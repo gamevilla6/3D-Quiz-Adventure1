@@ -832,6 +832,101 @@
       .collection-reward.tier-silver { color: #45546e; border-color: #d5ddec; background: #f3f6fb; }
       .collection-reward.tier-bronze { color: #7b4a22; border-color: #eac7a7; background: #fff0df; }
       .collection-reward-empty { color: #827996; font-size: 10px; font-style: italic; }
+      .collection-open-button {
+        min-height: 36px;
+        padding: 0 12px;
+        color: #fff;
+        border: 0;
+        border-radius: 11px;
+        background: linear-gradient(115deg, #7044e6, #3b69ef 60%, #c84de3);
+        box-shadow: 0 7px 18px rgba(82, 66, 190, .2);
+        font: inherit;
+        font-size: 11px;
+        font-weight: 850;
+        cursor: pointer;
+      }
+      .collection-open-button:hover { filter: brightness(1.08); transform: translateY(-1px); }
+      .collection-open-button:focus-visible,
+      .rewards-close-button:focus-visible { outline: 3px solid #83f0e1; outline-offset: 3px; }
+      .rewards-dialog {
+        width: min(900px, calc(100vw - 28px));
+        max-width: none;
+        max-height: min(92vh, 940px);
+        margin: auto;
+        padding: 0;
+        overflow: hidden;
+        color: #fff;
+        border: 1px solid rgba(255,255,255,.22);
+        border-radius: 26px;
+        background: linear-gradient(140deg, rgba(26, 17, 58, .99), rgba(13, 27, 62, .99) 58%, rgba(46, 19, 67, .99));
+        box-shadow: 0 30px 100px rgba(8, 6, 24, .48);
+      }
+      .rewards-dialog::backdrop { background: rgba(8, 7, 23, .72); backdrop-filter: blur(8px); }
+      .rewards-dialog-shell { max-height: min(92vh, 940px); padding: clamp(20px, 4vw, 34px); overflow: auto; }
+      .rewards-dialog-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 20px; margin-bottom: 22px; }
+      .rewards-dialog-heading { min-width: 0; }
+      .rewards-dialog-kicker { margin: 0 0 7px; color: #93f5e9; font-size: 10px; font-weight: 850; letter-spacing: .14em; text-transform: uppercase; }
+      .rewards-dialog-title { margin: 0; color: #fff; font-size: clamp(23px, 4vw, 32px); font-weight: 900; letter-spacing: -.035em; }
+      .rewards-dialog-description { max-width: 620px; margin: 8px 0 0; color: #e0dcf4; font-size: 13px; line-height: 1.55; }
+      .rewards-close-button { flex: 0 0 40px; width: 40px; height: 40px; display: grid; place-items: center; color: #fff; border: 1px solid rgba(255,255,255,.2); border-radius: 12px; background: rgba(255,255,255,.1); font: inherit; font-size: 24px; cursor: pointer; }
+      .rewards-close-button:hover { background: rgba(255,255,255,.18); }
+      .analytics-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 13px; }
+      .analytics-card { min-width: 0; padding: 18px; border: 1px solid rgba(255,255,255,.16); border-radius: 18px; background: rgba(255,255,255,.09); box-shadow: inset 0 1px rgba(255,255,255,.06); }
+      .analytics-card h3 { margin: 0 0 12px; color: #fff; font-size: 14px; font-weight: 850; }
+      .analytics-iq-score { display: block; color: #9bf3e8; font-size: clamp(38px, 8vw, 56px); font-weight: 950; line-height: 1; font-variant-numeric: tabular-nums; text-shadow: 0 4px 20px rgba(77,239,216,.22); }
+      .analytics-iq-rating { display: block; margin-top: 8px; color: #fff; font-size: 14px; font-weight: 800; }
+      .analytics-card-note { min-height: 30px; margin: 10px 0 0; color: #d1cbe8; font-size: 11px; line-height: 1.5; }
+      .analytics-level-count { margin-bottom: 10px; color: #fff; font-size: 15px; font-weight: 850; font-variant-numeric: tabular-nums; }
+      .analytics-progress-track { height: 10px; overflow: hidden; border: 1px solid rgba(255,255,255,.12); border-radius: 99px; background: rgba(0,0,0,.28); }
+      .analytics-progress-fill { width: 0; height: 100%; border-radius: inherit; background: linear-gradient(90deg, #38e4bd, #5c8cff 55%, #d15aff); transition: width .45s ease; }
+      .analytics-metrics { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-top: 14px; }
+      .analytics-metric { min-width: 0; padding: 9px; border-radius: 11px; background: rgba(6, 8, 28, .3); }
+      .analytics-metric span { display: block; color: #c9c2e1; font-size: 9px; font-weight: 750; text-transform: uppercase; letter-spacing: .06em; }
+      .analytics-metric strong { display: block; margin-top: 5px; color: #fff; font-size: 17px; font-weight: 900; font-variant-numeric: tabular-nums; }
+      .analytics-rounds { margin: 11px 0 0; color: #c9c2e1; font-size: 10px; }
+      .analytics-section { margin-top: 22px; }
+      .analytics-section h3 { margin: 0 0 11px; color: #fff; font-size: 15px; font-weight: 900; }
+      .trophy-gallery { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 11px; }
+      .trophy-showcase-card { min-width: 0; display: grid; justify-items: center; gap: 7px; padding: 15px 10px; border: 1px solid rgba(255,255,255,.15); border-radius: 16px; background: rgba(255,255,255,.08); text-align: center; }
+      .trophy-showcase-card.locked, .badge-showcase-card.locked { opacity: .52; filter: grayscale(.75); }
+      .trophy-showcase-card.tier-gold { border-color: rgba(255,211,91,.5); background: linear-gradient(145deg, rgba(167,116,22,.25), rgba(255,255,255,.07)); }
+      .trophy-showcase-card.tier-silver { border-color: rgba(199,218,247,.4); background: linear-gradient(145deg, rgba(113,138,176,.23), rgba(255,255,255,.07)); }
+      .trophy-showcase-card.tier-bronze { border-color: rgba(237,165,112,.38); background: linear-gradient(145deg, rgba(154,90,49,.24), rgba(255,255,255,.07)); }
+      .trophy-showcase-art { display: grid; width: 58px; height: 58px; place-items: center; border-radius: 17px; background: rgba(0,0,0,.22); font-size: 35px; filter: drop-shadow(0 7px 7px rgba(0,0,0,.3)); transform: perspective(160px) rotateY(-13deg) rotateX(5deg); animation: trophyShowcaseFloat 4s ease-in-out infinite alternate; }
+      .trophy-showcase-card.tier-silver .trophy-showcase-art { animation-delay: .35s; }
+      .trophy-showcase-card.tier-bronze .trophy-showcase-art { animation-delay: .7s; }
+      .trophy-showcase-name { color: #fff; font-size: 12px; font-weight: 850; }
+      .trophy-showcase-status { color: #d0c9e8; font-size: 10px; line-height: 1.35; }
+      .badge-gallery { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 9px; }
+      .badge-showcase-card { min-width: 0; display: flex; align-items: center; gap: 9px; padding: 10px; border: 1px solid rgba(255,255,255,.15); border-radius: 13px; background: rgba(255,255,255,.08); }
+      .badge-showcase-icon { flex: 0 0 34px; width: 34px; height: 34px; display: grid; place-items: center; color: #fff; border-radius: 11px; background: linear-gradient(145deg, #7044e6, #315dff); font-size: 17px; }
+      .badge-showcase-copy { min-width: 0; }
+      .badge-showcase-copy strong { display: block; overflow-wrap: anywhere; color: #fff; font-size: 11px; line-height: 1.3; }
+      .badge-showcase-copy small { display: block; margin-top: 3px; color: #cec7e4; font-size: 9px; }
+      @keyframes trophyShowcaseFloat { from { transform: perspective(160px) rotateY(-14deg) rotateX(5deg) translateY(1px); } to { transform: perspective(160px) rotateY(14deg) rotateX(-4deg) translateY(-3px); } }
+      @media (max-width: 650px) {
+        .collection-heading { align-items: flex-start; }
+        .collection-open-button { max-width: 165px; min-height: 34px; font-size: 10px; }
+        .rewards-dialog { width: calc(100vw - 16px); max-height: calc(100dvh - 16px); border-radius: 20px; }
+        .rewards-dialog-shell { max-height: calc(100dvh - 16px); padding: 18px 15px 22px; }
+        .rewards-dialog-header { gap: 12px; margin-bottom: 16px; }
+        .analytics-grid { grid-template-columns: 1fr; gap: 10px; }
+        .analytics-card { padding: 15px; }
+        .analytics-section { margin-top: 18px; }
+        .trophy-gallery { gap: 7px; }
+        .trophy-showcase-card { padding: 12px 7px; }
+        .trophy-showcase-art { width: 48px; height: 48px; font-size: 30px; }
+        .badge-gallery { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      }
+      @media (max-width: 390px) {
+        .collection-heading { flex-direction: column; }
+        .collection-open-button { max-width: none; }
+        .badge-gallery { grid-template-columns: 1fr; }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .trophy-showcase-art { animation: none !important; }
+        .analytics-progress-fill { transition: none; }
+      }
       .streak-hint { margin-top: 5px; color: #dfd8f9; font-size: 9px; font-weight: 650; letter-spacing: .01em; }
       [hidden] { display: none !important; }
       .level-selection { padding: clamp(26px, 5vh, 54px) 0 48px; }
@@ -1487,7 +1582,10 @@
           </div>
           <div class="welcome-foot"><span><b class="tiny-check">✓</b> <span id="totalQuestionsLabel">30 General Knowledge questions</span></span><span><b class="tiny-check">✓</b> <span id="instantAnswersLabel">Instant answers</span></span><span><b class="tiny-check">✓</b> <span id="justForFunLabel">Just for fun</span></span></div>
           <section class="collection-panel" aria-labelledby="collectionTitle">
-            <div class="collection-heading"><h2 id="collectionTitle">Your collection</h2></div>
+            <div class="collection-heading">
+              <h2 id="collectionTitle">Your collection</h2>
+              <button class="collection-open-button" type="button" id="openRewardsButton">Rewards &amp; Analytics</button>
+            </div>
             <div class="collection-stats">
               <div class="collection-stat"><strong id="collectionBestPoints">0</strong><span id="collectionBestPointsLabel">Personal best points</span></div>
               <div class="collection-stat"><strong id="collectionBestStreak">0</strong><span id="collectionBestStreakLabel">Personal best streak</span></div>
@@ -1503,6 +1601,48 @@
               </section>
             </div>
           </section>
+          <dialog class="rewards-dialog" id="rewardsDialog" aria-labelledby="rewardsDialogTitle" aria-describedby="rewardsDialogDescription">
+            <div class="rewards-dialog-shell">
+              <header class="rewards-dialog-header">
+                <div class="rewards-dialog-heading">
+                  <h2 class="rewards-dialog-title" id="rewardsDialogTitle">Rewards &amp; Analytics</h2>
+                  <p class="rewards-dialog-description" id="rewardsDialogDescription">Your progress, trophies, badges, and game-only IQ estimate.</p>
+                </div>
+                <button class="rewards-close-button" type="button" id="closeRewardsButton" aria-label="Close rewards dashboard"><span aria-hidden="true">×</span></button>
+              </header>
+              <div class="analytics-grid">
+                <section class="analytics-card" aria-labelledby="dashboardIQTitle">
+                  <h3 id="dashboardIQTitle">IQ-style analytical estimate</h3>
+                  <strong class="analytics-iq-score" id="dashboardIQScore">—</strong>
+                  <span class="analytics-iq-rating" id="dashboardIQRating">Finish an IQ Check round to see your estimate.</span>
+                  <p class="analytics-card-note" id="dashboardIQFootnote">For fun only; this is not a clinical IQ test.</p>
+                  <p class="analytics-rounds" id="dashboardIQAttempts">0 IQ Check rounds</p>
+                </section>
+                <section class="analytics-card" aria-labelledby="dashboardGKTitle">
+                  <h3 id="dashboardGKTitle">General Knowledge mastery</h3>
+                  <div class="analytics-level-count" id="dashboardLevelsCompleted">0 of 500 levels completed</div>
+                  <div class="analytics-progress-track" id="dashboardGKProgress" role="progressbar" aria-valuemin="0" aria-valuemax="500" aria-valuenow="0">
+                    <div class="analytics-progress-fill" id="dashboardGKProgressFill"></div>
+                  </div>
+                  <div class="analytics-metrics">
+                    <div class="analytics-metric"><span id="dashboardAccuracyLabel">Accuracy</span><strong id="dashboardGKAccuracy">—</strong></div>
+                    <div class="analytics-metric"><span id="dashboardCorrectLabel">Correct</span><strong id="dashboardGKCorrect">0</strong></div>
+                    <div class="analytics-metric"><span id="dashboardIncorrectLabel">Incorrect</span><strong id="dashboardGKIncorrect">0</strong></div>
+                  </div>
+                  <p class="analytics-rounds" id="dashboardGKRounds">0 completed rounds</p>
+                  <p class="analytics-card-note" id="dashboardNoGKData">Finish a General Knowledge round to build your accuracy stats.</p>
+                </section>
+              </div>
+              <section class="analytics-section" aria-labelledby="dashboardTrophyTitle">
+                <h3 id="dashboardTrophyTitle">Trophy showcase</h3>
+                <div class="trophy-gallery" id="trophyGallery" role="list"></div>
+              </section>
+              <section class="analytics-section" aria-labelledby="dashboardBadgeTitle">
+                <h3 id="dashboardBadgeTitle">Achievement badges</h3>
+                <div class="badge-gallery" id="badgeGallery" role="list"></div>
+              </section>
+            </div>
+          </dialog>
         </section>
 
         <section class="view level-selection" id="levelView" aria-labelledby="levelTitle">
@@ -1715,6 +1855,18 @@
           collectionTrophies: "Trophies",
           collectionBadges: "Badges",
           collectionEmpty: "None yet",
+          rewardsDashboardTitle: "Rewards & Analytics",
+          rewardsDashboardDescription: "Your progress, trophies, badges, and game-only IQ estimate.",
+          closeRewards: "Close rewards dashboard",
+          dashboardIQAttempts: "{count} IQ Check rounds",
+          dashboardNoIQ: "Finish an IQ Check round to see your estimate.",
+          dashboardGKTitle: "General Knowledge mastery",
+          dashboardLevelsCompleted: "{completed} of {total} levels completed",
+          dashboardGKRounds: "{count} completed rounds",
+          dashboardNoGKData: "Finish a General Knowledge round to build your accuracy stats.",
+          dashboardTrophyGallery: "Trophy showcase",
+          dashboardBadgeGallery: "Achievement badges",
+          dashboardPreviousReward: "Earned in an earlier round",
           achievements: "Unlocked badges",
           noAchievements: "No badges unlocked this round yet.",
           trophyAward: "Round reward",
@@ -1842,6 +1994,18 @@
           collectionTrophies: "ট্রফি",
           collectionBadges: "ব্যাজ",
           collectionEmpty: "এখনো কিছু নেই",
+          rewardsDashboardTitle: "পুরস্কার ও পরিসংখ্যান",
+          rewardsDashboardDescription: "আপনার অগ্রগতি, ট্রফি, ব্যাজ ও খেলার ভিত্তিতে IQ-ধাঁচের অনুমান একসঙ্গে দেখুন।",
+          closeRewards: "পুরস্কারের ড্যাশবোর্ড বন্ধ করুন",
+          dashboardIQAttempts: "{count}টি আইকিউ পরীক্ষার পর্ব",
+          dashboardNoIQ: "খেলার ভিত্তিতে অনুমান দেখতে একটি আইকিউ পরীক্ষার পর্ব শেষ করুন।",
+          dashboardGKTitle: "সাধারণ জ্ঞানে অগ্রগতি",
+          dashboardLevelsCompleted: "{completed}/{total}টি লেভেল সম্পন্ন",
+          dashboardGKRounds: "{count}টি পর্ব সম্পন্ন",
+          dashboardNoGKData: "সঠিকতার পরিসংখ্যান পেতে একটি সাধারণ জ্ঞানের পর্ব শেষ করুন।",
+          dashboardTrophyGallery: "ট্রফির প্রদর্শনী",
+          dashboardBadgeGallery: "অর্জনের ব্যাজ",
+          dashboardPreviousReward: "আগের পর্বে অর্জিত",
           achievements: "অর্জিত ব্যাজ",
           noAchievements: "এই পর্বে এখনো কোনো ব্যাজ মেলেনি।",
           trophyAward: "এই পর্বের পুরস্কার",
@@ -1969,6 +2133,18 @@
           collectionTrophies: "ट्रॉफियाँ",
           collectionBadges: "बैज",
           collectionEmpty: "अभी कुछ नहीं",
+          rewardsDashboardTitle: "इनाम और आँकड़े",
+          rewardsDashboardDescription: "अपनी प्रगति, ट्रॉफियाँ, बैज और गेम-आधारित IQ अनुमान एक जगह देखें।",
+          closeRewards: "इनाम डैशबोर्ड बंद करें",
+          dashboardIQAttempts: "{count} IQ चेक राउंड",
+          dashboardNoIQ: "अपना अनुमान देखने के लिए IQ चेक का एक राउंड पूरा करें।",
+          dashboardGKTitle: "सामान्य ज्ञान में प्रगति",
+          dashboardLevelsCompleted: "{total} में से {completed} लेवल पूरे",
+          dashboardGKRounds: "{count} राउंड पूरे",
+          dashboardNoGKData: "सटीकता के आँकड़े देखने के लिए सामान्य ज्ञान का एक राउंड पूरा करें।",
+          dashboardTrophyGallery: "ट्रॉफी संग्रह",
+          dashboardBadgeGallery: "उपलब्धि बैज",
+          dashboardPreviousReward: "पिछले राउंड में मिला",
           achievements: "अनलॉक बैज",
           noAchievements: "इस राउंड में अभी कोई बैज नहीं मिला।",
           trophyAward: "इस राउंड का इनाम",
@@ -2096,6 +2272,18 @@
           collectionTrophies: "Trofeos",
           collectionBadges: "Insignias",
           collectionEmpty: "Todavía no hay nada",
+          rewardsDashboardTitle: "Recompensas y estadísticas",
+          rewardsDashboardDescription: "Consulta tu progreso, trofeos, insignias y estimación de IQ basada solo en el juego.",
+          closeRewards: "Cerrar el panel de recompensas",
+          dashboardIQAttempts: "{count} rondas de IQ Check",
+          dashboardNoIQ: "Completa una ronda de IQ Check para ver tu estimación.",
+          dashboardGKTitle: "Progreso en cultura general",
+          dashboardLevelsCompleted: "{completed} de {total} niveles completados",
+          dashboardGKRounds: "{count} rondas completadas",
+          dashboardNoGKData: "Completa una ronda de cultura general para ver tus estadísticas de aciertos.",
+          dashboardTrophyGallery: "Galería de trofeos",
+          dashboardBadgeGallery: "Insignias de logros",
+          dashboardPreviousReward: "Obtenido en una ronda anterior",
           achievements: "Insignias desbloqueadas",
           noAchievements: "Aún no has desbloqueado insignias en esta ronda.",
           trophyAward: "Recompensa de la ronda",
@@ -2223,6 +2411,18 @@
           collectionTrophies: "Trophées",
           collectionBadges: "Badges",
           collectionEmpty: "Pas encore de récompense",
+          rewardsDashboardTitle: "Récompenses et statistiques",
+          rewardsDashboardDescription: "Retrouvez votre progression, vos trophées, vos badges et votre estimation de QI basée uniquement sur le jeu.",
+          closeRewards: "Fermer le tableau des récompenses",
+          dashboardIQAttempts: "{count} manches de test logique",
+          dashboardNoIQ: "Terminez une manche de test logique pour voir votre estimation.",
+          dashboardGKTitle: "Progression en culture générale",
+          dashboardLevelsCompleted: "{completed} niveaux terminés sur {total}",
+          dashboardGKRounds: "{count} manches terminées",
+          dashboardNoGKData: "Terminez une manche de culture générale pour afficher vos statistiques de bonnes réponses.",
+          dashboardTrophyGallery: "Galerie de trophées",
+          dashboardBadgeGallery: "Badges de réussite",
+          dashboardPreviousReward: "Obtenu lors d’une manche précédente",
           achievements: "Badges débloqués",
           noAchievements: "Aucun badge débloqué pour cette manche.",
           trophyAward: "Récompense de la manche",
@@ -2385,12 +2585,28 @@
       const INCORRECT_ANSWER_PENALTY = 5;
       const ANSWER_SOUND_STORAGE_KEY = "quiz-orbit-answer-sounds-muted";
       const REWARD_COLLECTION_STORAGE_KEY = "quiz-orbit-reward-collection";
-      const REWARD_COLLECTION_VERSION = 1;
+      const REWARD_COLLECTION_VERSION = 2;
       const TROPHY_TIERS = ["gold", "silver", "bronze"];
       const BADGE_IDS = ["quizMaster", "logicMaster", "speedDemon", "quizSpeedster", "knowledgeSeeker"];
+      const REWARD_MODES = ["General Knowledge", "IQ Check"];
 
       function emptyRewardCollection() {
-        return { version: REWARD_COLLECTION_VERSION, trophies: [], badges: [], bestPoints: 0, bestStreak: 0 };
+        return {
+          version: REWARD_COLLECTION_VERSION,
+          trophies: [],
+          badges: [],
+          bestPoints: 0,
+          bestStreak: 0,
+          trophyRecords: [],
+          gkRuns: 0,
+          gkCorrect: 0,
+          gkIncorrect: 0,
+          gkCompletedLevels: 0,
+          iqRuns: 0,
+          iqCorrect: 0,
+          iqIncorrect: 0,
+          iqLatestEstimate: null
+        };
       }
 
       function readRewardCollection() {
@@ -2398,11 +2614,24 @@
           const serialized = localStorage.getItem(REWARD_COLLECTION_STORAGE_KEY);
           if (!serialized) return emptyRewardCollection();
           const saved = JSON.parse(serialized);
-          if (!saved || typeof saved !== "object" || saved.version !== REWARD_COLLECTION_VERSION) {
+          // Migrate v1 reward collections without discarding earned trophies or badges.
+          if (!saved || typeof saved !== "object" || ![1, REWARD_COLLECTION_VERSION].includes(saved.version)) {
             return emptyRewardCollection();
           }
           const validNonNegativeNumber = (value) =>
             typeof value === "number" && Number.isFinite(value) && value >= 0;
+          const validCount = (value) => validNonNegativeNumber(value) ? Math.floor(value) : 0;
+          const trophyRecords = [];
+          const trophyRecordKeys = new Set();
+          if (Array.isArray(saved.trophyRecords)) {
+            saved.trophyRecords.forEach((record) => {
+              if (!record || !TROPHY_TIERS.includes(record.tier) || !REWARD_MODES.includes(record.mode)) return;
+              const key = `${record.tier}:${record.mode}`;
+              if (trophyRecordKeys.has(key)) return;
+              trophyRecordKeys.add(key);
+              trophyRecords.push({ tier: record.tier, mode: record.mode });
+            });
+          }
           return {
             version: REWARD_COLLECTION_VERSION,
             trophies: Array.isArray(saved.trophies)
@@ -2412,7 +2641,18 @@
               ? [...new Set(saved.badges.filter((badgeId) => BADGE_IDS.includes(badgeId)))]
               : [],
             bestPoints: validNonNegativeNumber(saved.bestPoints) ? saved.bestPoints : 0,
-            bestStreak: validNonNegativeNumber(saved.bestStreak) ? Math.floor(saved.bestStreak) : 0
+            bestStreak: validCount(saved.bestStreak),
+            trophyRecords,
+            gkRuns: validCount(saved.gkRuns),
+            gkCorrect: validCount(saved.gkCorrect),
+            gkIncorrect: validCount(saved.gkIncorrect),
+            gkCompletedLevels: Math.min(generalKnowledgeLevels.length, validCount(saved.gkCompletedLevels)),
+            iqRuns: validCount(saved.iqRuns),
+            iqCorrect: validCount(saved.iqCorrect),
+            iqIncorrect: validCount(saved.iqIncorrect),
+            iqLatestEstimate: Number.isInteger(saved.iqLatestEstimate) && saved.iqLatestEstimate >= 70 && saved.iqLatestEstimate <= 145
+              ? saved.iqLatestEstimate
+              : null
           };
         } catch {
           return emptyRewardCollection();
@@ -2472,7 +2712,6 @@
       let roundQuestionIndexes = [];
       let activeGeneralKnowledgePool = [];
       let currentLevelPage = 0;
-      let questionSessionOffset = 0;
       let currentQuestion = 0;
       let score = 0;
       let points = 0;
@@ -2773,11 +3012,40 @@
         return Math.floor(Math.random() * maxExclusive);
       }
 
+      const unitConversionQuestionTemplates = {
+        en: "Convert {amount} {from} to {to}.",
+        bn: "{amount} {from} কে {to}-তে রূপান্তর করুন।",
+        hi: "{amount} {from} को {to} में बदलें।",
+        es: "Convierte {amount} {from} a {to}.",
+        fr: "Convertissez {amount} {from} en {to}."
+      };
+      const generalKnowledgeUnitConversions = [
+        { factor: 1000, units: { en: ["km", "m"], bn: ["কিমি", "মি"], hi: ["किमी", "मीटर"], es: ["km", "m"], fr: ["km", "m"] } },
+        { factor: 100, units: { en: ["m", "cm"], bn: ["মি", "সেমি"], hi: ["मीटर", "सेमी"], es: ["m", "cm"], fr: ["m", "cm"] } },
+        { factor: 10, units: { en: ["cm", "mm"], bn: ["সেমি", "মিমি"], hi: ["सेमी", "मिमी"], es: ["cm", "mm"], fr: ["cm", "mm"] } },
+        { factor: 1000, units: { en: ["L", "mL"], bn: ["লিটার", "মিলিলিটার"], hi: ["लीटर", "मिलीलीटर"], es: ["L", "mL"], fr: ["L", "mL"] } },
+        { factor: 1000, units: { en: ["kg", "g"], bn: ["কেজি", "গ্রাম"], hi: ["किग्रा", "ग्राम"], es: ["kg", "g"], fr: ["kg", "g"] } },
+        { factor: 1000, units: { en: ["g", "mg"], bn: ["গ্রাম", "মিলিগ্রাম"], hi: ["ग्राम", "मिलीग्राम"], es: ["g", "mg"], fr: ["g", "mg"] } },
+        { factor: 60, units: { en: ["hours", "minutes"], bn: ["ঘণ্টা", "মিনিট"], hi: ["घंटे", "मिनट"], es: ["horas", "minutos"], fr: ["heures", "minutes"] } },
+        { factor: 24, units: { en: ["days", "hours"], bn: ["দিন", "ঘণ্টা"], hi: ["दिन", "घंटे"], es: ["días", "horas"], fr: ["jours", "heures"] } },
+        { factor: 60, units: { en: ["minutes", "seconds"], bn: ["মিনিট", "সেকেন্ড"], hi: ["मिनट", "सेकंड"], es: ["minutos", "segundos"], fr: ["minutes", "secondes"] } },
+        { factor: 7, units: { en: ["weeks", "days"], bn: ["সপ্তাহ", "দিন"], hi: ["सप्ताह", "दिन"], es: ["semanas", "días"], fr: ["semaines", "jours"] } }
+      ];
+      const generalKnowledgePackingItems = {
+        en: ["stickers", "cards", "beads", "books", "crayons"],
+        bn: ["স্টিকার", "কার্ড", "মণি", "বই", "ক্রেয়ন"],
+        hi: ["स्टिकर", "कार्ड", "मोती", "किताबें", "क्रेयॉन"],
+        es: ["pegatinas", "tarjetas", "cuentas", "libros", "crayones"],
+        fr: ["autocollants", "cartes", "perles", "livres", "crayons"]
+      };
+
       // Procedurally create one localized question. Each of the ten families uses
       // a level-and-variant number that only increases, so generated prompts never
       // repeat between levels. Numeric distractors are shuffled for each pool build.
       function makeGeneratedGeneralKnowledgeQuestion(level, family, variant) {
-        const instance = (level - 1) * 2 + variant + 1 + questionSessionOffset;
+        // Each level/variant maps to its own bounded parameter combination. The
+        // shuffled 20-question pool supplies session variety without huge numbers.
+        const instance = (level - 1) * 2 + variant;
         const difficulty = 1 + Math.floor((level - 1) / 50);
         const n = (value, language) => formatNumber(value, language);
         let answer;
@@ -2786,9 +3054,9 @@
 
         switch (family) {
           case 0: {
-            const starting = 20 + instance * 2;
-            const added = 5 + (instance % (5 + difficulty)) + difficulty;
-            const sold = 1 + (instance % (3 + difficulty));
+            const starting = 10 + (instance % 90);
+            const added = 1 + Math.floor(instance / 90);
+            const sold = 1 + (instance % Math.min(10, added));
             answer = starting + added - sold;
             optionStep = difficulty + 2;
             question = {
@@ -2801,10 +3069,10 @@
             break;
           }
           case 1: {
-            const rows = 2 + (instance % 8);
-            const seats = 3 + instance * 2 + difficulty;
+            const rows = 2 + (instance % 24);
+            const seats = 2 + Math.floor(instance / 24);
             answer = rows * seats;
-            optionStep = Math.max(rows, difficulty + 2);
+            optionStep = Math.max(2, difficulty);
             question = {
               en: `A hall has ${n(rows, "en")} rows with ${n(seats, "en")} seats in each row. How many seats are there?`,
               bn: `একটি হলের ${n(rows, "bn")}টি সারিতে প্রতিটিতে ${n(seats, "bn")}টি আসন আছে। মোট আসন কত?`,
@@ -2815,8 +3083,8 @@
             break;
           }
           case 2: {
-            const capacity = 100 + instance * 20;
-            const percent = [10, 20, 25, 50][(level + variant) % 4];
+            const capacity = 100 + (instance % 250) * 20;
+            const percent = [10, 20, 25, 50][Math.floor(instance / 250)];
             answer = capacity * percent / 100;
             optionStep = Math.max(2, difficulty * 2);
             question = {
@@ -2829,8 +3097,8 @@
             break;
           }
           case 3: {
-            const first = 2 + instance * 3;
-            const step = 2 + difficulty + (instance % 7);
+            const first = 2 + (instance % 100);
+            const step = 2 + Math.floor(instance / 100);
             const terms = Array.from({ length: 5 }, (_, index) => first + step * index);
             answer = first + step * 5;
             optionStep = step;
@@ -2844,55 +3112,37 @@
             break;
           }
           case 4: {
-            const amount = instance;
-            if (difficulty <= 3) {
-              answer = amount * 1000;
-              question = {
-                en: `How many meters are there in ${n(amount, "en")} kilometers?`,
-                bn: `${n(amount, "bn")} কিলোমিটারে কত মিটার আছে?`,
-                hi: `${n(amount, "hi")} किलोमीटर में कितने मीटर होते हैं?`,
-                es: `¿Cuántos metros hay en ${n(amount, "es")} kilómetros?`,
-                fr: `Combien de mètres y a-t-il dans ${n(amount, "fr")} kilomètres ?`
-              };
-            } else if (difficulty <= 6) {
-              answer = amount * 60;
-              question = {
-                en: `How many minutes are there in ${n(amount, "en")} hours?`,
-                bn: `${n(amount, "bn")} ঘণ্টায় কত মিনিট আছে?`,
-                hi: `${n(amount, "hi")} घंटे में कितने मिनट होते हैं?`,
-                es: `¿Cuántos minutos hay en ${n(amount, "es")} horas?`,
-                fr: `Combien de minutes y a-t-il dans ${n(amount, "fr")} heures ?`
-              };
-            } else {
-              answer = amount * 1000;
-              question = {
-                en: `How many grams are there in ${n(amount, "en")} kilograms?`,
-                bn: `${n(amount, "bn")} কিলোগ্রামে কত গ্রাম আছে?`,
-                hi: `${n(amount, "hi")} किलोग्राम में कितने ग्राम होते हैं?`,
-                es: `¿Cuántos gramos hay en ${n(amount, "es")} kilogramos?`,
-                fr: `Combien de grammes y a-t-il dans ${n(amount, "fr")} kilogrammes ?`
-              };
-            }
-            optionStep = Math.max(10, Math.floor(answer / 100) + difficulty);
+            const conversion = generalKnowledgeUnitConversions[Math.floor(instance / 100)];
+            const amount = 1 + (instance % 100);
+            answer = amount * conversion.factor;
+            question = Object.fromEntries(["en", "bn", "hi", "es", "fr"].map((language) => {
+              const [from, to] = conversion.units[language];
+              const localizedQuestion = unitConversionQuestionTemplates[language]
+                .replace("{amount}", n(amount, language))
+                .replace("{from}", from)
+                .replace("{to}", to);
+              return [language, localizedQuestion];
+            }));
+            optionStep = Math.max(2, Math.floor(answer / 100) + difficulty);
             break;
           }
           case 5: {
-            const length = 4 + instance * 2;
-            const width = 3 + (instance % (5 + difficulty));
-            answer = length * width;
-            optionStep = width;
+            const mapScale = 1 + (instance % 40);
+            const mapDistance = 1 + Math.floor(instance / 40);
+            answer = mapScale * mapDistance;
+            optionStep = mapDistance;
             question = {
-              en: `A rectangular garden is ${n(length, "en")} meters long and ${n(width, "en")} meters wide. What is its area in square meters?`,
-              bn: `একটি আয়তাকার বাগান ${n(length, "bn")} মিটার লম্বা ও ${n(width, "bn")} মিটার চওড়া। ক্ষেত্রফল কত বর্গমিটার?`,
-              hi: `एक आयताकार बगीचा ${n(length, "hi")} मीटर लंबा और ${n(width, "hi")} मीटर चौड़ा है। उसका क्षेत्रफल कितने वर्ग मीटर है?`,
-              es: `Un jardín rectangular mide ${n(length, "es")} metros de largo y ${n(width, "es")} de ancho. ¿Cuál es su área en metros cuadrados?`,
-              fr: `Un jardin rectangulaire mesure ${n(length, "fr")} mètres de long et ${n(width, "fr")} de large. Quelle est son aire en mètres carrés ?`
+              en: `A map scale says 1 cm represents ${n(mapScale, "en")} km. A route is ${n(mapDistance, "en")} cm on the map. How long is it in real life?`,
+              bn: `মানচিত্রে ১ সেমি = ${n(mapScale, "bn")} কিমি। একটি পথ মানচিত্রে ${n(mapDistance, "bn")} সেমি। বাস্তবে পথটি কত কিমি?`,
+              hi: `नक्शे में 1 सेमी = ${n(mapScale, "hi")} किमी है। एक रास्ता नक्शे पर ${n(mapDistance, "hi")} सेमी है। वास्तविक दूरी कितनी किमी है?`,
+              es: `En el mapa, 1 cm representa ${n(mapScale, "es")} km. Una ruta mide ${n(mapDistance, "es")} cm. ¿Cuál es la distancia real?`,
+              fr: `Sur la carte, 1 cm représente ${n(mapScale, "fr")} km. Un itinéraire mesure ${n(mapDistance, "fr")} cm. Quelle est la distance réelle ?`
             };
             break;
           }
           case 6: {
             const hours = 1 + (instance % 5);
-            const speed = 20 + instance * 3;
+            const speed = 20 + Math.floor(instance / 5);
             const distance = speed * hours;
             answer = speed;
             optionStep = difficulty + 2;
@@ -2906,23 +3156,24 @@
             break;
           }
           case 7: {
-            const first = 10 + instance * 3;
-            const second = first + 2 * difficulty;
-            const third = first + 4 * difficulty;
-            answer = first + 2 * difficulty;
+            const first = 1 + (instance % 70);
+            const gap = 1 + Math.floor(instance / 70);
+            const second = first + gap;
+            const third = first + gap * 2;
+            answer = first + gap;
             optionStep = Math.max(2, difficulty);
             question = {
-              en: `What is the average of ${n(first, "en")}, ${n(second, "en")}, and ${n(third, "en")}?`,
-              bn: `${n(first, "bn")}, ${n(second, "bn")} ও ${n(third, "bn")}-এর গড় কত?`,
-              hi: `${n(first, "hi")}, ${n(second, "hi")} और ${n(third, "hi")} का औसत क्या है?`,
-              es: `¿Cuál es el promedio de ${n(first, "es")}, ${n(second, "es")} y ${n(third, "es")}?`,
-              fr: `Quelle est la moyenne de ${n(first, "fr")}, ${n(second, "fr")} et ${n(third, "fr")} ?`
+              en: `A team scores ${n(first, "en")}, ${n(second, "en")}, and ${n(third, "en")} points in three rounds. What is its average score?`,
+              bn: `একটি দল তিন রাউন্ডে ${n(first, "bn")}, ${n(second, "bn")} ও ${n(third, "bn")} পয়েন্ট পায়। গড় স্কোর কত?`,
+              hi: `एक टीम तीन राउंड में ${n(first, "hi")}, ${n(second, "hi")} और ${n(third, "hi")} अंक पाती है। औसत स्कोर क्या है?`,
+              es: `Un equipo obtiene ${n(first, "es")}, ${n(second, "es")} y ${n(third, "es")} puntos en tres rondas. ¿Cuál es su promedio?`,
+              fr: `Une équipe marque ${n(first, "fr")}, ${n(second, "fr")} et ${n(third, "fr")} points en trois manches. Quelle est sa moyenne ?`
             };
             break;
           }
           case 8: {
-            const price = 400 + instance * 20;
-            const percent = [10, 20, 25, 30, 40, 50][(instance + difficulty) % 6];
+            const price = 20 + (instance % 100) * 20;
+            const percent = [10, 20, 25, 30, 40, 50, 60, 75, 80, 90][Math.floor(instance / 100)];
             answer = price * (100 - percent) / 100;
             optionStep = Math.max(10, difficulty * 10);
             question = {
@@ -2935,16 +3186,19 @@
             break;
           }
           case 9: {
-            const root = 5 + instance + difficulty * 2;
-            const square = root * root;
-            answer = root;
-            optionStep = Math.max(2, difficulty);
+            const context = Math.floor(instance / 200);
+            const localIndex = instance % 200;
+            const packs = 2 + Math.floor(localIndex / 4);
+            const itemsPerPack = 2 + (localIndex % 4);
+            const itemCount = packs * itemsPerPack;
+            answer = packs;
+            optionStep = 1;
             question = {
-              en: `What is the positive square root of ${n(square, "en")}?`,
-              bn: `${n(square, "bn")}-এর ধনাত্মক বর্গমূল কত?`,
-              hi: `${n(square, "hi")} का धनात्मक वर्गमूल क्या है?`,
-              es: `¿Cuál es la raíz cuadrada positiva de ${n(square, "es")}?`,
-              fr: `Quelle est la racine carrée positive de ${n(square, "fr")} ?`
+              en: `A box has ${n(itemCount, "en")} ${generalKnowledgePackingItems.en[context]}, packed ${n(itemsPerPack, "en")} per pack. How many packs are there?`,
+              bn: `একটি বাক্সে মোট ${n(itemCount, "bn")}টি ${generalKnowledgePackingItems.bn[context]} আছে, প্রতি প্যাকে ${n(itemsPerPack, "bn")}টি। মোট প্যাক কয়টি?`,
+              hi: `एक डिब्बे में कुल ${n(itemCount, "hi")} ${generalKnowledgePackingItems.hi[context]} हैं, हर पैक में ${n(itemsPerPack, "hi")}। कुल कितने पैक हैं?`,
+              es: `Una caja tiene ${n(itemCount, "es")} ${generalKnowledgePackingItems.es[context]}, con ${n(itemsPerPack, "es")} por paquete. ¿Cuántos paquetes hay?`,
+              fr: `Une boîte contient ${n(itemCount, "fr")} ${generalKnowledgePackingItems.fr[context]}, à raison de ${n(itemsPerPack, "fr")} par paquet. Combien de paquets y a-t-il ?`
             };
             break;
           }
@@ -3412,6 +3666,115 @@
         );
       }
 
+      function renderRewardsDashboard() {
+        const iqEstimate = rewardCollection.iqLatestEstimate;
+        document.getElementById("dashboardIQTitle").textContent = currentText.iqEstimateLabel;
+        document.getElementById("dashboardIQScore").textContent = iqEstimate === null
+          ? "—"
+          : formatNumber(iqEstimate);
+        document.getElementById("dashboardIQRating").textContent = iqEstimate === null
+          ? currentText.dashboardNoIQ
+          : iqEstimate >= 120
+            ? currentText.iqRatingStandout
+            : iqEstimate >= 100
+              ? currentText.iqRatingSolver
+              : currentText.iqRatingStarter;
+        document.getElementById("dashboardIQFootnote").textContent = currentText.iqDisclaimer;
+        document.getElementById("dashboardIQAttempts").textContent = currentText.dashboardIQAttempts
+          .replace("{count}", formatNumber(rewardCollection.iqRuns));
+
+        const completedLevels = Math.min(
+          generalKnowledgeLevels.length,
+          Math.max(rewardCollection.gkCompletedLevels, unlockedGeneralKnowledgeLevel - 1)
+        );
+        const generalKnowledgeAnswers = rewardCollection.gkCorrect + rewardCollection.gkIncorrect;
+        const generalKnowledgeAccuracy = generalKnowledgeAnswers
+          ? Math.round((rewardCollection.gkCorrect / generalKnowledgeAnswers) * 100)
+          : null;
+        document.getElementById("dashboardGKTitle").textContent = currentText.dashboardGKTitle;
+        document.getElementById("dashboardLevelsCompleted").textContent = currentText.dashboardLevelsCompleted
+          .replace("{completed}", formatNumber(completedLevels))
+          .replace("{total}", formatNumber(generalKnowledgeLevels.length));
+        const progressTrack = document.getElementById("dashboardGKProgress");
+        progressTrack.setAttribute("aria-valuemax", String(generalKnowledgeLevels.length));
+        progressTrack.setAttribute("aria-valuenow", String(completedLevels));
+        progressTrack.setAttribute("aria-label", currentText.dashboardGKTitle);
+        document.getElementById("dashboardGKProgressFill").style.width =
+          `${(completedLevels / generalKnowledgeLevels.length) * 100}%`;
+        document.getElementById("dashboardAccuracyLabel").textContent = currentText.accuracy;
+        document.getElementById("dashboardCorrectLabel").textContent = currentText.correct;
+        document.getElementById("dashboardIncorrectLabel").textContent = currentText.incorrectAnswers;
+        document.getElementById("dashboardGKAccuracy").textContent = generalKnowledgeAccuracy === null
+          ? "—"
+          : `${formatNumber(generalKnowledgeAccuracy)}%`;
+        document.getElementById("dashboardGKCorrect").textContent = formatNumber(rewardCollection.gkCorrect);
+        document.getElementById("dashboardGKIncorrect").textContent = formatNumber(rewardCollection.gkIncorrect);
+        document.getElementById("dashboardGKRounds").textContent = currentText.dashboardGKRounds
+          .replace("{count}", formatNumber(rewardCollection.gkRuns));
+        document.getElementById("dashboardNoGKData").textContent = currentText.dashboardNoGKData;
+        document.getElementById("dashboardNoGKData").hidden = rewardCollection.gkRuns > 0;
+
+        const trophyGallery = document.getElementById("trophyGallery");
+        trophyGallery.replaceChildren();
+        trophyGallery.setAttribute("aria-label", currentText.dashboardTrophyGallery);
+        TROPHY_TIERS.forEach((tier) => {
+          const isUnlocked = rewardCollection.trophies.includes(tier);
+          const modes = [...new Set(
+            rewardCollection.trophyRecords
+              .filter((record) => record.tier === tier)
+              .map((record) => record.mode)
+          )];
+          const tierLabel = currentText[rewardTierPalettes[tier].label];
+          const modeText = modes.length
+            ? modes.map((mode) => categoryName(mode)).join(" · ")
+            : isUnlocked
+              ? currentText.dashboardPreviousReward
+              : currentText.levelLocked;
+          const card = document.createElement("div");
+          card.className = `trophy-showcase-card tier-${tier}${isUnlocked ? "" : " locked"}`;
+          card.setAttribute("role", "listitem");
+          card.setAttribute("aria-label", `${tierLabel} · ${isUnlocked ? currentText.levelUnlocked : currentText.levelLocked} · ${modeText}`);
+          const artwork = document.createElement("span");
+          artwork.className = "trophy-showcase-art";
+          artwork.setAttribute("aria-hidden", "true");
+          artwork.textContent = isUnlocked ? "🏆" : "🔒";
+          const title = document.createElement("span");
+          title.className = "trophy-showcase-name";
+          title.textContent = tierLabel;
+          const status = document.createElement("span");
+          status.className = "trophy-showcase-status";
+          status.textContent = isUnlocked
+            ? `${currentText.levelUnlocked} · ${modeText}`
+            : currentText.levelLocked;
+          card.append(artwork, title, status);
+          trophyGallery.append(card);
+        });
+
+        const badgeGallery = document.getElementById("badgeGallery");
+        badgeGallery.replaceChildren();
+        badgeGallery.setAttribute("aria-label", currentText.dashboardBadgeGallery);
+        getAllBadgeDefinitions().forEach((badge) => {
+          const isUnlocked = rewardCollection.badges.includes(badge.id);
+          const card = document.createElement("div");
+          card.className = `badge-showcase-card${isUnlocked ? "" : " locked"}`;
+          card.setAttribute("role", "listitem");
+          card.setAttribute("aria-label", `${badge.title} · ${isUnlocked ? currentText.levelUnlocked : currentText.levelLocked}`);
+          const icon = document.createElement("span");
+          icon.className = "badge-showcase-icon";
+          icon.setAttribute("aria-hidden", "true");
+          icon.textContent = isUnlocked ? badge.icon : "🔒";
+          const copy = document.createElement("span");
+          copy.className = "badge-showcase-copy";
+          const title = document.createElement("strong");
+          title.textContent = badge.title;
+          const status = document.createElement("small");
+          status.textContent = isUnlocked ? currentText.levelUnlocked : currentText.levelLocked;
+          copy.append(title, status);
+          card.append(icon, copy);
+          badgeGallery.append(card);
+        });
+      }
+
       function renderResults() {
         const total = roundLength();
         const accuracy = total ? Math.round((score / total) * 100) : 0;
@@ -3430,12 +3793,13 @@
         document.getElementById("finalTotal").textContent = formatNumber(total);
         document.getElementById("resultCategory").textContent = `${categoryName(currentCategory)} · ${currentText.categoryComplete}`;
         const isIQRun = currentCategory === "IQ Check";
+        let estimatedIQ = null;
         const iqSummary = document.getElementById("iqSummary");
         iqSummary.hidden = !isIQRun;
         if (isIQRun) {
           // A lightweight game-only estimate blends accuracy with average response speed.
           const speedRatio = Math.max(0, 1 - Math.min(QUESTION_TIME_LIMIT_SECONDS, averageAnswerSeconds) / QUESTION_TIME_LIMIT_SECONDS);
-          const estimatedIQ = Math.round(70 + accuracy * .55 + speedRatio * 20);
+          estimatedIQ = Math.round(70 + accuracy * .55 + speedRatio * 20);
           document.getElementById("iqEstimate").textContent = formatNumber(estimatedIQ);
           document.getElementById("iqRating").textContent = estimatedIQ >= 120
             ? currentText.iqRatingStandout
@@ -3482,7 +3846,7 @@
         }
         document.getElementById("resultTitle").textContent = title;
         document.getElementById("resultMessage").textContent = message;
-        return { tier, unlockedBadges: badges.filter((badge) => badge.unlocked) };
+        return { tier, unlockedBadges: badges.filter((badge) => badge.unlocked), estimatedIQ };
       }
 
       function finishQuiz() {
@@ -3508,16 +3872,39 @@
           }
         }
         rewardCelebrationAt = performance.now();
-        const { tier, unlockedBadges } = renderResults();
+        const { tier, unlockedBadges, estimatedIQ } = renderResults();
+        const isIQRun = currentCategory === "IQ Check";
+        const trophyRecords = [
+          ...rewardCollection.trophyRecords,
+          { tier, mode: currentCategory }
+        ].filter((record, index, records) =>
+          records.findIndex((candidate) => candidate.tier === record.tier && candidate.mode === record.mode) === index
+        );
         rewardCollection = {
           ...rewardCollection,
           trophies: [...new Set([...rewardCollection.trophies, tier])],
           badges: [...new Set([...rewardCollection.badges, ...unlockedBadges.map((badge) => badge.id)])],
           bestPoints: Math.max(rewardCollection.bestPoints, points),
-          bestStreak: Math.max(rewardCollection.bestStreak, bestStreak)
+          bestStreak: Math.max(rewardCollection.bestStreak, bestStreak),
+          trophyRecords,
+          gkRuns: rewardCollection.gkRuns + (isIQRun ? 0 : 1),
+          gkCorrect: rewardCollection.gkCorrect + (isIQRun ? 0 : score),
+          gkIncorrect: rewardCollection.gkIncorrect + (isIQRun ? 0 : roundLength() - score),
+          gkCompletedLevels: isIQRun
+            ? rewardCollection.gkCompletedLevels
+            : Math.max(
+                rewardCollection.gkCompletedLevels,
+                unlockedGeneralKnowledgeLevel - 1,
+                levelJustUnlocked || allLevelsComplete ? currentLevel : 0
+              ),
+          iqRuns: rewardCollection.iqRuns + (isIQRun ? 1 : 0),
+          iqCorrect: rewardCollection.iqCorrect + (isIQRun ? score : 0),
+          iqIncorrect: rewardCollection.iqIncorrect + (isIQRun ? roundLength() - score : 0),
+          iqLatestEstimate: isIQRun ? estimatedIQ : rewardCollection.iqLatestEstimate
         };
         saveRewardCollection(rewardCollection);
         renderRewardCollection();
+        renderRewardsDashboard();
         showView("results");
       }
 
@@ -3554,6 +3941,17 @@
           categoryHeading: "categoryHeading",
           categoryHeadingHint: "categoryHeadingHint",
           startGameLabel: "startGame",
+          openRewardsButton: "rewardsDashboardTitle",
+          rewardsDialogTitle: "rewardsDashboardTitle",
+          rewardsDialogDescription: "rewardsDashboardDescription",
+          dashboardIQTitle: "iqEstimateLabel",
+          dashboardIQFootnote: "iqDisclaimer",
+          dashboardGKTitle: "dashboardGKTitle",
+          dashboardTrophyTitle: "dashboardTrophyGallery",
+          dashboardBadgeTitle: "dashboardBadgeGallery",
+          dashboardAccuracyLabel: "accuracy",
+          dashboardCorrectLabel: "correct",
+          dashboardIncorrectLabel: "incorrectAnswers",
           levelTitle: "levelSelectTitle",
           levelDescription: "levelSelectDescription",
           levelBackLabel: "levelBack",
@@ -3601,6 +3999,7 @@
         document.getElementById("progressTrack").setAttribute("aria-label", currentText.progress);
         document.getElementById("iqTimer").setAttribute("aria-label", currentText.questionTimer);
         document.getElementById("levelGrid").setAttribute("aria-label", currentText.levelSelectTitle);
+        document.getElementById("closeRewardsButton").setAttribute("aria-label", currentText.closeRewards);
         optionsElement.setAttribute("aria-label", currentText.answerOptions);
         const replayLabel = currentCategory === "General Knowledge" ? currentText.retryLevel : currentText.playAgain;
         document.getElementById("playAgainButton").firstChild.nodeValue = `${replayLabel} `;
@@ -3613,6 +4012,7 @@
           ? currentText.selectedHint.replace("{category}", categoryName(selectedCategory))
           : currentText.startHint;
         renderRewardCollection();
+        renderRewardsDashboard();
 
         if (views.game.classList.contains("active")) {
           document.getElementById("gameCategory").textContent = gameCategoryLabel(currentCategory);
@@ -3633,6 +4033,19 @@
         soundToggle.setAttribute("aria-label", label);
         document.getElementById("soundToggleLabel").textContent = label;
       }
+
+      const rewardsDialog = document.getElementById("rewardsDialog");
+      const openRewardsButton = document.getElementById("openRewardsButton");
+      openRewardsButton.addEventListener("click", () => {
+        renderRewardsDashboard();
+        rewardsDialog.showModal();
+      });
+      document.getElementById("closeRewardsButton").addEventListener("click", () => {
+        rewardsDialog.close();
+      });
+      rewardsDialog.addEventListener("click", (event) => {
+        if (event.target === rewardsDialog) rewardsDialog.close();
+      });
 
       document.getElementById("soundToggle").addEventListener("click", () => {
         answerSoundsMuted = !answerSoundsMuted;
@@ -3663,7 +4076,6 @@
           setGameModeTheme(selectedCategory);
           if (selectedCategory === "General Knowledge") {
             sessionUsedQuestionIds.clear();
-            questionSessionOffset = randomIndex(1_000_000);
             currentLevelPage = Math.floor((unlockedGeneralKnowledgeLevel - 1) / LEVELS_PER_PAGE);
             renderLevelMap();
             showView("levels");
