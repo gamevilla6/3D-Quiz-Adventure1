@@ -1,0 +1,28 @@
+{
+  "expo": {
+    "name": "Quiz Orbit — Mobile",
+    "slug": "quiz-mobile",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/images/icon.png",
+    "scheme": "quiz-mobile",
+    "userInterfaceStyle": "automatic",
+    "splash": {
+      "backgroundColor": "#F1F4F8",
+      "image": "./assets/images/icon.png",
+      "resizeMode": "contain"
+    },
+    "ios": {
+      "supportsTablet": false
+    },
+    "android": {},
+    "web": {
+      "favicon": "./assets/images/icon.png"
+    },
+    "plugins": ["expo-router"],
+    "experiments": {
+      "typedRoutes": true,
+      "reactCompiler": true
+    }
+  }
+}

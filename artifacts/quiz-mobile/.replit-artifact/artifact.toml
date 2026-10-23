@@ -1,0 +1,24 @@
+kind = "mobile"
+previewPath = "/quiz-mobile/"
+title = "Quiz Orbit — Mobile"
+description = "A native, touch-first companion for the Quiz Orbit 3D quiz game, with category selection, ten curated questions, progress, answer feedback, and a results screen."
+version = "1.0.0"
+id = "artifacts/quiz-mobile"
+router = "expo-domain"
+
+[[services]]
+name = "expo"
+ensurePreviewReachable = "/status"
+paths = [ "/quiz-mobile/" ]
+localPort = 21757
+
+[services.development]
+run = "pnpm --filter @workspace/quiz-mobile run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/quiz-mobile", "run", "build" ]
+run = [ "pnpm", "--filter", "@workspace/quiz-mobile", "run", "serve" ]
+
+[services.env]
+PORT = "21757"
+BASE_PATH = "/quiz-mobile/"
