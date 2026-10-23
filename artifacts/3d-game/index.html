@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#f1f4f8" />
-    <title>Quiz Orbit — a little room for big questions</title>
+    <title>QuizVerse 3D — a little room for big questions</title>
     <meta id="metaDescription" name="description" content="A thoughtful 3D quiz experience. Pick a subject, follow your curiosity, and see how far you get." />
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='18' fill='%23ef4890'/%3E%3Cpath d='M32 11v42M11 32h42M17 17l30 30M47 17 17 47' stroke='white' stroke-width='3' stroke-linecap='round'/%3E%3Ccircle cx='32' cy='32' r='8' fill='%23ffd85a'/%3E%3C/svg%3E" />
     <style>
@@ -47,11 +47,49 @@
       #scene { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
       #scene canvas { display: block; width: 100%; height: 100%; }
       .app { position: relative; z-index: 1; min-height: 100vh; padding: 26px 5.4vw 30px; }
+      .loading-screen {
+        position: fixed;
+        z-index: 10000;
+        inset: 0;
+        display: grid;
+        place-items: center;
+        color: #fff;
+        background:
+          radial-gradient(ellipse at 18% 14%, rgba(112, 79, 255, .3), transparent 35%),
+          radial-gradient(ellipse at 86% 80%, rgba(38, 213, 226, .22), transparent 36%),
+          #080b1e;
+        opacity: 1;
+        transition: opacity .48s ease;
+      }
+      .loading-screen.is-hidden { opacity: 0; pointer-events: none; }
+      .loading-screen-card { display: grid; justify-items: center; gap: 17px; text-align: center; }
+      .loading-orbit {
+        width: 60px;
+        height: 60px;
+        border: 2px solid rgba(130, 234, 255, .22);
+        border-top-color: #82eaff;
+        border-right-color: #bd8aff;
+        border-radius: 50%;
+        box-shadow: 0 0 24px rgba(110, 137, 255, .18);
+        animation: loadingOrbitSpin 1.25s linear infinite;
+      }
+      .loading-screen h2 { margin: 0; color: #fff; font-size: clamp(27px, 5vw, 40px); font-weight: 850; letter-spacing: -.055em; text-shadow: 0 0 18px rgba(122, 221, 255, .3); }
+      .loading-screen h2 span { color: #82eaff; }
+      .loading-screen p { margin: -8px 0 0; color: #c8d1ee; font-size: 11px; font-weight: 650; letter-spacing: .04em; }
+      @keyframes loadingOrbitSpin { to { transform: rotate(360deg); } }
+      @media (prefers-reduced-motion: reduce) {
+        .loading-orbit { animation-duration: 4s; }
+        .loading-screen { transition-duration: .12s; }
+      }
       .topbar { max-width: 1220px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; }
       .brand { display: flex; gap: 11px; align-items: center; color: var(--ink); text-decoration: none; font-weight: 730; letter-spacing: -.04em; }
       .brand-mark { width: 34px; height: 34px; display: grid; place-items: center; border-radius: 12px; color: white; background: linear-gradient(145deg, #7198f4, #4d70da); box-shadow: 0 7px 16px rgba(76,120,232,.24); }
       .brand-mark svg { width: 19px; height: 19px; }
-      .brand-name { font-size: 16px; }
+      .brand-name {
+        font-size: 16px;
+        text-shadow: 0 0 9px rgba(122, 221, 255, .26);
+        animation: brandNeonPulse 3.6s ease-in-out infinite alternate;
+      }
       .top-note { display: flex; align-items: center; gap: 9px; color: #687990; font-size: 12px; font-weight: 600; letter-spacing: .045em; }
       .live-dot { width: 7px; height: 7px; background: #53b99a; border-radius: 99px; box-shadow: 0 0 0 4px rgba(83,185,154,.13); }
       .topbar-actions { display: flex; align-items: center; gap: 18px; }
@@ -89,6 +127,26 @@
       h1 { margin: 0; max-width: 600px; font-size: clamp(40px, 5.3vw, 68px); line-height: .99; letter-spacing: -.065em; font-weight: 740; }
       h1 span { color: var(--blue); }
       .hero-copy > p:not(.eyebrow) { max-width: 450px; margin: 20px 0 0; color: #708096; font-size: 15px; line-height: 1.7; }
+      .hero-live-stats { max-width: 590px; margin-top: 18px; }
+      .hero-stats-heading { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; color: #c3cee9; font-size: 9px; font-weight: 800; letter-spacing: .15em; }
+      .hero-stats-heading .live-dot { width: 6px; height: 6px; }
+      .hero-stats-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+      .hero-stat-tile {
+        min-width: 0;
+        padding: 9px 11px;
+        display: grid;
+        align-content: center;
+        gap: 5px;
+        border: 1px solid rgba(174, 188, 255, .19);
+        border-radius: 13px;
+        background: rgba(8, 12, 36, .64);
+        box-shadow: inset 0 1px rgba(255, 255, 255, .06);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+      }
+      .hero-stat-label { overflow: hidden; color: #b7c2e2; font-size: 9px; font-weight: 690; line-height: 1.3; text-overflow: ellipsis; white-space: nowrap; }
+      .hero-stat-value { display: flex; align-items: center; gap: 6px; color: #fff; font-size: 14px; font-weight: 850; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
+      .hero-stat-value.is-active { color: #78f3c6; font-size: 10px; letter-spacing: .06em; }
       .hero-aside { position: relative; z-index: 1; justify-self: center; display: flex; align-items: center; justify-content: center; width: min(100%, 350px); height: 220px; }
       .hero-orbit-fallback { position: absolute; inset: 0; display: grid; place-items: center; perspective: 700px; }
       .fallback-orbit { position: absolute; width: 205px; height: 205px; border: 1px solid rgba(102,137,201,.30); border-radius: 50%; transform: rotateX(64deg) rotate(-29deg); }
@@ -106,7 +164,7 @@
       .section-heading { display: flex; align-items: end; justify-content: space-between; margin: 36px 2px 15px; }
       .section-heading h2 { margin: 0; font-size: 17px; letter-spacing: -.035em; }
       .section-heading p { margin: 0; color: var(--muted); font-size: 12px; }
-      .category-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+      .category-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
       .category {
         appearance: none;
         position: relative;
@@ -135,6 +193,8 @@
       .category-icon svg { width: 21px; height: 21px; }
       .category:nth-child(2) .category-icon { color: #3ca78e; background: #e6f6f1; }
       .category:nth-child(3) .category-icon { color: #ce786b; background: #fff0ed; }
+      .category:nth-child(4) .category-icon { color: #9a6bd4; background: #f1eaff; }
+      .category:nth-child(5) .category-icon { color: #4276da; background: #eaf0ff; }
       .category-text { flex: 1; padding-top: 1px; }
       .category-title { display: block; font-size: 14px; font-weight: 720; letter-spacing: -.025em; }
       .category-detail { display: block; margin-top: 6px; color: #8995a6; font-size: 11px; line-height: 1.5; }
@@ -235,6 +295,7 @@
         .game-layout { grid-template-columns: minmax(0,1fr) 190px; gap: 12px; }
         .side-card { padding: 17px; }
         .quiz-card { padding: 26px; }
+        .category-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       }
       @media (max-width: 650px) {
         .app { padding: 16px 17px 25px; }
@@ -353,11 +414,15 @@
       }
       .category:nth-child(2) { background: linear-gradient(135deg, #efffff, #d9fff2); }
       .category:nth-child(3) { background: linear-gradient(135deg, #fff5e9, #ffe5d5); }
+      .category:nth-child(4) { background: linear-gradient(135deg, #f9f2ff, #eadfff); }
+      .category:nth-child(5) { background: linear-gradient(135deg, #f1f6ff, #dbe7ff); }
       .category:hover { background: #fff; box-shadow: 0 11px 0 rgba(60, 34, 122, .1), 0 19px 29px rgba(60, 34, 122, .14); }
       .category.selected { border-color: #ff4ca1; background: #fff1fa; box-shadow: 0 0 0 4px rgba(255, 76, 161, .14), 0 8px 0 rgba(191, 44, 130, .14); }
       .category-icon { color: #fff; background: linear-gradient(145deg, #7351ff, #315cff); }
       .category:nth-child(2) .category-icon { color: #fff; background: linear-gradient(145deg, #13bd91, #087c81); }
       .category:nth-child(3) .category-icon { color: #fff; background: linear-gradient(145deg, #ff8b36, #ef496e); }
+      .category:nth-child(4) .category-icon { color: #fff; background: linear-gradient(145deg, #a76bff, #6050ce); }
+      .category:nth-child(5) .category-icon { color: #fff; background: linear-gradient(145deg, #31b8e4, #3664c8); }
       .category-title { color: #241345; font-size: 15px; font-weight: 820; }
       .category-detail { color: #65577e; font-size: 12px; }
       .welcome-foot, .start-hint { color: #554777; font-weight: 600; }
@@ -692,6 +757,63 @@
         box-shadow: 0 7px 0 #5736b5, 0 13px 25px rgba(28, 178, 255, .22);
       }
       body.theme-iq .primary-button.start-button:hover:not(:disabled) { box-shadow: 0 9px 0 #5736b5, 0 18px 28px rgba(255, 54, 194, .24); }
+      body.theme-science {
+        color: #f3fffb;
+        background:
+          radial-gradient(ellipse at 12% 8%, rgba(26, 232, 190, .22), transparent 31%),
+          radial-gradient(ellipse at 88% 15%, rgba(51, 164, 255, .2), transparent 34%),
+          radial-gradient(ellipse at 52% 100%, rgba(55, 209, 150, .16), transparent 38%),
+          #071b26;
+      }
+      body.theme-pop {
+        color: #fff6fb;
+        background:
+          radial-gradient(ellipse at 12% 8%, rgba(255, 76, 170, .23), transparent 31%),
+          radial-gradient(ellipse at 88% 15%, rgba(255, 145, 49, .2), transparent 34%),
+          radial-gradient(ellipse at 52% 100%, rgba(146, 57, 211, .2), transparent 38%),
+          #210d25;
+      }
+      body.theme-history {
+        color: #fffaf0;
+        background:
+          radial-gradient(ellipse at 12% 8%, rgba(255, 194, 87, .18), transparent 31%),
+          radial-gradient(ellipse at 88% 15%, rgba(60, 199, 165, .17), transparent 34%),
+          radial-gradient(ellipse at 52% 100%, rgba(175, 117, 61, .18), transparent 38%),
+          #1c171b;
+      }
+      body.theme-science .brand, body.theme-pop .brand, body.theme-history .brand { color: #fff; }
+      body.theme-science .top-note, body.theme-pop .top-note, body.theme-history .top-note { color: #e7e9f5; }
+      body.theme-science .hero, body.theme-pop .hero, body.theme-history .hero {
+        color: #fff;
+        border-color: rgba(255,255,255,.18);
+        box-shadow: 0 22px 48px rgba(0,0,0,.3);
+      }
+      body.theme-science .hero { background: linear-gradient(120deg, rgba(5,44,53,.97), rgba(13,75,86,.94) 52%, rgba(17,55,96,.96)); }
+      body.theme-pop .hero { background: linear-gradient(120deg, rgba(67,17,54,.97), rgba(111,31,87,.94) 52%, rgba(94,38,120,.96)); }
+      body.theme-history .hero { background: linear-gradient(120deg, rgba(60,40,27,.97), rgba(76,65,35,.94) 52%, rgba(27,77,74,.96)); }
+      body.theme-science .hero h1 span { color: #67f4d0; }
+      body.theme-pop .hero h1 span { color: #ff8ccb; }
+      body.theme-history .hero h1 span { color: #ffd478; }
+      body.theme-science .hero .eyebrow { color: #78f4d4; }
+      body.theme-pop .hero .eyebrow { color: #ffacd8; }
+      body.theme-history .hero .eyebrow { color: #ffe09b; }
+      body.theme-science .hero-copy > p:not(.eyebrow), body.theme-pop .hero-copy > p:not(.eyebrow), body.theme-history .hero-copy > p:not(.eyebrow) { color: #f0f3fb; }
+      body.theme-science .section-heading h2, body.theme-pop .section-heading h2, body.theme-history .section-heading h2 { color: #fff; }
+      body.theme-science .section-heading p, body.theme-science .welcome-foot, body.theme-science .start-hint,
+      body.theme-pop .section-heading p, body.theme-pop .welcome-foot, body.theme-pop .start-hint,
+      body.theme-history .section-heading p, body.theme-history .welcome-foot, body.theme-history .start-hint { color: #e2dfef; }
+      body.theme-science .category, body.theme-pop .category, body.theme-history .category {
+        color: #fff; border-color: rgba(255,255,255,.17); background: rgba(13,22,41,.82);
+      }
+      body.theme-science .category.selected { border-color: #55f2c7; background: linear-gradient(135deg,rgba(13,65,72,.98),rgba(19,52,89,.96)); }
+      body.theme-pop .category.selected { border-color: #ff79c6; background: linear-gradient(135deg,rgba(86,27,74,.98),rgba(66,32,93,.96)); }
+      body.theme-history .category.selected { border-color: #ffd16c; background: linear-gradient(135deg,rgba(84,56,35,.98),rgba(35,74,70,.96)); }
+      body.theme-science .category-title, body.theme-pop .category-title, body.theme-history .category-title { color: #fff; }
+      body.theme-science .category-detail, body.theme-pop .category-detail, body.theme-history .category-detail { color: #d8d9e8; }
+      body.theme-science .category-icon, body.theme-pop .category-icon, body.theme-history .category-icon { color: #071927; }
+      body.theme-science .primary-button.start-button { color: #06251d; background: linear-gradient(100deg,#60f4cd,#5eb5ff); }
+      body.theme-pop .primary-button.start-button { color: #37112d; background: linear-gradient(100deg,#ff7ec4,#ffae63); }
+      body.theme-history .primary-button.start-button { color: #32210c; background: linear-gradient(100deg,#ffd06e,#64d8bb); }
       @keyframes cyberGridPulse { from { opacity: .55; transform: scale(.98); } to { opacity: 1; transform: scale(1.02); } }
       @keyframes cyberFloat { from { transform: rotate(-10deg) translateY(4px); } to { transform: rotate(8deg) translateY(-5px); } }
       .iq-timer {
@@ -873,6 +995,16 @@
       .analytics-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 13px; }
       .analytics-card { min-width: 0; padding: 18px; border: 1px solid rgba(255,255,255,.16); border-radius: 18px; background: rgba(255,255,255,.09); box-shadow: inset 0 1px rgba(255,255,255,.06); }
       .analytics-card h3 { margin: 0 0 12px; color: #fff; font-size: 14px; font-weight: 850; }
+      .category-progress-card { grid-column: 1 / -1; }
+      .category-progress-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(205px, 1fr)); gap: 10px; }
+      .category-progress-item { min-width: 0; padding: 13px; border: 1px solid rgba(255,255,255,.12); border-radius: 14px; background: rgba(3,8,28,.3); }
+      .category-progress-item h4 { margin: 0 0 8px; color: #fff; font-size: 12px; line-height: 1.3; }
+      .category-progress-item .analytics-level-count { margin-bottom: 8px; font-size: 12px; }
+      .category-progress-item .analytics-metrics { gap: 5px; margin-top: 9px; }
+      .category-progress-item .analytics-metric { padding: 7px; }
+      .category-progress-item .analytics-metric span { font-size: 8px; }
+      .category-progress-item .analytics-metric strong { font-size: 13px; }
+      .category-progress-item .analytics-rounds { margin-top: 8px; }
       .analytics-iq-score { display: block; color: #9bf3e8; font-size: clamp(38px, 8vw, 56px); font-weight: 950; line-height: 1; font-variant-numeric: tabular-nums; text-shadow: 0 4px 20px rgba(77,239,216,.22); }
       .analytics-iq-rating { display: block; margin-top: 8px; color: #fff; font-size: 14px; font-weight: 800; }
       .analytics-card-note { min-height: 30px; margin: 10px 0 0; color: #d1cbe8; font-size: 11px; line-height: 1.5; }
@@ -1027,6 +1159,15 @@
           radial-gradient(ellipse at 88% 78%, rgba(255, 54, 194, .16), transparent 34%),
           linear-gradient(180deg, rgba(5, 7, 20, .2), rgba(5, 7, 20, .72));
       }
+      body.theme-science[data-view="game"]::before {
+        background: radial-gradient(ellipse at 16% 7%,rgba(39,235,192,.2),transparent 34%),radial-gradient(ellipse at 88% 78%,rgba(45,150,255,.18),transparent 34%),linear-gradient(180deg,rgba(5,7,20,.16),rgba(5,7,20,.72));
+      }
+      body.theme-pop[data-view="game"]::before {
+        background: radial-gradient(ellipse at 16% 7%,rgba(255,72,166,.22),transparent 34%),radial-gradient(ellipse at 88% 78%,rgba(255,151,62,.18),transparent 34%),linear-gradient(180deg,rgba(5,7,20,.16),rgba(5,7,20,.72));
+      }
+      body.theme-history[data-view="game"]::before {
+        background: radial-gradient(ellipse at 16% 7%,rgba(255,195,85,.18),transparent 34%),radial-gradient(ellipse at 88% 78%,rgba(61,201,167,.16),transparent 34%),linear-gradient(180deg,rgba(5,7,20,.16),rgba(5,7,20,.72));
+      }
       body[data-view="game"] .app { padding-top: 15px; }
       body[data-view="game"] .topbar {
         max-width: 1060px;
@@ -1136,8 +1277,14 @@
       .progress-track { height: 8px; margin: 18px 0 31px; border: 1px solid rgba(196, 200, 255, .13); background: rgba(255, 255, 255, .08); }
       .progress-fill { background: linear-gradient(90deg, #41e8d3, #7284ff 52%, #d75ce7); box-shadow: 0 0 18px rgba(119, 115, 255, .52); }
       body.theme-iq[data-view="game"] .progress-fill { background: linear-gradient(90deg, #00f5d4, #31b8ff 52%, #ff51c9); }
+      body.theme-science[data-view="game"] .progress-fill { background: linear-gradient(90deg,#47f1c8,#4ab7ff); }
+      body.theme-pop[data-view="game"] .progress-fill { background: linear-gradient(90deg,#ff65b9,#ffb653); }
+      body.theme-history[data-view="game"] .progress-fill { background: linear-gradient(90deg,#ffd06f,#4dd8b4); }
       .question-kicker { color: #a99aff; font-size: 10px; }
       body.theme-iq[data-view="game"] .question-kicker { color: #76f5e7; }
+      body.theme-science[data-view="game"] .question-kicker { color: #68f1cd; }
+      body.theme-pop[data-view="game"] .question-kicker { color: #ff8fcb; }
+      body.theme-history[data-view="game"] .question-kicker { color: #ffd477; }
       .question {
         max-width: 760px;
         color: #fff;
@@ -1200,6 +1347,9 @@
       }
       .primary-button:not(.start-button):hover:not(:disabled) { box-shadow: 0 11px 27px rgba(92, 87, 230, .38), inset 0 1px rgba(255, 255, 255, .22); }
       body.theme-iq[data-view="game"] .primary-button:not(.start-button) { color: #061927; background: linear-gradient(110deg, #00e2cb, #46b8ff 58%, #bc70ff); }
+      body.theme-science[data-view="game"] .primary-button:not(.start-button) { color: #06251d; background: linear-gradient(110deg,#60f4cd,#5eb5ff); }
+      body.theme-pop[data-view="game"] .primary-button:not(.start-button) { color: #37112d; background: linear-gradient(110deg,#ff7ec4,#ffae63); }
+      body.theme-history[data-view="game"] .primary-button:not(.start-button) { color: #32210c; background: linear-gradient(110deg,#ffd06e,#64d8bb); }
       .iq-timer {
         margin: -10px 0 23px;
         color: #f4f3ff;
@@ -1289,6 +1439,7 @@
         -webkit-backdrop-filter: blur(20px);
       }
       body[data-view="welcome"] .brand { color: #fff; }
+      body[data-view="welcome"] .brand-name { color: #f6f1ff; text-shadow: 0 0 12px rgba(126, 225, 255, .36); }
       body[data-view="welcome"] .brand-mark {
         background: linear-gradient(145deg, #39dfff, #7457ff 58%, #bb46e8);
         box-shadow: 0 0 22px rgba(110, 92, 255, .34);
@@ -1353,6 +1504,9 @@
         text-shadow: 0 0 22px rgba(83, 221, 255, .28);
         animation: welcomeTitleGlow 3.8s ease-in-out infinite alternate;
       }
+      body[data-view="welcome"] #welcomeTitle {
+        text-shadow: 0 0 25px rgba(120, 105, 255, .15);
+      }
       body[data-view="welcome"] #welcomeDescription {
         max-width: 490px;
         color: #e1e4fb;
@@ -1361,6 +1515,15 @@
         animation: welcomeTextReveal .8s .18s both;
       }
       body[data-view="welcome"] .hero-aside { transform-style: preserve-3d; }
+      body[data-view="welcome"] .orbit-label {
+        max-width: min(94%, 320px);
+        text-align: center;
+        white-space: normal;
+        line-height: 1.35;
+        letter-spacing: .035em;
+        transition: opacity .2s ease, transform .2s ease;
+      }
+      body[data-view="welcome"] .orbit-label.is-changing { opacity: 0; transform: translateY(4px); }
       body[data-view="welcome"] .hero-aside::before {
         opacity: .95;
         background:
@@ -1392,7 +1555,8 @@
       body[data-view="welcome"] .start-hint { color: #c6c9e3; }
       body[data-view="welcome"] .section-heading p { font-size: 12px; }
       body[data-view="welcome"] .category {
-        min-height: 116px;
+        min-height: 154px;
+        padding: 16px 18px;
         color: #f6f5ff;
         border: 1px solid rgba(182, 188, 255, .2);
         border-radius: 19px;
@@ -1421,8 +1585,77 @@
       }
       body[data-view="welcome"] .category-title { color: #fff; font-size: 15px; font-weight: 820; }
       body[data-view="welcome"] .category-detail { color: #c6c9e3; font-size: 12px; }
+      body[data-view="welcome"] .category-text { min-width: 0; }
+      body[data-view="welcome"] .category-preview { display: grid; gap: 6px; margin-top: 10px; }
+      body[data-view="welcome"] .category-preview-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+      body[data-view="welcome"] .category-progress-copy { color: #d9def5; font-size: 10px; font-weight: 700; font-variant-numeric: tabular-nums; }
+      body[data-view="welcome"] .category-difficulty {
+        flex: 0 0 auto;
+        padding: 3px 7px;
+        border: 1px solid rgba(166, 179, 255, .18);
+        border-radius: 999px;
+        color: #bdefff;
+        background: rgba(84, 100, 190, .17);
+        font-size: 9px;
+        font-weight: 760;
+        white-space: nowrap;
+      }
+      body[data-view="welcome"] .category-preview-track {
+        display: block;
+        height: 4px;
+        overflow: hidden;
+        border-radius: 99px;
+        background: rgba(204, 211, 255, .14);
+      }
+      body[data-view="welcome"] .category-preview-fill {
+        display: block;
+        width: 0;
+        height: 100%;
+        border-radius: inherit;
+        background: linear-gradient(90deg, #46e5dc, #65a7ff, #d28cff);
+        box-shadow: 0 0 10px rgba(111, 198, 255, .54);
+        transition: width .55s cubic-bezier(.2,.7,.2,1);
+      }
+      body[data-view="welcome"] .category-unlock-status { color: #9da9d2; font-size: 9px; font-weight: 680; }
       body[data-view="welcome"] .category-arrow { color: #8feeff; }
       body[data-view="welcome"] .category:nth-child(2) .category-arrow { color: #7df1dc; }
+      body[data-view="welcome"] .continue-journey-button {
+        width: min(100%, 340px);
+        padding: 9px 14px;
+        display: flex;
+        align-items: center;
+        gap: 11px;
+        color: #f4f3ff;
+        border: 1px solid rgba(172, 184, 255, .24);
+        border-radius: 999px;
+        background: linear-gradient(130deg, rgba(38, 46, 91, .92), rgba(34, 34, 77, .92));
+        box-shadow: 0 12px 28px rgba(0, 0, 0, .2), inset 0 1px rgba(255, 255, 255, .08);
+        text-align: left;
+        cursor: pointer;
+        transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease;
+      }
+      body[data-view="welcome"] .continue-journey-button[hidden] { display: none !important; }
+      body[data-view="welcome"] .continue-journey-button:hover {
+        transform: translateY(-2px);
+        border-color: rgba(132, 234, 255, .58);
+        box-shadow: 0 15px 32px rgba(0, 0, 0, .27), 0 0 20px rgba(100, 156, 255, .13);
+      }
+      .continue-icon {
+        width: 34px;
+        height: 34px;
+        flex: 0 0 34px;
+        display: grid;
+        place-items: center;
+        border-radius: 11px;
+        color: #171d43;
+        background: linear-gradient(140deg, #82efff, #a899ff);
+        font-size: 17px;
+        font-weight: 850;
+      }
+      .continue-copy { min-width: 0; flex: 1; display: grid; gap: 2px; }
+      .continue-copy strong { font-size: 11px; font-weight: 820; }
+      .continue-copy small { overflow: hidden; color: #c4cbed; font-size: 10px; text-overflow: ellipsis; white-space: nowrap; }
+      .continue-arrow { color: #83e8ff; font-size: 16px; }
       body[data-view="welcome"] .tiny-check { color: #74efca; }
       body[data-view="welcome"] .start-button {
         position: relative;
@@ -1471,12 +1704,26 @@
         box-shadow: 0 0 0 1px rgba(112, 241, 220, .22), 0 0 30px rgba(51, 211, 199, .15);
       }
       @keyframes welcomeAurora { from { transform: translateX(-1.5%) scale(1); opacity: .6; } to { transform: translateX(1.5%) scale(1.04); opacity: .95; } }
+      @keyframes brandNeonPulse { from { text-shadow: 0 0 4px rgba(122, 221, 255, .14); } to { text-shadow: 0 0 12px rgba(122, 221, 255, .42), 0 0 22px rgba(174, 117, 255, .16); } }
       @keyframes welcomeTitleGlow { from { filter: drop-shadow(0 0 3px rgba(71, 218, 255, .1)); } to { filter: drop-shadow(0 0 13px rgba(71, 218, 255, .34)); } }
       @keyframes welcomeTextReveal { from { opacity: 0; transform: translateY(9px); } to { opacity: 1; transform: translateY(0); } }
       @keyframes welcomeOrbitDrift { from { transform: rotateX(64deg) rotate(-34deg) translateY(4px); } to { transform: rotateX(64deg) rotate(-24deg) translateY(-4px); } }
       @keyframes welcomePlanetFloat { from { transform: rotate(-11deg) translateY(5px); } to { transform: rotate(6deg) translateY(-6px); } }
       @keyframes welcomeMoonFloat { from { transform: translate(0, 4px); } to { transform: translate(-5px, -5px); } }
       @keyframes welcomeCtaGlow { 0%, 100% { filter: brightness(1); } 50% { filter: brightness(1.08); } }
+      @media (max-width: 650px) {
+        body[data-view="welcome"] .category { min-height: 148px; padding: 15px 14px; gap: 11px; }
+        body[data-view="welcome"] .category-preview-top { gap: 5px; }
+        body[data-view="welcome"] .category-progress-copy { font-size: 9px; }
+        body[data-view="welcome"] .hero-live-stats { margin-top: 14px; }
+        body[data-view="welcome"] .hero-stats-grid { gap: 6px; }
+        body[data-view="welcome"] .hero-stat-tile { padding: 8px 7px; }
+        body[data-view="welcome"] .hero-stat-label { font-size: 8px; }
+        body[data-view="welcome"] .hero-stat-value { font-size: 12px; }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .brand-name { animation: none !important; }
+      }
       @keyframes startRipple { 0% { opacity: .82; transform: scale(.84); } 100% { opacity: 0; transform: scale(1.18); } }
       @media (max-width: 650px) {
         body[data-view="welcome"] .app { padding: 12px 12px 22px; }
@@ -1515,14 +1762,31 @@
     </style>
   </head>
   <body data-view="welcome">
+    <div class="loading-screen" id="loadingScreen" role="status" aria-label="Loading QuizVerse 3D">
+      <div class="loading-screen-card">
+        <span class="loading-orbit" aria-hidden="true"></span>
+        <h2>QuizVerse <span>3D</span></h2>
+        <p id="loadingLabel">Preparing your next challenge…</p>
+      </div>
+    </div>
+    <script>
+      window.__quizVerseLoadingFailsafe = window.setTimeout(() => {
+        const loadingScreen = document.getElementById("loadingScreen");
+        if (loadingScreen) {
+          loadingScreen.setAttribute("aria-hidden", "true");
+          loadingScreen.classList.add("is-hidden");
+          window.setTimeout(() => loadingScreen.remove(), 520);
+        }
+      }, 9000);
+    </script>
     <div id="scene" aria-hidden="true"></div>
     <div class="app">
       <header class="topbar">
-        <a class="brand" href="#" id="brandHome" aria-label="Quiz Orbit home">
+        <a class="brand" href="#" id="brandHome" aria-label="QuizVerse 3D home">
           <span class="brand-mark" aria-hidden="true">
             <svg viewBox="0 0 24 24" fill="none"><path d="M12 3.5v3m0 11v3M3.5 12h3m11 0h3M6 6l2.1 2.1m7.8 7.8L18 18M18 6l-2.1 2.1m-7.8 7.8L6 18" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><circle cx="12" cy="12" r="4.2" stroke="currentColor" stroke-width="1.8"/></svg>
           </span>
-          <span class="brand-name">quiz orbit</span>
+          <span class="brand-name">QuizVerse 3D</span>
         </a>
         <div class="topbar-actions">
           <div class="top-note"><span class="live-dot"></span><span id="topNoteText">A small space for curiosity</span></div>
@@ -1547,8 +1811,25 @@
           <div class="hero">
             <div class="hero-copy">
               <p class="eyebrow" id="welcomeEyebrow">A quiz with a little perspective</p>
-              <h1 id="welcomeTitle">Wonder a little <span>further.</span></h1>
+              <h1 id="welcomeTitle">QuizVerse <span>3D</span></h1>
             <p id="welcomeDescription">Two ways to explore: discover the world, or race the clock with logic and patterns.</p>
+            <div class="hero-live-stats" id="heroStatsTicker" role="group" aria-label="Live game statistics">
+              <div class="hero-stats-heading"><span class="live-dot" aria-hidden="true"></span><span id="heroStatsTitle">LIVE GAME STATS</span></div>
+              <div class="hero-stats-grid">
+                <div class="hero-stat-tile">
+                  <span class="hero-stat-label" id="heroStatCategoriesLabel">Active categories</span>
+                  <strong class="hero-stat-value" id="heroStatCategoriesValue">5</strong>
+                </div>
+                <div class="hero-stat-tile">
+                  <span class="hero-stat-label" id="heroStatLevelsLabel">Total levels</span>
+                  <strong class="hero-stat-value" id="heroStatLevelsValue">2,500+</strong>
+                </div>
+                <div class="hero-stat-tile">
+                  <span class="hero-stat-label" id="heroStatFocusLabel">Focus checks</span>
+                  <strong class="hero-stat-value is-active" id="heroStatFocusValue"><span class="live-dot" aria-hidden="true"></span><span id="heroStatActiveValue">ACTIVE</span></strong>
+                </div>
+              </div>
+            </div>
             </div>
             <div class="hero-aside">
               <div class="hero-orbit-fallback" aria-hidden="true">
@@ -1559,7 +1840,7 @@
                 <span class="fallback-spark spark-a"></span>
                 <span class="fallback-spark spark-b"></span>
               </div>
-              <div class="orbit-label" id="orbitLabel">Explore at your own pace</div>
+              <div class="orbit-label" id="orbitLabel" aria-live="off">Choose a mode · conquer 500 levels</div>
             </div>
           </div>
           <div class="section-heading">
@@ -1569,16 +1850,73 @@
           <div class="category-grid" id="categoryGrid" role="group" aria-label="Choose a quiz category">
             <button class="category selected" type="button" data-category="General Knowledge" aria-pressed="true">
               <span class="category-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M4.5 6.2c2.4-1.1 4.8-.9 7.5.8v12c-2.7-1.7-5.1-1.9-7.5-.8v-12Zm15 0c-2.4-1.1-4.8-.9-7.5.8v12c2.7-1.7 5.1-1.9 7.5-.8v-12Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M8 9.2h1.4m6.6 0h1.4M8 12h1.4m6.6 0h1.4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></span>
-              <span class="category-text"><span class="category-title" data-category-title>General Knowledge</span><span class="category-detail" data-category-detail>A little bit of everything</span></span><span class="category-arrow" aria-hidden="true">→</span>
+              <span class="category-text">
+                <span class="category-title" data-category-title>General Knowledge</span>
+                <span class="category-detail" data-category-detail>A little bit of everything</span>
+                <span class="category-preview">
+                  <span class="category-preview-top"><span class="category-progress-copy" data-category-progress>0% complete</span><span class="category-difficulty" data-category-difficulty>Mixed</span></span>
+                  <span class="category-preview-track" aria-hidden="true"><span class="category-preview-fill" data-category-progress-fill></span></span>
+                  <span class="category-unlock-status" data-category-unlock>Level 1 unlocked</span>
+                </span>
+              </span><span class="category-arrow" aria-hidden="true">→</span>
+            </button>
+            <button class="category" type="button" data-category="Science &amp; Technology" aria-pressed="false">
+              <span class="category-icon" aria-hidden="true">⚛</span>
+              <span class="category-text">
+                <span class="category-title" data-category-title>Science &amp; Technology</span>
+                <span class="category-detail" data-category-detail>Experiments, space, and digital life</span>
+                <span class="category-preview">
+                  <span class="category-preview-top"><span class="category-progress-copy" data-category-progress>0% complete</span><span class="category-difficulty" data-category-difficulty>Intermediate</span></span>
+                  <span class="category-preview-track" aria-hidden="true"><span class="category-preview-fill" data-category-progress-fill></span></span>
+                  <span class="category-unlock-status" data-category-unlock>Level 1 unlocked</span>
+                </span>
+              </span><span class="category-arrow" aria-hidden="true">→</span>
+            </button>
+            <button class="category" type="button" data-category="Pop Culture &amp; Movies" aria-pressed="false">
+              <span class="category-icon" aria-hidden="true">🎬</span>
+              <span class="category-text">
+                <span class="category-title" data-category-title>Pop Culture &amp; Movies</span>
+                <span class="category-detail" data-category-detail>Film, music, and games</span>
+                <span class="category-preview">
+                  <span class="category-preview-top"><span class="category-progress-copy" data-category-progress>0% complete</span><span class="category-difficulty" data-category-difficulty>Casual</span></span>
+                  <span class="category-preview-track" aria-hidden="true"><span class="category-preview-fill" data-category-progress-fill></span></span>
+                  <span class="category-unlock-status" data-category-unlock>Level 1 unlocked</span>
+                </span>
+              </span><span class="category-arrow" aria-hidden="true">→</span>
+            </button>
+            <button class="category" type="button" data-category="History &amp; Geography" aria-pressed="false">
+              <span class="category-icon" aria-hidden="true">🧭</span>
+              <span class="category-text">
+                <span class="category-title" data-category-title>History &amp; Geography</span>
+                <span class="category-detail" data-category-detail>Places, timelines, and journeys</span>
+                <span class="category-preview">
+                  <span class="category-preview-top"><span class="category-progress-copy" data-category-progress>0% complete</span><span class="category-difficulty" data-category-difficulty>Intermediate</span></span>
+                  <span class="category-preview-track" aria-hidden="true"><span class="category-preview-fill" data-category-progress-fill></span></span>
+                  <span class="category-unlock-status" data-category-unlock>Level 1 unlocked</span>
+                </span>
+              </span><span class="category-arrow" aria-hidden="true">→</span>
             </button>
             <button class="category" type="button" data-category="IQ Check" aria-pressed="false">
               <span class="category-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M12 3.8a3 3 0 0 0-5.1 2.1 3.3 3.3 0 0 0-1.2 5.9 3.2 3.2 0 0 0 1.8 5.8 3 3 0 0 0 4.5 2.4V3.8Zm0 0a3 3 0 0 1 5.1 2.1 3.3 3.3 0 0 1 1.2 5.9 3.2 3.2 0 0 1-1.8 5.8 3 3 0 0 1-4.5 2.4V3.8Z" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M8.5 9.3h1m5 0h1M9 14h1m4 0h1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></span>
-              <span class="category-text"><span class="category-title" data-category-title>IQ Check</span><span class="category-detail" data-category-detail>Logic, patterns, and a 15-second clock</span></span><span class="category-arrow" aria-hidden="true">→</span>
+              <span class="category-text">
+                <span class="category-title" data-category-title>IQ Check</span>
+                <span class="category-detail" data-category-detail>Logic, patterns, and a 15-second clock</span>
+                <span class="category-preview">
+                  <span class="category-preview-top"><span class="category-progress-copy" data-category-progress>0% complete</span><span class="category-difficulty" data-category-difficulty>Challenging</span></span>
+                  <span class="category-preview-track" aria-hidden="true"><span class="category-preview-fill" data-category-progress-fill></span></span>
+                  <span class="category-unlock-status" data-category-unlock>Level 1 unlocked</span>
+                </span>
+              </span><span class="category-arrow" aria-hidden="true">→</span>
             </button>
           </div>
           <div class="start-row">
             <button class="primary-button start-button" type="button" id="startGameButton"><span id="startGameLabel">Start game</span> <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M4.2 10h11.6m-4.5-4.5 4.5 4.5-4.5 4.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
             <div class="start-hint" id="startHint" aria-live="polite">Choose a subject to begin your orbit.</div>
+            <button class="continue-journey-button" type="button" id="continueJourneyButton" hidden>
+              <span class="continue-icon" aria-hidden="true">↗</span>
+              <span class="continue-copy"><strong id="continueJourneyLabel">Continue journey</strong><small id="continueJourneyTarget">General Knowledge · Level 1</small></span>
+              <span class="continue-arrow" aria-hidden="true">→</span>
+            </button>
           </div>
           <div class="welcome-foot"><span><b class="tiny-check">✓</b> <span id="totalQuestionsLabel">30 General Knowledge questions</span></span><span><b class="tiny-check">✓</b> <span id="instantAnswersLabel">Instant answers</span></span><span><b class="tiny-check">✓</b> <span id="justForFunLabel">Just for fun</span></span></div>
           <section class="collection-panel" aria-labelledby="collectionTitle">
@@ -1618,19 +1956,9 @@
                   <p class="analytics-card-note" id="dashboardIQFootnote">For fun only; this is not a clinical IQ test.</p>
                   <p class="analytics-rounds" id="dashboardIQAttempts">0 IQ Check rounds</p>
                 </section>
-                <section class="analytics-card" aria-labelledby="dashboardGKTitle">
-                  <h3 id="dashboardGKTitle">General Knowledge mastery</h3>
-                  <div class="analytics-level-count" id="dashboardLevelsCompleted">0 of 500 levels completed</div>
-                  <div class="analytics-progress-track" id="dashboardGKProgress" role="progressbar" aria-valuemin="0" aria-valuemax="500" aria-valuenow="0">
-                    <div class="analytics-progress-fill" id="dashboardGKProgressFill"></div>
-                  </div>
-                  <div class="analytics-metrics">
-                    <div class="analytics-metric"><span id="dashboardAccuracyLabel">Accuracy</span><strong id="dashboardGKAccuracy">—</strong></div>
-                    <div class="analytics-metric"><span id="dashboardCorrectLabel">Correct</span><strong id="dashboardGKCorrect">0</strong></div>
-                    <div class="analytics-metric"><span id="dashboardIncorrectLabel">Incorrect</span><strong id="dashboardGKIncorrect">0</strong></div>
-                  </div>
-                  <p class="analytics-rounds" id="dashboardGKRounds">0 completed rounds</p>
-                  <p class="analytics-card-note" id="dashboardNoGKData">Finish a General Knowledge round to build your accuracy stats.</p>
+                <section class="analytics-card category-progress-card" aria-labelledby="dashboardCategoryProgressTitle">
+                  <h3 id="dashboardCategoryProgressTitle">Progress by category</h3>
+                  <div class="category-progress-grid" id="dashboardCategoryProgressGrid"></div>
                 </section>
               </div>
               <section class="analytics-section" aria-labelledby="dashboardTrophyTitle">
@@ -1778,32 +2106,65 @@
       // All persistent labels and short gameplay messages live in this locale dictionary.
       const translations = {
         en: {
-          pageTitle: "Quiz Orbit — 3D Quiz Game",
-          metaDescription: "A colorful 3D quiz. Choose a subject, follow your curiosity, and see how far your knowledge takes you.",
+          pageTitle: "QuizVerse 3D — Quiz Game",
+          metaDescription: "Play QuizVerse 3D: explore five quiz worlds, conquer progressive levels, and test your logic.",
           language: "Language",
           topNote: "A small space for curiosity",
-          brandHome: "Quiz Orbit home",
+          brandHome: "QuizVerse 3D home",
+          loadingScreenLabel: "Loading QuizVerse 3D",
+          loadingLabel: "Preparing your next challenge…",
+          heroStatsGroup: "Live game statistics",
+          heroStatsTitle: "LIVE GAME STATS",
+          heroStatCategories: "Active categories",
+          heroStatLevels: "Total levels",
+          heroStatFocus: "Focus checks",
+          heroStatActive: "ACTIVE",
           answerSoundsOn: "Game sounds on",
           answerSoundsOff: "Game sounds off",
           welcomeEyebrow: "A quiz with a little perspective",
-          welcomeTitle: "Wonder a little <span>further.</span>",
-          welcomeDescription: "Two ways to explore: discover the world, or race the clock with logic and patterns.",
-          orbitLabel: "Explore at your own pace",
+          welcomeTitle: "QuizVerse <span>3D</span>",
+          welcomeDescription: "Choose a subject, follow a new path, and build your streak across five worlds.",
+          orbitLabel: "Choose a mode · conquer 500 levels",
+          heroTaglines: [
+            "Choose a mode · conquer 500 levels",
+            "Five worlds · one growing collection",
+            "Your next challenge is one tap away"
+          ],
+          categoryDifficulty: {
+            "General Knowledge": "Mixed",
+            "Science & Technology": "Intermediate",
+            "Pop Culture & Movies": "Casual",
+            "History & Geography": "Intermediate",
+            "IQ Check": "Challenging"
+          },
+          categoryProgress: "{percent}% complete",
+          categoryUnlockedStatus: "Level {level} unlocked",
+          categoryCompleteStatus: "All 500 levels complete",
+          continueJourney: "Continue journey",
+          continueJourneyTarget: "{category} · Level {level}",
           categoryHeading: "Choose your mode",
-          categoryHeadingHint: "Both modes · 15 seconds per question",
-          categoryGroup: "Choose a quiz mode",
+          categoryHeadingHint: "5 modes · 15 seconds per question",
+          categoryGroup: "Choose a quiz category",
           categoryLabels: {
             "General Knowledge": "General Knowledge",
+            "Science & Technology": "Science & Technology",
+            "Pop Culture & Movies": "Pop Culture & Movies",
+            "History & Geography": "History & Geography",
             "IQ Check": "IQ Check"
           },
           categoryDescriptions: {
             "General Knowledge": "A little bit of everything",
+            "Science & Technology": "Experiments, space, and digital life",
+            "Pop Culture & Movies": "Film, music, and games",
+            "History & Geography": "Places, timelines, and journeys",
             "IQ Check": "Logic, patterns, and a 15-second clock"
           },
           startGame: "Start game",
           startHint: "Choose a mode to begin.",
           selectedHint: "{category} selected · ready when you are.",
-          totalQuestions: "{count} General Knowledge questions · {levels} levels · {iqCount} IQ puzzles",
+          focusSwitchPenalty: "Question auto-submitted because the game lost focus.",
+          progressIntegrityNotice: "Saved progress failed its integrity check and was reset to Level 1.",
+          totalQuestions: "{count} questions per category · {levels} levels each",
           instantAnswers: "Instant answers",
           justForFun: "Just for fun",
           quizRound: "Quiz round",
@@ -1860,6 +2221,8 @@
           closeRewards: "Close rewards dashboard",
           dashboardIQAttempts: "{count} IQ Check rounds",
           dashboardNoIQ: "Finish an IQ Check round to see your estimate.",
+          dashboardCategoryProgressTitle: "Progress by category",
+          dashboardCategoryRounds: "{count} completed rounds",
           dashboardGKTitle: "General Knowledge mastery",
           dashboardLevelsCompleted: "{completed} of {total} levels completed",
           dashboardGKRounds: "{count} completed rounds",
@@ -1917,32 +2280,65 @@
           optionLetters: ["A", "B", "C", "D"]
         },
         bn: {
-          pageTitle: "কুইজ অরবিট — 3D কুইজ গেম",
-          metaDescription: "রঙিন 3D কুইজ খেলুন। বিষয় বেছে নিন, কৌতূহল অনুসরণ করুন এবং আপনার জ্ঞানের পরীক্ষা দিন।",
+          pageTitle: "QuizVerse 3D — 3D কুইজ গেম",
+          metaDescription: "QuizVerse 3D খেলুন: পাঁচটি কুইজ জগৎ ঘুরে দেখুন, লেভেল পেরোন এবং যুক্তির পরীক্ষা দিন।",
           language: "ভাষা",
           topNote: "কৌতূহলের জন্য ছোট্ট এক জগৎ",
-          brandHome: "কুইজ অরবিটের হোম",
+          brandHome: "QuizVerse 3D হোম",
+          loadingScreenLabel: "QuizVerse 3D লোড হচ্ছে",
+          loadingLabel: "আপনার পরের চ্যালেঞ্জ প্রস্তুত হচ্ছে…",
+          heroStatsGroup: "গেমের সরাসরি পরিসংখ্যান",
+          heroStatsTitle: "লাইভ গেম ডেটা",
+          heroStatCategories: "সক্রিয় বিভাগ",
+          heroStatLevels: "মোট লেভেল",
+          heroStatFocus: "ফোকাস পরীক্ষা",
+          heroStatActive: "চালু",
           answerSoundsOn: "গেমের শব্দ চালু",
           answerSoundsOff: "গেমের শব্দ বন্ধ",
           welcomeEyebrow: "নতুন দৃষ্টিতে কুইজ",
-          welcomeTitle: "আরও একটু <span>জেনে নিন।</span>",
-          welcomeDescription: "অনুসন্ধানের দুটি পথ: বিশ্বকে জানুন, অথবা যুক্তি ও ধাঁধার সঙ্গে সময়ের দৌড়ে নামুন।",
-          orbitLabel: "নিজের গতিতে ঘুরে দেখুন",
+          welcomeTitle: "QuizVerse <span>3D</span>",
+          welcomeDescription: "পাঁচটি বিষয়ের জগতে পছন্দের পথে এগিয়ে যান, নতুন প্রশ্ন সমাধান করুন এবং আপনার স্ট্রিক বাড়ান।",
+          orbitLabel: "মোড বেছে নিন · ৫০০ লেভেল পার করুন",
+          heroTaglines: [
+            "মোড বেছে নিন · ৫০০ লেভেল পার করুন",
+            "পাঁচটি জগৎ · আপনার সংগ্রহ বাড়ান",
+            "পরের চ্যালেঞ্জ এক ট্যাপ দূরে"
+          ],
+          categoryDifficulty: {
+            "General Knowledge": "বৈচিত্র্যময়",
+            "Science & Technology": "মাঝারি",
+            "Pop Culture & Movies": "সহজ",
+            "History & Geography": "মাঝারি",
+            "IQ Check": "চ্যালেঞ্জিং"
+          },
+          categoryProgress: "{percent}% সম্পন্ন",
+          categoryUnlockedStatus: "লেভেল {level} খোলা",
+          categoryCompleteStatus: "সব ৫০০ লেভেল সম্পন্ন",
+          continueJourney: "যাত্রা চালিয়ে যান",
+          continueJourneyTarget: "{category} · লেভেল {level}",
           categoryHeading: "মোড বেছে নিন",
-          categoryHeadingHint: "দুই মোডেই প্রতি প্রশ্নে ১৫ সেকেন্ড",
-          categoryGroup: "কুইজের মোড বেছে নিন",
+          categoryHeadingHint: "৫টি মোড · প্রতি প্রশ্নে ১৫ সেকেন্ড",
+          categoryGroup: "কুইজের বিভাগ বেছে নিন",
           categoryLabels: {
             "General Knowledge": "সাধারণ জ্ঞান",
+            "Science & Technology": "বিজ্ঞান ও প্রযুক্তি",
+            "Pop Culture & Movies": "পপ কালচার ও সিনেমা",
+            "History & Geography": "ইতিহাস ও ভূগোল",
             "IQ Check": "আইকিউ পরীক্ষা"
           },
           categoryDescriptions: {
             "General Knowledge": "নানান বিষয়ের মজার তথ্য",
+            "Science & Technology": "পরীক্ষা, মহাকাশ ও ডিজিটাল জীবন",
+            "Pop Culture & Movies": "সিনেমা, গান ও গেম",
+            "History & Geography": "স্থান, সময়রেখা ও ভ্রমণ",
             "IQ Check": "ধাঁধা, যুক্তি ও ১৫ সেকেন্ডের সময়সীমা"
           },
           startGame: "খেলা শুরু করুন",
           startHint: "শুরু করতে একটি মোড বেছে নিন।",
           selectedHint: "{category} বেছে নেওয়া হয়েছে · শুরু করতে প্রস্তুত।",
-          totalQuestions: "সাধারণ জ্ঞানের {count}টি প্রশ্ন · {levels}টি লেভেল · {iqCount}টি আইকিউ ধাঁধা",
+          focusSwitchPenalty: "গেমের ফোকাস হারানোয় প্রশ্নটি স্বয়ংক্রিয়ভাবে জমা হয়েছে।",
+          progressIntegrityNotice: "সংরক্ষিত অগ্রগতির যাচাই ব্যর্থ হয়েছে; লেভেল ১-এ ফিরিয়ে দেওয়া হয়েছে।",
+          totalQuestions: "প্রতি বিভাগে {count}টি প্রশ্ন · প্রতিটিতে {levels}টি লেভেল",
           instantAnswers: "তাৎক্ষণিক উত্তর",
           justForFun: "শুধু মজার জন্য",
           quizRound: "কুইজ পর্ব",
@@ -1999,6 +2395,8 @@
           closeRewards: "পুরস্কারের ড্যাশবোর্ড বন্ধ করুন",
           dashboardIQAttempts: "{count}টি আইকিউ পরীক্ষার পর্ব",
           dashboardNoIQ: "খেলার ভিত্তিতে অনুমান দেখতে একটি আইকিউ পরীক্ষার পর্ব শেষ করুন।",
+          dashboardCategoryProgressTitle: "বিভাগ অনুযায়ী অগ্রগতি",
+          dashboardCategoryRounds: "{count}টি পর্ব সম্পন্ন",
           dashboardGKTitle: "সাধারণ জ্ঞানে অগ্রগতি",
           dashboardLevelsCompleted: "{completed}/{total}টি লেভেল সম্পন্ন",
           dashboardGKRounds: "{count}টি পর্ব সম্পন্ন",
@@ -2056,32 +2454,65 @@
           optionLetters: ["ক", "খ", "গ", "ঘ"]
         },
         hi: {
-          pageTitle: "क्विज़ ऑर्बिट — 3D क्विज़ गेम",
-          metaDescription: "रंगीन 3D क्विज़ खेलें। विषय चुनें, जिज्ञासा के साथ आगे बढ़ें और अपना ज्ञान आज़माएँ।",
+          pageTitle: "QuizVerse 3D — 3D क्विज़ गेम",
+          metaDescription: "QuizVerse 3D खेलें: पाँच क्विज़ दुनिया खोजें, स्तर पार करें और अपनी तर्कशक्ति जाँचें।",
           language: "भाषा",
           topNote: "जिज्ञासा के लिए एक छोटी-सी जगह",
-          brandHome: "क्विज़ ऑर्बिट होम",
+          brandHome: "QuizVerse 3D होम",
+          loadingScreenLabel: "QuizVerse 3D लोड हो रहा है",
+          loadingLabel: "आपकी अगली चुनौती तैयार हो रही है…",
+          heroStatsGroup: "लाइव गेम आँकड़े",
+          heroStatsTitle: "लाइव गेम आँकड़े",
+          heroStatCategories: "सक्रिय श्रेणियाँ",
+          heroStatLevels: "कुल स्तर",
+          heroStatFocus: "फ़ोकस जाँच",
+          heroStatActive: "सक्रिय",
           answerSoundsOn: "गेम की ध्वनि चालू",
           answerSoundsOff: "गेम की ध्वनि बंद",
           welcomeEyebrow: "एक नए नज़रिए वाला क्विज़",
-          welcomeTitle: "थोड़ा और <span>जानें।</span>",
-          welcomeDescription: "जिज्ञासा के दो रास्ते: दुनिया जानें या तर्क और पैटर्न के साथ समय को चुनौती दें।",
-          orbitLabel: "अपनी गति से खेलें",
+          welcomeTitle: "QuizVerse <span>3D</span>",
+          welcomeDescription: "पाँच विषयों में अपनी राह चुनें, नए सवाल हल करें और अपनी लगातार सही जवाबों की लय बनाएँ।",
+          orbitLabel: "मोड चुनें · 500 स्तर पार करें",
+          heroTaglines: [
+            "मोड चुनें · 500 स्तर पार करें",
+            "पाँच दुनिया · आपका संग्रह बढ़े",
+            "अगली चुनौती बस एक टैप दूर"
+          ],
+          categoryDifficulty: {
+            "General Knowledge": "मिश्रित",
+            "Science & Technology": "मध्यम",
+            "Pop Culture & Movies": "आसान",
+            "History & Geography": "मध्यम",
+            "IQ Check": "कठिन"
+          },
+          categoryProgress: "{percent}% पूरा",
+          categoryUnlockedStatus: "स्तर {level} खुला",
+          categoryCompleteStatus: "सभी 500 स्तर पूरे",
+          continueJourney: "यात्रा जारी रखें",
+          continueJourneyTarget: "{category} · स्तर {level}",
           categoryHeading: "अपना मोड चुनें",
-          categoryHeadingHint: "दोनों मोड · हर सवाल के लिए 15 सेकंड",
-          categoryGroup: "क्विज़ मोड चुनें",
+          categoryHeadingHint: "5 मोड · हर सवाल के लिए 15 सेकंड",
+          categoryGroup: "क्विज़ श्रेणी चुनें",
           categoryLabels: {
             "General Knowledge": "सामान्य ज्ञान",
+            "Science & Technology": "विज्ञान और तकनीक",
+            "Pop Culture & Movies": "पॉप संस्कृति और फ़िल्में",
+            "History & Geography": "इतिहास और भूगोल",
             "IQ Check": "IQ जाँच"
           },
           categoryDescriptions: {
             "General Knowledge": "हर विषय से थोड़ी-थोड़ी जानकारी",
+            "Science & Technology": "प्रयोग, अंतरिक्ष और डिजिटल जीवन",
+            "Pop Culture & Movies": "फ़िल्म, संगीत और गेम",
+            "History & Geography": "स्थान, समयरेखाएँ और यात्राएँ",
             "IQ Check": "तर्क, पैटर्न और 15 सेकंड की घड़ी"
           },
           startGame: "खेल शुरू करें",
           startHint: "शुरू करने के लिए कोई मोड चुनें।",
           selectedHint: "{category} चुना गया · जब चाहें शुरू करें।",
-          totalQuestions: "{count} सामान्य ज्ञान के सवाल · {levels} स्तर · {iqCount} IQ पहेलियाँ",
+          focusSwitchPenalty: "गेम से फ़ोकस हटने के कारण सवाल अपने-आप जमा कर दिया गया।",
+          progressIntegrityNotice: "सेव की गई प्रगति की जाँच विफल हुई; इसे स्तर 1 पर रीसेट किया गया।",
+          totalQuestions: "हर श्रेणी में {count} सवाल · हर श्रेणी के {levels} स्तर",
           instantAnswers: "तुरंत जवाब",
           justForFun: "सिर्फ़ मज़े के लिए",
           quizRound: "क्विज़ राउंड",
@@ -2138,6 +2569,8 @@
           closeRewards: "इनाम डैशबोर्ड बंद करें",
           dashboardIQAttempts: "{count} IQ चेक राउंड",
           dashboardNoIQ: "अपना अनुमान देखने के लिए IQ चेक का एक राउंड पूरा करें।",
+          dashboardCategoryProgressTitle: "श्रेणी के अनुसार प्रगति",
+          dashboardCategoryRounds: "{count} राउंड पूरे",
           dashboardGKTitle: "सामान्य ज्ञान में प्रगति",
           dashboardLevelsCompleted: "{total} में से {completed} लेवल पूरे",
           dashboardGKRounds: "{count} राउंड पूरे",
@@ -2195,32 +2628,65 @@
           optionLetters: ["क", "ख", "ग", "घ"]
         },
         es: {
-          pageTitle: "Quiz Orbit — Juego de preguntas 3D",
-          metaDescription: "Juega a un colorido quiz 3D. Elige un tema, sigue tu curiosidad y pon a prueba tus conocimientos.",
+          pageTitle: "QuizVerse 3D — Juego de preguntas",
+          metaDescription: "Juega a QuizVerse 3D: explora cinco mundos, supera niveles y pon a prueba tu lógica.",
           language: "Idioma",
           topNote: "Un pequeño espacio para la curiosidad",
-          brandHome: "Inicio de Quiz Orbit",
+          brandHome: "Inicio de QuizVerse 3D",
+          loadingScreenLabel: "Cargando QuizVerse 3D",
+          loadingLabel: "Preparando tu próximo reto…",
+          heroStatsGroup: "Estadísticas en vivo",
+          heroStatsTitle: "DATOS DEL JUEGO",
+          heroStatCategories: "Categorías activas",
+          heroStatLevels: "Niveles totales",
+          heroStatFocus: "Control de foco",
+          heroStatActive: "ACTIVO",
           answerSoundsOn: "Sonidos del juego activados",
           answerSoundsOff: "Sonidos del juego desactivados",
           welcomeEyebrow: "Un quiz con otra perspectiva",
-          welcomeTitle: "Descubre un poco <span>más.</span>",
-          welcomeDescription: "Dos formas de explorar: descubre el mundo o resuelve patrones contra reloj.",
-          orbitLabel: "Explora a tu ritmo",
+          welcomeTitle: "QuizVerse <span>3D</span>",
+          welcomeDescription: "Elige una materia, avanza por cinco mundos y mantén tu racha de respuestas correctas.",
+          orbitLabel: "Elige un modo · supera 500 niveles",
+          heroTaglines: [
+            "Elige un modo · supera 500 niveles",
+            "Cinco mundos · una colección en marcha",
+            "Tu próximo reto está a un toque"
+          ],
+          categoryDifficulty: {
+            "General Knowledge": "Variado",
+            "Science & Technology": "Intermedio",
+            "Pop Culture & Movies": "Ligero",
+            "History & Geography": "Intermedio",
+            "IQ Check": "Desafiante"
+          },
+          categoryProgress: "{percent}% completado",
+          categoryUnlockedStatus: "Nivel {level} desbloqueado",
+          categoryCompleteStatus: "Los 500 niveles completados",
+          continueJourney: "Continuar recorrido",
+          continueJourneyTarget: "{category} · Nivel {level}",
           categoryHeading: "Elige un modo",
-          categoryHeadingHint: "Ambos modos · 15 segundos por pregunta",
-          categoryGroup: "Elige un modo de juego",
+          categoryHeadingHint: "5 modos · 15 segundos por pregunta",
+          categoryGroup: "Elige una categoría",
           categoryLabels: {
             "General Knowledge": "Cultura general",
+            "Science & Technology": "Ciencia y tecnología",
+            "Pop Culture & Movies": "Cultura pop y cine",
+            "History & Geography": "Historia y geografía",
             "IQ Check": "Desafío de lógica"
           },
           categoryDescriptions: {
             "General Knowledge": "Un poco de todo",
+            "Science & Technology": "Experimentos, espacio y vida digital",
+            "Pop Culture & Movies": "Cine, música y videojuegos",
+            "History & Geography": "Lugares, cronologías y viajes",
             "IQ Check": "Lógica, patrones y 15 segundos por pregunta"
           },
           startGame: "Empezar partida",
           startHint: "Elige un modo para comenzar.",
           selectedHint: "{category} seleccionado · cuando quieras.",
-          totalQuestions: "{count} preguntas de cultura general · {levels} niveles · {iqCount} retos IQ",
+          focusSwitchPenalty: "La pregunta se envió automáticamente al perder el foco del juego.",
+          progressIntegrityNotice: "No se pudo validar el progreso guardado; se restableció al nivel 1.",
+          totalQuestions: "{count} preguntas por categoría · {levels} niveles cada una",
           instantAnswers: "Respuestas al instante",
           justForFun: "Solo por diversión",
           quizRound: "Ronda de preguntas",
@@ -2277,6 +2743,8 @@
           closeRewards: "Cerrar el panel de recompensas",
           dashboardIQAttempts: "{count} rondas de IQ Check",
           dashboardNoIQ: "Completa una ronda de IQ Check para ver tu estimación.",
+          dashboardCategoryProgressTitle: "Progreso por categoría",
+          dashboardCategoryRounds: "{count} rondas completadas",
           dashboardGKTitle: "Progreso en cultura general",
           dashboardLevelsCompleted: "{completed} de {total} niveles completados",
           dashboardGKRounds: "{count} rondas completadas",
@@ -2334,32 +2802,65 @@
           optionLetters: ["A", "B", "C", "D"]
         },
         fr: {
-          pageTitle: "Quiz Orbit — Quiz 3D",
-          metaDescription: "Jouez à un quiz 3D haut en couleur. Choisissez un thème, suivez votre curiosité et testez vos connaissances.",
+          pageTitle: "QuizVerse 3D — Quiz",
+          metaDescription: "Jouez à QuizVerse 3D : explorez cinq univers, progressez de niveau et testez votre logique.",
           language: "Langue",
           topNote: "Un petit espace pour la curiosité",
-          brandHome: "Accueil de Quiz Orbit",
+          brandHome: "Accueil de QuizVerse 3D",
+          loadingScreenLabel: "Chargement de QuizVerse 3D",
+          loadingLabel: "Préparation de votre prochain défi…",
+          heroStatsGroup: "Statistiques du jeu en direct",
+          heroStatsTitle: "STATS EN DIRECT",
+          heroStatCategories: "Catégories actives",
+          heroStatLevels: "Niveaux au total",
+          heroStatFocus: "Vérification du focus",
+          heroStatActive: "ACTIF",
           answerSoundsOn: "Sons du jeu activés",
           answerSoundsOff: "Sons du jeu désactivés",
           welcomeEyebrow: "Un quiz sous un nouvel angle",
-          welcomeTitle: "Explorez un peu <span>plus.</span>",
-          welcomeDescription: "Deux façons d’explorer : découvrez le monde ou résolvez des énigmes contre la montre.",
-          orbitLabel: "Explorez à votre rythme",
+          welcomeTitle: "QuizVerse <span>3D</span>",
+          welcomeDescription: "Choisissez un thème, explorez cinq univers et prolongez votre série de bonnes réponses.",
+          orbitLabel: "Choisissez un mode · 500 niveaux",
+          heroTaglines: [
+            "Choisissez un mode · 500 niveaux",
+            "Cinq univers · une collection qui grandit",
+            "Le prochain défi est à portée de clic"
+          ],
+          categoryDifficulty: {
+            "General Knowledge": "Varié",
+            "Science & Technology": "Intermédiaire",
+            "Pop Culture & Movies": "Accessible",
+            "History & Geography": "Intermédiaire",
+            "IQ Check": "Difficile"
+          },
+          categoryProgress: "{percent}% terminé",
+          categoryUnlockedStatus: "Niveau {level} débloqué",
+          categoryCompleteStatus: "Les 500 niveaux sont terminés",
+          continueJourney: "Continuer le parcours",
+          continueJourneyTarget: "{category} · Niveau {level}",
           categoryHeading: "Choisissez un mode",
-          categoryHeadingHint: "Deux modes · 15 secondes par question",
-          categoryGroup: "Choisissez un mode de jeu",
+          categoryHeadingHint: "5 modes · 15 secondes par question",
+          categoryGroup: "Choisissez une catégorie",
           categoryLabels: {
             "General Knowledge": "Culture générale",
+            "Science & Technology": "Sciences et technologie",
+            "Pop Culture & Movies": "Culture pop et cinéma",
+            "History & Geography": "Histoire et géographie",
             "IQ Check": "Défi logique"
           },
           categoryDescriptions: {
             "General Knowledge": "Un peu de tout",
+            "Science & Technology": "Expériences, espace et vie numérique",
+            "Pop Culture & Movies": "Cinéma, musique et jeux",
+            "History & Geography": "Lieux, chronologies et voyages",
             "IQ Check": "Logique, motifs et 15 secondes par question"
           },
           startGame: "Lancer la partie",
           startHint: "Choisissez un mode pour commencer.",
           selectedHint: "{category} sélectionné · à vous de jouer.",
-          totalQuestions: "{count} questions de culture générale · {levels} niveaux · {iqCount} défis IQ",
+          focusSwitchPenalty: "La question a été envoyée automatiquement lorsque le jeu a perdu le focus.",
+          progressIntegrityNotice: "La progression enregistrée n’a pas pu être vérifiée ; elle a été réinitialisée au niveau 1.",
+          totalQuestions: "{count} questions par catégorie · {levels} niveaux chacune",
           instantAnswers: "Réponses immédiates",
           justForFun: "Juste pour le plaisir",
           quizRound: "Manche de quiz",
@@ -2416,6 +2917,8 @@
           closeRewards: "Fermer le tableau des récompenses",
           dashboardIQAttempts: "{count} manches de test logique",
           dashboardNoIQ: "Terminez une manche de test logique pour voir votre estimation.",
+          dashboardCategoryProgressTitle: "Progression par catégorie",
+          dashboardCategoryRounds: "{count} manches terminées",
           dashboardGKTitle: "Progression en culture générale",
           dashboardLevelsCompleted: "{completed} niveaux terminés sur {total}",
           dashboardGKRounds: "{count} manches terminées",
@@ -2474,10 +2977,8 @@
         }
       };
 
-      // Expand the General Knowledge bank in exact groups of 10 questions:
-      // each consecutive group becomes one level. Every question and its four
-      // options must include all five locales with the same zero-based answer.
-      // Add another translated block of 10 to append a new level automatically.
+      // IQ Check uses this localized, curated reasoning pool. General Knowledge
+      // level questions are generated per session from the procedural bank below.
       const quizData = {
         "General Knowledge": [
           { question: { en: "What is the capital of Japan?", bn: "জাপানের রাজধানী কোনটি?", hi: "जापान की राजधानी क्या है?", es: "¿Cuál es la capital de Japón?", fr: "Quelle est la capitale du Japon ?" }, options: { en: ["Tokyo", "Kyoto", "Osaka", "Sapporo"], bn: ["টোকিও", "কিয়োটো", "ওসাকা", "সাপ্পোরো"], hi: ["टोक्यो", "क्योटो", "ओसाका", "साप्पोरो"], es: ["Tokio", "Kioto", "Osaka", "Sapporo"], fr: ["Tokyo", "Kyoto", "Osaka", "Sapporo"] }, answer: 0 },
@@ -2538,57 +3039,373 @@
         ]
       };
 
+      // Curated multilingual trivia anchors each subject; the procedural pool
+      // supplies additional numeric challenges for hundreds of replayable levels.
+      const localizedQuizItem = (questions, choices, answer) => ({
+        question: Object.fromEntries(["en", "bn", "hi", "es", "fr"].map((language, index) => [language, questions[index]])),
+        options: Object.fromEntries(["en", "bn", "hi", "es", "fr"].map((language, index) => [language, choices[index]])),
+        answer
+      });
+      Object.assign(quizData, {
+        "Science & Technology": [
+          localizedQuizItem(
+            ["Which chemical formula represents water?", "পানির রাসায়নিক সংকেত কোনটি?", "पानी का रासायनिक सूत्र कौन-सा है?", "¿Qué fórmula química representa el agua?", "Quelle formule chimique représente l’eau ?"],
+            [["CO₂", "H₂O", "O₂", "NaCl"], ["CO₂", "H₂O", "O₂", "NaCl"], ["CO₂", "H₂O", "O₂", "NaCl"], ["CO₂", "H₂O", "O₂", "NaCl"], ["CO₂", "H₂O", "O₂", "NaCl"]],
+            1
+          ),
+          localizedQuizItem(
+            ["Which star is closest to Earth?", "পৃথিবীর সবচেয়ে কাছের নক্ষত্র কোনটি?", "पृथ्वी के सबसे निकट कौन-सा तारा है?", "¿Qué estrella está más cerca de la Tierra?", "Quelle étoile est la plus proche de la Terre ?"],
+            [["The Sun", "Sirius", "Polaris", "Vega"], ["সূর্য", "সিরিয়াস", "পোলারিস", "ভেগা"], ["सूर्य", "सीरियस", "ध्रुवतारा", "वेगा"], ["El Sol", "Sirio", "Polaris", "Vega"], ["Le Soleil", "Sirius", "Polaris", "Véga"]],
+            0
+          ),
+          localizedQuizItem(
+            ["Which molecule carries genetic instructions in living things?", "জীবদেহে বংশগতির নির্দেশ বহন করে কোন অণু?", "जीवों में आनुवंशिक निर्देश कौन-सा अणु वहन करता है?", "¿Qué molécula transporta la información genética de los seres vivos?", "Quelle molécule porte l’information génétique des êtres vivants ?"],
+            [["ATP", "Glucose", "DNA", "Water"], ["এটিপি", "গ্লুকোজ", "ডিএনএ", "পানি"], ["एटीपी", "ग्लूकोज़", "डीएनए", "पानी"], ["ATP", "Glucosa", "ADN", "Agua"], ["ATP", "Glucose", "ADN", "Eau"]],
+            2
+          ),
+          localizedQuizItem(
+            ["What is the process plants use to make food from light?", "আলো ব্যবহার করে উদ্ভিদ খাদ্য তৈরি করে কোন প্রক্রিয়ায়?", "पौधे प्रकाश से भोजन किस प्रक्रिया द्वारा बनाते हैं?", "¿Qué proceso usan las plantas para producir alimento con luz?", "Quel processus les plantes utilisent-elles pour produire de la nourriture grâce à la lumière ?"],
+            [["Evaporation", "Photosynthesis", "Condensation", "Fermentation"], ["বাষ্পীভবন", "সালোকসংশ্লেষণ", "ঘনীভবন", "গাঁজন"], ["वाष्पीकरण", "प्रकाश संश्लेषण", "संघनन", "किण्वन"], ["Evaporación", "Fotosíntesis", "Condensación", "Fermentación"], ["Évaporation", "Photosynthèse", "Condensation", "Fermentation"]],
+            1
+          ),
+          localizedQuizItem(
+            ["Which gas makes up most of Earth's atmosphere?", "পৃথিবীর বায়ুমণ্ডলে সবচেয়ে বেশি কোন গ্যাস রয়েছে?", "पृथ्वी के वायुमंडल में सबसे अधिक कौन-सी गैस है?", "¿Qué gas constituye la mayor parte de la atmósfera terrestre?", "Quel gaz compose la majeure partie de l’atmosphère terrestre ?"],
+            [["Nitrogen", "Oxygen", "Carbon dioxide", "Hydrogen"], ["নাইট্রোজেন", "অক্সিজেন", "কার্বন ডাই-অক্সাইড", "হাইড্রোজেন"], ["नाइट्रोजन", "ऑक्सीजन", "कार्बन डाइऑक्साइड", "हाइड्रोजन"], ["Nitrógeno", "Oxígeno", "Dióxido de carbono", "Hidrógeno"], ["Azote", "Oxygène", "Dioxyde de carbone", "Hydrogène"]],
+            0
+          ),
+          localizedQuizItem(
+            ["What does CPU stand for?", "CPU-এর পূর্ণরূপ কী?", "CPU का पूरा नाम क्या है?", "¿Qué significan las siglas CPU?", "Que signifie le sigle CPU ?"],
+            [["Central Process Utility", "Computer Power Unit", "Central Processing Unit", "Core Program Unit"], ["সেন্ট্রাল প্রসেস ইউটিলিটি", "কম্পিউটার পাওয়ার ইউনিট", "সেন্ট্রাল প্রসেসিং ইউনিট", "কোর প্রোগ্রাম ইউনিট"], ["सेंट्रल प्रोसेस यूटिलिटी", "कंप्यूटर पावर यूनिट", "सेंट्रल प्रोसेसिंग यूनिट", "कोर प्रोग्राम यूनिट"], ["Unidad de Proceso Central", "Unidad de Potencia del Computador", "Unidad Central de Procesamiento", "Unidad de Programa Principal"], ["Unité de processus centrale", "Unité de puissance informatique", "Unité centrale de traitement", "Unité de programme central"]],
+            2
+          ),
+          localizedQuizItem(
+            ["What electric charge does an electron have?", "ইলেকট্রনের বৈদ্যুতিক আধান কী?", "इलेक्ट्रॉन पर कौन-सा विद्युत आवेश होता है?", "¿Qué carga eléctrica tiene un electrón?", "Quelle charge électrique porte un électron ?"],
+            [["Positive", "Neutral", "Both positive and negative", "Negative"], ["ধনাত্মক", "নিরপেক্ষ", "ধনাত্মক ও ঋণাত্মক উভয়", "ঋণাত্মক"], ["धनात्मक", "तटस्थ", "धनात्मक और ऋणात्मक दोनों", "ऋणात्मक"], ["Positiva", "Neutra", "Positiva y negativa", "Negativa"], ["Positive", "Neutre", "Positive et négative", "Négative"]],
+            3
+          ),
+          localizedQuizItem(
+            ["Which planet is known as the Red Planet?", "কোন গ্রহকে লাল গ্রহ বলা হয়?", "किस ग्रह को लाल ग्रह कहा जाता है?", "¿Qué planeta se conoce como el planeta rojo?", "Quelle planète est surnommée la planète rouge ?"],
+            [["Venus", "Jupiter", "Mars", "Mercury"], ["শুক্র", "বৃহস্পতি", "মঙ্গল", "বুধ"], ["शुक्र", "बृहस्पति", "मंगल", "बुध"], ["Venus", "Júpiter", "Marte", "Mercurio"], ["Vénus", "Jupiter", "Mars", "Mercure"]],
+            2
+          ),
+          localizedQuizItem(
+            ["What does HTML stand for?", "HTML-এর পূর্ণরূপ কী?", "HTML का पूरा नाम क्या है?", "¿Qué significan las siglas HTML?", "Que signifie le sigle HTML ?"],
+            [["HyperText Markup Language", "High Transfer Machine Link", "Home Tool Markup List", "Hyperlink Text Management Logic"], ["হাইপারটেক্সট মার্কআপ ল্যাঙ্গুয়েজ", "হাই ট্রান্সফার মেশিন লিংক", "হোম টুল মার্কআপ লিস্ট", "হাইপারলিংক টেক্সট ম্যানেজমেন্ট লজিক"], ["हाइपरटेक्स्ट मार्कअप लैंग्वेज", "हाई ट्रांसफर मशीन लिंक", "होम टूल मार्कअप लिस्ट", "हाइपरलिंक टेक्स्ट मैनेजमेंट लॉजिक"], ["Lenguaje de Marcado de Hipertexto", "Enlace de Máquina de Alta Transferencia", "Lista de Marcado de Herramientas", "Lógica de Gestión de Hipertexto"], ["Langage de balisage hypertexte", "Lien de machine à haut transfert", "Liste de balisage d’outils", "Logique de gestion hypertexte"]],
+            0
+          ),
+          localizedQuizItem(
+            ["Can sound travel through a vacuum?", "শূন্যস্থানের মধ্য দিয়ে কি শব্দ চলতে পারে?", "क्या ध्वनि निर्वात में यात्रा कर सकती है?", "¿Puede viajar el sonido a través del vacío?", "Le son peut-il se propager dans le vide ?"],
+            [["Yes, at any temperature", "No, it needs a medium", "Only in sunlight", "Only at night"], ["হ্যাঁ, যেকোনো তাপমাত্রায়", "না, এর মাধ্যম দরকার", "শুধু সূর্যের আলোতে", "শুধু রাতে"], ["हाँ, किसी भी तापमान पर", "नहीं, इसे माध्यम चाहिए", "केवल धूप में", "केवल रात में"], ["Sí, a cualquier temperatura", "No, necesita un medio", "Solo con luz solar", "Solo de noche"], ["Oui, à toute température", "Non, il lui faut un milieu", "Seulement au soleil", "Seulement la nuit"]],
+            1
+          )
+        ],
+        "Pop Culture & Movies": [
+          localizedQuizItem(
+            ["Bollywood is primarily based in which Indian city?", "বলিউড প্রধানত ভারতের কোন শহরকে কেন্দ্র করে গড়ে উঠেছে?", "बॉलीवुड मुख्य रूप से भारत के किस शहर में स्थित है?", "¿En qué ciudad india se concentra principalmente Bollywood?", "Dans quelle ville indienne Bollywood est-il principalement basé ?"],
+            [["Delhi", "Kolkata", "Chennai", "Mumbai"], ["দিল্লি", "কলকাতা", "চেন্নাই", "মুম্বাই"], ["दिल्ली", "कोलकाता", "चेन्नई", "मुंबई"], ["Delhi", "Calcuta", "Chennai", "Bombay"], ["Delhi", "Calcutta", "Chennai", "Mumbai"]],
+            3
+          ),
+          localizedQuizItem(
+            ["Which awards are widely associated with achievements in music?", "সংগীতের কৃতিত্বের জন্য কোন পুরস্কারগুলো পরিচিত?", "संगीत की उपलब्धियों के लिए कौन-से पुरस्कार प्रसिद्ध हैं?", "¿Qué premios se asocian ampliamente con los logros musicales?", "Quels prix sont largement associés aux réalisations musicales ?"],
+            [["Grammy Awards", "Pulitzer Prize", "Nobel Prize", "Booker Prize"], ["গ্র্যামি অ্যাওয়ার্ড", "পুলিৎজার পুরস্কার", "নোবেল পুরস্কার", "বুকার পুরস্কার"], ["ग्रैमी पुरस्कार", "पुलित्ज़र पुरस्कार", "नोबेल पुरस्कार", "बुकर पुरस्कार"], ["Premios Grammy", "Premio Pulitzer", "Premio Nobel", "Premio Booker"], ["Grammy Awards", "Prix Pulitzer", "Prix Nobel", "Prix Booker"]],
+            0
+          ),
+          localizedQuizItem(
+            ["What is another common name for the Academy Awards?", "অ্যাকাডেমি অ্যাওয়ার্ডসের আরেকটি পরিচিত নাম কী?", "अकादमी पुरस्कारों का दूसरा प्रचलित नाम क्या है?", "¿Cuál es otro nombre común de los premios de la Academia?", "Quel est l’autre nom courant des Academy Awards ?"],
+            [["The Tonys", "The Oscars", "The Emmys", "The Brit Awards"], ["টনি অ্যাওয়ার্ড", "অস্কার", "এমি অ্যাওয়ার্ড", "ব্রিট অ্যাওয়ার্ড"], ["टोनी पुरस्कार", "ऑस्कर", "एमी पुरस्कार", "ब्रिट पुरस्कार"], ["Los Tony", "Los Óscar", "Los Emmy", "Los Brit"], ["Les Tony", "Les Oscars", "Les Emmy", "Les Brit"]],
+            1
+          ),
+          localizedQuizItem(
+            ["K-pop music originated in which country?", "কে-পপ সংগীতের উৎপত্তি কোন দেশে?", "के-पॉप संगीत की शुरुआत किस देश में हुई?", "¿En qué país se originó el K-pop?", "Dans quel pays la musique K-pop est-elle apparue ?"],
+            [["Japan", "Thailand", "South Korea", "China"], ["জাপান", "থাইল্যান্ড", "দক্ষিণ কোরিয়া", "চীন"], ["जापान", "थाईलैंड", "दक्षिण कोरिया", "चीन"], ["Japón", "Tailandia", "Corea del Sur", "China"], ["Japon", "Thaïlande", "Corée du Sud", "Chine"]],
+            2
+          ),
+          localizedQuizItem(
+            ["In a story, what is a trilogy?", "গল্প বা চলচ্চিত্রে ট্রিলজি বলতে কী বোঝায়?", "कहानी या फ़िल्म में त्रयी किसे कहते हैं?", "En una historia, ¿qué es una trilogía?", "Dans une histoire, qu’est-ce qu’une trilogie ?"],
+            [["A work in two parts", "A set of three related works", "A collection of five short stories", "A single scene"], ["দুই অংশের একটি কাজ", "সম্পর্কিত তিনটি কাজের সমষ্টি", "পাঁচটি ছোটগল্পের সংকলন", "একটি মাত্র দৃশ্য"], ["दो भागों की रचना", "तीन संबंधित रचनाओं का समूह", "पाँच लघुकथाओं का संग्रह", "एक दृश्य"], ["Una obra en dos partes", "Un conjunto de tres obras relacionadas", "Una colección de cinco relatos", "Una sola escena"], ["Une œuvre en deux parties", "Un ensemble de trois œuvres liées", "Un recueil de cinq nouvelles", "Une seule scène"]],
+            1
+          ),
+          localizedQuizItem(
+            ["In video games, what does DLC usually mean?", "ভিডিও গেমে DLC সাধারণত কী বোঝায়?", "वीडियो गेम में DLC का आमतौर पर क्या अर्थ होता है?", "En videojuegos, ¿qué suele significar DLC?", "Dans les jeux vidéo, que signifie généralement DLC ?"],
+            [["Downloadable content", "Digital level counter", "Direct link control", "Dynamic loading code"], ["ডাউনলোডযোগ্য কনটেন্ট", "ডিজিটাল লেভেল কাউন্টার", "ডাইরেক্ট লিংক কন্ট্রোল", "ডাইনামিক লোডিং কোড"], ["डाउनलोड करने योग्य सामग्री", "डिजिटल लेवल काउंटर", "डायरेक्ट लिंक कंट्रोल", "डायनेमिक लोडिंग कोड"], ["Contenido descargable", "Contador de niveles digitales", "Control de enlace directo", "Código de carga dinámica"], ["Contenu téléchargeable", "Compteur de niveaux numériques", "Contrôle de lien direct", "Code de chargement dynamique"]],
+            0
+          ),
+          localizedQuizItem(
+            ["What does a film storyboard usually show?", "চলচ্চিত্রের স্টোরিবোর্ডে সাধারণত কী দেখানো হয়?", "फ़िल्म के स्टोरीबोर्ड में आमतौर पर क्या दिखाया जाता है?", "¿Qué suele mostrar un guion gráfico de cine?", "Que montre généralement un storyboard de film ?"],
+            [["Ticket prices", "The final soundtrack", "Planned shots and scenes", "The theater seating chart"], ["টিকিটের দাম", "চূড়ান্ত সাউন্ডট্র্যাক", "পরিকল্পিত শট ও দৃশ্য", "সিনেমা হলের আসন বিন্যাস"], ["टिकट की कीमतें", "अंतिम साउंडट्रैक", "योजनाबद्ध शॉट और दृश्य", "सिनेमा की सीटों का नक्शा"], ["Los precios de las entradas", "La banda sonora final", "Los planos y escenas previstos", "El mapa de asientos"], ["Le prix des billets", "La bande originale finale", "Les plans et scènes prévus", "Le plan des sièges"]],
+            2
+          ),
+          localizedQuizItem(
+            ["What does a DJ do?", "একজন DJ সাধারণত কী করেন?", "एक DJ आमतौर पर क्या करता है?", "¿Qué hace un DJ?", "Que fait un DJ ?"],
+            [["Designs movie sets", "Writes game code", "Builds musical instruments", "Selects and mixes recorded music"], ["চলচ্চিত্রের সেট নকশা করেন", "গেমের কোড লেখেন", "বাদ্যযন্ত্র তৈরি করেন", "রেকর্ড করা গান বেছে ও মিশ্রণ করেন"], ["फ़िल्म के सेट बनाता है", "गेम कोड लिखता है", "वाद्ययंत्र बनाता है", "रिकॉर्ड किए गए संगीत को चुनता और मिलाता है"], ["Diseña escenarios de cine", "Escribe código de juegos", "Fabrica instrumentos", "Selecciona y mezcla música grabada"], ["Conçoit des décors de film", "Écrit du code de jeu", "Fabrique des instruments", "Sélectionne et mixe de la musique enregistrée"]],
+            3
+          ),
+          localizedQuizItem(
+            ["Online, what does it usually mean when a post goes viral?", "অনলাইনে কোনো পোস্ট ভাইরাল হলে সাধারণত কী বোঝায়?", "ऑनलाइन कोई पोस्ट वायरल होने का आमतौर पर क्या अर्थ है?", "En internet, ¿qué suele significar que una publicación se vuelva viral?", "En ligne, que signifie généralement le fait qu’une publication devienne virale ?"],
+            [["It is deleted immediately", "It is shared rapidly by many people", "It can only be seen offline", "It is converted into a game"], ["এটি সঙ্গে সঙ্গে মুছে ফেলা হয়", "অনেক মানুষ দ্রুত শেয়ার করেন", "এটি শুধু অফলাইনে দেখা যায়", "এটি গেমে রূপান্তরিত হয়"], ["इसे तुरंत हटा दिया जाता है", "बहुत से लोग इसे तेज़ी से साझा करते हैं", "इसे केवल ऑफ़लाइन देखा जा सकता है", "इसे गेम में बदल दिया जाता है"], ["Se elimina de inmediato", "Mucha gente la comparte rápidamente", "Solo puede verse sin conexión", "Se convierte en un juego"], ["Elle est supprimée immédiatement", "De nombreuses personnes la partagent rapidement", "Elle ne se voit que hors ligne", "Elle est transformée en jeu"]],
+            1
+          ),
+          localizedQuizItem(
+            ["In a song, what is a chorus?", "গানে কোরাস বলতে কী বোঝায়?", "गीत में कोरस क्या होता है?", "En una canción, ¿qué es el estribillo?", "Dans une chanson, qu’est-ce qu’un refrain ?"],
+            [["A repeated section", "The opening credits", "A silent scene", "The album cover"], ["বারবার ফিরে আসা অংশ", "শুরুর ক্রেডিট", "নীরব দৃশ্য", "অ্যালবামের প্রচ্ছদ"], ["बार-बार आने वाला भाग", "शुरुआती श्रेय", "मौन दृश्य", "एल्बम का कवर"], ["Una sección que se repite", "Los créditos iniciales", "Una escena sin sonido", "La portada del álbum"], ["Une partie répétée", "Le générique d’ouverture", "Une scène silencieuse", "La pochette de l’album"]],
+            0
+          )
+        ],
+        "History & Geography": [
+          localizedQuizItem(
+            ["The Great Wall is located in which country?", "মহাপ্রাচীর কোন দেশে অবস্থিত?", "चीन की महान दीवार किस देश में है?", "¿En qué país se encuentra la Gran Muralla?", "Dans quel pays se trouve la Grande Muraille ?"],
+            [["India", "China", "Mongolia", "Japan"], ["ভারত", "চীন", "মঙ্গোলিয়া", "জাপান"], ["भारत", "चीन", "मंगोलिया", "जापान"], ["India", "China", "Mongolia", "Japón"], ["Inde", "Chine", "Mongolie", "Japon"]],
+            1
+          ),
+          localizedQuizItem(
+            ["What is the capital of Australia?", "অস্ট্রেলিয়ার রাজধানী কোনটি?", "ऑस्ट्रेलिया की राजधानी क्या है?", "¿Cuál es la capital de Australia?", "Quelle est la capitale de l’Australie ?"],
+            [["Sydney", "Melbourne", "Canberra", "Perth"], ["সিডনি", "মেলবোর্ন", "ক্যানবেরা", "পার্থ"], ["सिडनी", "मेलबर्न", "कैनबरा", "पर्थ"], ["Sídney", "Melbourne", "Canberra", "Perth"], ["Sydney", "Melbourne", "Canberra", "Perth"]],
+            2
+          ),
+          localizedQuizItem(
+            ["In which city is the Colosseum?", "কলোসিয়াম কোন শহরে অবস্থিত?", "कोलोसियम किस शहर में है?", "¿En qué ciudad está el Coliseo?", "Dans quelle ville se trouve le Colisée ?"],
+            [["Athens", "Rome", "Istanbul", "Naples"], ["এথেন্স", "রোম", "ইস্তাম্বুল", "নেপলস"], ["एथेंस", "रोम", "इस्तांबुल", "नेपल्स"], ["Atenas", "Roma", "Estambul", "Nápoles"], ["Athènes", "Rome", "Istanbul", "Naples"]],
+            1
+          ),
+          localizedQuizItem(
+            ["The Statue of Liberty was a gift from which country?", "স্ট্যাচু অব লিবার্টি কোন দেশের উপহার ছিল?", "स्टैच्यू ऑफ़ लिबर्टी किस देश की ओर से उपहार था?", "¿Qué país regaló la Estatua de la Libertad?", "Quel pays a offert la Statue de la Liberté ?"],
+            [["France", "Spain", "Canada", "Italy"], ["ফ্রান্স", "স্পেন", "কানাডা", "ইতালি"], ["फ़्रांस", "स्पेन", "कनाडा", "इटली"], ["Francia", "España", "Canadá", "Italia"], ["France", "Espagne", "Canada", "Italie"]],
+            0
+          ),
+          localizedQuizItem(
+            ["In which year did World War II end?", "দ্বিতীয় বিশ্বযুদ্ধ কোন সালে শেষ হয়?", "द्वितीय विश्व युद्ध किस वर्ष समाप्त हुआ?", "¿En qué año terminó la Segunda Guerra Mundial?", "En quelle année la Seconde Guerre mondiale s’est-elle terminée ?"],
+            [["1918", "1939", "1945", "1950"], ["১৯১৮", "১৯৩৯", "১৯৪৫", "১৯৫০"], ["१९१८", "१९३९", "१९४५", "१९५०"], ["1918", "1939", "1945", "1950"], ["1918", "1939", "1945", "1950"]],
+            2
+          ),
+          localizedQuizItem(
+            ["The Taj Mahal is in which Indian city?", "তাজমহল ভারতের কোন শহরে অবস্থিত?", "ताजमहल भारत के किस शहर में है?", "¿En qué ciudad india está el Taj Mahal?", "Dans quelle ville indienne se trouve le Taj Mahal ?"],
+            [["Jaipur", "Agra", "Delhi", "Lucknow"], ["জয়পুর", "আগ্রা", "দিল্লি", "লখনউ"], ["जयपुर", "आगरा", "दिल्ली", "लखनऊ"], ["Jaipur", "Agra", "Delhi", "Lucknow"], ["Jaipur", "Agra", "Delhi", "Lucknow"]],
+            1
+          ),
+          localizedQuizItem(
+            ["Machu Picchu was built by which civilization?", "মাচু পিচু কোন সভ্যতা নির্মাণ করেছিল?", "माचू पिचू का निर्माण किस सभ्यता ने किया था?", "¿Qué civilización construyó Machu Picchu?", "Quelle civilisation a construit le Machu Picchu ?"],
+            [["Roman", "Maya", "Inca", "Ancient Greek"], ["রোমান", "মায়া", "ইনকা", "প্রাচীন গ্রিক"], ["रोमन", "माया", "इंका", "प्राचीन यूनानी"], ["Romana", "Maya", "Inca", "Griega antigua"], ["Romaine", "Maya", "Inca", "Grecque antique"]],
+            2
+          ),
+          localizedQuizItem(
+            ["Mount Everest is part of which mountain range?", "মাউন্ট এভারেস্ট কোন পর্বতমালার অংশ?", "माउंट एवरेस्ट किस पर्वत शृंखला का हिस्सा है?", "¿A qué cordillera pertenece el Everest?", "À quelle chaîne de montagnes appartient l’Everest ?"],
+            [["Andes", "Alps", "Rockies", "Himalayas"], ["আন্দিজ", "আল্পস", "রকি", "হিমালয়"], ["एंडीज़", "आल्प्स", "रॉकी", "हिमालय"], ["Andes", "Alpes", "Rocosas", "Himalaya"], ["Andes", "Alpes", "Rocheuses", "Himalaya"]],
+            3
+          ),
+          localizedQuizItem(
+            ["The Magna Carta was sealed in which year?", "ম্যাগনা কার্টা কোন সালে সিলমোহর করা হয়?", "मैग्ना कार्टा पर किस वर्ष मुहर लगाई गई थी?", "¿En qué año se selló la Carta Magna?", "En quelle année la Magna Carta a-t-elle été scellée ?"],
+            [["1066", "1215", "1492", "1776"], ["১০৬৬", "১২১৫", "১৪৯২", "১৭৭৬"], ["१०६६", "१२१५", "१४९२", "१७७६"], ["1066", "1215", "1492", "1776"], ["1066", "1215", "1492", "1776"]],
+            1
+          ),
+          localizedQuizItem(
+            ["Which river flows through Cairo?", "কায়রো শহরের মধ্য দিয়ে কোন নদী প্রবাহিত হয়েছে?", "काहिरा शहर से होकर कौन-सी नदी बहती है?", "¿Qué río atraviesa El Cairo?", "Quel fleuve traverse Le Caire ?"],
+            [["Amazon", "Danube", "Nile", "Rhine"], ["আমাজন", "ডানিউব", "নীল", "রাইন"], ["अमेज़न", "डैन्यूब", "नील", "राइन"], ["Amazonas", "Danubio", "Nilo", "Rin"], ["Amazone", "Danube", "Nil", "Rhin"]],
+            2
+          )
+        ]
+      });
+
       const QUESTIONS_PER_LEVEL = 10;
-      const IQ_QUESTIONS_PER_ROUND = 10;
       const QUESTION_TIME_LIMIT_SECONDS = 15;
       const SPEED_BONUS_WINDOW_SECONDS = 5;
       const SPEED_BONUS_POINTS = 5;
       const LEVEL_PASSING_ACCURACY = 0.6;
-      const GENERAL_KNOWLEDGE_LEVEL_COUNT = 500;
-      const GENERAL_KNOWLEDGE_POOL_SIZE = 20;
+      const LEVELS_PER_CATEGORY = 500;
+      const PROGRESSION_CATEGORIES = [
+        "General Knowledge",
+        "Science & Technology",
+        "Pop Culture & Movies",
+        "History & Geography",
+        "IQ Check"
+      ];
+      const GENERAL_KNOWLEDGE_LEVEL_COUNT = LEVELS_PER_CATEGORY;
+      const GENERAL_KNOWLEDGE_TEMPLATE_COUNT = 10;
+      const GENERAL_KNOWLEDGE_VARIANTS_PER_TEMPLATE = 100;
+      const GENERAL_KNOWLEDGE_PARAMETER_SPACE = 1000;
+      const CATEGORY_TEMPLATE_COUNT = 10;
+      const CATEGORY_VARIANTS_PER_TEMPLATE = 100;
+      const CATEGORY_PARAMETER_SPACE = 1000;
+      const GENERAL_KNOWLEDGE_POOL_SIZE =
+        GENERAL_KNOWLEDGE_TEMPLATE_COUNT * GENERAL_KNOWLEDGE_VARIANTS_PER_TEMPLATE;
       const LEVELS_PER_PAGE = 25;
-      const curatedGeneralKnowledgeCount = quizData["General Knowledge"].length;
-      if (curatedGeneralKnowledgeCount === 0 || curatedGeneralKnowledgeCount % QUESTIONS_PER_LEVEL !== 0) {
-        throw new Error(`The curated General Knowledge bank must contain complete ${QUESTIONS_PER_LEVEL}-question levels.`);
+      if (GENERAL_KNOWLEDGE_POOL_SIZE % QUESTIONS_PER_LEVEL !== 0 ||
+          GENERAL_KNOWLEDGE_VARIANTS_PER_TEMPLATE > GENERAL_KNOWLEDGE_PARAMETER_SPACE) {
+        throw new Error("The randomized General Knowledge pool configuration is invalid.");
       }
-      const curatedGeneralKnowledgeLevelCount = curatedGeneralKnowledgeCount / QUESTIONS_PER_LEVEL;
-      if (curatedGeneralKnowledgeLevelCount > GENERAL_KNOWLEDGE_LEVEL_COUNT) {
-        throw new Error("The curated question bank cannot contain more levels than the level map.");
-      }
-      // Keep map metadata-only: build a question pool only after a level is selected.
-      const generalKnowledgeQuestionCount = GENERAL_KNOWLEDGE_LEVEL_COUNT * QUESTIONS_PER_LEVEL;
-      const generalKnowledgeLevels = Array.from(
-        { length: GENERAL_KNOWLEDGE_LEVEL_COUNT },
-        (_, levelIndex) => ({ level: levelIndex + 1 })
-      );
-      const LEVEL_PROGRESS_STORAGE_KEY = "quiz-orbit-gk-unlocked-level";
+      // Keep maps metadata-only: build a fresh question pool only after a level is selected.
+      const categoryLevels = Object.fromEntries(PROGRESSION_CATEGORIES.map((category) => [
+        category,
+        Array.from({ length: LEVELS_PER_CATEGORY }, (_, levelIndex) => ({ level: levelIndex + 1 }))
+      ]));
+      const generalKnowledgeLevels = categoryLevels["General Knowledge"];
+      const CATEGORY_QUESTION_COUNT = LEVELS_PER_CATEGORY * QUESTIONS_PER_LEVEL;
+      const LEGACY_LEVEL_PROGRESS_STORAGE_KEY = "quiz-orbit-gk-unlocked-level";
+      const PROGRESS_TOKEN_VERSION = "2";
+      const PROGRESS_CHECKSUM_CONTEXT = "quiz-orbit-category-progress-v2";
+      let progressStateTampered = false;
 
-      function readUnlockedGeneralKnowledgeLevel() {
+      // Base64 plus a checksum catches casual/manual edits and corrupted values.
+      // This is tamper-evident only: the client-side algorithm is not a secret.
+      function categoryProgressStorageKey(category) {
+        if (!PROGRESSION_CATEGORIES.includes(category)) {
+          throw new RangeError(`Unknown quiz category: ${category}`);
+        }
+        if (category === "General Knowledge") return LEGACY_LEVEL_PROGRESS_STORAGE_KEY;
+        const slug = category.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+        return `quiz-orbit-${slug}-unlocked-level`;
+      }
+
+      function progressChecksum(category, level) {
+        const payload = `${PROGRESS_CHECKSUM_CONTEXT}:${category}:${level}`;
+        let hash = 0x811c9dc5;
+        for (let index = 0; index < payload.length; index += 1) {
+          hash ^= payload.charCodeAt(index);
+          hash = Math.imul(hash, 0x01000193);
+        }
+        return (hash >>> 0).toString(36);
+      }
+
+      function legacyProgressChecksum(level) {
+        const payload = `quiz-orbit-level-progress-v1:${level}`;
+        let hash = 0x811c9dc5;
+        for (let index = 0; index < payload.length; index += 1) {
+          hash ^= payload.charCodeAt(index);
+          hash = Math.imul(hash, 0x01000193);
+        }
+        return (hash >>> 0).toString(36);
+      }
+
+      function encodeProgressToken(category, level) {
+        const safeLevel = Math.min(
+          categoryLevels[category].length,
+          Math.max(1, Math.floor(level))
+        );
+        return btoa(`${PROGRESS_TOKEN_VERSION}:${category}:${safeLevel}:${progressChecksum(category, safeLevel)}`);
+      }
+
+      function decodeProgressToken(category, value) {
         try {
-          const savedLevel = Number.parseInt(localStorage.getItem(LEVEL_PROGRESS_STORAGE_KEY), 10);
-          return Number.isInteger(savedLevel)
-            ? Math.min(generalKnowledgeLevels.length, Math.max(1, savedLevel))
-            : 1;
+          const [version, savedCategory, levelText, checksum, ...extra] = atob(value).split(":");
+          const level = Number(levelText);
+          if (
+            extra.length === 0 &&
+            version === PROGRESS_TOKEN_VERSION &&
+            savedCategory === category &&
+            Number.isInteger(level) &&
+            level >= 1 &&
+            level <= categoryLevels[category].length &&
+            checksum === progressChecksum(category, level)
+          ) {
+            return level;
+          }
+        } catch {
+          // An unreadable token is handled by the integrity-reset path below.
+        }
+        return null;
+      }
+
+      function decodePreviousGeneralKnowledgeToken(value) {
+        try {
+          const [version, levelText, checksum, ...extra] = atob(value).split(":");
+          const level = Number(levelText);
+          if (
+            extra.length === 0 &&
+            version === "1" &&
+            Number.isInteger(level) &&
+            level >= 1 &&
+            level <= generalKnowledgeLevels.length &&
+            checksum === legacyProgressChecksum(level)
+          ) {
+            return level;
+          }
+        } catch {
+          // Try the old plain-number migration, then reset if neither format is valid.
+        }
+        return null;
+      }
+
+      function readUnlockedLevel(category) {
+        try {
+          const saved = localStorage.getItem(categoryProgressStorageKey(category));
+          if (saved === null) return 1;
+          const savedLevel = decodeProgressToken(category, saved);
+          if (savedLevel !== null) return savedLevel;
+
+          // Preserve valid v1 General Knowledge tokens and previous plain-number saves.
+          const previousTokenLevel = category === "General Knowledge"
+            ? decodePreviousGeneralKnowledgeToken(saved)
+            : null;
+          if (previousTokenLevel !== null) {
+            saveUnlockedLevel(category, previousTokenLevel);
+            return previousTokenLevel;
+          }
+          if (/^[1-9]\d*$/.test(saved)) {
+            const legacyLevel = Number(saved);
+            if (Number.isInteger(legacyLevel) && legacyLevel <= categoryLevels[category].length) {
+              saveUnlockedLevel(category, legacyLevel);
+              return legacyLevel;
+            }
+          }
+
+          progressStateTampered = true;
+          saveUnlockedLevel(category, 1);
+          return 1;
         } catch {
           return 1;
         }
       }
 
-      function saveUnlockedGeneralKnowledgeLevel(level) {
+      function saveUnlockedLevel(category, level) {
         try {
-          localStorage.setItem(LEVEL_PROGRESS_STORAGE_KEY, String(level));
+          localStorage.setItem(categoryProgressStorageKey(category), encodeProgressToken(category, level));
         } catch {
           // Progress still works for this visit if browser storage is unavailable.
         }
+      }
+      const unlockedLevelsByCategory = Object.fromEntries(
+        PROGRESSION_CATEGORIES.map((category) => [category, readUnlockedLevel(category)])
+      );
+      function unlockedLevelFor(category) {
+        return unlockedLevelsByCategory[category] || 1;
+      }
+      const LAST_PLAYED_STORAGE_KEY = "quiz-orbit-last-played-v1";
+      function readLastPlayed() {
+        try {
+          const saved = JSON.parse(localStorage.getItem(LAST_PLAYED_STORAGE_KEY) || "null");
+          if (
+            !saved ||
+            saved.version !== 1 ||
+            !PROGRESSION_CATEGORIES.includes(saved.category) ||
+            !Number.isInteger(saved.level) ||
+            saved.level < 1 ||
+            saved.level > unlockedLevelFor(saved.category)
+          ) {
+            return null;
+          }
+          return { version: 1, category: saved.category, level: saved.level };
+        } catch {
+          return null;
+        }
+      }
+      let lastPlayed = readLastPlayed();
+      function saveLastPlayed(category, level) {
+        const saved = { version: 1, category, level };
+        lastPlayed = saved;
+        try {
+          localStorage.setItem(LAST_PLAYED_STORAGE_KEY, JSON.stringify(saved));
+        } catch {
+          // Keep the quick-start target available for this visit if storage is blocked.
+        }
+        renderHomeHub();
       }
       const CORRECT_ANSWER_POINTS = 10;
       const INCORRECT_ANSWER_PENALTY = 5;
       const ANSWER_SOUND_STORAGE_KEY = "quiz-orbit-answer-sounds-muted";
       const REWARD_COLLECTION_STORAGE_KEY = "quiz-orbit-reward-collection";
-      const REWARD_COLLECTION_VERSION = 2;
+      const REWARD_COLLECTION_VERSION = 3;
       const TROPHY_TIERS = ["gold", "silver", "bronze"];
       const BADGE_IDS = ["quizMaster", "logicMaster", "speedDemon", "quizSpeedster", "knowledgeSeeker"];
-      const REWARD_MODES = ["General Knowledge", "IQ Check"];
+      const REWARD_MODES = PROGRESSION_CATEGORIES;
 
       function emptyRewardCollection() {
         return {
@@ -2598,6 +3415,10 @@
           bestPoints: 0,
           bestStreak: 0,
           trophyRecords: [],
+          categoryStats: Object.fromEntries(PROGRESSION_CATEGORIES.map((category) => [
+            category,
+            { runs: 0, correct: 0, incorrect: 0, completedLevels: 0 }
+          ])),
           gkRuns: 0,
           gkCorrect: 0,
           gkIncorrect: 0,
@@ -2615,7 +3436,7 @@
           if (!serialized) return emptyRewardCollection();
           const saved = JSON.parse(serialized);
           // Migrate v1 reward collections without discarding earned trophies or badges.
-          if (!saved || typeof saved !== "object" || ![1, REWARD_COLLECTION_VERSION].includes(saved.version)) {
+          if (!saved || typeof saved !== "object" || ![1, 2, REWARD_COLLECTION_VERSION].includes(saved.version)) {
             return emptyRewardCollection();
           }
           const validNonNegativeNumber = (value) =>
@@ -2632,6 +3453,37 @@
               trophyRecords.push({ tier: record.tier, mode: record.mode });
             });
           }
+          const categoryStats = Object.fromEntries(PROGRESSION_CATEGORIES.map((category) => [
+            category,
+            { runs: 0, correct: 0, incorrect: 0, completedLevels: 0 }
+          ]));
+          categoryStats["General Knowledge"] = {
+            runs: validCount(saved.gkRuns),
+            correct: validCount(saved.gkCorrect),
+            incorrect: validCount(saved.gkIncorrect),
+            completedLevels: Math.min(generalKnowledgeLevels.length, validCount(saved.gkCompletedLevels))
+          };
+          categoryStats["IQ Check"] = {
+            runs: validCount(saved.iqRuns),
+            correct: validCount(saved.iqCorrect),
+            incorrect: validCount(saved.iqIncorrect),
+            completedLevels: 0
+          };
+          if (saved.categoryStats && typeof saved.categoryStats === "object") {
+            PROGRESSION_CATEGORIES.forEach((category) => {
+              const stats = saved.categoryStats[category];
+              if (!stats || typeof stats !== "object") return;
+              categoryStats[category] = {
+                runs: validCount(stats.runs),
+                correct: validCount(stats.correct),
+                incorrect: validCount(stats.incorrect),
+                completedLevels: Math.min(
+                  categoryLevels[category].length,
+                  validCount(stats.completedLevels)
+                )
+              };
+            });
+          }
           return {
             version: REWARD_COLLECTION_VERSION,
             trophies: Array.isArray(saved.trophies)
@@ -2643,6 +3495,7 @@
             bestPoints: validNonNegativeNumber(saved.bestPoints) ? saved.bestPoints : 0,
             bestStreak: validCount(saved.bestStreak),
             trophyRecords,
+            categoryStats,
             gkRuns: validCount(saved.gkRuns),
             gkCorrect: validCount(saved.gkCorrect),
             gkIncorrect: validCount(saved.gkIncorrect),
@@ -2703,14 +3556,13 @@
       let currentCategory = "General Knowledge";
       let selectedCategory = "General Knowledge";
       let currentLevel = 1;
-      let unlockedGeneralKnowledgeLevel = readUnlockedGeneralKnowledgeLevel();
       let levelJustUnlocked = false;
       let levelFailed = false;
       let allLevelsComplete = false;
       let sessionUsedQuestionIds = new Set();
       let answeredQuestionIndexes = new Set();
       let roundQuestionIndexes = [];
-      let activeGeneralKnowledgePool = [];
+      let activeQuestionPool = [];
       let currentLevelPage = 0;
       let currentQuestion = 0;
       let score = 0;
@@ -2724,6 +3576,8 @@
       let questionTimerInterval = null;
       let lastTimerTickSecond = null;
       let lastAnswerTimedOut = false;
+      let lastAnswerInterrupted = false;
+      let focusLossGraceTimeout = null;
       let lastSpeedBonus = 0;
       let rewardCelebrationAt = 0;
       let answered = false;
@@ -2735,6 +3589,9 @@
       let rewardCollection = readRewardCollection();
       let environmentTarget = 0;
       let cyberEnvironmentTarget = 0;
+      let scienceEnvironmentTarget = 0;
+      let popEnvironmentTarget = 0;
+      let historyEnvironmentTarget = 0;
       const rewardTierPalettes = {
         gold: {
           label: "trophyGold",
@@ -2757,10 +3614,19 @@
       function setGameModeTheme(category) {
         const isCosmic = category === "General Knowledge";
         const isCyber = category === "IQ Check";
+        const isScience = category === "Science & Technology";
+        const isPop = category === "Pop Culture & Movies";
+        const isHistory = category === "History & Geography";
         environmentTarget = isCosmic ? 1 : 0;
         cyberEnvironmentTarget = isCyber ? 1 : 0;
+        scienceEnvironmentTarget = isScience ? 1 : 0;
+        popEnvironmentTarget = isPop ? 1 : 0;
+        historyEnvironmentTarget = isHistory ? 1 : 0;
         document.body.classList.toggle("theme-cosmic", isCosmic);
         document.body.classList.toggle("theme-iq", isCyber);
+        document.body.classList.toggle("theme-science", isScience);
+        document.body.classList.toggle("theme-pop", isPop);
+        document.body.classList.toggle("theme-history", isHistory);
       }
 
       // Three consecutive correct answers start a 2× combo; five raise it to 3×.
@@ -2784,9 +3650,7 @@
         const streakValue = document.getElementById("streakValue");
         streakValue.textContent = `${formatNumber(currentStreak)} · ${formatNumber(multiplier)}×`;
         streakValue.classList.toggle("combo-active", currentStreak >= 3);
-        const levelLabel = currentCategory === "General Knowledge"
-          ? currentText.levelNumber.replace("{level}", formatNumber(currentLevel))
-          : categoryName(currentCategory);
+        const levelLabel = currentText.levelNumber.replace("{level}", formatNumber(currentLevel));
         document.getElementById("hudLevel").textContent =
           `${levelLabel} · ${currentText.question} ${formatNumber(currentQuestion + 1)} ${currentText.of} ${formatNumber(roundLength())}`;
         const comboBanner = document.getElementById("comboBanner");
@@ -2825,7 +3689,7 @@
 
       function renderQuestionTimer() {
         const timer = document.getElementById("iqTimer");
-        const enabled = currentCategory === "General Knowledge" || currentCategory === "IQ Check";
+        const enabled = PROGRESSION_CATEGORIES.includes(currentCategory);
         timer.hidden = !views.game.classList.contains("active") || !enabled;
         if (!enabled) return;
         const secondsLeft = questionDeadline
@@ -2955,6 +3819,7 @@
         }
       }
 
+      const numberFormatters = new Map();
       function formatNumber(value, language = currentLanguage) {
         const locales = {
           en: "en-US",
@@ -2963,7 +3828,11 @@
           es: "es-ES",
           fr: "fr-FR"
         };
-        return new Intl.NumberFormat(locales[language] || locales.en).format(value);
+        const locale = locales[language] || locales.en;
+        if (!numberFormatters.has(locale)) {
+          numberFormatters.set(locale, new Intl.NumberFormat(locale));
+        }
+        return numberFormatters.get(locale).format(value);
       }
 
       function categoryName(category) {
@@ -2972,14 +3841,12 @@
 
       function roundQuestions() {
         return roundQuestionIndexes.map((questionIndex) => {
-          const bankItem = currentCategory === "General Knowledge"
-            ? activeGeneralKnowledgePool[questionIndex]
-            : quizData[currentCategory][questionIndex];
-          return {
+          const bankItem = activeQuestionPool[questionIndex];
+          const localizedQuestion = {
             question: bankItem.question[currentLanguage],
-            options: bankItem.options[currentLanguage],
-            answer: bankItem.answer
+            options: bankItem.options[currentLanguage]
           };
+          return storeConcealedAnswer(localizedQuestion, readConcealedAnswer(bankItem));
         });
       }
 
@@ -2988,7 +3855,6 @@
       }
 
       function gameCategoryLabel(category) {
-        if (category !== "General Knowledge") return categoryName(category);
         const levelName = currentText.levelNumber.replace("{level}", formatNumber(currentLevel));
         return `${categoryName(category)} · ${levelName}`;
       }
@@ -3011,6 +3877,37 @@
         }
         return Math.floor(Math.random() * maxExclusive);
       }
+
+      // Keep answer indexes out of rendered question objects and DOM. This is
+      // runtime obfuscation, not a security boundary against source inspection.
+      const concealedAnswerIndexes = new WeakMap();
+      const answerIndexMask = randomIndex(256);
+
+      function storeConcealedAnswer(question, answerIndex) {
+        if (!Number.isInteger(answerIndex) || answerIndex < 0 || answerIndex > 3) {
+          throw new Error("A question has an invalid answer index.");
+        }
+        concealedAnswerIndexes.set(question, answerIndex ^ answerIndexMask);
+        return question;
+      }
+
+      function concealQuestionAnswer(question) {
+        const answerIndex = question.answer;
+        delete question.answer;
+        return storeConcealedAnswer(question, answerIndex);
+      }
+
+      function readConcealedAnswer(question) {
+        const encodedIndex = concealedAnswerIndexes.get(question);
+        if (!Number.isInteger(encodedIndex)) {
+          throw new Error("A quiz answer token is missing or invalid.");
+        }
+        return encodedIndex ^ answerIndexMask;
+      }
+
+      Object.values(quizData).forEach((questionBank) => {
+        questionBank.forEach(concealQuestionAnswer);
+      });
 
       const unitConversionQuestionTemplates = {
         en: "Convert {amount} {from} to {to}.",
@@ -3039,13 +3936,10 @@
         fr: ["autocollants", "cartes", "perles", "livres", "crayons"]
       };
 
-      // Procedurally create one localized question. Each of the ten families uses
-      // a level-and-variant number that only increases, so generated prompts never
-      // repeat between levels. Numeric distractors are shuffled for each pool build.
-      function makeGeneratedGeneralKnowledgeQuestion(level, family, variant) {
-        // Each level/variant maps to its own bounded parameter combination. The
-        // shuffled 20-question pool supplies session variety without huge numbers.
-        const instance = (level - 1) * 2 + variant;
+      // Procedurally create one localized question from a bounded parameter
+      // space. Its ID omits the level intentionally, so a session cannot repeat
+      // the same prompt when a random parameter combination appears again later.
+      function makeGeneratedGeneralKnowledgeQuestion(level, family, instance) {
         const difficulty = 1 + Math.floor((level - 1) / 50);
         const n = (value, language) => formatNumber(value, language);
         let answer;
@@ -3218,7 +4112,7 @@
         }
         const languages = ["en", "bn", "hi", "es", "fr"];
         return {
-          id: `generated-gk-${level}-${family}-${variant}`,
+          id: `generated-gk-${family}-${instance}`,
           question,
           options: Object.fromEntries(languages.map((language) => [
             language,
@@ -3228,96 +4122,455 @@
         };
       }
 
-      // Build just one level's 20-question candidate pool on demand. The first
-      // three levels retain their curated 10-question sets plus 10 generated
-      // alternatives; later levels use 20 generated candidates. Every round
-      // shuffles and selects 10, and stable IDs prevent repeats until that level's
-      // candidates are exhausted. Unique level parameters prevent cross-level overlap.
-      function getGeneralKnowledgeQuestionPool(level) {
-        if (!Number.isInteger(level) || level < 1 || level > GENERAL_KNOWLEDGE_LEVEL_COUNT) {
-          throw new RangeError(`General Knowledge level ${level} does not exist.`);
+      const categoryQuestionWords = {
+        "Science & Technology": {
+          en: { place: "science lab", item: "samples", group: "sensor modules", measure: "units", sequence: "sensor readings", transport: "data signal", priceItem: "device" },
+          bn: { place: "বিজ্ঞানাগার", placeLocative: "বিজ্ঞানাগারে", placePossessive: "বিজ্ঞানাগারের", item: "নমুনা", group: "সেন্সর মডিউল", measure: "একক", sequence: "সেন্সর রিডিং", transport: "ডেটা সংকেত", priceItem: "যন্ত্র" },
+          hi: { place: "विज्ञान प्रयोगशाला", item: "नमूने", group: "सेंसर मॉड्यूल", measure: "इकाइयाँ", sequence: "सेंसर रीडिंग", transport: "डेटा संकेत", priceItem: "उपकरण" },
+          es: { place: "laboratorio científico", item: "muestras", group: "módulos de sensores", measure: "unidades", sequence: "lecturas de sensores", transport: "señal de datos", priceItem: "dispositivo" },
+          fr: { place: "laboratoire scientifique", item: "échantillons", group: "modules de capteurs", measure: "unités", sequence: "relevés des capteurs", transport: "signal de données", priceItem: "appareil" }
+        },
+        "Pop Culture & Movies": {
+          en: { place: "cinema", item: "tickets", group: "seats", measure: "seats", sequence: "box-office totals", transport: "film reel", priceItem: "ticket" },
+          bn: { place: "সিনেমা হল", placeLocative: "সিনেমা হলে", placePossessive: "সিনেমা হলের", item: "টিকিট", group: "আসন", measure: "আসন", sequence: "বক্স অফিসের আয়", transport: "চলচ্চিত্রের রিল", priceItem: "টিকিট" },
+          hi: { place: "सिनेमा", item: "टिकट", group: "सीटें", measure: "सीटें", sequence: "बॉक्स ऑफिस के आँकड़े", transport: "फ़िल्म रील", priceItem: "टिकट" },
+          es: { place: "cine", item: "entradas", group: "asientos", measure: "asientos", sequence: "recaudación de taquilla", transport: "carrete de película", priceItem: "entrada" },
+          fr: { place: "cinéma", item: "billets", group: "sièges", measure: "sièges", sequence: "recettes du box-office", transport: "bobine de film", priceItem: "billet" }
+        },
+        "History & Geography": {
+          en: { place: "history museum", item: "artifacts", group: "exhibits", measure: "artifacts", sequence: "timeline years", transport: "train", priceItem: "entry ticket" },
+          bn: { place: "ইতিহাস জাদুঘর", placeLocative: "ইতিহাস জাদুঘরে", placePossessive: "ইতিহাস জাদুঘরের", item: "প্রত্নবস্তু", group: "প্রদর্শনী", measure: "প্রত্নবস্তু", sequence: "সময়রেখার বছর", transport: "ট্রেন", priceItem: "প্রবেশ টিকিট" },
+          hi: { place: "इतिहास संग्रहालय", item: "कलाकृतियाँ", group: "प्रदर्शन", measure: "कलाकृतियाँ", sequence: "समयरेखा के वर्ष", transport: "ट्रेन", priceItem: "प्रवेश टिकट" },
+          es: { place: "museo de historia", item: "artefactos", group: "exhibiciones", measure: "artefactos", sequence: "años de la cronología", transport: "tren", priceItem: "entrada" },
+          fr: { place: "musée d’histoire", item: "objets anciens", group: "expositions", measure: "objets", sequence: "années de la chronologie", transport: "train", priceItem: "billet d’entrée" }
         }
-        const curated = level <= curatedGeneralKnowledgeLevelCount
-          ? quizData["General Knowledge"]
-            .slice((level - 1) * QUESTIONS_PER_LEVEL, level * QUESTIONS_PER_LEVEL)
-            .map((item, index) => ({ ...item, id: `curated-gk-${level}-${index}` }))
-          : [];
-        const generatedCount = GENERAL_KNOWLEDGE_POOL_SIZE - curated.length;
-        const generated = Array.from({ length: generatedCount }, (_, index) =>
-          makeGeneratedGeneralKnowledgeQuestion(
-            level,
-            index % 10,
-            Math.floor(index / 10)
-          )
-        );
-        return [...curated, ...generated];
+      };
+      const categoryQuestionTemplates = {
+        en: [
+          "A {place} has {start} {item}. It gets {added} more, then uses {used}. How many remain?",
+          "At a {place}, there are {rows} rows with {count} {group} in each. How many are there?",
+          "A {place} is {percent}% full. Its capacity is {capacity} {measure}. How many {measure} are in use?",
+          "What number comes next in this {sequence} sequence: {terms}, ...?",
+          "",
+          "A scale plan of a {place} uses 1 unit for {scale} units. A route is {distance} units on the plan. What is its actual length?",
+          "",
+          "The values recorded for {sequence} are {first}, {second}, and {third}. What is their average?",
+          "A {priceItem} costs {price} credits and has a {percent}% discount. What is the sale price?",
+          "A {place} packs {count} {item}, with {perPack} in each pack. How many packs are there?"
+        ],
+        bn: [
+          "একটি {placeLocative} {start}টি {item} আছে। আরও {added}টি এলো, তারপর {used}টি ব্যবহার হলো। কতটি বাকি?",
+          "একটি {placeLocative} {rows}টি সারিতে প্রতিটিতে {count}টি {group} আছে। মোট কতটি?",
+          "একটি {placeLocative} {percent}% পূর্ণ। এর ধারণক্ষমতা {capacity}টি {measure}। কতটি {measure} ব্যবহার হচ্ছে?",
+          "এই {sequence} ধারার পরের সংখ্যাটি কত: {terms}, ...?",
+          "",
+          "একটি {placePossessive} স্কেল নকশায় ১ একক = {scale} একক। পথটি নকশায় {distance} একক। বাস্তব দৈর্ঘ্য কত?",
+          "",
+          "{sequence} থেকে পাওয়া তিনটি মান {first}, {second} ও {third}। গড় কত?",
+          "একটি {priceItem}র দাম {price} ক্রেডিট। {percent}% ছাড়ের পর দাম কত?",
+          "একটি {placeLocative} {count}টি {item} প্রতি প্যাকে {perPack}টি করে রাখা হয়। মোট প্যাক কয়টি?"
+        ],
+        hi: [
+          "एक {place} में {start} {item} हैं। {added} और आए, फिर {used} इस्तेमाल हुए। कितने बचे?",
+          "एक {place} में {rows} पंक्तियाँ हैं और हर पंक्ति में {count} {group} हैं। कुल कितने?",
+          "एक {place} {percent}% भरा है। इसकी क्षमता {capacity} {measure} है। कितने {measure} इस्तेमाल हो रहे हैं?",
+          "इस {sequence} क्रम में अगली संख्या क्या है: {terms}, ...?",
+          "",
+          "एक {place} के स्केल नक्शे में 1 इकाई = {scale} इकाइयाँ हैं। रास्ता नक्शे पर {distance} इकाई है। वास्तविक लंबाई कितनी है?",
+          "",
+          "{sequence} से मिले तीन मान {first}, {second} और {third} हैं। औसत कितना है?",
+          "एक {priceItem} की कीमत {price} क्रेडिट है। {percent}% छूट के बाद कीमत क्या होगी?",
+          "एक {place} में {count} {item} हैं, हर पैक में {perPack}। कुल कितने पैक हैं?"
+        ],
+        es: [
+          "En un {place} hay {start} {item}. Llegan {added} más y se usan {used}. ¿Cuántos quedan?",
+          "En un {place} hay {rows} filas con {count} {group} en cada una. ¿Cuántos hay en total?",
+          "Un {place} está lleno al {percent}%. Su capacidad es de {capacity} {measure}. ¿Cuántos se usan?",
+          "¿Qué número sigue en esta serie de {sequence}: {terms}, ...?",
+          "",
+          "El plano a escala de un {place} usa 1 unidad para representar {scale} unidades. Una ruta mide {distance} unidades en el plano. ¿Cuál es su longitud real?",
+          "",
+          "Los valores registrados para {sequence} son {first}, {second} y {third}. ¿Cuál es el promedio?",
+          "Un {priceItem} cuesta {price} créditos y tiene un descuento del {percent}%. ¿Cuál es el precio final?",
+          "Un {place} guarda {count} {item}, con {perPack} en cada paquete. ¿Cuántos paquetes hay?"
+        ],
+        fr: [
+          "Un {place} compte {start} {item}. Il en reçoit {added}, puis en utilise {used}. Combien en reste-t-il ?",
+          "Dans un {place}, il y a {rows} rangées de {count} {group}. Combien y en a-t-il au total ?",
+          "Un {place} est rempli à {percent} %. Sa capacité est de {capacity} {measure}. Combien sont utilisés ?",
+          "Quel nombre suit cette suite de {sequence} : {terms}, ... ?",
+          "",
+          "Le plan à l’échelle d’un {place} utilise 1 unité pour {scale} unités. Un itinéraire mesure {distance} unités sur le plan. Quelle est sa longueur réelle ?",
+          "",
+          "Les valeurs relevées pour {sequence} sont {first}, {second} et {third}. Quelle est la moyenne ?",
+          "Un {priceItem} coûte {price} crédits avec une remise de {percent} %. Quel est son prix après remise ?",
+          "Un {place} emballe {count} {item}, à raison de {perPack} par paquet. Combien y a-t-il de paquets ?"
+        ]
+      };
+      const categoryRateTemplates = {
+        "Science & Technology": {
+          en: "A data stream transfers {distance} MB in {hours} hours. What is its average rate in MB per hour?",
+          bn: "একটি ডেটা স্ট্রিম {hours} ঘণ্টায় {distance} MB পাঠায়। প্রতি ঘণ্টায় গড়ে কত MB পাঠায়?",
+          hi: "एक डेटा स्ट्रीम {hours} घंटे में {distance} MB भेजती है। प्रति घंटे औसत दर कितनी MB है?",
+          es: "Un flujo de datos transfiere {distance} MB en {hours} horas. ¿Cuál es su ritmo medio en MB por hora?",
+          fr: "Un flux de données transfère {distance} Mo en {hours} heures. Quel est son débit moyen en Mo par heure?"
+        },
+        "Pop Culture & Movies": {
+          en: "A playlist contains {distance} songs over {hours} hours. How many songs are played per hour on average?",
+          bn: "একটি প্লেলিস্টে {hours} ঘণ্টায় {distance}টি গান আছে। প্রতি ঘণ্টায় গড়ে কয়টি গান বাজে?",
+          hi: "एक प्लेलिस्ट में {hours} घंटे में {distance} गाने हैं। हर घंटे औसतन कितने गाने चलते हैं?",
+          es: "Una lista de reproducción tiene {distance} canciones en {hours} horas. ¿Cuántas suenan por hora en promedio?",
+          fr: "Une playlist contient {distance} chansons sur {hours} heures. Combien de chansons sont diffusées par heure en moyenne?"
+        },
+        "History & Geography": {
+          en: "A train covers {distance} kilometers in {hours} hours. What is its average speed in km/h?",
+          bn: "একটি ট্রেন {hours} ঘণ্টায় {distance} কিলোমিটার যায়। গড় গতি কত কিমি/ঘণ্টা?",
+          hi: "एक ट्रेन {hours} घंटे में {distance} किलोमीटर चलती है। औसत गति कितनी किमी/घंटा है?",
+          es: "Un tren recorre {distance} kilómetros en {hours} horas. ¿Cuál es su velocidad media en km/h?",
+          fr: "Un train parcourt {distance} kilomètres en {hours} heures. Quelle est sa vitesse moyenne en km/h?"
+        }
+      };
+
+      function makeGeneratedThemedQuestion(category, level, family, instance) {
+        const words = categoryQuestionWords[category];
+        if (!words) throw new RangeError(`No themed question data exists for ${category}.`);
+        const difficulty = 1 + Math.floor((level - 1) / 50);
+        const languages = ["en", "bn", "hi", "es", "fr"];
+        const n = (value, language) => formatNumber(value, language);
+        let answer;
+        let optionStep = Math.max(2, difficulty);
+        let values = {};
+        if (family === 0) {
+          const start = 10 + (instance % 90);
+          const added = 1 + Math.floor(instance / 90);
+          const used = 1 + (instance % Math.min(10, added));
+          answer = start + added - used;
+          values = { start, added, used };
+          optionStep = difficulty + 2;
+        } else if (family === 1) {
+          const rows = 2 + (instance % 24);
+          const count = 2 + Math.floor(instance / 24);
+          answer = rows * count;
+          values = { rows, count };
+          optionStep = Math.max(2, difficulty);
+        } else if (family === 2) {
+          const capacity = 100 + (instance % 250) * 20;
+          const percent = [10, 20, 25, 50][Math.floor(instance / 250)];
+          answer = capacity * percent / 100;
+          values = { capacity, percent };
+          optionStep = Math.max(2, difficulty * 2);
+        } else if (family === 3) {
+          const first = 2 + (instance % 100);
+          const step = 2 + Math.floor(instance / 100);
+          const terms = Array.from({ length: 5 }, (_, index) => first + step * index);
+          answer = first + step * 5;
+          values = { terms: terms.map((value) => n(value, "en")).join(", ") };
+          optionStep = step;
+        } else if (family === 4) {
+          const conversion = generalKnowledgeUnitConversions[Math.floor(instance / 100)];
+          const amount = 1 + (instance % 100);
+          answer = amount * conversion.factor;
+          values = { amount, conversion };
+          optionStep = Math.max(2, Math.floor(answer / 100) + difficulty);
+        } else if (family === 5) {
+          const scale = 1 + (instance % 40);
+          const distance = 1 + Math.floor(instance / 40);
+          answer = scale * distance;
+          values = { scale, distance };
+          optionStep = distance;
+        } else if (family === 6) {
+          const hours = 1 + (instance % 5);
+          const speed = 20 + Math.floor(instance / 5);
+          const distance = speed * hours;
+          answer = speed;
+          values = { hours, distance };
+          optionStep = difficulty + 2;
+        } else if (family === 7) {
+          const first = 1 + (instance % 70);
+          const gap = 1 + Math.floor(instance / 70);
+          values = { first, second: first + gap, third: first + gap * 2 };
+          answer = first + gap;
+          optionStep = Math.max(2, difficulty);
+        } else if (family === 8) {
+          const price = 20 + (instance % 100) * 20;
+          const percent = [10, 20, 25, 30, 40, 50, 60, 75, 80, 90][Math.floor(instance / 100)];
+          answer = price * (100 - percent) / 100;
+          values = { price, percent };
+          optionStep = Math.max(10, difficulty * 10);
+        } else if (family === 9) {
+          const packs = 2 + Math.floor((instance % 200) / 4);
+          const perPack = 2 + (instance % 4);
+          answer = packs;
+          values = { count: packs * perPack, perPack };
+          optionStep = 1;
+        } else {
+          throw new RangeError(`Unknown themed question family: ${family}`);
+        }
+        const question = Object.fromEntries(languages.map((language) => {
+          const localizedValues = {
+            ...Object.fromEntries(Object.entries(values).filter(([key]) => key !== "conversion")),
+            ...words[language]
+          };
+          if (family === 3) {
+            localizedValues.terms = Array.from({ length: 5 }, (_, index) =>
+              n(2 + (instance % 100) + (2 + Math.floor(instance / 100)) * index, language)
+            ).join(", ");
+          }
+          if (family === 4) {
+            const [from, to] = values.conversion.units[language];
+            return [language, unitConversionQuestionTemplates[language]
+              .replace("{amount}", n(values.amount, language))
+              .replace("{from}", from)
+              .replace("{to}", to)];
+          }
+          const template = family === 6
+            ? categoryRateTemplates[category][language]
+            : categoryQuestionTemplates[language][family];
+          return [language, template.replace(/\{([^}]+)\}/g, (_, key) => {
+            const value = localizedValues[key];
+            return Number.isFinite(value) ? n(value, language) : value ?? "";
+          })];
+        }));
+        const numericOptions = [answer, answer + optionStep, Math.max(0, answer - optionStep), answer + optionStep * 2];
+        for (let index = numericOptions.length - 1; index > 0; index -= 1) {
+          const swapIndex = randomIndex(index + 1);
+          [numericOptions[index], numericOptions[swapIndex]] = [numericOptions[swapIndex], numericOptions[index]];
+        }
+        const slug = category.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+        return {
+          id: `generated-${slug}-${family}-${instance}`,
+          question,
+          options: Object.fromEntries(languages.map((language) => [
+            language,
+            numericOptions.map((value) => formatNumber(value, language))
+          ])),
+          answer: numericOptions.indexOf(answer)
+        };
+      }
+
+      function makeGeneratedIQQuestion(level, family, instance) {
+        const difficulty = 1 + Math.floor((level - 1) / 40);
+        const languages = ["en", "bn", "hi", "es", "fr"];
+        const n = (value, language) => formatNumber(value, language);
+        let answer;
+        let step = Math.max(2, difficulty);
+        let promptByLanguage;
+        if (family === 0) {
+          const start = 1 + (instance % 90);
+          const jump = 1 + Math.floor(instance / 100) + difficulty;
+          const terms = Array.from({ length: 5 }, (_, i) => start + jump * i);
+          answer = start + jump * 5;
+          step = jump;
+          promptByLanguage = Object.fromEntries(languages.map((language) => [language, {
+            en: `What number comes next: ${terms.map((v) => n(v, "en")).join(", ")}, ...?`,
+            bn: `পরের সংখ্যাটি কত: ${terms.map((v) => n(v, "bn")).join(", ")}, ...?`,
+            hi: `अगली संख्या क्या है: ${terms.map((v) => n(v, "hi")).join(", ")}, ...?`,
+            es: `¿Qué número sigue: ${terms.map((v) => n(v, "es")).join(", ")}, ...?`,
+            fr: `Quel nombre suit : ${terms.map((v) => n(v, "fr")).join(", ")}, ... ?`
+          }[language]]));
+        } else if (family === 1) {
+          const factor = 2 + (instance % 4);
+          const start = 1 + Math.floor(instance / 4) % 15;
+          const terms = [start, start * factor, start * factor ** 2, start * factor ** 3];
+          answer = start * factor ** 4;
+          step = factor;
+          promptByLanguage = Object.fromEntries(languages.map((language) => [language, {
+            en: `Find the next number in this multiplying pattern: ${terms.map((v) => n(v, "en")).join(", ")}, ...`,
+            bn: `গুণের এই ধারার পরের সংখ্যাটি বের করুন: ${terms.map((v) => n(v, "bn")).join(", ")}, ...`,
+            hi: `गुणा वाले इस क्रम की अगली संख्या बताइए: ${terms.map((v) => n(v, "hi")).join(", ")}, ...`,
+            es: `¿Qué número sigue en este patrón de multiplicación: ${terms.map((v) => n(v, "es")).join(", ")}, ...?`,
+            fr: `Quel nombre suit ce motif de multiplication : ${terms.map((v) => n(v, "fr")).join(", ")}, ... ?`
+          }[language]]));
+        } else if (family === 2) {
+          const base = 2 + (instance % 35);
+          const terms = [base, base + 1, base + 2, base + 3].map((v) => v * v);
+          answer = (base + 4) ** 2;
+          step = 2 * base + 7;
+          promptByLanguage = Object.fromEntries(languages.map((language) => [language, {
+            en: `Which square number completes the pattern: ${terms.map((v) => n(v, "en")).join(", ")}, ...?`,
+            bn: `বর্গ সংখ্যার ধারাটি পূরণ করুন: ${terms.map((v) => n(v, "bn")).join(", ")}, ...?`,
+            hi: `वर्ग संख्याओं का क्रम पूरा करें: ${terms.map((v) => n(v, "hi")).join(", ")}, ...?`,
+            es: `Completa la serie de cuadrados: ${terms.map((v) => n(v, "es")).join(", ")}, ...?`,
+            fr: `Complétez la suite des carrés : ${terms.map((v) => n(v, "fr")).join(", ")}, ... ?`
+          }[language]]));
+        } else {
+          const start = 1 + (instance % 60);
+          const jump = 2 + (instance % 17) + difficulty;
+          let terms;
+          if (family === 3) {
+            const a = start;
+            const b = start + jump;
+            terms = [a, b, a + b, a + 2 * b, 2 * a + 3 * b];
+            answer = terms[3] + terms[4];
+            step = Math.max(2, b);
+          } else if (family === 4) {
+            const secondJump = jump + 1 + (instance % 5);
+            terms = [start, start + jump, start + jump + secondJump, start + 2 * jump + secondJump, start + 2 * jump + 2 * secondJump];
+            answer = start + 3 * jump + 2 * secondJump;
+            step = Math.max(jump, secondJump);
+          } else if (family === 5) {
+            const tri = (value) => value * (value + 1) / 2;
+            terms = [start, start + 1, start + 2, start + 3].map(tri);
+            answer = tri(start + 4);
+            step = start + 4;
+          } else if (family === 6) {
+            const add = 1 + (instance % 9);
+            terms = [start, start * 2 + add, (start * 2 + add) * 2 + add, ((start * 2 + add) * 2 + add) * 2 + add];
+            answer = terms[3] * 2 + add;
+            step = add;
+          } else if (family === 7) {
+            const increment = 1 + (instance % 14);
+            terms = [start, start + increment, start + increment * 3, start + increment * 6, start + increment * 10];
+            answer = start + increment * 15;
+            step = increment;
+          } else if (family === 8) {
+            const cubeBase = 1 + (instance % 18);
+            terms = [cubeBase, cubeBase + 1, cubeBase + 2, cubeBase + 3].map((v) => v ** 3);
+            answer = (cubeBase + 4) ** 3;
+            step = Math.max(3, 3 * (cubeBase + 4) ** 2);
+          } else {
+            const offset = 1 + (instance % 12);
+            terms = [start, start + offset, start + offset * 2, start + offset * 3, start + offset * 4];
+            answer = start + offset * 5;
+            step = offset;
+          }
+          const sequence = terms.map((value) => n(value, "en")).join(", ");
+          const localizedSequences = Object.fromEntries(languages.map((language) => [
+            language,
+            terms.map((value) => n(value, language)).join(", ")
+          ]));
+          promptByLanguage = Object.fromEntries(languages.map((language) => [language, {
+            en: `Solve the logic pattern: ${sequence}, ... What comes next?`,
+            bn: `যুক্তির ধারাটি সমাধান করুন: ${localizedSequences.bn}, ... পরের সংখ্যাটি কত?`,
+            hi: `तर्क का क्रम हल करें: ${localizedSequences.hi}, ... अगली संख्या क्या है?`,
+            es: `Resuelve el patrón lógico: ${localizedSequences.es}, ... ¿Qué sigue?`,
+            fr: `Résolvez le motif logique : ${localizedSequences.fr}, ... Quel nombre vient ensuite ?`
+          }[language]]));
+        }
+        const numericOptions = [answer, answer + step, Math.max(0, answer - step), answer + step * 2];
+        for (let index = numericOptions.length - 1; index > 0; index -= 1) {
+          const swapIndex = randomIndex(index + 1);
+          [numericOptions[index], numericOptions[swapIndex]] = [numericOptions[swapIndex], numericOptions[index]];
+        }
+        return {
+          id: `generated-iq-check-${family}-${instance}`,
+          question: promptByLanguage,
+          options: Object.fromEntries(languages.map((language) => [
+            language,
+            numericOptions.map((value) => formatNumber(value, language))
+          ])),
+          answer: numericOptions.indexOf(answer)
+        };
+      }
+
+      function makeGeneratedCategoryQuestion(category, level, family, instance) {
+        if (category === "General Knowledge") {
+          return makeGeneratedGeneralKnowledgeQuestion(level, family, instance);
+        }
+        if (category === "IQ Check") {
+          return makeGeneratedIQQuestion(level, family, instance);
+        }
+        return makeGeneratedThemedQuestion(category, level, family, instance);
+      }
+
+      // Every category has a separate 1,000-candidate pool per level. Ten
+      // localized questions are sampled without replacement, and IDs are
+      // tracked across retries/levels for the current browser session.
+      function getCategoryQuestionPool(category, level) {
+        if (!PROGRESSION_CATEGORIES.includes(category) ||
+            !Number.isInteger(level) || level < 1 || level > LEVELS_PER_CATEGORY) {
+          throw new RangeError(`Category level ${category} ${level} does not exist.`);
+        }
+        const candidates = [];
+        const variantsPerTemplate = category === "General Knowledge"
+          ? GENERAL_KNOWLEDGE_VARIANTS_PER_TEMPLATE
+          : CATEGORY_VARIANTS_PER_TEMPLATE;
+        const parameterSpace = category === "General Knowledge"
+          ? GENERAL_KNOWLEDGE_PARAMETER_SPACE
+          : CATEGORY_PARAMETER_SPACE;
+        for (let family = 0; family < CATEGORY_TEMPLATE_COUNT; family += 1) {
+          const variants = Array.from({ length: parameterSpace }, (_, index) => index);
+          // Partial Fisher–Yates samples without replacement and cannot loop
+          // forever if a browser's random source returns a repeated value.
+          for (let index = 0; index < variantsPerTemplate; index += 1) {
+            const swapIndex = index + randomIndex(parameterSpace - index);
+            [variants[index], variants[swapIndex]] = [variants[swapIndex], variants[index]];
+            const instance = variants[index];
+            const generated = makeGeneratedCategoryQuestion(category, level, family, instance);
+            generated.source = "generated";
+            candidates.push(concealQuestionAnswer(generated));
+          }
+        }
+        const slug = category.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+        (quizData[category] || []).forEach((bankItem, index) => {
+          const triviaItem = {
+            id: `trivia-${slug}-${index}`,
+            source: "trivia",
+            question: bankItem.question,
+            options: bankItem.options
+          };
+          candidates.push(storeConcealedAnswer(triviaItem, readConcealedAnswer(bankItem)));
+        });
+        return candidates;
       }
 
       // Select a shuffled round without replacement within this session.
       function selectRoundQuestionIndexes(category, level = 1) {
-        let indexes;
-        if (category === "General Knowledge") {
-          if (!generalKnowledgeLevels[level - 1]) {
-            throw new RangeError(`General Knowledge level ${level} does not exist.`);
-          }
-          const allPoolIndexes = Array.from(
-            { length: activeGeneralKnowledgePool.length },
-            (_, index) => index
-          );
-          indexes = allPoolIndexes.filter((index) =>
-            !sessionUsedQuestionIds.has(activeGeneralKnowledgePool[index].id)
-          );
-          const poolHasGeneratedQuestions = activeGeneralKnowledgePool.some((item) =>
-            item.id.startsWith("generated-gk-")
-          );
-          const generatedQuestionsRemain = indexes.some((index) =>
-            activeGeneralKnowledgePool[index].id.startsWith("generated-gk-")
-          );
-          if (indexes.length < QUESTIONS_PER_LEVEL || (poolHasGeneratedQuestions && !generatedQuestionsRemain)) {
-            // Start a new cycle for this level only after its candidate pool is used.
-            activeGeneralKnowledgePool.forEach((item) => sessionUsedQuestionIds.delete(item.id));
-            indexes = allPoolIndexes;
-          }
-        } else {
-          indexes = Array.from({ length: quizData[category].length }, (_, index) => index);
+        if (!categoryLevels[category]?.[level - 1]) {
+          throw new RangeError(`${category} level ${level} does not exist.`);
         }
-        for (let index = indexes.length - 1; index > 0; index -= 1) {
-          const swapIndex = randomIndex(index + 1);
-          [indexes[index], indexes[swapIndex]] = [indexes[swapIndex], indexes[index]];
+        const allPoolIndexes = Array.from(
+          { length: activeQuestionPool.length },
+          (_, index) => index
+        );
+        let indexes = allPoolIndexes.filter((index) =>
+          !sessionUsedQuestionIds.has(activeQuestionPool[index].id)
+        );
+        if (indexes.length < QUESTIONS_PER_LEVEL) {
+          // Start a new cycle only after this category's session pool is exhausted.
+          activeQuestionPool.forEach((item) => sessionUsedQuestionIds.delete(item.id));
+          indexes = allPoolIndexes;
         }
-        if (category === "General Knowledge") {
-          indexes = indexes.slice(0, QUESTIONS_PER_LEVEL);
-          // Early levels mix curated and generated content. Keep at least one
-          // session-specific generated question in every round for variety.
-          const hasGenerated = indexes.some((index) =>
-            activeGeneralKnowledgePool[index].id.startsWith("generated-gk-")
-          );
-          if (!hasGenerated) {
-            const chosen = new Set(indexes);
-            const replacement = allPoolIndexes.find((index) =>
-              activeGeneralKnowledgePool[index].id.startsWith("generated-gk-") &&
-              !sessionUsedQuestionIds.has(activeGeneralKnowledgePool[index].id) &&
-              !chosen.has(index)
-            );
-            if (replacement !== undefined) indexes[indexes.length - 1] = replacement;
+        const shuffle = (items) => {
+          for (let index = items.length - 1; index > 0; index -= 1) {
+            const swapIndex = randomIndex(index + 1);
+            [items[index], items[swapIndex]] = [items[swapIndex], items[index]];
           }
-          indexes.forEach((index) => sessionUsedQuestionIds.add(activeGeneralKnowledgePool[index].id));
-        } else if (category === "IQ Check") {
-          indexes = indexes.slice(0, Math.min(IQ_QUESTIONS_PER_ROUND, indexes.length));
+          return items;
+        };
+        const triviaIndexes = shuffle(indexes.filter((index) =>
+          activeQuestionPool[index].source === "trivia"
+        ));
+        const generatedIndexes = shuffle(indexes.filter((index) =>
+          activeQuestionPool[index].source !== "trivia"
+        ));
+        const triviaCount = Math.min(5, triviaIndexes.length);
+        const selectedIndexes = triviaIndexes.slice(0, triviaCount);
+        selectedIndexes.push(...generatedIndexes.slice(0, QUESTIONS_PER_LEVEL - selectedIndexes.length));
+        if (selectedIndexes.length < QUESTIONS_PER_LEVEL) {
+          const alreadySelected = new Set(selectedIndexes);
+          selectedIndexes.push(...shuffle(indexes.filter((index) => !alreadySelected.has(index)))
+            .slice(0, QUESTIONS_PER_LEVEL - selectedIndexes.length));
         }
+        indexes = shuffle(selectedIndexes);
+        indexes.forEach((index) => sessionUsedQuestionIds.add(activeQuestionPool[index].id));
         return indexes;
       }
 
-      function renderLevelMap() {
+      function renderLevelMap(category = currentCategory) {
+        if (!PROGRESSION_CATEGORIES.includes(category)) category = "General Knowledge";
+        currentCategory = category;
+        const levels = categoryLevels[category];
+        const unlockedLevel = unlockedLevelFor(category);
         const grid = document.getElementById("levelGrid");
         grid.replaceChildren();
         grid.setAttribute("aria-label", currentText.levelSelectTitle);
         document.getElementById("levelEyebrow").textContent =
-          `${categoryName("General Knowledge")} · ${currentText.levelSelectTitle}`;
+          `${categoryName(category)} · ${currentText.levelSelectTitle}`;
         document.getElementById("levelCountLabel").textContent = currentText.levelProgress
-          .replace("{unlocked}", formatNumber(unlockedGeneralKnowledgeLevel))
-          .replace("{total}", formatNumber(generalKnowledgeLevels.length));
-        const pageCount = Math.ceil(generalKnowledgeLevels.length / LEVELS_PER_PAGE);
+          .replace("{unlocked}", formatNumber(unlockedLevel))
+          .replace("{total}", formatNumber(levels.length));
+        const pageCount = Math.ceil(levels.length / LEVELS_PER_PAGE);
         currentLevelPage = Math.min(Math.max(0, currentLevelPage), pageCount - 1);
         const pageStart = currentLevelPage * LEVELS_PER_PAGE;
         document.getElementById("levelPageLabel").textContent = currentText.levelPageStatus
@@ -3325,9 +4578,9 @@
           .replace("{pages}", formatNumber(pageCount));
         document.getElementById("levelPreviousButton").disabled = currentLevelPage === 0;
         document.getElementById("levelNextButton").disabled = currentLevelPage >= pageCount - 1;
-        generalKnowledgeLevels.slice(pageStart, pageStart + LEVELS_PER_PAGE).forEach(({ level }) => {
-          const isCompleted = level < unlockedGeneralKnowledgeLevel;
-          const isUnlocked = level <= unlockedGeneralKnowledgeLevel;
+        levels.slice(pageStart, pageStart + LEVELS_PER_PAGE).forEach(({ level }) => {
+          const isCompleted = level < unlockedLevel;
+          const isUnlocked = level <= unlockedLevel;
           const stateLabel = isCompleted
             ? currentText.levelComplete
             : isUnlocked
@@ -3355,7 +4608,7 @@
           indicator.textContent = isUnlocked ? "⭐" : "🔒";
           status.append(indicator, document.createTextNode(stateLabel));
           card.append(number, name, details, status);
-          card.addEventListener("click", () => startQuiz("General Knowledge", level));
+          card.addEventListener("click", () => startQuiz(category, level));
           grid.append(card);
         });
       }
@@ -3367,24 +4620,24 @@
         Object.values(views).forEach((view) => view.classList.remove("active"));
         views[name].classList.add("active");
         if (rewardGroup) rewardGroup.visible = name === "results";
+        if (name === "welcome") renderHomeHub();
         window.scrollTo({ top: 0, behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
       }
 
       function startQuiz(category, level = 1) {
-        if (category === "General Knowledge" &&
-            (!Number.isInteger(level) || level < 1 || level > unlockedGeneralKnowledgeLevel)) {
-          renderLevelMap();
+        if (!PROGRESSION_CATEGORIES.includes(category)) return;
+        if (!Number.isInteger(level) || level < 1 || level > unlockedLevelFor(category)) {
+          renderLevelMap(category);
           showView("levels");
           return;
         }
         stopQuestionTimer();
         setGameModeTheme(category);
         currentCategory = category;
-        currentLevel = category === "General Knowledge" ? level : 0;
-        activeGeneralKnowledgePool = category === "General Knowledge"
-          ? getGeneralKnowledgeQuestionPool(currentLevel)
-          : [];
-        roundQuestionIndexes = selectRoundQuestionIndexes(category, currentLevel || 1);
+        currentLevel = level;
+        saveLastPlayed(category, level);
+        activeQuestionPool = getCategoryQuestionPool(category, currentLevel);
+        roundQuestionIndexes = selectRoundQuestionIndexes(category, currentLevel);
         answeredQuestionIndexes = new Set();
         currentQuestion = 0;
         score = 0;
@@ -3394,6 +4647,7 @@
         lastPointsAwarded = 0;
         lastSpeedBonus = 0;
         lastAnswerTimedOut = false;
+        lastAnswerInterrupted = false;
         answerTimes = [];
         rewardCelebrationAt = 0;
         levelJustUnlocked = false;
@@ -3417,6 +4671,7 @@
           answered = false;
           lastSelected = null;
           lastAnswerTimedOut = false;
+          lastAnswerInterrupted = false;
         }
         if (!preserveAnswer) {
           questionStartedAt = performance.now();
@@ -3460,7 +4715,7 @@
 
       function renderAnswerState() {
         const item = roundQuestions()[currentQuestion];
-        const correctAnswer = item.answer;
+        const correctAnswer = readConcealedAnswer(item);
         const buttons = [...optionsElement.querySelectorAll(".option")];
         buttons.forEach((button, buttonIndex) => {
           button.disabled = true;
@@ -3483,8 +4738,13 @@
               .replace("{points}", formatNumber(-lastPointsAwarded))
               .replace("{answer}", item.options[correctAnswer])
             : currentText.incorrectFeedback.replace("{answer}", item.options[correctAnswer]);
-          feedback.textContent = lastAnswerTimedOut
-            ? `${currentText.iqTimerExpired} ${incorrectMessage}`
+          const submissionReason = lastAnswerInterrupted
+            ? currentText.focusSwitchPenalty
+            : lastAnswerTimedOut
+              ? currentText.iqTimerExpired
+              : "";
+          feedback.textContent = submissionReason
+            ? `${submissionReason} ${incorrectMessage}`
             : incorrectMessage;
         }
         updateScoreDisplay();
@@ -3494,9 +4754,9 @@
         setNextButtonLabel(currentQuestion === roundLength() - 1 ? currentText.seeScore : currentText.nextQuestion);
       }
 
-      function selectAnswer(index, timedOut = false) {
+      function selectAnswer(index, timedOut = false, interrupted = false) {
         if (answered) return;
-        if (!timedOut && questionDeadline && performance.now() >= questionDeadline) {
+        if (!timedOut && !interrupted && questionDeadline && performance.now() >= questionDeadline) {
           clearQuestionTimer();
           playTimerCue(true);
           selectAnswer(-1, true);
@@ -3507,10 +4767,11 @@
         answeredQuestionIndexes.add(questionIndex);
         const selectedOption = index >= 0 ? optionsElement.querySelectorAll(".option")[index] : null;
         lastSelected = index;
-        const correctAnswer = roundQuestions()[currentQuestion].answer;
+        const correctAnswer = readConcealedAnswer(roundQuestions()[currentQuestion]);
         const isCorrect = index === correctAnswer;
         answered = true;
         lastAnswerTimedOut = timedOut;
+        lastAnswerInterrupted = interrupted;
         const elapsedSeconds = Math.max(0, (performance.now() - questionStartedAt) / 1000);
         answerTimes.push(elapsedSeconds);
         stopQuestionTimer();
@@ -3543,6 +4804,31 @@
           quizCardElement.classList.add("penalty-screen");
         }
       }
+
+      function submitQuestionOnFocusLoss() {
+        if (!views.game.classList.contains("active") || answered) return;
+        selectAnswer(-1, false, true);
+      }
+
+      document.addEventListener("visibilitychange", () => {
+        if (document.visibilityState === "hidden") submitQuestionOnFocusLoss();
+      });
+      window.addEventListener("blur", () => {
+        if (!views.game.classList.contains("active") || answered) return;
+        window.clearTimeout(focusLossGraceTimeout);
+        focusLossGraceTimeout = window.setTimeout(() => {
+          focusLossGraceTimeout = null;
+          if (document.visibilityState !== "hidden" && !document.hasFocus()) {
+            submitQuestionOnFocusLoss();
+          }
+        }, 400);
+      });
+      window.addEventListener("focus", () => {
+        if (focusLossGraceTimeout !== null) {
+          window.clearTimeout(focusLossGraceTimeout);
+          focusLossGraceTimeout = null;
+        }
+      });
 
       function getAchievementBadges(accuracy, averageAnswerSeconds) {
         const isIQRun = currentCategory === "IQ Check";
@@ -3683,36 +4969,64 @@
         document.getElementById("dashboardIQAttempts").textContent = currentText.dashboardIQAttempts
           .replace("{count}", formatNumber(rewardCollection.iqRuns));
 
-        const completedLevels = Math.min(
-          generalKnowledgeLevels.length,
-          Math.max(rewardCollection.gkCompletedLevels, unlockedGeneralKnowledgeLevel - 1)
-        );
-        const generalKnowledgeAnswers = rewardCollection.gkCorrect + rewardCollection.gkIncorrect;
-        const generalKnowledgeAccuracy = generalKnowledgeAnswers
-          ? Math.round((rewardCollection.gkCorrect / generalKnowledgeAnswers) * 100)
-          : null;
-        document.getElementById("dashboardGKTitle").textContent = currentText.dashboardGKTitle;
-        document.getElementById("dashboardLevelsCompleted").textContent = currentText.dashboardLevelsCompleted
-          .replace("{completed}", formatNumber(completedLevels))
-          .replace("{total}", formatNumber(generalKnowledgeLevels.length));
-        const progressTrack = document.getElementById("dashboardGKProgress");
-        progressTrack.setAttribute("aria-valuemax", String(generalKnowledgeLevels.length));
-        progressTrack.setAttribute("aria-valuenow", String(completedLevels));
-        progressTrack.setAttribute("aria-label", currentText.dashboardGKTitle);
-        document.getElementById("dashboardGKProgressFill").style.width =
-          `${(completedLevels / generalKnowledgeLevels.length) * 100}%`;
-        document.getElementById("dashboardAccuracyLabel").textContent = currentText.accuracy;
-        document.getElementById("dashboardCorrectLabel").textContent = currentText.correct;
-        document.getElementById("dashboardIncorrectLabel").textContent = currentText.incorrectAnswers;
-        document.getElementById("dashboardGKAccuracy").textContent = generalKnowledgeAccuracy === null
-          ? "—"
-          : `${formatNumber(generalKnowledgeAccuracy)}%`;
-        document.getElementById("dashboardGKCorrect").textContent = formatNumber(rewardCollection.gkCorrect);
-        document.getElementById("dashboardGKIncorrect").textContent = formatNumber(rewardCollection.gkIncorrect);
-        document.getElementById("dashboardGKRounds").textContent = currentText.dashboardGKRounds
-          .replace("{count}", formatNumber(rewardCollection.gkRuns));
-        document.getElementById("dashboardNoGKData").textContent = currentText.dashboardNoGKData;
-        document.getElementById("dashboardNoGKData").hidden = rewardCollection.gkRuns > 0;
+        document.getElementById("dashboardCategoryProgressTitle").textContent =
+          currentText.dashboardCategoryProgressTitle;
+        const categoryProgressGrid = document.getElementById("dashboardCategoryProgressGrid");
+        categoryProgressGrid.replaceChildren();
+        PROGRESSION_CATEGORIES.forEach((category) => {
+          const stats = rewardCollection.categoryStats[category] || {
+            runs: 0, correct: 0, incorrect: 0, completedLevels: 0
+          };
+          const totalAnswers = stats.correct + stats.incorrect;
+          const accuracy = totalAnswers ? Math.round((stats.correct / totalAnswers) * 100) : null;
+          const totalLevels = categoryLevels[category].length;
+          const completedLevels = Math.min(
+            totalLevels,
+            Math.max(stats.completedLevels, unlockedLevelFor(category) - 1)
+          );
+          const card = document.createElement("section");
+          card.className = "category-progress-item";
+          const title = document.createElement("h4");
+          title.textContent = categoryName(category);
+          const levelCount = document.createElement("div");
+          levelCount.className = "analytics-level-count";
+          levelCount.textContent = currentText.dashboardLevelsCompleted
+            .replace("{completed}", formatNumber(completedLevels))
+            .replace("{total}", formatNumber(totalLevels));
+          const track = document.createElement("div");
+          track.className = "analytics-progress-track";
+          track.setAttribute("role", "progressbar");
+          track.setAttribute("aria-valuemin", "0");
+          track.setAttribute("aria-valuemax", String(totalLevels));
+          track.setAttribute("aria-valuenow", String(completedLevels));
+          track.setAttribute("aria-label", `${categoryName(category)} · ${currentText.dashboardCategoryProgressTitle}`);
+          const fill = document.createElement("div");
+          fill.className = "analytics-progress-fill";
+          fill.style.width = `${(completedLevels / totalLevels) * 100}%`;
+          track.append(fill);
+          const metrics = document.createElement("div");
+          metrics.className = "analytics-metrics";
+          [
+            [currentText.accuracy, accuracy === null ? "—" : `${formatNumber(accuracy)}%`],
+            [currentText.correct, formatNumber(stats.correct)],
+            [currentText.incorrectAnswers, formatNumber(stats.incorrect)]
+          ].forEach(([label, value]) => {
+            const metric = document.createElement("div");
+            metric.className = "analytics-metric";
+            const metricLabel = document.createElement("span");
+            metricLabel.textContent = label;
+            const metricValue = document.createElement("strong");
+            metricValue.textContent = value;
+            metric.append(metricLabel, metricValue);
+            metrics.append(metric);
+          });
+          const rounds = document.createElement("p");
+          rounds.className = "analytics-rounds";
+          rounds.textContent = currentText.dashboardCategoryRounds
+            .replace("{count}", formatNumber(stats.runs));
+          card.append(title, levelCount, track, metrics, rounds);
+          categoryProgressGrid.append(card);
+        });
 
         const trophyGallery = document.getElementById("trophyGallery");
         trophyGallery.replaceChildren();
@@ -3807,7 +5121,7 @@
               ? currentText.iqRatingSolver
               : currentText.iqRatingStarter;
         }
-        const isLevelRun = currentCategory === "General Knowledge";
+        const isLevelRun = PROGRESSION_CATEGORIES.includes(currentCategory);
         const resultLevel = document.getElementById("resultLevel");
         resultLevel.hidden = !isLevelRun;
         if (isLevelRun) {
@@ -3825,7 +5139,7 @@
           levelUnlockNotice.textContent = currentText.allLevelsComplete;
         }
         const nextLevelButton = document.getElementById("nextLevelButton");
-        nextLevelButton.hidden = !isLevelRun || currentLevel >= unlockedGeneralKnowledgeLevel;
+        nextLevelButton.hidden = !isLevelRun || currentLevel >= unlockedLevelFor(currentCategory);
         document.getElementById("nextLevelLabel").textContent = currentText.nextLevel;
         const replayLabel = isLevelRun ? currentText.retryLevel : currentText.playAgain;
         document.getElementById("playAgainButton").firstChild.nodeValue = `${replayLabel} `;
@@ -3854,18 +5168,18 @@
         levelJustUnlocked = false;
         levelFailed = false;
         allLevelsComplete = false;
-        if (currentCategory === "General Knowledge" &&
-            currentLevel === unlockedGeneralKnowledgeLevel) {
+        const currentUnlockedLevel = unlockedLevelFor(currentCategory);
+        if (currentLevel === currentUnlockedLevel) {
           const requiredCorrect = Math.ceil(roundLength() * LEVEL_PASSING_ACCURACY);
           if (score >= requiredCorrect) {
-            if (currentLevel < generalKnowledgeLevels.length) {
-              unlockedGeneralKnowledgeLevel = currentLevel + 1;
-              saveUnlockedGeneralKnowledgeLevel(unlockedGeneralKnowledgeLevel);
-              currentLevelPage = Math.floor((unlockedGeneralKnowledgeLevel - 1) / LEVELS_PER_PAGE);
+            if (currentLevel < categoryLevels[currentCategory].length) {
+              unlockedLevelsByCategory[currentCategory] = currentLevel + 1;
+              saveUnlockedLevel(currentCategory, unlockedLevelsByCategory[currentCategory]);
+              currentLevelPage = Math.floor((unlockedLevelFor(currentCategory) - 1) / LEVELS_PER_PAGE);
               levelJustUnlocked = true;
             } else {
               allLevelsComplete = true;
-              saveUnlockedGeneralKnowledgeLevel(currentLevel);
+              saveUnlockedLevel(currentCategory, currentLevel);
             }
           } else {
             levelFailed = true;
@@ -3874,6 +5188,20 @@
         rewardCelebrationAt = performance.now();
         const { tier, unlockedBadges, estimatedIQ } = renderResults();
         const isIQRun = currentCategory === "IQ Check";
+        const categoryStats = { ...rewardCollection.categoryStats };
+        const previousCategoryStats = categoryStats[currentCategory] || {
+          runs: 0, correct: 0, incorrect: 0, completedLevels: 0
+        };
+        categoryStats[currentCategory] = {
+          runs: previousCategoryStats.runs + 1,
+          correct: previousCategoryStats.correct + score,
+          incorrect: previousCategoryStats.incorrect + roundLength() - score,
+          completedLevels: Math.max(
+            previousCategoryStats.completedLevels,
+            unlockedLevelFor(currentCategory) - 1,
+            levelJustUnlocked || allLevelsComplete ? currentLevel : 0
+          )
+        };
         const trophyRecords = [
           ...rewardCollection.trophyRecords,
           { tier, mode: currentCategory }
@@ -3887,22 +5215,22 @@
           bestPoints: Math.max(rewardCollection.bestPoints, points),
           bestStreak: Math.max(rewardCollection.bestStreak, bestStreak),
           trophyRecords,
-          gkRuns: rewardCollection.gkRuns + (isIQRun ? 0 : 1),
-          gkCorrect: rewardCollection.gkCorrect + (isIQRun ? 0 : score),
-          gkIncorrect: rewardCollection.gkIncorrect + (isIQRun ? 0 : roundLength() - score),
-          gkCompletedLevels: isIQRun
-            ? rewardCollection.gkCompletedLevels
-            : Math.max(
-                rewardCollection.gkCompletedLevels,
-                unlockedGeneralKnowledgeLevel - 1,
-                levelJustUnlocked || allLevelsComplete ? currentLevel : 0
-              ),
+          categoryStats,
+          gkRuns: rewardCollection.gkRuns + (currentCategory === "General Knowledge" ? 1 : 0),
+          gkCorrect: rewardCollection.gkCorrect + (currentCategory === "General Knowledge" ? score : 0),
+          gkIncorrect: rewardCollection.gkIncorrect +
+            (currentCategory === "General Knowledge" ? roundLength() - score : 0),
+          gkCompletedLevels: Math.max(
+            rewardCollection.gkCompletedLevels,
+            categoryStats["General Knowledge"].completedLevels
+          ),
           iqRuns: rewardCollection.iqRuns + (isIQRun ? 1 : 0),
           iqCorrect: rewardCollection.iqCorrect + (isIQRun ? score : 0),
           iqIncorrect: rewardCollection.iqIncorrect + (isIQRun ? roundLength() - score : 0),
           iqLatestEstimate: isIQRun ? estimatedIQ : rewardCollection.iqLatestEstimate
         };
         saveRewardCollection(rewardCollection);
+        renderHomeHub();
         renderRewardCollection();
         renderRewardsDashboard();
         showView("results");
@@ -3911,6 +5239,97 @@
       const categoryButtons = [...document.querySelectorAll(".category")];
       const startGameButton = document.getElementById("startGameButton");
       const startHint = document.getElementById("startHint");
+      const continueJourneyButton = document.getElementById("continueJourneyButton");
+      const continueJourneyTarget = document.getElementById("continueJourneyTarget");
+      const orbitLabel = document.getElementById("orbitLabel");
+      let heroTaglineIndex = 0;
+      let heroTaglineSwapTimeout = null;
+      function renderStartHint() {
+        const selectionMessage = selectedCategory
+          ? currentText.selectedHint.replace("{category}", categoryName(selectedCategory))
+          : currentText.startHint;
+        startHint.textContent = progressStateTampered
+          ? `${currentText.progressIntegrityNotice} ${selectionMessage}`
+          : selectionMessage;
+      }
+      function renderHeroTagline() {
+        if (heroTaglineSwapTimeout !== null) {
+          window.clearTimeout(heroTaglineSwapTimeout);
+          heroTaglineSwapTimeout = null;
+        }
+        heroTaglineIndex = 0;
+        orbitLabel.classList.remove("is-changing");
+        orbitLabel.textContent = currentText.heroTaglines[heroTaglineIndex];
+      }
+      function rotateHeroTagline() {
+        if (!views.welcome.classList.contains("active")) return;
+        const lines = currentText.heroTaglines;
+        if (!lines?.length) return;
+        const replaceLine = () => {
+          heroTaglineIndex = (heroTaglineIndex + 1) % lines.length;
+          orbitLabel.textContent = lines[heroTaglineIndex];
+          orbitLabel.classList.remove("is-changing");
+          heroTaglineSwapTimeout = null;
+        };
+        if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+          replaceLine();
+          return;
+        }
+        orbitLabel.classList.add("is-changing");
+        heroTaglineSwapTimeout = window.setTimeout(replaceLine, 180);
+      }
+      function renderHomeHub() {
+        categoryButtons.forEach((button) => {
+          const category = button.dataset.category;
+          const totalLevels = categoryLevels[category].length;
+          const stats = rewardCollection.categoryStats[category] || {
+            runs: 0, correct: 0, incorrect: 0, completedLevels: 0
+          };
+          const completedLevels = Math.min(
+            totalLevels,
+            Math.max(stats.completedLevels || 0, unlockedLevelFor(category) - 1)
+          );
+          const progressPercent = Math.round((completedLevels / totalLevels) * 1000) / 10;
+          const progressText = currentText.categoryProgress.replace(
+            "{percent}",
+            formatNumber(progressPercent)
+          );
+          const unlockedLevel = unlockedLevelFor(category);
+          const unlockText = completedLevels >= totalLevels
+            ? currentText.categoryCompleteStatus
+            : currentText.categoryUnlockedStatus.replace("{level}", formatNumber(unlockedLevel));
+          button.querySelector("[data-category-progress]").textContent = progressText;
+          button.querySelector("[data-category-difficulty]").textContent =
+            currentText.categoryDifficulty[category];
+          button.querySelector("[data-category-progress-fill]").style.width =
+            `${progressPercent}%`;
+          button.querySelector("[data-category-unlock]").textContent = unlockText;
+          button.dataset.progressPercent = String(progressPercent);
+          button.dataset.unlockedLevel = String(unlockedLevel);
+          button.setAttribute(
+            "aria-label",
+            `${categoryName(category)}. ${currentText.categoryDescriptions[category]}. ` +
+            `${currentText.categoryDifficulty[category]}. ${progressText}. ${unlockText}.`
+          );
+        });
+        const target = lastPlayed &&
+          PROGRESSION_CATEGORIES.includes(lastPlayed.category) &&
+          Number.isInteger(lastPlayed.level) &&
+          lastPlayed.level <= unlockedLevelFor(lastPlayed.category)
+          ? lastPlayed
+          : null;
+        continueJourneyButton.hidden = !target;
+        if (target) {
+          const targetText = currentText.continueJourneyTarget
+            .replace("{category}", categoryName(target.category))
+            .replace("{level}", formatNumber(target.level));
+          continueJourneyTarget.textContent = targetText;
+          continueJourneyButton.setAttribute(
+            "aria-label",
+            `${currentText.continueJourney}: ${targetText}`
+          );
+        }
+      }
       categoryButtons.forEach((button) => {
         const isSelected = button.dataset.category === selectedCategory;
         button.classList.toggle("selected", isSelected);
@@ -3927,6 +5346,12 @@
         updateSoundToggle();
         document.title = currentText.pageTitle;
         document.getElementById("metaDescription").content = currentText.metaDescription;
+        const loadingScreen = document.getElementById("loadingScreen");
+        if (loadingScreen) {
+          loadingScreen.setAttribute("aria-label", currentText.loadingScreenLabel);
+          const loadingLabel = document.getElementById("loadingLabel");
+          if (loadingLabel) loadingLabel.textContent = currentText.loadingLabel;
+        }
         try {
           localStorage.setItem("quiz-orbit-language", currentLanguage);
         } catch {
@@ -3937,6 +5362,12 @@
           topNoteText: "topNote",
           welcomeEyebrow: "welcomeEyebrow",
           welcomeDescription: "welcomeDescription",
+          continueJourneyLabel: "continueJourney",
+          heroStatsTitle: "heroStatsTitle",
+          heroStatCategoriesLabel: "heroStatCategories",
+          heroStatLevelsLabel: "heroStatLevels",
+          heroStatFocusLabel: "heroStatFocus",
+          heroStatActiveValue: "heroStatActive",
           orbitLabel: "orbitLabel",
           categoryHeading: "categoryHeading",
           categoryHeadingHint: "categoryHeadingHint",
@@ -3946,12 +5377,9 @@
           rewardsDialogDescription: "rewardsDashboardDescription",
           dashboardIQTitle: "iqEstimateLabel",
           dashboardIQFootnote: "iqDisclaimer",
-          dashboardGKTitle: "dashboardGKTitle",
+          dashboardCategoryProgressTitle: "dashboardCategoryProgressTitle",
           dashboardTrophyTitle: "dashboardTrophyGallery",
           dashboardBadgeTitle: "dashboardBadgeGallery",
-          dashboardAccuracyLabel: "accuracy",
-          dashboardCorrectLabel: "correct",
-          dashboardIncorrectLabel: "incorrectAnswers",
           levelTitle: "levelSelectTitle",
           levelDescription: "levelSelectDescription",
           levelBackLabel: "levelBack",
@@ -3986,12 +5414,16 @@
         Object.entries(textById).forEach(([id, key]) => {
           const value = id === "totalQuestionsLabel"
             ? currentText[key]
-              .replace("{count}", formatNumber(generalKnowledgeQuestionCount))
-              .replace("{levels}", formatNumber(generalKnowledgeLevels.length))
-              .replace("{iqCount}", formatNumber(quizData["IQ Check"].length))
+              .replace("{count}", formatNumber(CATEGORY_QUESTION_COUNT))
+              .replace("{levels}", formatNumber(LEVELS_PER_CATEGORY))
             : currentText[key];
           document.getElementById(id).textContent = value;
         });
+        document.getElementById("heroStatCategoriesValue").textContent =
+          formatNumber(PROGRESSION_CATEGORIES.length);
+        document.getElementById("heroStatLevelsValue").textContent =
+          `${formatNumber(LEVELS_PER_CATEGORY * PROGRESSION_CATEGORIES.length)}+`;
+        document.getElementById("heroStatsTicker").setAttribute("aria-label", currentText.heroStatsGroup);
         document.getElementById("welcomeTitle").innerHTML = currentText.welcomeTitle;
         document.getElementById("brandHome").setAttribute("aria-label", currentText.brandHome);
         document.getElementById("categoryGrid").setAttribute("aria-label", currentText.categoryGroup);
@@ -4001,16 +5433,16 @@
         document.getElementById("levelGrid").setAttribute("aria-label", currentText.levelSelectTitle);
         document.getElementById("closeRewardsButton").setAttribute("aria-label", currentText.closeRewards);
         optionsElement.setAttribute("aria-label", currentText.answerOptions);
-        const replayLabel = currentCategory === "General Knowledge" ? currentText.retryLevel : currentText.playAgain;
+        const replayLabel = currentText.retryLevel;
         document.getElementById("playAgainButton").firstChild.nodeValue = `${replayLabel} `;
         categoryButtons.forEach((button) => {
           const category = button.dataset.category;
           button.querySelector("[data-category-title]").textContent = categoryName(category);
           button.querySelector("[data-category-detail]").textContent = currentText.categoryDescriptions[category];
         });
-        startHint.textContent = selectedCategory
-          ? currentText.selectedHint.replace("{category}", categoryName(selectedCategory))
-          : currentText.startHint;
+        renderStartHint();
+        renderHeroTagline();
+        renderHomeHub();
         renderRewardCollection();
         renderRewardsDashboard();
 
@@ -4068,20 +5500,33 @@
             categoryButton.setAttribute("aria-pressed", String(isSelected));
           });
           startGameButton.disabled = false;
-          startHint.textContent = currentText.selectedHint.replace("{category}", categoryName(selectedCategory));
+          renderStartHint();
+          renderHomeHub();
         });
+      });
+      continueJourneyButton.addEventListener("click", () => {
+        const target = readLastPlayed();
+        if (!target) {
+          lastPlayed = null;
+          renderHomeHub();
+          return;
+        }
+        selectedCategory = target.category;
+        categoryButtons.forEach((button) => {
+          const isSelected = button.dataset.category === selectedCategory;
+          button.classList.toggle("selected", isSelected);
+          button.setAttribute("aria-pressed", String(isSelected));
+        });
+        renderStartHint();
+        startQuiz(target.category, target.level);
       });
       startGameButton.addEventListener("click", () => {
         if (selectedCategory) {
           setGameModeTheme(selectedCategory);
-          if (selectedCategory === "General Knowledge") {
-            sessionUsedQuestionIds.clear();
-            currentLevelPage = Math.floor((unlockedGeneralKnowledgeLevel - 1) / LEVELS_PER_PAGE);
-            renderLevelMap();
-            showView("levels");
-          } else {
-            startQuiz(selectedCategory);
-          }
+          currentCategory = selectedCategory;
+          currentLevelPage = Math.floor((unlockedLevelFor(selectedCategory) - 1) / LEVELS_PER_PAGE);
+          renderLevelMap(selectedCategory);
+          showView("levels");
         }
       });
       nextButton.addEventListener("click", () => {
@@ -4106,15 +5551,15 @@
         }
       });
       document.getElementById("levelNextButton").addEventListener("click", () => {
-        const pageCount = Math.ceil(generalKnowledgeLevels.length / LEVELS_PER_PAGE);
+        const pageCount = Math.ceil(categoryLevels[currentCategory].length / LEVELS_PER_PAGE);
         if (currentLevelPage < pageCount - 1) {
           currentLevelPage += 1;
           renderLevelMap();
         }
       });
       document.getElementById("nextLevelButton").addEventListener("click", () => {
-        if (currentCategory === "General Knowledge" && currentLevel < unlockedGeneralKnowledgeLevel) {
-          startQuiz("General Knowledge", currentLevel + 1);
+        if (currentLevel < unlockedLevelFor(currentCategory)) {
+          startQuiz(currentCategory, currentLevel + 1);
         }
       });
       document.getElementById("playAgainButton").addEventListener("click", () => startQuiz(currentCategory, currentLevel || 1));
@@ -4131,6 +5576,7 @@
         }
       });
       setLanguage(currentLanguage);
+      window.setInterval(rotateHeroTagline, 4600);
 
       // A small, low-cost procedural orbit scene; the quiz remains usable if WebGL is unavailable.
       const sceneRoot = document.getElementById("scene");
@@ -4489,6 +5935,144 @@
         cyberRing.rotation.set(.42, .18, .2);
         cyberEnvironment.add(cyberRing);
 
+        // Lightweight mode-specific scenes use only procedural geometry.
+        // Each group cross-fades with the lobby and other themes via its own
+        // blend value, so category changes never hard-cut the 3D canvas.
+        const scienceEnvironment = new THREE.Group();
+        scene.add(scienceEnvironment);
+        const scienceMaterials = [];
+        const scienceAtoms = [];
+        const scienceAtomSpecs = [
+          [-1.45, .5, -3.5, .35, 0x48f0ca], [-.35, 1.15, -3.8, .24, 0x62bdff],
+          [.75, .48, -3.35, .32, 0x91e66f], [1.48, 1.14, -3.8, .22, 0x55d8ff],
+          [-.4, -.45, -3.4, .26, 0xb98bff], [.75, -.52, -3.8, .22, 0xffd36f],
+          [2.05, -.2, -4.6, .44, 0x40c8da], [-2.35, -1.1, -5.1, .54, 0x4d9bdb]
+        ];
+        const scienceBondMaterial = registerThemeMaterial(new THREE.LineBasicMaterial({
+          color: 0x84f4da, transparent: true, opacity: .55
+        }), scienceMaterials);
+        scienceAtomSpecs.forEach(([x, y, z, radius, color], index) => {
+          const material = registerThemeMaterial(new THREE.MeshStandardMaterial({
+            color, emissive: color, emissiveIntensity: .42, roughness: .28, metalness: .16,
+            transparent: true, opacity: .9
+          }), scienceMaterials);
+          const atom = new THREE.Mesh(new THREE.SphereGeometry(radius, 18, 14), material);
+          atom.position.set(x, y, z);
+          atom.userData = { phase: index * .75, baseY: y };
+          scienceEnvironment.add(atom);
+          scienceAtoms.push(atom);
+        });
+        scienceAtomSpecs.slice(0, 6).forEach(([x, y, z], index) => {
+          const next = scienceAtomSpecs[(index + 1) % 6];
+          const bondGeometry = new THREE.BufferGeometry().setFromPoints([
+            new THREE.Vector3(x, y, z),
+            new THREE.Vector3(next[0], next[1], next[2])
+          ]);
+          scienceEnvironment.add(new THREE.Line(bondGeometry, scienceBondMaterial));
+        });
+        const scienceOrbitMaterial = registerThemeMaterial(new THREE.MeshBasicMaterial({
+          color: 0x50edcb, transparent: true, opacity: .48
+        }), scienceMaterials);
+        const scienceOrbit = new THREE.Mesh(new THREE.TorusGeometry(2.15, .018, 8, 88), scienceOrbitMaterial);
+        scienceOrbit.rotation.set(.95, .2, -.3);
+        scienceEnvironment.add(scienceOrbit);
+        const scienceGrid = new THREE.GridHelper(22, 22, 0x42f4d0, 0x416fff);
+        scienceGrid.position.set(0, -2.5, -3.8);
+        (Array.isArray(scienceGrid.material) ? scienceGrid.material : [scienceGrid.material])
+          .forEach((material) => registerThemeMaterial(material, scienceMaterials));
+        scienceEnvironment.add(scienceGrid);
+
+        const popEnvironment = new THREE.Group();
+        scene.add(popEnvironment);
+        const popMaterials = [];
+        const popObjects = [];
+        const filmRingMaterial = registerThemeMaterial(new THREE.MeshStandardMaterial({
+          color: 0xff78c4, emissive: 0xe43694, emissiveIntensity: .56, roughness: .28, metalness: .18,
+          transparent: true, opacity: .82
+        }), popMaterials);
+        const filmRing = new THREE.Mesh(new THREE.TorusGeometry(1.22, .13, 10, 48), filmRingMaterial);
+        filmRing.position.set(-.5, .05, -3.8);
+        popEnvironment.add(filmRing);
+        const filmCoreMaterial = registerThemeMaterial(new THREE.MeshStandardMaterial({
+          color: 0xffb85e, emissive: 0xff6a44, emissiveIntensity: .55, roughness: .32, metalness: .22,
+          transparent: true, opacity: .9
+        }), popMaterials);
+        const filmCore = new THREE.Mesh(new THREE.CylinderGeometry(.48, .48, .12, 24), filmCoreMaterial);
+        filmCore.rotation.x = Math.PI / 2;
+        filmCore.position.copy(filmRing.position);
+        popEnvironment.add(filmCore);
+        const marqueeMaterial = registerThemeMaterial(new THREE.MeshBasicMaterial({
+          color: 0xffc763, transparent: true, opacity: .8
+        }), popMaterials);
+        const spotlightMaterial = registerThemeMaterial(new THREE.MeshBasicMaterial({
+          color: 0xff8fcf, transparent: true, opacity: .08,
+          side: THREE.DoubleSide, depthWrite: false
+        }), popMaterials);
+        [-1, 1].forEach((side) => {
+          const beam = new THREE.Mesh(new THREE.ConeGeometry(1.65, 5.2, 18, 1, true), spotlightMaterial);
+          beam.position.set(side * 2.65, .25, -6.3);
+          beam.rotation.z = side * -.34;
+          beam.rotation.x = .1;
+          popEnvironment.add(beam);
+        });
+        for (let index = 0; index < 12; index += 1) {
+          const angle = (index / 12) * Math.PI * 2;
+          const bulb = new THREE.Mesh(new THREE.SphereGeometry(.045, 8, 6), marqueeMaterial);
+          bulb.position.set(Math.cos(angle) * 1.68 + 1.5, Math.sin(angle) * 1.2, -4.3);
+          popEnvironment.add(bulb);
+        }
+        const popShapes = [
+          [-3.25, 1.75, -4.8, 0xff8abf], [3.45, 1.4, -4.5, 0xffb454],
+          [-2.8, -1.45, -3.8, 0xb383ff], [3, -.9, -5.1, 0xff6d9c]
+        ];
+        popShapes.forEach(([x, y, z, color], index) => {
+          const material = registerThemeMaterial(new THREE.MeshStandardMaterial({
+            color, emissive: color, emissiveIntensity: .4, roughness: .3, metalness: .2,
+            transparent: true, opacity: .82
+          }), popMaterials);
+          const shape = new THREE.Mesh(
+            index % 2 ? new THREE.OctahedronGeometry(.36, 0) : new THREE.BoxGeometry(.52, .52, .12),
+            material
+          );
+          shape.position.set(x, y, z);
+          shape.userData = { phase: index * .9, baseY: y };
+          popEnvironment.add(shape);
+          popObjects.push(shape);
+        });
+
+        const historyEnvironment = new THREE.Group();
+        scene.add(historyEnvironment);
+        const historyMaterials = [];
+        const stoneMaterial = registerThemeMaterial(new THREE.MeshStandardMaterial({
+          color: 0xcaa36a, emissive: 0x58381e, emissiveIntensity: .24, roughness: .72, metalness: .04,
+          transparent: true, opacity: .84
+        }), historyMaterials);
+        const historyColumns = [];
+        [-3.6, -2.35, 2.35, 3.6].forEach((x, index) => {
+          const column = new THREE.Mesh(new THREE.CylinderGeometry(.22, .3, 3.1, 12), stoneMaterial);
+          column.position.set(x, -.35, -4.1 - (index % 2) * .25);
+          historyEnvironment.add(column);
+          historyColumns.push(column);
+          const capital = new THREE.Mesh(new THREE.BoxGeometry(.72, .2, .6), stoneMaterial);
+          capital.position.set(x, 1.3, -4.1 - (index % 2) * .25);
+          historyEnvironment.add(capital);
+        });
+        const archMaterial = registerThemeMaterial(new THREE.MeshStandardMaterial({
+          color: 0x50ddbf, emissive: 0x148a77, emissiveIntensity: .4, roughness: .34, metalness: .14,
+          transparent: true, opacity: .8
+        }), historyMaterials);
+        const historyArch = new THREE.Mesh(new THREE.TorusGeometry(2.35, .08, 8, 44, Math.PI), archMaterial);
+        historyArch.position.set(0, .85, -4.8);
+        historyArch.rotation.z = Math.PI;
+        historyEnvironment.add(historyArch);
+        const compassMaterial = registerThemeMaterial(new THREE.MeshStandardMaterial({
+          color: 0xffd66e, emissive: 0xbf721f, emissiveIntensity: .5, roughness: .26, metalness: .36,
+          transparent: true, opacity: .9
+        }), historyMaterials);
+        const compass = new THREE.Mesh(new THREE.OctahedronGeometry(.42, 0), compassMaterial);
+        compass.position.set(0, -.35, -2.8);
+        historyEnvironment.add(compass);
+
         const clock = new THREE.Clock();
         const pointerParallaxEnabled =
           window.matchMedia("(hover: hover) and (pointer: fine)").matches &&
@@ -4510,13 +6094,19 @@
         }
         let cosmicBlend = 0;
         let cyberBlend = 0;
+        let scienceBlend = 0;
+        let popBlend = 0;
+        let historyBlend = 0;
         function animate() {
           requestAnimationFrame(animate);
           const delta = Math.min(clock.getDelta(), .05);
           const elapsed = clock.elapsedTime;
           cosmicBlend = THREE.MathUtils.damp(cosmicBlend, environmentTarget, 1.65, delta);
           cyberBlend = THREE.MathUtils.damp(cyberBlend, cyberEnvironmentTarget, 1.65, delta);
-          const lobbyBlend = Math.max(cosmicBlend, cyberBlend);
+          scienceBlend = THREE.MathUtils.damp(scienceBlend, scienceEnvironmentTarget, 1.65, delta);
+          popBlend = THREE.MathUtils.damp(popBlend, popEnvironmentTarget, 1.65, delta);
+          historyBlend = THREE.MathUtils.damp(historyBlend, historyEnvironmentTarget, 1.65, delta);
+          const lobbyBlend = Math.max(cosmicBlend, cyberBlend, scienceBlend, popBlend, historyBlend);
           lobbyMaterials.forEach((material) => {
             material.opacity = material.userData.themeBaseOpacity * (1 - lobbyBlend);
           });
@@ -4527,6 +6117,15 @@
           });
           cyberMaterials.forEach((material) => {
             material.opacity = material.userData.themeBaseOpacity * cyberBlend;
+          });
+          scienceMaterials.forEach((material) => {
+            material.opacity = material.userData.themeBaseOpacity * scienceBlend;
+          });
+          popMaterials.forEach((material) => {
+            material.opacity = material.userData.themeBaseOpacity * popBlend;
+          });
+          historyMaterials.forEach((material) => {
+            material.opacity = material.userData.themeBaseOpacity * historyBlend;
           });
           cosmicStarMaterial.opacity = cosmicStarMaterial.userData.themeBaseOpacity * cosmicBlend * (.78 + Math.sin(elapsed * 2.1) * .18);
           nebulaMaterial.opacity = nebulaMaterial.userData.themeBaseOpacity * cosmicBlend * (.8 + Math.sin(elapsed * .7) * .16);
@@ -4539,11 +6138,22 @@
             : 0;
           cosmicEnvironment.visible = cosmicBlend > .008;
           cyberEnvironment.visible = cyberBlend > .008;
+          scienceEnvironment.visible = scienceBlend > .008;
+          popEnvironment.visible = popBlend > .008;
+          historyEnvironment.visible = historyBlend > .008;
           const homeParallax = views.welcome.classList.contains("active") && pointerParallaxEnabled ? 1 : 0;
           pointerX = THREE.MathUtils.damp(pointerX, pointerTargetX * homeParallax, 4.5, delta);
           pointerY = THREE.MathUtils.damp(pointerY, pointerTargetY * homeParallax, 4.5, delta);
+          lobbyParticles.position.x = pointerX * .18;
+          lobbyParticles.position.y = -pointerY * .12;
+          cosmicStarfield.position.x = pointerX * .22 * cosmicBlend;
+          cosmicStarfield.position.y = -pointerY * .15 * cosmicBlend;
+          nebula.position.x = pointerX * .12 * cosmicBlend;
+          nebula.position.y = -pointerY * .08 * cosmicBlend;
           lobbyEnvironment.scale.setScalar(1 - lobbyBlend * .2);
-          lobbyEnvironment.position.x = -.35 * cosmicBlend + .35 * cyberBlend + pointerX * .16 * (1 - lobbyBlend);
+          lobbyEnvironment.position.x =
+            -.35 * cosmicBlend + .35 * cyberBlend + .2 * scienceBlend - .2 * popBlend + .3 * historyBlend +
+            pointerX * .16 * (1 - lobbyBlend);
           lobbyEnvironment.position.y = -pointerY * .1 * (1 - lobbyBlend);
           cosmicEnvironment.scale.setScalar(.84 + cosmicBlend * .16);
           cosmicEnvironment.position.x = pointerX * .12 * cosmicBlend;
@@ -4553,9 +6163,33 @@
           cyberEnvironment.position.x = pointerX * .12 * cyberBlend;
           cyberEnvironment.position.y = -pointerY * .08 * cyberBlend;
           cyberEnvironment.rotation.y = Math.sin(elapsed * .14) * .045;
+          scienceEnvironment.scale.setScalar(.86 + scienceBlend * .14);
+          scienceEnvironment.position.x = pointerX * .12 * scienceBlend;
+          scienceEnvironment.rotation.y = Math.sin(elapsed * .15) * .055;
+          scienceAtoms.forEach((atom) => {
+            atom.position.y = atom.userData.baseY + Math.sin(elapsed * .8 + atom.userData.phase) * .09;
+            atom.rotation.y += .002;
+          });
+          scienceOrbit.rotation.y = elapsed * .13;
+          popEnvironment.scale.setScalar(.86 + popBlend * .14);
+          popEnvironment.position.x = pointerX * .12 * popBlend;
+          filmRing.rotation.z = elapsed * .12;
+          filmCore.rotation.z = -elapsed * .18;
+          popObjects.forEach((object) => {
+            object.position.y = object.userData.baseY + Math.sin(elapsed + object.userData.phase) * .13;
+            object.rotation.x += .002;
+            object.rotation.y += .003;
+          });
+          historyEnvironment.scale.setScalar(.86 + historyBlend * .14);
+          historyEnvironment.position.x = pointerX * .12 * historyBlend;
+          historyArch.rotation.y = Math.sin(elapsed * .12) * .04;
+          compass.rotation.y = elapsed * .28;
+          historyColumns.forEach((column, index) => {
+            column.position.y = -.35 + Math.sin(elapsed * .6 + index) * .035;
+          });
           camera.position.set(
-            .45 * cosmicBlend - .35 * cyberBlend + pointerX * .42,
-            .16 * cosmicBlend + .1 * cyberBlend - pointerY * .28,
+            .45 * cosmicBlend - .35 * cyberBlend + .22 * scienceBlend - .24 * popBlend + .3 * historyBlend + pointerX * .42,
+            .16 * cosmicBlend + .1 * cyberBlend + .08 * scienceBlend - .05 * popBlend + .13 * historyBlend - pointerY * .28,
             12 - .35 * lobbyBlend
           );
           camera.lookAt(pointerX * .12, -pointerY * .08, 0);
@@ -4614,6 +6248,13 @@
         console.warn("3D scene initialization failed; using the CSS fallback.", error);
         document.body.classList.remove("webgl-ready");
         sceneRoot.hidden = true;
+      }
+      const loadingScreen = document.getElementById("loadingScreen");
+      if (loadingScreen) {
+        window.clearTimeout(window.__quizVerseLoadingFailsafe);
+        loadingScreen.setAttribute("aria-hidden", "true");
+        window.requestAnimationFrame(() => loadingScreen.classList.add("is-hidden"));
+        window.setTimeout(() => loadingScreen.remove(), 520);
       }
     </script>
   </body>
