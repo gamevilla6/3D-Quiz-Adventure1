@@ -1,0 +1,2601 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#f1f4f8" />
+    <title>Quiz Orbit — a little room for big questions</title>
+    <meta id="metaDescription" name="description" content="A thoughtful 3D quiz experience. Pick a subject, follow your curiosity, and see how far you get." />
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='18' fill='%23ef4890'/%3E%3Cpath d='M32 11v42M11 32h42M17 17l30 30M47 17 17 47' stroke='white' stroke-width='3' stroke-linecap='round'/%3E%3Ccircle cx='32' cy='32' r='8' fill='%23ffd85a'/%3E%3C/svg%3E" />
+    <style>
+      :root {
+        color-scheme: light;
+        --ink: #17243b;
+        --muted: #78869a;
+        --line: rgba(106, 126, 154, .18);
+        --surface: rgba(255, 255, 255, .77);
+        --surface-strong: rgba(255, 255, 255, .93);
+        --blue: #4c78e8;
+        --blue-dark: #345ecb;
+        --mint: #49b89d;
+        --coral: #e88174;
+        --shadow: 0 24px 72px rgba(41, 62, 100, .11), 0 2px 8px rgba(41, 62, 100, .035);
+      }
+      * { box-sizing: border-box; }
+      html, body { min-height: 100%; }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        overflow-x: hidden;
+        color: var(--ink);
+        background:
+          radial-gradient(ellipse at 74% 23%, rgba(190, 211, 250, .40), transparent 38%),
+          radial-gradient(ellipse at 12% 80%, rgba(207, 239, 230, .42), transparent 34%),
+          #f1f4f8;
+        font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Noto Sans Bengali", "Nirmala UI", "Vrinda", "Segoe UI", sans-serif;
+        -webkit-font-smoothing: antialiased;
+      }
+      body::after {
+        content: "";
+        position: fixed;
+        inset: 0;
+        z-index: 0;
+        pointer-events: none;
+        opacity: .2;
+        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.82' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.1'/%3E%3C/svg%3E");
+      }
+      #scene { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+      #scene canvas { display: block; width: 100%; height: 100%; }
+      .app { position: relative; z-index: 1; min-height: 100vh; padding: 26px 5.4vw 30px; }
+      .topbar { max-width: 1220px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; }
+      .brand { display: flex; gap: 11px; align-items: center; color: var(--ink); text-decoration: none; font-weight: 730; letter-spacing: -.04em; }
+      .brand-mark { width: 34px; height: 34px; display: grid; place-items: center; border-radius: 12px; color: white; background: linear-gradient(145deg, #7198f4, #4d70da); box-shadow: 0 7px 16px rgba(76,120,232,.24); }
+      .brand-mark svg { width: 19px; height: 19px; }
+      .brand-name { font-size: 16px; }
+      .top-note { display: flex; align-items: center; gap: 9px; color: #687990; font-size: 12px; font-weight: 600; letter-spacing: .045em; }
+      .live-dot { width: 7px; height: 7px; background: #53b99a; border-radius: 99px; box-shadow: 0 0 0 4px rgba(83,185,154,.13); }
+      .topbar-actions { display: flex; align-items: center; gap: 18px; }
+      .language-select { min-width: 126px; min-height: 36px; padding: 0 30px 0 11px; color: #40516a; border: 1px solid rgba(106,126,154,.2); border-radius: 11px; background: rgba(255,255,255,.76); font: inherit; font-size: 11px; font-weight: 700; cursor: pointer; }
+      .language-select:focus-visible { outline: 3px solid rgba(76,120,232,.38); outline-offset: 2px; }
+      main { max-width: 1220px; margin: 0 auto; }
+      .view { display: none; animation: appear .45s cubic-bezier(.2,.7,.2,1) both; }
+      .view.active { display: block; }
+      @keyframes appear { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+      .welcome { padding-top: clamp(40px, 7.8vh, 88px); }
+      .hero {
+        position: relative;
+        overflow: hidden;
+        min-height: 310px;
+        padding: clamp(30px, 5.2vw, 66px);
+        display: grid;
+        grid-template-columns: minmax(0, 1.1fr) minmax(260px, .9fr);
+        align-items: center;
+        border: 1px solid rgba(255,255,255,.84);
+        border-radius: 30px;
+        background: linear-gradient(112deg, rgba(255,255,255,.92) 0%, rgba(255,255,255,.78) 57%, rgba(241,246,255,.63) 100%);
+        box-shadow: var(--shadow);
+        backdrop-filter: blur(22px);
+        -webkit-backdrop-filter: blur(22px);
+      }
+      .hero::before { content: ""; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(125deg, rgba(255,255,255,.45), transparent 48%); }
+      .hero-copy { position: relative; z-index: 1; max-width: 590px; }
+      .eyebrow { margin: 0 0 16px; color: #607ba7; font-size: 11px; font-weight: 750; letter-spacing: .17em; text-transform: uppercase; }
+      h1 { margin: 0; max-width: 600px; font-size: clamp(40px, 5.3vw, 68px); line-height: .99; letter-spacing: -.065em; font-weight: 740; }
+      h1 span { color: var(--blue); }
+      .hero-copy > p:not(.eyebrow) { max-width: 450px; margin: 20px 0 0; color: #708096; font-size: 15px; line-height: 1.7; }
+      .hero-aside { position: relative; z-index: 1; justify-self: center; display: flex; align-items: center; justify-content: center; width: min(100%, 350px); height: 220px; }
+      .hero-orbit-fallback { position: absolute; inset: 0; display: grid; place-items: center; perspective: 700px; }
+      .fallback-orbit { position: absolute; width: 205px; height: 205px; border: 1px solid rgba(102,137,201,.30); border-radius: 50%; transform: rotateX(64deg) rotate(-29deg); }
+      .fallback-orbit.orbit-b { width: 270px; height: 270px; border-color: rgba(78,181,158,.28); transform: rotateX(66deg) rotate(34deg); }
+      .fallback-planet { position: relative; z-index: 1; width: 116px; height: 116px; border-radius: 37px; background: radial-gradient(circle at 31% 26%, #c7d7ff 0 8%, transparent 9%), radial-gradient(circle at 67% 69%, rgba(102,129,225,.4) 0 10%, transparent 11%), linear-gradient(145deg, #9fb8f7 4%, #7393e8 56%, #5474d5 100%); box-shadow: inset -12px -14px 24px rgba(54,79,151,.18), inset 8px 8px 16px rgba(255,255,255,.36), 0 22px 38px rgba(86,119,201,.20); transform: rotate(-11deg); }
+      .fallback-planet::before, .fallback-planet::after { content: ""; position: absolute; border-radius: 50%; background: rgba(238,244,255,.34); }
+      .fallback-planet::before { width: 23px; height: 23px; top: 25px; left: 28px; }
+      .fallback-planet::after { width: 12px; height: 12px; right: 24px; bottom: 26px; background: rgba(57,83,161,.2); }
+      .fallback-moon { position: absolute; z-index: 2; top: 34px; right: 61px; width: 19px; height: 19px; border-radius: 50%; background: linear-gradient(135deg,#78ceb8,#3ea990); box-shadow: 0 0 0 6px rgba(93,190,165,.12), 0 5px 14px rgba(47,149,128,.2); }
+      .fallback-spark { position: absolute; width: 7px; height: 7px; border-radius: 50%; background: #e7b76b; box-shadow: 0 0 0 5px rgba(231,183,107,.13); }
+      .fallback-spark.spark-a { left: 44px; top: 57px; }
+      .fallback-spark.spark-b { right: 54px; bottom: 42px; width: 5px; height: 5px; background: #859ce2; }
+      body.webgl-ready .hero-orbit-fallback { display: none; }
+      .orbit-label { position: absolute; right: 0; bottom: 5px; padding: 9px 12px; border: 1px solid rgba(255,255,255,.85); border-radius: 12px; color: #718096; background: rgba(255,255,255,.68); font-size: 10px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; backdrop-filter: blur(10px); }
+      .section-heading { display: flex; align-items: end; justify-content: space-between; margin: 36px 2px 15px; }
+      .section-heading h2 { margin: 0; font-size: 17px; letter-spacing: -.035em; }
+      .section-heading p { margin: 0; color: var(--muted); font-size: 12px; }
+      .category-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+      .category {
+        appearance: none;
+        position: relative;
+        width: 100%;
+        min-height: 121px;
+        padding: 19px 20px;
+        display: flex;
+        align-items: flex-start;
+        gap: 15px;
+        text-align: left;
+        color: var(--ink);
+        border: 1px solid rgba(255,255,255,.94);
+        border-radius: 20px;
+        background: rgba(255,255,255,.68);
+        box-shadow: 0 9px 28px rgba(53,74,111,.045);
+        cursor: pointer;
+        transition: transform .22s ease, box-shadow .22s ease, background .22s ease;
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+      }
+      .category:hover { transform: translateY(-4px); background: rgba(255,255,255,.93); box-shadow: 0 16px 34px rgba(53,74,111,.10); }
+      .category.selected { border-color: rgba(76,120,232,.62); background: rgba(246,249,255,.96); box-shadow: 0 0 0 3px rgba(76,120,232,.09), 0 13px 32px rgba(53,74,111,.09); }
+      .category.selected .category-arrow { color: var(--blue); }
+      .category:focus-visible, button:focus-visible { outline: 3px solid rgba(76,120,232,.38); outline-offset: 3px; }
+      .category-icon { flex: 0 0 43px; height: 43px; display: grid; place-items: center; border-radius: 14px; color: #5279d9; background: #edf2ff; }
+      .category-icon svg { width: 21px; height: 21px; }
+      .category:nth-child(2) .category-icon { color: #3ca78e; background: #e6f6f1; }
+      .category:nth-child(3) .category-icon { color: #ce786b; background: #fff0ed; }
+      .category-text { flex: 1; padding-top: 1px; }
+      .category-title { display: block; font-size: 14px; font-weight: 720; letter-spacing: -.025em; }
+      .category-detail { display: block; margin-top: 6px; color: #8995a6; font-size: 11px; line-height: 1.5; }
+      .category-arrow { align-self: center; color: #a2adbb; font-size: 18px; transition: transform .2s ease; }
+      .category:hover .category-arrow { transform: translateX(3px); color: var(--blue); }
+      .welcome-foot { display: flex; justify-content: center; gap: 22px; padding: 24px 0 8px; color: #8a96a7; font-size: 11px; }
+      .welcome-foot span { display: inline-flex; align-items: center; gap: 7px; }
+      .tiny-check { color: #55ad97; font-weight: 800; }
+      .start-row { display: flex; flex-direction: column; align-items: center; gap: 9px; margin-top: 19px; }
+      .start-button { min-width: 190px; min-height: 48px; font-size: 13px; }
+      .start-hint { min-height: 16px; color: #8995a6; font-size: 11px; text-align: center; }
+
+      .game-layout { display: grid; grid-template-columns: minmax(0, 1fr) 248px; align-items: start; gap: 19px; max-width: 1060px; margin: clamp(34px, 7vh, 72px) auto 0; }
+      .quiz-card, .side-card, .result-card { border: 1px solid rgba(255,255,255,.88); background: rgba(255,255,255,.78); box-shadow: var(--shadow); backdrop-filter: blur(22px); -webkit-backdrop-filter: blur(22px); }
+      .quiz-card { min-height: 495px; border-radius: 26px; padding: clamp(24px, 4.2vw, 48px); }
+      .quiz-meta { display: flex; justify-content: space-between; align-items: center; gap: 14px; }
+      .category-tag { display: inline-flex; align-items: center; gap: 8px; color: #5474ae; background: #eef3ff; padding: 8px 11px; border-radius: 9px; font-size: 10px; font-weight: 760; letter-spacing: .09em; text-transform: uppercase; }
+      .category-tag .tag-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+      .question-count { color: #8491a3; font-size: 12px; font-weight: 650; font-variant-numeric: tabular-nums; }
+      .progress-track { height: 5px; margin: 20px 0 35px; border-radius: 99px; background: #e9edf3; overflow: hidden; }
+      .progress-fill { height: 100%; width: 10%; border-radius: inherit; background: linear-gradient(90deg, #6a8ff0, #4f72d8); transition: width .4s ease; }
+      .question-kicker { margin: 0 0 12px; color: #99a4b3; font-size: 10px; font-weight: 740; letter-spacing: .14em; text-transform: uppercase; }
+      .question { max-width: 730px; margin: 0; font-size: clamp(23px, 3.2vw, 35px); line-height: 1.25; letter-spacing: -.045em; font-weight: 690; }
+      .options { display: grid; grid-template-columns: 1fr 1fr; gap: 11px; margin-top: 30px; }
+      .option {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        min-height: 61px;
+        padding: 11px 14px;
+        color: #40516a;
+        text-align: left;
+        border: 1px solid #e4e9f0;
+        border-radius: 13px;
+        background: rgba(255,255,255,.56);
+        font: inherit;
+        font-size: 13px;
+        font-weight: 570;
+        cursor: pointer;
+        transition: transform .16s ease, border-color .16s ease, background .16s ease, color .16s ease;
+      }
+      .option:hover:not(:disabled) { transform: translateY(-2px); border-color: #a8bdf1; background: #f8faff; color: #283b5d; }
+      .option:disabled { cursor: default; }
+      .option-key { flex: 0 0 28px; height: 28px; display: grid; place-items: center; color: #8997ab; background: #f0f3f7; border-radius: 8px; font-size: 10px; font-weight: 750; }
+      .option.correct { color: #247e67; border-color: #8ed5c3; background: #effaf6; }
+      .option.correct .option-key { color: white; background: #49b89d; }
+      .option.incorrect { color: #a85650; border-color: #efaaa2; background: #fff5f3; }
+      .option.incorrect .option-key { color: white; background: #e88174; }
+      .option.muted { opacity: .55; }
+      .feedback { min-height: 44px; padding-top: 16px; color: #728096; font-size: 12px; line-height: 1.5; }
+      .feedback.good { color: #2d9279; font-weight: 650; }
+      .feedback.bad { color: #bd655b; font-weight: 650; }
+      .quiz-actions { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-top: 7px; }
+      .text-button { appearance: none; padding: 10px 0; color: #8190a4; border: 0; background: transparent; font: inherit; font-size: 12px; font-weight: 650; cursor: pointer; }
+      .text-button:hover { color: #415d9b; }
+      .primary-button { appearance: none; min-height: 44px; padding: 0 19px; display: inline-flex; align-items: center; justify-content: center; gap: 10px; color: white; border: 0; border-radius: 12px; background: linear-gradient(135deg, #6489eb, #4d70d8); box-shadow: 0 8px 18px rgba(76,120,232,.22); font: inherit; font-size: 12px; font-weight: 720; cursor: pointer; transition: transform .18s ease, box-shadow .18s ease; }
+      .primary-button:hover { transform: translateY(-2px); box-shadow: 0 11px 22px rgba(76,120,232,.28); }
+      .primary-button:disabled { opacity: .45; cursor: not-allowed; transform: none; box-shadow: none; }
+      .primary-button svg { width: 15px; height: 15px; }
+      .game-sidebar { position: sticky; top: 18px; display: grid; gap: 13px; }
+      .side-card { border-radius: 19px; padding: 21px; }
+      .side-label { color: #8a97a8; font-size: 10px; font-weight: 740; letter-spacing: .12em; text-transform: uppercase; }
+      .score-value { margin-top: 13px; font-size: 42px; line-height: 1; letter-spacing: -.065em; font-weight: 730; font-variant-numeric: tabular-nums; }
+      .score-caption { margin-top: 9px; color: #8b97a8; font-size: 11px; }
+      .side-divider { height: 1px; margin: 16px 0; background: #e9edf2; }
+      .side-detail { display: flex; justify-content: space-between; color: #8190a3; font-size: 11px; }
+      .side-detail strong { color: #3e506a; font-weight: 680; }
+      .orbit-mini { height: 94px; margin: 0 -4px 4px; position: relative; overflow: hidden; border-radius: 13px; background: linear-gradient(140deg, #eef4ff, #f0faf7); }
+      .mini-ring { position: absolute; left: 50%; top: 50%; width: 73px; height: 73px; border: 1px solid rgba(101,139,213,.35); border-radius: 50%; transform: translate(-50%,-50%) rotateX(64deg) rotate(-27deg); }
+      .mini-ring.ring-two { width: 112px; height: 112px; border-color: rgba(75,183,157,.28); transform: translate(-50%,-50%) rotateX(64deg) rotate(35deg); }
+      .mini-core { position: absolute; width: 25px; height: 25px; left: 50%; top: 50%; border-radius: 9px; background: linear-gradient(145deg,#7ea2f5,#5579dc); box-shadow: 0 8px 18px rgba(76,120,232,.26); transform: translate(-50%,-50%) rotate(15deg); }
+      .mini-orb { position: absolute; width: 9px; height: 9px; left: 68%; top: 29%; border-radius: 50%; background: #5fc4a5; box-shadow: 0 0 0 5px rgba(95,196,165,.15); }
+      .side-note { color: #8390a2; font-size: 11px; line-height: 1.6; }
+      .side-note strong { color: #536a92; font-weight: 690; }
+
+      .results-wrap { max-width: 790px; margin: clamp(42px, 9vh, 90px) auto 0; }
+      .result-card { overflow: hidden; border-radius: 28px; }
+      .result-top { position: relative; padding: 45px 34px 37px; text-align: center; background: linear-gradient(140deg, rgba(255,255,255,.92), rgba(234,241,255,.70)); }
+      .result-seal { width: 68px; height: 68px; margin: 0 auto 19px; display: grid; place-items: center; color: #5278dc; border-radius: 22px; background: #edf2ff; box-shadow: inset 0 0 0 1px rgba(92,126,215,.08); transform: rotate(-5deg); }
+      .result-seal svg { width: 30px; height: 30px; transform: rotate(5deg); }
+      .result-top .eyebrow { margin-bottom: 11px; }
+      .result-top h1 { margin: auto; font-size: clamp(35px, 5vw, 50px); }
+      .result-top #resultMessage { margin: 12px auto 0; color: #7c8ba1; font-size: 13px; }
+      .result-score { margin: 25px auto 0; font-size: 68px; font-weight: 760; line-height: 1; letter-spacing: -.075em; font-variant-numeric: tabular-nums; }
+      .result-score small { color: #9aa7b7; font-size: 21px; font-weight: 550; letter-spacing: -.02em; }
+      .result-bottom { padding: 25px 30px 30px; text-align: center; }
+      .result-stats { display: flex; justify-content: center; gap: 52px; margin-bottom: 25px; }
+      .result-stat strong { display: block; font-size: 17px; letter-spacing: -.03em; }
+      .result-stat span { display: block; margin-top: 5px; color: #8b97a8; font-size: 10px; text-transform: uppercase; letter-spacing: .1em; font-weight: 710; }
+      .result-actions { display: flex; justify-content: center; gap: 10px; }
+      .secondary-button { appearance: none; min-height: 44px; padding: 0 18px; color: #5d6d83; border: 1px solid #e0e6ee; border-radius: 12px; background: rgba(255,255,255,.74); font: inherit; font-size: 12px; font-weight: 700; cursor: pointer; transition: background .18s ease, border-color .18s ease; }
+      .secondary-button:hover { background: white; border-color: #bdcbe0; }
+      .visually-hidden { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+      @media (max-width: 820px) {
+        .app { padding: 20px 5vw 24px; }
+        .hero { grid-template-columns: 1.15fr .85fr; min-height: 275px; }
+        .hero-aside { height: 180px; }
+        .game-layout { grid-template-columns: minmax(0,1fr) 190px; gap: 12px; }
+        .side-card { padding: 17px; }
+        .quiz-card { padding: 26px; }
+      }
+      @media (max-width: 650px) {
+        .app { padding: 16px 17px 25px; }
+        .top-note { display: none; }
+        .topbar-actions { gap: 8px; }
+        .language-select { min-height: 34px; }
+        .welcome { padding-top: 29px; }
+        .hero { min-height: unset; grid-template-columns: 1fr; padding: 28px 24px 19px; border-radius: 24px; }
+        h1 { font-size: clamp(42px, 11vw, 58px); }
+        .hero-copy > p:not(.eyebrow) { margin-top: 14px; font-size: 13px; }
+        .hero-aside { width: 100%; height: 130px; margin-top: 4px; }
+        .orbit-label { right: 3px; bottom: 0; font-size: 9px; }
+        .section-heading { align-items: start; flex-direction: column; gap: 6px; margin-top: 27px; }
+        .category-grid { grid-template-columns: 1fr; gap: 9px; }
+        .category { min-height: 81px; padding: 14px 15px; align-items: center; border-radius: 16px; }
+        .category-icon { flex-basis: 40px; height: 40px; }
+        .category-detail { margin-top: 3px; }
+        .welcome-foot { gap: 13px; flex-wrap: wrap; font-size: 10px; }
+        .start-row { margin-top: 16px; }
+        .start-button { width: 100%; max-width: 360px; }
+        .game-layout { display: flex; flex-direction: column; margin-top: 28px; gap: 12px; }
+        .quiz-card { width: 100%; min-height: unset; padding: 22px 19px 19px; border-radius: 22px; }
+        .progress-track { margin: 16px 0 28px; }
+        .question { font-size: clamp(24px, 7vw, 31px); }
+        .options { grid-template-columns: 1fr; gap: 8px; margin-top: 22px; }
+        .option { min-height: 54px; }
+        .feedback { min-height: 38px; padding-top: 12px; }
+        .quiz-actions { margin-top: 3px; }
+        .game-sidebar { position: static; width: 100%; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .game-sidebar .side-card:first-child { display: grid; grid-template-columns: 1fr 1fr; column-gap: 8px; align-items: center; }
+        .game-sidebar .side-card:first-child .score-hud-top,
+        .game-sidebar .side-card:first-child .combo-banner { grid-column: 1 / -1; width: 100%; }
+        .game-sidebar .side-card:first-child .side-label, .game-sidebar .side-card:first-child .score-caption { grid-column: 1 / -1; }
+        .game-sidebar .side-card:first-child .score-value { margin-top: 7px; font-size: 34px; }
+        .game-sidebar .side-card:first-child .side-divider { display: none; }
+        .game-sidebar .side-card:first-child .side-detail { margin-top: 6px; }
+        .game-sidebar .side-card:last-child { padding: 12px; }
+        .orbit-mini { height: 62px; margin-bottom: 7px; }
+        .mini-ring { width: 49px; height: 49px; }
+        .mini-ring.ring-two { width: 76px; height: 76px; }
+        .mini-core { width: 19px; height: 19px; }
+        .mini-orb { width: 7px; height: 7px; }
+        .side-note { font-size: 10px; }
+        .results-wrap { margin-top: 35px; }
+        .result-top { padding: 35px 19px 30px; }
+        .result-bottom { padding: 23px 17px 25px; }
+        .result-stats { gap: 28px; }
+      }
+      html[lang="bn"] h1, html[lang="bn"] .question { letter-spacing: 0; line-height: 1.35; }
+      html[lang="bn"] .category-title, html[lang="bn"] .category-detail,
+      html[lang="bn"] .option, html[lang="bn"] .primary-button,
+      html[lang="bn"] .secondary-button, html[lang="bn"] .text-button { letter-spacing: 0; }
+      @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+      }
+      /* Quiz Orbit arcade theme. Keep after base rules; preserve Bengali and accessibility overrides above. */
+      :root {
+        --ink: #20134b;
+        --muted: #564b75;
+        --line: rgba(69, 42, 135, .18);
+        --surface: #fff9ff;
+        --surface-strong: #fff;
+        --blue: #315cff;
+        --blue-dark: #2343c8;
+        --mint: #12a975;
+        --coral: #e94d66;
+        --shadow: 0 20px 50px rgba(53, 28, 117, .15), 0 5px 12px rgba(79, 47, 148, .09);
+      }
+      body {
+        color: #20134b;
+        background:
+          radial-gradient(ellipse at 12% 5%, rgba(255, 174, 67, .27), transparent 30%),
+          radial-gradient(ellipse at 89% 18%, rgba(255, 73, 163, .2), transparent 33%),
+          radial-gradient(ellipse at 40% 96%, rgba(72, 111, 255, .19), transparent 34%),
+          #f5efff;
+      }
+      body::after { opacity: .09; }
+      .brand { color: #25144f; }
+      .brand-mark {
+        background: linear-gradient(145deg, #ff8a37, #ff4d9b 55%, #6c4cff);
+        box-shadow: 0 6px 0 #d53b8a, 0 10px 20px rgba(212, 54, 151, .22);
+      }
+      .language-select { color: #25144f; border: 2px solid #d9cdf9; background: #fff; }
+      .hero {
+        min-height: 330px;
+        color: #fff;
+        border: 0;
+        border-radius: 32px;
+        background:
+          radial-gradient(circle at 83% 20%, rgba(255, 255, 255, .23) 0 5%, transparent 5.4%),
+          linear-gradient(118deg, #4620b7, #6834df 48%, #315dff);
+        box-shadow: 0 22px 48px rgba(66, 35, 167, .28);
+      }
+      .hero::before { opacity: .45; background: radial-gradient(circle at 62% 12%, rgba(255, 78, 171, .62), transparent 30%); }
+      .eyebrow { color: #ffd45d; }
+      h1 { font-weight: 850; }
+      h1 span { color: #ffbf45; }
+      .hero-copy > p:not(.eyebrow) { color: #f0eaff; font-size: 16px; }
+      .fallback-orbit { border-color: rgba(255, 255, 255, .55); }
+      .fallback-orbit.orbit-b { border-color: rgba(255, 192, 73, .55); }
+      .fallback-planet {
+        background: linear-gradient(145deg, #ff72b8, #8e49ff 62%, #375eff);
+        box-shadow: inset -12px -14px 24px rgba(32, 12, 111, .23), inset 8px 8px 16px rgba(255, 255, 255, .45), 0 22px 38px rgba(20, 9, 80, .35);
+      }
+      .fallback-moon { background: linear-gradient(135deg, #ffd75c, #ff813a); }
+      .orbit-label { color: #2a1851; border: 0; background: #ffe16d; }
+      .section-heading h2 { color: #25144f; font-size: 21px; font-weight: 850; }
+      .section-heading p { color: #5a4b7a; font-size: 13px; font-weight: 600; }
+      .category {
+        color: #241345;
+        border: 2px solid rgba(255, 255, 255, .9);
+        border-radius: 21px;
+        background: linear-gradient(135deg, #fff, #fff8fb);
+        box-shadow: 0 8px 0 rgba(60, 34, 122, .09), 0 13px 25px rgba(60, 34, 122, .08);
+        backdrop-filter: none;
+      }
+      .category:nth-child(2) { background: linear-gradient(135deg, #efffff, #d9fff2); }
+      .category:nth-child(3) { background: linear-gradient(135deg, #fff5e9, #ffe5d5); }
+      .category:hover { background: #fff; box-shadow: 0 11px 0 rgba(60, 34, 122, .1), 0 19px 29px rgba(60, 34, 122, .14); }
+      .category.selected { border-color: #ff4ca1; background: #fff1fa; box-shadow: 0 0 0 4px rgba(255, 76, 161, .14), 0 8px 0 rgba(191, 44, 130, .14); }
+      .category-icon { color: #fff; background: linear-gradient(145deg, #7351ff, #315cff); }
+      .category:nth-child(2) .category-icon { color: #fff; background: linear-gradient(145deg, #13bd91, #087c81); }
+      .category:nth-child(3) .category-icon { color: #fff; background: linear-gradient(145deg, #ff8b36, #ef496e); }
+      .category-title { color: #241345; font-size: 15px; font-weight: 820; }
+      .category-detail { color: #65577e; font-size: 12px; }
+      .welcome-foot, .start-hint { color: #554777; font-weight: 600; }
+      .tiny-check { color: #078b68; }
+      .start-button {
+        min-height: 58px;
+        min-width: 220px;
+        color: #2f174e;
+        border-radius: 17px;
+        background: linear-gradient(100deg, #ffdc55, #ff9a38 48%, #ff5d9d);
+        box-shadow: 0 7px 0 #d84e77, 0 13px 25px rgba(229, 77, 129, .3);
+        font-size: 15px;
+        font-weight: 850;
+        animation: startBounce 2.6s ease-in-out infinite;
+      }
+      .start-button:hover { box-shadow: 0 9px 0 #d84e77, 0 18px 28px rgba(229, 77, 129, .35); }
+      .start-button:disabled { filter: saturate(.45); opacity: .68; animation: none; }
+      @keyframes startBounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
+      .quiz-card, .side-card, .result-card {
+        border: 2px solid rgba(255, 255, 255, .92);
+        background: #fffaff;
+        box-shadow: var(--shadow);
+        backdrop-filter: blur(12px);
+      }
+      .quiz-card { border-radius: 28px; }
+      .category-tag { color: #fff; background: linear-gradient(110deg, #7045e8, #315cff); border-radius: 999px; }
+      .question-count { color: #51436f; font-size: 14px; font-weight: 800; }
+      .progress-track { height: 12px; border: 2px solid #e5dafa; background: #f0eaff; }
+      .progress-fill { background: linear-gradient(90deg, #ff9c38, #ff4ea1 52%, #5444ff); }
+      .question-kicker { color: #7054bb; }
+      .question { color: #241443; font-weight: 830; }
+      .option {
+        min-height: 68px;
+        color: #241443;
+        border: 2px solid transparent;
+        border-radius: 17px;
+        background: #f0eaff;
+        font-size: 15px;
+        font-weight: 690;
+      }
+      .option:nth-child(2) { background: #e5f8ff; }
+      .option:nth-child(3) { background: #fff0f7; }
+      .option:nth-child(4) { background: #fff3df; }
+      .option:hover:not(:disabled) { border-color: #7253ed; color: #241443; background: #fff; }
+      .option-key { flex-basis: 32px; height: 32px; color: #fff; background: #6948de; border-radius: 10px; font-size: 12px; }
+      .option:nth-child(2) .option-key { background: #147ba1; }
+      .option:nth-child(3) .option-key { background: #bf3684; }
+      .option:nth-child(4) .option-key { background: #b86a16; }
+      .option.correct { color: #075a40; border-color: #11aa77; background: #d7ffed; }
+      .option.correct .option-key { background: #07895f; }
+      .option.incorrect { color: #8e2339; border-color: #e24c64; background: #ffe0e5; }
+      .option.incorrect .option-key { background: #cb3653; }
+      .option.muted { opacity: .72; }
+      .feedback { color: #54466f; font-size: 14px; font-weight: 600; }
+      .feedback.good { color: #06724f; }
+      .feedback.bad { color: #a52e45; }
+      .text-button { color: #554575; font-size: 13px; font-weight: 750; }
+      .primary-button {
+        min-height: 48px;
+        color: #fff;
+        border-radius: 14px;
+        background: linear-gradient(120deg, #7044e6, #315dff);
+        box-shadow: 0 5px 0 #3a2ea6, 0 9px 18px rgba(69, 65, 191, .2);
+        font-size: 13px;
+        font-weight: 800;
+      }
+      .primary-button:disabled { opacity: .53; }
+      .result-actions .primary-button { box-shadow: 0 5px 0 #3a2ea6; }
+      .game-sidebar .side-card:first-child {
+        color: #fff;
+        border: 1px solid rgba(255,255,255,.38);
+        background: linear-gradient(150deg, rgba(57,27,126,.92), rgba(35,69,170,.9));
+        box-shadow: 0 8px 0 rgba(58, 39, 153, .2), 0 18px 36px rgba(42, 27, 119, .28), inset 0 1px 0 rgba(255,255,255,.16);
+        backdrop-filter: blur(24px);
+        -webkit-backdrop-filter: blur(24px);
+      }
+      .score-hud-top { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 18px; }
+      .score-level-chip { max-width: 75%; overflow: hidden; color: #fff; border: 1px solid rgba(255,255,255,.26); border-radius: 99px; background: rgba(11,14,53,.3); padding: 6px 9px; font-size: 9px; line-height: 1.25; font-weight: 800; text-overflow: ellipsis; white-space: nowrap; }
+      .score-live-tag { display: inline-flex; align-items: center; gap: 5px; flex: 0 0 auto; color: #c6ffe9; font-size: 8px; font-weight: 900; letter-spacing: .1em; }
+      .score-live-dot { width: 6px; height: 6px; border-radius: 50%; background: #58f3b4; box-shadow: 0 0 9px #58f3b4; }
+      .side-label { color: #e3d9ff; }
+      .score-value {
+        display: inline-block;
+        min-width: 74px;
+        padding: 9px 13px 11px;
+        color: #fff59c;
+        border: 1px solid rgba(255,255,255,.35);
+        border-radius: 16px;
+        background: rgba(12,12,49,.52);
+        box-shadow: 0 4px 0 rgba(9,10,54,.35), inset 0 1px 0 rgba(255,255,255,.13), 0 0 22px rgba(116,227,255,.14);
+        text-shadow: 0 0 9px rgba(255,232,99,.76), 0 0 23px rgba(255,190,73,.43);
+        text-align: center;
+      }
+      .combo-banner { margin: 11px 0 0; padding: 8px 10px; color: #fff8c2; border: 1px solid rgba(255,221,87,.55); border-radius: 12px; background: linear-gradient(100deg, rgba(255,174,54,.24), rgba(255,77,157,.2)); font-size: 10px; font-weight: 900; text-align: center; text-shadow: 0 0 10px rgba(255,185,60,.5); animation: combo-glow .85s ease-in-out infinite alternate; }
+      .streak-value.combo-active { color: #ffe77b; text-shadow: 0 0 10px rgba(255,221,87,.78); }
+      @keyframes combo-glow { from { box-shadow: 0 0 0 rgba(255,196,60,0); } to { box-shadow: 0 0 18px rgba(255,196,60,.24); } }
+      .quiz-card { position: relative; }
+      .score-popups { position: absolute; inset: 0; z-index: 20; overflow: visible; pointer-events: none; }
+      .score-popup { position: absolute; z-index: 1; max-width: min(210px, 75%); padding: 7px 13px; border: 1px solid rgba(255,255,255,.7); border-radius: 999px; background: rgba(9,18,47,.94); box-shadow: 0 8px 24px rgba(20,15,63,.25); font-size: clamp(17px, 2.4vw, 23px); line-height: 1.2; font-weight: 950; text-align: center; white-space: nowrap; transform: translate(-50%, 0); animation: score-float-up 1.05s cubic-bezier(.18,.72,.28,1) forwards; }
+      .score-popup.correct { color: #72ffc2; text-shadow: 0 0 11px rgba(42,255,169,.72); border-color: rgba(76,255,189,.75); }
+      .score-popup.incorrect { color: #ff8c9b; text-shadow: 0 0 11px rgba(255,77,106,.72); border-color: rgba(255,110,129,.8); }
+      .score-popup.no-change { color: #ffe77b; border-color: rgba(255,221,87,.7); font-size: 13px; white-space: normal; }
+      @keyframes score-float-up { 0% { opacity: 0; transform: translate(-50%, 12px) scale(.82); } 12% { opacity: 1; transform: translate(-50%, 0) scale(1.08); } 28% { transform: translate(-50%, -4px) scale(1); } 100% { opacity: 0; transform: translate(-50%, -72px) scale(.96); } }
+      @media (prefers-reduced-motion: reduce) {
+        .score-popup { animation-duration: .01ms; }
+        .combo-banner, .score-value.penalty-hit, .feedback.penalty-warning, .quiz-card.penalty-screen { animation: none !important; }
+      }
+      .score-value.penalty-hit { animation: score-penalty-shake .4s ease-in-out; }
+      .feedback.penalty-warning { animation: feedback-penalty-nudge .32s ease-out; }
+      .quiz-card.penalty-screen { animation: quiz-card-penalty-pulse .34s ease-out; }
+      @keyframes score-penalty-shake {
+        0%, 100% { transform: translateX(0); }
+        22% { transform: translateX(-4px); color: #a52e45; }
+        44% { transform: translateX(4px); }
+        66% { transform: translateX(-2px); }
+        88% { transform: translateX(1px); }
+      }
+      @keyframes feedback-penalty-nudge {
+        35% { transform: translateX(3px); }
+        70% { transform: translateX(-2px); }
+      }
+      @keyframes quiz-card-penalty-pulse {
+        0%, 100% { transform: translateX(0); box-shadow: var(--shadow); }
+        28% { transform: translateX(-3px); box-shadow: 0 0 0 3px rgba(255,88,118,.14), 0 17px 42px rgba(125,28,61,.15); }
+        56% { transform: translateX(3px); }
+      }
+      .score-caption, .side-detail { color: #e5ddff; }
+      .side-detail strong { color: #fff; }
+      .side-divider { background: rgba(255, 255, 255, .25); }
+      .orbit-mini { background: linear-gradient(135deg, #e8e1ff, #d9f8ff 55%, #ffe4f1); }
+      .mini-ring { border-color: rgba(107, 69, 220, .5); }
+      .mini-ring.ring-two { border-color: rgba(255, 83, 160, .42); }
+      .mini-core { background: linear-gradient(145deg, #ff58a4, #6548ef); }
+      .mini-orb { background: #ff9d35; }
+      .side-note { color: #51436f; font-size: 12px; }
+      .side-note strong { color: #4f2ab1; }
+      .result-card { border: 0; border-radius: 30px; }
+      .result-top {
+        color: #fff;
+        background: radial-gradient(circle at 13% 10%, rgba(255, 207, 76, .33), transparent 22%), linear-gradient(140deg, #5526c6, #315dff 65%, #813ee6);
+      }
+      .result-top .eyebrow { color: #ffe16a; }
+      .result-top h1 { color: #fff; }
+      .result-top #resultMessage { color: #f0eaff; font-size: 15px; }
+      .result-trophy {
+        position: absolute;
+        right: clamp(12px, 8vw, 92px);
+        top: 26px;
+        width: 90px;
+        height: 90px;
+        pointer-events: none;
+        opacity: .96;
+        filter: drop-shadow(0 6px 0 rgba(38, 16, 94, .26));
+      }
+      .result-seal { color: #5120a8; background: #ffe05c; box-shadow: 0 6px 0 #e8a632, 0 12px 24px rgba(40, 12, 103, .28); }
+      .result-score { color: #ffdc57; text-shadow: 0 3px 0 rgba(36, 14, 88, .35); font-size: 76px; }
+      .result-score small { color: #f2eaff; }
+      .result-bottom { background: #fffaff; }
+      .result-stat strong { color: #2a174f; font-size: 20px; }
+      .result-stat span { color: #665782; font-size: 11px; }
+      .secondary-button { color: #4a3475; border: 2px solid #d9cdf3; background: #fff; font-weight: 750; }
+      @media (max-width: 650px) {
+        .category { min-height: 78px; }
+        .category-title { font-size: 14px; }
+        .category-detail { font-size: 11px; }
+        .option { min-height: 59px; font-size: 14px; }
+        .result-trophy { position: relative; display: block; top: auto; right: auto; margin: 0 auto 4px; }
+        .result-top { padding-top: 26px; }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .start-button { animation: none !important; }
+      }
+      .primary-button.start-button {
+        color: #31124f;
+        background: linear-gradient(100deg, #ffdc55, #ff9a38 48%, #ff5d9d);
+        box-shadow: 0 7px 0 #d84e77, 0 13px 25px rgba(229, 77, 129, .3);
+      }
+      .primary-button.start-button:hover:not(:disabled) {
+        box-shadow: 0 9px 0 #d84e77, 0 18px 28px rgba(229, 77, 129, .35);
+      }
+      .primary-button.start-button:disabled {
+        color: #31124f;
+        background: linear-gradient(100deg, #ffdc55, #ff9a38 48%, #ff5d9d);
+        filter: saturate(.82);
+        opacity: .88;
+        box-shadow: 0 4px 0 #d84e77;
+      }
+      body, .hero, .category, .start-button, .section-heading h2,
+      .section-heading p, .welcome-foot, .start-hint {
+        transition: background .72s ease, border-color .72s ease, box-shadow .72s ease, color .55s ease;
+      }
+      body.theme-cosmic {
+        color: #f8f5ff;
+        background:
+          radial-gradient(ellipse at 12% 5%, rgba(112, 79, 255, .38), transparent 30%),
+          radial-gradient(ellipse at 89% 18%, rgba(25, 212, 255, .24), transparent 33%),
+          radial-gradient(ellipse at 40% 96%, rgba(208, 55, 205, .23), transparent 34%),
+          #090b27;
+      }
+      body.theme-cosmic .brand { color: #f6f3ff; }
+      body.theme-cosmic .brand-mark {
+        background: linear-gradient(145deg, #40ddff, #7457ff 58%, #bd46e8);
+        box-shadow: 0 6px 0 #5638c8, 0 10px 20px rgba(79, 72, 226, .34);
+      }
+      body.theme-cosmic .top-note { color: #e7e1ff; }
+      body.theme-cosmic .hero {
+        background:
+          radial-gradient(circle at 83% 20%, rgba(99, 223, 255, .2) 0 5%, transparent 5.4%),
+          linear-gradient(118deg, #101448, #382078 48%, #174d91);
+        box-shadow: 0 22px 48px rgba(18, 20, 70, .42);
+      }
+      body.theme-cosmic .hero::before {
+        background: radial-gradient(circle at 62% 12%, rgba(43, 226, 255, .46), transparent 30%);
+      }
+      body.theme-cosmic .hero .eyebrow { color: #79efff; }
+      body.theme-cosmic .hero h1 span { color: #71efff; }
+      body.theme-cosmic .hero-copy > p:not(.eyebrow) { color: #eeeaff; }
+      .hero-aside::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: 50%;
+        opacity: 0;
+        pointer-events: none;
+        background:
+          radial-gradient(circle at 16% 23%, #fff 0 1px, transparent 2px),
+          radial-gradient(circle at 79% 19%, #9cefff 0 1.5px, transparent 2.5px),
+          radial-gradient(circle at 70% 76%, #ffd6fa 0 1px, transparent 2px),
+          radial-gradient(circle at 28% 70%, #fff 0 1px, transparent 2px),
+          radial-gradient(ellipse at 50% 50%, rgba(71, 76, 210, .32), transparent 72%);
+        transition: opacity .7s ease;
+      }
+      body.theme-cosmic .hero-aside::before { opacity: 1; animation: cosmicTwinkle 4s ease-in-out infinite alternate; }
+      body.theme-cosmic .fallback-orbit { border-color: rgba(118, 226, 255, .62); }
+      body.theme-cosmic .fallback-orbit.orbit-b { border-color: rgba(205, 116, 255, .62); }
+      body.theme-cosmic .fallback-planet {
+        border-radius: 50%;
+        background: linear-gradient(145deg, #5bedff, #6251e7 62%, #222c88);
+        box-shadow: inset -12px -14px 24px rgba(15, 12, 68, .38), inset 8px 8px 16px rgba(255,255,255,.38), 0 22px 38px rgba(20, 9, 80, .48);
+        animation: cosmicPlanetDrift 10s ease-in-out infinite alternate;
+      }
+      body.theme-cosmic .fallback-moon { background: linear-gradient(135deg, #ffe878, #ff8a45); }
+      body.theme-cosmic .orbit-label { color: #10204b; background: #83f1ff; }
+      @keyframes cosmicTwinkle { from { opacity: .68; } to { opacity: 1; } }
+      @keyframes cosmicPlanetDrift { from { transform: rotate(-11deg) translateY(3px); } to { transform: rotate(5deg) translateY(-4px); } }
+      body.theme-cosmic .section-heading h2 { color: #f3efff; }
+      body.theme-cosmic .section-heading p,
+      body.theme-cosmic .welcome-foot,
+      body.theme-cosmic .start-hint { color: #d5ccf7; }
+      body.theme-cosmic .category.selected {
+        border-color: #35dff6;
+        background: linear-gradient(135deg, #edfdff, #c9f7ff);
+        box-shadow: 0 0 0 4px rgba(53, 223, 246, .22), 0 8px 0 rgba(22, 112, 174, .23);
+      }
+      body.theme-cosmic .category.selected .category-arrow { color: #087ea2; }
+      body.theme-cosmic .primary-button.start-button {
+        color: #101446;
+        background: linear-gradient(100deg, #72efff, #36bfff 48%, #947aff);
+        box-shadow: 0 7px 0 #4c42bd, 0 13px 25px rgba(75, 119, 255, .3);
+      }
+      body.theme-cosmic .primary-button.start-button:hover:not(:disabled) {
+        box-shadow: 0 9px 0 #4c42bd, 0 18px 28px rgba(75, 119, 255, .4);
+      }
+      body.theme-cosmic .primary-button.start-button:disabled { opacity: .88; }
+      @media (prefers-reduced-motion: reduce) {
+        body.theme-cosmic .hero-aside::before,
+        body.theme-cosmic .fallback-planet { animation: none !important; }
+      }
+      .result-stats {
+        display: grid;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: 10px;
+        max-width: 660px;
+        margin: 0 auto 23px;
+      }
+      .result-stat {
+        min-width: 0;
+        padding: 12px 8px;
+        border-radius: 14px;
+        background: #f2edff;
+      }
+      .result-stat strong { font-size: 20px; }
+      .result-stat span { font-size: 9px; }
+      .trophy-tier {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        margin: 16px auto 0;
+        padding: 8px 13px;
+        color: #77420f;
+        border: 1px solid rgba(176, 104, 36, .2);
+        border-radius: 999px;
+        background: linear-gradient(120deg, #fff2d6, #f4cf9c);
+        box-shadow: 0 4px 0 rgba(126, 69, 27, .16);
+        font-size: 12px;
+        font-weight: 850;
+      }
+      .trophy-tier-mark { font-size: 15px; }
+      #resultCard[data-tier="gold"] .trophy-tier {
+        color: #6b4700;
+        border-color: rgba(218, 162, 15, .4);
+        background: linear-gradient(120deg, #fff4b8, #ffc83d);
+      }
+      #resultCard[data-tier="silver"] .trophy-tier {
+        color: #354363;
+        border-color: rgba(121, 143, 181, .38);
+        background: linear-gradient(120deg, #f7faff, #bfcbe2);
+      }
+      #resultCard[data-tier="bronze"] .trophy-tier {
+        color: #714119;
+        border-color: rgba(176, 104, 36, .28);
+        background: linear-gradient(120deg, #fff0df, #df9a5e);
+      }
+      .achievement-panel {
+        max-width: 660px;
+        margin: 0 auto 24px;
+        text-align: left;
+      }
+      .achievement-heading { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 10px; }
+      .achievement-heading h2 { margin: 0; color: #34215d; font-size: 14px; font-weight: 850; }
+      .achievement-count { min-width: 25px; padding: 4px 7px; color: #4d36a0; border-radius: 99px; background: #e8e0ff; text-align: center; font-size: 11px; font-weight: 850; }
+      .achievement-list { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 9px; }
+      .achievement-badge {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        min-width: 0;
+        padding: 10px;
+        color: #30214e;
+        border: 1px solid #dfd6f8;
+        border-radius: 13px;
+        background: linear-gradient(135deg, #fff, #f3efff);
+      }
+      .achievement-icon { flex: 0 0 32px; width: 32px; height: 32px; display: grid; place-items: center; color: white; border-radius: 10px; background: linear-gradient(145deg, #7044e6, #315dff); font-size: 16px; }
+      .achievement-copy { min-width: 0; }
+      .achievement-copy strong { display: block; color: #30214e; font-size: 11px; line-height: 1.25; }
+      .achievement-copy small { display: block; margin-top: 3px; color: #72658f; font-size: 9px; line-height: 1.3; }
+      .achievement-empty { margin: 0; padding: 13px; color: #6c6284; border: 1px dashed #d8cfee; border-radius: 13px; background: #faf8ff; font-size: 12px; text-align: center; }
+      .streak-hint { margin-top: 5px; color: #dfd8f9; font-size: 9px; font-weight: 650; letter-spacing: .01em; }
+      [hidden] { display: none !important; }
+      .level-selection { padding: clamp(26px, 5vh, 54px) 0 48px; }
+      .level-shell { max-width: 920px; margin: 0 auto; }
+      .level-intro {
+        padding: clamp(24px, 4vw, 38px);
+        color: #fff;
+        border: 1px solid rgba(255,255,255,.28);
+        border-radius: 25px;
+        background: linear-gradient(125deg, #38217c, #6542df 55%, #315dff);
+        box-shadow: 0 18px 40px rgba(68,49,170,.23);
+        text-align: center;
+      }
+      .level-intro .eyebrow { color: #ffe476; }
+      .level-intro h1 { margin: 10px 0 8px; font-size: clamp(29px, 5vw, 42px); line-height: 1.08; font-weight: 900; letter-spacing: -.045em; }
+      .level-intro p:last-child { max-width: 540px; margin: 0 auto; color: #f0edff; font-size: 14px; line-height: 1.6; }
+      .level-toolbar { display: flex; justify-content: space-between; align-items: center; gap: 14px; margin: 22px 0 13px; }
+      .level-count { padding: 8px 12px; color: #453188; border: 1px solid #dbd2ff; border-radius: 99px; background: #fff; font-size: 11px; font-weight: 800; }
+      .level-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 13px; }
+      .level-card {
+        min-width: 0;
+        min-height: 145px;
+        padding: 18px;
+        display: flex;
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 9px;
+        color: #fff;
+        border: 1px solid rgba(255,255,255,.48);
+        border-radius: 20px;
+        background: linear-gradient(145deg, #7350e8, #3e5dff);
+        box-shadow: 0 6px 0 rgba(67,50,157,.2), 0 14px 22px rgba(68,58,173,.12);
+        text-align: left;
+        font: inherit;
+        cursor: pointer;
+        transition: transform .18s ease, box-shadow .18s ease;
+      }
+      .level-card:not(:disabled):hover { transform: translateY(-3px); box-shadow: 0 9px 0 rgba(67,50,157,.18), 0 18px 25px rgba(68,58,173,.18); }
+      .level-card:focus-visible { outline: 3px solid #ffcf4d; outline-offset: 3px; }
+      .level-card.unlocked { border-color: rgba(255,225,102,.9); box-shadow: 0 6px 0 rgba(67,50,157,.2), 0 14px 24px rgba(68,58,173,.2), 0 0 0 2px rgba(255,225,102,.16); }
+      .level-card.completed { background: linear-gradient(145deg, #078b71, #16b894); box-shadow: 0 6px 0 rgba(6,103,82,.23), 0 14px 22px rgba(19,143,116,.13); }
+      .level-card.locked { color: #5e5b70; border-color: #e2dff0; background: linear-gradient(145deg, #f7f6fb, #e6e5ef); box-shadow: 0 5px 0 rgba(77,69,111,.1); cursor: not-allowed; }
+      .level-card-number { color: inherit; font-size: 24px; line-height: 1; font-weight: 900; letter-spacing: -.04em; }
+      .level-card-name { color: inherit; font-size: 15px; font-weight: 850; }
+      .level-card-detail { color: inherit; font-size: 11px; font-weight: 650; opacity: .86; }
+      .level-card-status { display: inline-flex; align-items: center; gap: 6px; margin-top: auto; align-self: flex-end; padding: 5px 9px; border-radius: 99px; background: rgba(21,15,61,.24); font-size: 10px; font-weight: 850; }
+      .level-card-indicator { display: grid; width: 20px; height: 20px; place-items: center; border-radius: 50%; background: rgba(255,255,255,.2); font-size: 13px; line-height: 1; }
+      .level-card.locked .level-card-status { background: rgba(59,55,83,.1); }
+      .level-card.locked .level-card-indicator { background: #d8d6e1; filter: grayscale(1); }
+      .result-level-label { margin: 6px 0 0; color: #ffe778; font-size: 13px; font-weight: 850; }
+      .level-unlock-notice { width: fit-content; margin: 11px auto 0; padding: 7px 12px; color: #35215e; border: 1px solid #ffe481; border-radius: 99px; background: #ffdf67; font-size: 12px; font-weight: 850; }
+      .result-actions { flex-wrap: wrap; }
+      html[lang="bn"] .achievement-copy strong,
+      html[lang="bn"] .achievement-copy small,
+      html[lang="bn"] .trophy-tier,
+      html[lang="bn"] .level-card,
+      html[lang="bn"] .streak-hint { letter-spacing: 0; }
+      @media (max-width: 650px) {
+        .result-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+        .result-stat { padding: 10px 7px; }
+        .achievement-list { grid-template-columns: 1fr; }
+        .achievement-panel { margin-bottom: 21px; }
+        .game-sidebar .side-card:first-child .streak-hint { grid-column: 1 / -1; }
+        .level-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+        .level-card { min-height: 132px; padding: 14px; }
+        .result-actions > button { flex: 1 1 auto; }
+      }
+      @media (max-width: 390px) {
+        .level-grid { grid-template-columns: 1fr; }
+        .level-toolbar { align-items: flex-start; flex-direction: column; }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="scene" aria-hidden="true"></div>
+    <div class="app">
+      <header class="topbar">
+        <a class="brand" href="#" id="brandHome" aria-label="Quiz Orbit home">
+          <span class="brand-mark" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M12 3.5v3m0 11v3M3.5 12h3m11 0h3M6 6l2.1 2.1m7.8 7.8L18 18M18 6l-2.1 2.1m-7.8 7.8L6 18" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><circle cx="12" cy="12" r="4.2" stroke="currentColor" stroke-width="1.8"/></svg>
+          </span>
+          <span class="brand-name">quiz orbit</span>
+        </a>
+        <div class="topbar-actions">
+          <div class="top-note"><span class="live-dot"></span><span id="topNoteText">A small space for curiosity</span></div>
+          <label class="visually-hidden" for="languageSelect" id="languageLabel">Language</label>
+          <select class="language-select" id="languageSelect" aria-labelledby="languageLabel">
+            <option value="en">English</option>
+            <option value="bn">বাংলা</option>
+            <option value="hi">हिन्दी</option>
+            <option value="es">Español</option>
+            <option value="fr">Français</option>
+          </select>
+        </div>
+      </header>
+
+      <main>
+        <section class="view welcome active" id="welcomeView" aria-labelledby="welcomeTitle">
+          <div class="hero">
+            <div class="hero-copy">
+              <p class="eyebrow" id="welcomeEyebrow">A quiz with a little perspective</p>
+              <h1 id="welcomeTitle">Wonder a little <span>further.</span></h1>
+            <p id="welcomeDescription">Three curious corners. Ten good questions. Take a quiet moment and see where your knowledge takes you.</p>
+            </div>
+            <div class="hero-aside">
+              <div class="hero-orbit-fallback" aria-hidden="true">
+                <span class="fallback-orbit"></span>
+                <span class="fallback-orbit orbit-b"></span>
+                <span class="fallback-planet"></span>
+                <span class="fallback-moon"></span>
+                <span class="fallback-spark spark-a"></span>
+                <span class="fallback-spark spark-b"></span>
+              </div>
+              <div class="orbit-label" id="orbitLabel">Explore at your own pace</div>
+            </div>
+          </div>
+          <div class="section-heading">
+            <h2 id="categoryHeading">Choose your orbit</h2>
+            <p id="categoryHeadingHint">Pick a subject · no timer</p>
+          </div>
+          <div class="category-grid" id="categoryGrid" role="group" aria-label="Choose a quiz category">
+            <button class="category selected" type="button" data-category="General Knowledge" aria-pressed="true">
+              <span class="category-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M4.5 6.2c2.4-1.1 4.8-.9 7.5.8v12c-2.7-1.7-5.1-1.9-7.5-.8v-12Zm15 0c-2.4-1.1-4.8-.9-7.5.8v12c2.7-1.7 5.1-1.9 7.5-.8v-12Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M8 9.2h1.4m6.6 0h1.4M8 12h1.4m6.6 0h1.4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></span>
+              <span class="category-text"><span class="category-title" data-category-title>General Knowledge</span><span class="category-detail" data-category-detail>A little bit of everything</span></span><span class="category-arrow" aria-hidden="true">→</span>
+            </button>
+            <button class="category" type="button" data-category="Science" aria-pressed="false">
+              <span class="category-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M9 3.5h6m-5 0v6.2l-4.7 7.8a2 2 0 0 0 1.7 3h10a2 2 0 0 0 1.7-3L14 9.7V3.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M8 15h8m-6.8-2h5.6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></span>
+              <span class="category-text"><span class="category-title" data-category-title>Science</span><span class="category-detail" data-category-detail>The world, wonderfully explained</span></span><span class="category-arrow" aria-hidden="true">→</span>
+            </button>
+            <button class="category" type="button" data-category="Technology" aria-pressed="false">
+              <span class="category-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><rect x="4" y="5" width="16" height="11.5" rx="2" stroke="currentColor" stroke-width="1.7"/><path d="M8 20h8m-4-3.5V20M8 9h3m-3 3h5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg></span>
+              <span class="category-text"><span class="category-title" data-category-title>Technology</span><span class="category-detail" data-category-detail>Ideas that move us forward</span></span><span class="category-arrow" aria-hidden="true">→</span>
+            </button>
+          </div>
+          <div class="start-row">
+            <button class="primary-button start-button" type="button" id="startGameButton"><span id="startGameLabel">Start game</span> <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M4.2 10h11.6m-4.5-4.5 4.5 4.5-4.5 4.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+            <div class="start-hint" id="startHint" aria-live="polite">Choose a subject to begin your orbit.</div>
+          </div>
+          <div class="welcome-foot"><span><b class="tiny-check">✓</b> <span id="totalQuestionsLabel">30 General Knowledge questions</span></span><span><b class="tiny-check">✓</b> <span id="instantAnswersLabel">Instant answers</span></span><span><b class="tiny-check">✓</b> <span id="justForFunLabel">Just for fun</span></span></div>
+        </section>
+
+        <section class="view level-selection" id="levelView" aria-labelledby="levelTitle">
+          <div class="level-shell">
+            <div class="level-intro">
+              <p class="eyebrow" id="levelEyebrow">General Knowledge · progression</p>
+              <h1 id="levelTitle">Choose a level</h1>
+              <p id="levelDescription">Answer at least 6 of 10 correctly to unlock the next level.</p>
+            </div>
+            <div class="level-toolbar">
+              <button class="secondary-button" type="button" id="levelBackButton"><span id="levelBackLabel">Back to subjects</span></button>
+              <span class="level-count" id="levelCountLabel" aria-live="polite"></span>
+            </div>
+            <div class="level-grid" id="levelGrid" role="group" aria-label="Choose a level"></div>
+          </div>
+        </section>
+
+        <section class="view" id="gameView" aria-label="Quiz round">
+          <div class="game-layout">
+            <article class="quiz-card" id="quizCard">
+              <div class="score-popups" id="scorePopups" aria-hidden="true"></div>
+              <div class="quiz-meta">
+                <div class="category-tag"><span class="tag-dot"></span><span id="gameCategory">Science</span></div>
+                <div class="question-count" id="questionCount">01 <span aria-hidden="true">/</span> 04</div>
+              </div>
+              <div class="progress-track" id="progressTrack" role="progressbar" aria-label="Quiz progress" aria-valuemin="0" aria-valuemax="4" aria-valuenow="0"><div class="progress-fill" id="progressFill"></div></div>
+              <p class="question-kicker" id="questionKicker">Take a moment</p>
+              <h1 class="question" id="questionText" tabindex="-1">Question goes here</h1>
+              <div class="options" id="options" role="group" aria-label="Answer options"></div>
+              <div class="feedback" id="feedback" aria-live="polite">Choose the answer that feels right.</div>
+              <div class="quiz-actions">
+                <button class="text-button" type="button" id="quitButton">← <span id="quitButtonLabel">Choose another subject</span></button>
+                <button class="primary-button" type="button" id="nextButton" disabled>Check answer</button>
+              </div>
+            </article>
+            <aside class="game-sidebar" aria-label="Round details">
+              <div class="side-card">
+                <div class="score-hud-top">
+                  <span class="score-level-chip" id="hudLevel">Level 1 · Question 1 of 10</span>
+                  <span class="score-live-tag"><span class="score-live-dot" aria-hidden="true"></span><span id="liveScoreLabel">LIVE</span></span>
+                </div>
+                <div class="side-label" id="scoreLabel">Your score</div>
+                <div class="score-value" id="scoreValue" aria-live="polite" aria-atomic="true">0</div>
+                <div class="score-caption" id="scoreCaption">points so far</div>
+                <div class="combo-banner" id="comboBanner" hidden></div>
+                <div class="side-divider"></div>
+                <div class="side-detail"><span id="correctLabel">Correct</span><strong id="correctCount">0</strong></div>
+                <div class="side-detail" style="margin-top:11px"><span id="streakLabel">Streak</span><strong id="streakValue">0 · 1×</strong></div>
+                <div class="streak-hint" id="streakHint">3 in a row: 2× · 5: 3×</div>
+                <div class="side-detail" style="margin-top:11px"><span id="roundLabel">Round</span><strong id="roundLength">4 questions</strong></div>
+              </div>
+              <div class="side-card">
+                <div class="orbit-mini" aria-hidden="true"><span class="mini-ring"></span><span class="mini-ring ring-two"></span><span class="mini-core"></span><span class="mini-orb"></span></div>
+                <div class="side-note"><strong id="sideNoteTitle">Stay curious.</strong><br><span id="sideNoteBody">Every answer is a new little fact to keep.</span></div>
+              </div>
+            </aside>
+          </div>
+        </section>
+
+        <section class="view" id="resultsView" aria-labelledby="resultTitle">
+          <div class="results-wrap">
+            <article class="result-card" id="resultCard" data-tier="bronze">
+              <div class="result-top">
+                <svg class="result-trophy" id="resultTrophySvg" viewBox="0 0 100 100" role="img" aria-label="Bronze trophy">
+                  <path id="trophyCup" d="M31 18h38v18c0 17-8 27-19 27S31 53 31 36V18Z" fill="#CD7F32" stroke="#F2B46F" stroke-width="4"/>
+                  <path id="trophyHandles" d="M31 26H17v8c0 14 8 20 20 19M69 26h14v8c0 14-8 20-20 19" fill="none" stroke="#A95D25" stroke-width="8" stroke-linecap="round"/>
+                  <path id="trophyBase" d="M50 63v13M37 79h26v8H37z" fill="#A95D25" stroke="#F2B46F" stroke-width="3" stroke-linejoin="round"/>
+                  <path d="m50 26 3.1 6.3 7 .9-5.1 4.8 1.2 6.8-6.2-3.3-6.2 3.3 1.2-6.8-5.1-4.8 7-.9L50 26Z" fill="#FFF8D6"/>
+                </svg>
+                <div class="result-seal" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="m12 3 2.2 5.1 5.5.5-4.2 3.6 1.3 5.4-4.8-2.9-4.8 2.9 1.3-5.4-4.2-3.6 5.5-.5L12 3Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><circle cx="12" cy="12" r="9.5" stroke="currentColor" stroke-width="1.2" opacity=".35"/></svg></div>
+                <p class="eyebrow" id="resultCategory">Your orbit is complete</p>
+                <p class="result-level-label" id="resultLevel" hidden></p>
+                <h1 id="resultTitle">A lovely little round.</h1>
+                <p id="resultMessage">You followed your curiosity all the way through.</p>
+                <p class="level-unlock-notice" id="levelUnlockNotice" hidden aria-live="polite"></p>
+                <div class="trophy-tier" id="trophyTier" data-tier="bronze" aria-live="polite">
+                  <span class="trophy-tier-mark" aria-hidden="true">✦</span>
+                  <span id="trophyTierText">Bronze Trophy</span>
+                </div>
+                <div class="result-score"><span id="finalScore">0</span><small id="finalDenominator"> net points</small></div>
+              </div>
+              <div class="result-bottom">
+                <div class="result-stats">
+                  <div class="result-stat"><strong id="finalCorrect">0</strong><span id="finalCorrectLabel">Correct</span></div>
+                  <div class="result-stat"><strong id="finalIncorrect">0</strong><span id="finalIncorrectLabel">Incorrect</span></div>
+                  <div class="result-stat"><strong id="finalAccuracy">0%</strong><span id="finalAccuracyLabel">Accuracy</span></div>
+                  <div class="result-stat"><strong id="finalBestStreak">0</strong><span id="finalBestStreakLabel">Best streak</span></div>
+                  <div class="result-stat"><strong id="finalTotal">4</strong><span id="finalTotalLabel">Questions</span></div>
+                </div>
+                <section class="achievement-panel" aria-labelledby="achievementHeading">
+                  <div class="achievement-heading">
+                    <h2 id="achievementHeading">Unlocked badges</h2>
+                    <span class="achievement-count" id="achievementCount">0</span>
+                  </div>
+                  <div class="achievement-list" id="achievementList" role="list" aria-live="polite"></div>
+                </section>
+                <div class="result-actions">
+                  <button class="secondary-button" type="button" id="homeButton"><span id="homeButtonLabel">Choose a subject</span></button>
+                  <button class="primary-button next-level-button" type="button" id="nextLevelButton" hidden><span id="nextLevelLabel">Next level</span> <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M4.2 10h11.6m-4.5-4.5 4.5 4.5-4.5 4.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+                  <button class="primary-button" type="button" id="playAgainButton">Play again <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M4.2 10h11.6m-4.5-4.5 4.5 4.5-4.5 4.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+                </div>
+              </div>
+            </article>
+          </div>
+        </section>
+      </main>
+    </div>
+    <script type="module">
+      import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js";
+
+      // Every piece of visible copy and every quiz option lives in this dictionary.
+      // Question order, options, and answer indexes match between languages.
+      // All persistent labels and short gameplay messages live in this locale dictionary.
+      const translations = {
+        en: {
+          pageTitle: "Quiz Orbit — 3D Quiz Game",
+          metaDescription: "A colorful 3D quiz. Choose a subject, follow your curiosity, and see how far your knowledge takes you.",
+          language: "Language",
+          topNote: "A small space for curiosity",
+          brandHome: "Quiz Orbit home",
+          welcomeEyebrow: "A quiz with a little perspective",
+          welcomeTitle: "Wonder a little <span>further.</span>",
+          welcomeDescription: "Three curious corners. Ten good questions. Take a quiet moment and see where your knowledge takes you.",
+          orbitLabel: "Explore at your own pace",
+          categoryHeading: "Choose your orbit",
+          categoryHeadingHint: "Pick a subject · no timer",
+          categoryGroup: "Choose a quiz category",
+          categoryLabels: {
+            "General Knowledge": "General Knowledge",
+            Science: "Science",
+            Technology: "Technology"
+          },
+          categoryDescriptions: {
+            "General Knowledge": "A little bit of everything",
+            Science: "The world, wonderfully explained",
+            Technology: "Ideas that move us forward"
+          },
+          startGame: "Start game",
+          startHint: "Choose a subject to begin your orbit.",
+          selectedHint: "{category} selected · ready when you are.",
+          totalQuestions: "{count} General Knowledge questions · {levels} levels",
+          instantAnswers: "Instant answers",
+          justForFun: "Just for fun",
+          quizRound: "Quiz round",
+          progress: "Quiz progress",
+          question: "Question",
+          of: "of",
+          option: "Option",
+          questionKicker: "Take a moment",
+          answerOptions: "Answer options",
+          chooseAnswer: "Choose the answer that feels right.",
+          correctFeedback: "Correct! +{points} points · {multiplier}× streak.",
+          incorrectFeedback: "No points deducted — the answer is {answer}.",
+          penaltyFeedback: "−{points} points — the answer is {answer}.",
+          noPointsLost: "No points to lose",
+          chooseAnother: "Choose another subject",
+          checkAnswer: "Check answer",
+          nextQuestion: "Next question",
+          seeScore: "See your score",
+          yourScore: "Your score",
+          pointsSoFar: "points so far",
+          pointsUnit: "points",
+          netPoints: "net points",
+          liveScore: "LIVE",
+          levelSelectTitle: "Choose a level",
+          levelSelectDescription: "Answer at least 6 of 10 correctly to unlock the next level.",
+          levelProgress: "{unlocked} of {total} levels unlocked",
+          levelBack: "Back to subjects",
+          levelNumber: "Level {level}",
+          levelUnlocked: "Unlocked",
+          levelLocked: "Locked",
+          levelComplete: "Completed",
+          levelQuestions: "{count} questions",
+          levelUnlockNotice: "Level {level} unlocked!",
+          levelFailNotice: "Get {count} correct to unlock the next level. Retry for a new set.",
+          nextLevel: "Next level",
+          retryLevel: "Retry level",
+          streak: "Streak",
+          streakHint: "3 in a row: 2× · 5: 3×",
+          streakCombo: "🔥 {streak} streak · {multiplier}× combo",
+          accuracy: "Accuracy",
+          bestStreak: "Best streak",
+          achievements: "Unlocked badges",
+          noAchievements: "No badges unlocked this round yet.",
+          trophyAward: "Round reward",
+          trophyGold: "Gold Trophy",
+          trophySilver: "Silver Trophy",
+          trophyBronze: "Bronze Trophy",
+          badgeQuizMaster: "Quiz Master",
+          badgeQuizMasterHint: "Perfect score",
+          badgeSpeedDemon: "Speed Demon",
+          badgeSpeedDemonHint: "Average answer under 6 seconds",
+          badgeKnowledgeSeeker: "Knowledge Seeker",
+          badgeKnowledgeSeekerHint: "60% accuracy or higher",
+          correct: "Correct",
+          incorrectAnswers: "Incorrect",
+          round: "Round",
+          questions: "questions",
+          resultQuestions: "Questions",
+          stayCurious: "Stay curious.",
+          sideNote: "Every answer is a new little fact to keep.",
+          orbitComplete: "Your orbit is complete",
+          categoryComplete: "complete",
+          resultPerfectTitle: "Brilliantly done.",
+          resultPerfectMessage: "A wonderfully sharp orbit. You knew your way around.",
+          resultStrongTitle: "Look at you go.",
+          resultStrongMessage: "A strong round, with a few new facts along the way.",
+          resultLowTitle: "Curiosity looks good on you.",
+          resultLowMessage: "Every question was a place to start. Want another orbit?",
+          resultDefaultTitle: "A lovely little round.",
+          resultDefaultMessage: "You followed your curiosity all the way through.",
+          category: "Category",
+          chooseSubject: "Choose a subject",
+          playAgain: "Play again",
+          optionLetters: ["A", "B", "C", "D"]
+        },
+        bn: {
+          pageTitle: "কুইজ অরবিট — 3D কুইজ গেম",
+          metaDescription: "রঙিন 3D কুইজ খেলুন। বিষয় বেছে নিন, কৌতূহল অনুসরণ করুন এবং আপনার জ্ঞানের পরীক্ষা দিন।",
+          language: "ভাষা",
+          topNote: "কৌতূহলের জন্য ছোট্ট এক জগৎ",
+          brandHome: "কুইজ অরবিটের হোম",
+          welcomeEyebrow: "নতুন দৃষ্টিতে কুইজ",
+          welcomeTitle: "আরও একটু <span>জেনে নিন।</span>",
+          welcomeDescription: "তিনটি কৌতূহলী বিষয়। দশটি মজার প্রশ্ন। একটু সময় নিয়ে দেখুন, আপনার জ্ঞান আপনাকে কোথায় নিয়ে যায়।",
+          orbitLabel: "নিজের গতিতে ঘুরে দেখুন",
+          categoryHeading: "আপনার বিষয় বেছে নিন",
+          categoryHeadingHint: "একটি বিষয় বেছে নিন · সময়সীমা নেই",
+          categoryGroup: "কুইজের বিষয় বেছে নিন",
+          categoryLabels: {
+            "General Knowledge": "সাধারণ জ্ঞান",
+            Science: "বিজ্ঞান",
+            Technology: "প্রযুক্তি"
+          },
+          categoryDescriptions: {
+            "General Knowledge": "নানান বিষয়ের মজার তথ্য",
+            Science: "চমৎকারভাবে ব্যাখ্যা করা জগৎ",
+            Technology: "যে ধারণাগুলো আমাদের এগিয়ে নেয়"
+          },
+          startGame: "খেলা শুরু করুন",
+          startHint: "শুরু করতে একটি বিষয় বেছে নিন।",
+          selectedHint: "{category} বেছে নেওয়া হয়েছে · শুরু করতে প্রস্তুত।",
+          totalQuestions: "সাধারণ জ্ঞানের {count}টি প্রশ্ন · {levels}টি লেভেল",
+          instantAnswers: "তাৎক্ষণিক উত্তর",
+          justForFun: "শুধু মজার জন্য",
+          quizRound: "কুইজ পর্ব",
+          progress: "কুইজের অগ্রগতি",
+          question: "প্রশ্ন",
+          of: "এর মধ্যে",
+          option: "বিকল্প",
+          questionKicker: "একটু ভেবে নিন",
+          answerOptions: "উত্তরের বিকল্প",
+          chooseAnswer: "আপনার কাছে যেটি ঠিক মনে হয়, সেটি বেছে নিন।",
+          correctFeedback: "সঠিক! +{points} পয়েন্ট · ধারায় {multiplier}×।",
+          incorrectFeedback: "পয়েন্ট কমেনি — সঠিক উত্তর: {answer}।",
+          penaltyFeedback: "−{points} পয়েন্ট — সঠিক উত্তর: {answer}।",
+          noPointsLost: "কমানোর মতো পয়েন্ট নেই",
+          chooseAnother: "অন্য বিষয় বেছে নিন",
+          checkAnswer: "উত্তর যাচাই",
+          nextQuestion: "পরের প্রশ্ন",
+          seeScore: "আপনার ফল দেখুন",
+          yourScore: "আপনার স্কোর",
+          pointsSoFar: "এখন পর্যন্ত পয়েন্ট",
+          pointsUnit: "পয়েন্ট",
+          netPoints: "নেট পয়েন্ট",
+          liveScore: "লাইভ",
+          levelSelectTitle: "একটি লেভেল বেছে নিন",
+          levelSelectDescription: "পরের লেভেল খুলতে ১০টির মধ্যে অন্তত ৬টি সঠিক উত্তর দিন।",
+          levelProgress: "{total}টির মধ্যে {unlocked}টি লেভেল খোলা",
+          levelBack: "বিষয় বাছাইয়ে ফিরুন",
+          levelNumber: "লেভেল {level}",
+          levelUnlocked: "খোলা",
+          levelLocked: "বন্ধ",
+          levelComplete: "সম্পন্ন",
+          levelQuestions: "{count}টি প্রশ্ন",
+          levelUnlockNotice: "লেভেল {level} খুলেছে!",
+          levelFailNotice: "পরের লেভেল খুলতে {count}টি সঠিক উত্তর দরকার। নতুন প্রশ্নে আবার খেলুন।",
+          nextLevel: "পরের লেভেল",
+          retryLevel: "আবার খেলুন",
+          streak: "ধারাবাহিক সঠিক উত্তর",
+          streakHint: "টানা ৩টি: ২× · ৫টি: ৩×",
+          streakCombo: "🔥 টানা {streak}টি · {multiplier}× কম্বো",
+          accuracy: "সঠিকতার হার",
+          bestStreak: "সর্বোচ্চ ধারা",
+          achievements: "অর্জিত ব্যাজ",
+          noAchievements: "এই পর্বে এখনো কোনো ব্যাজ মেলেনি।",
+          trophyAward: "এই পর্বের পুরস্কার",
+          trophyGold: "সোনার ট্রফি",
+          trophySilver: "রুপার ট্রফি",
+          trophyBronze: "ব্রোঞ্জ ট্রফি",
+          badgeQuizMaster: "কুইজ মাস্টার",
+          badgeQuizMasterHint: "পূর্ণ নম্বর",
+          badgeSpeedDemon: "দ্রুত উত্তরদাতা",
+          badgeSpeedDemonHint: "গড়ে ৬ সেকেন্ডের কমে উত্তর",
+          badgeKnowledgeSeeker: "জ্ঞানসন্ধানী",
+          badgeKnowledgeSeekerHint: "সঠিকতার হার ৬০% বা বেশি",
+          correct: "সঠিক",
+          incorrectAnswers: "ভুল",
+          round: "পর্ব",
+          questions: "টি প্রশ্ন",
+          resultQuestions: "প্রশ্ন",
+          stayCurious: "কৌতূহলী থাকুন।",
+          sideNote: "প্রতিটি উত্তরই মনে রাখার মতো নতুন একটি তথ্য।",
+          orbitComplete: "আপনার পর্ব শেষ",
+          categoryComplete: "সম্পন্ন",
+          resultPerfectTitle: "অসাধারণ করেছেন।",
+          resultPerfectMessage: "চমৎকার একটি পর্ব। সব উত্তরই আপনার জানা ছিল।",
+          resultStrongTitle: "দারুণ এগিয়েছেন।",
+          resultStrongMessage: "চমৎকার পর্ব, সঙ্গে শিখলেন কয়েকটি নতুন তথ্য।",
+          resultLowTitle: "কৌতূহলই আসল।",
+          resultLowMessage: "প্রতিটি প্রশ্নই শেখার একটি সুযোগ। আরেকটি পর্ব খেলবেন?",
+          resultDefaultTitle: "সুন্দর একটি পর্ব।",
+          resultDefaultMessage: "কৌতূহলের টানে পুরো পর্বটি শেষ করেছেন।",
+          category: "বিষয়",
+          chooseSubject: "বিষয় বেছে নিন",
+          playAgain: "আবার খেলুন",
+          optionLetters: ["ক", "খ", "গ", "ঘ"]
+        },
+        hi: {
+          pageTitle: "क्विज़ ऑर्बिट — 3D क्विज़ गेम",
+          metaDescription: "रंगीन 3D क्विज़ खेलें। विषय चुनें, जिज्ञासा के साथ आगे बढ़ें और अपना ज्ञान आज़माएँ।",
+          language: "भाषा",
+          topNote: "जिज्ञासा के लिए एक छोटी-सी जगह",
+          brandHome: "क्विज़ ऑर्बिट होम",
+          welcomeEyebrow: "एक नए नज़रिए वाला क्विज़",
+          welcomeTitle: "थोड़ा और <span>जानें।</span>",
+          welcomeDescription: "तीन दिलचस्प विषय। दस मज़ेदार सवाल। थोड़ा समय निकालें और देखें कि आपका ज्ञान आपको कहाँ ले जाता है।",
+          orbitLabel: "अपनी गति से खेलें",
+          categoryHeading: "अपना विषय चुनें",
+          categoryHeadingHint: "विषय चुनें · कोई समय सीमा नहीं",
+          categoryGroup: "क्विज़ श्रेणी चुनें",
+          categoryLabels: {
+            "General Knowledge": "सामान्य ज्ञान",
+            Science: "विज्ञान",
+            Technology: "प्रौद्योगिकी"
+          },
+          categoryDescriptions: {
+            "General Knowledge": "हर विषय से थोड़ी-थोड़ी जानकारी",
+            Science: "दुनिया को आसान भाषा में समझें",
+            Technology: "आगे बढ़ने के नए विचार"
+          },
+          startGame: "खेल शुरू करें",
+          startHint: "शुरू करने के लिए कोई विषय चुनें।",
+          selectedHint: "{category} चुना गया · जब चाहें शुरू करें।",
+          totalQuestions: "{count} सामान्य ज्ञान के सवाल · {levels} स्तर",
+          instantAnswers: "तुरंत जवाब",
+          justForFun: "सिर्फ़ मज़े के लिए",
+          quizRound: "क्विज़ राउंड",
+          progress: "क्विज़ की प्रगति",
+          question: "सवाल",
+          of: "में से",
+          option: "विकल्प",
+          questionKicker: "थोड़ा सोचें",
+          answerOptions: "जवाब के विकल्प",
+          chooseAnswer: "जो जवाब सही लगे, उसे चुनें।",
+          correctFeedback: "सही! +{points} अंक · {multiplier}× स्ट्रीक।",
+          incorrectFeedback: "कोई अंक नहीं कटे — सही जवाब: {answer}।",
+          penaltyFeedback: "−{points} अंक — सही जवाब: {answer}।",
+          noPointsLost: "घटाने को कोई अंक नहीं",
+          chooseAnother: "कोई और विषय चुनें",
+          checkAnswer: "जवाब जाँचें",
+          nextQuestion: "अगला सवाल",
+          seeScore: "अपना स्कोर देखें",
+          yourScore: "आपका स्कोर",
+          pointsSoFar: "अब तक के अंक",
+          pointsUnit: "अंक",
+          netPoints: "शुद्ध अंक",
+          liveScore: "लाइव",
+          levelSelectTitle: "एक स्तर चुनें",
+          levelSelectDescription: "अगला स्तर खोलने के लिए 10 में से कम से कम 6 सही जवाब दें।",
+          levelProgress: "{total} में से {unlocked} स्तर खुले",
+          levelBack: "विषय चुनने पर लौटें",
+          levelNumber: "स्तर {level}",
+          levelUnlocked: "खुला",
+          levelLocked: "बंद",
+          levelComplete: "पूरा",
+          levelQuestions: "{count} सवाल",
+          levelUnlockNotice: "स्तर {level} खुल गया!",
+          levelFailNotice: "अगला स्तर खोलने के लिए {count} सही जवाब दें। नए सवालों के साथ फिर खेलें।",
+          nextLevel: "अगला स्तर",
+          retryLevel: "स्तर फिर से खेलें",
+          streak: "लगातार सही जवाब",
+          streakHint: "लगातार 3: 2× · 5: 3×",
+          streakCombo: "🔥 लगातार {streak} · {multiplier}× कॉम्बो",
+          accuracy: "सटीकता",
+          bestStreak: "सबसे लंबी स्ट्रीक",
+          achievements: "अनलॉक बैज",
+          noAchievements: "इस राउंड में अभी कोई बैज नहीं मिला।",
+          trophyAward: "इस राउंड का इनाम",
+          trophyGold: "स्वर्ण ट्रॉफी",
+          trophySilver: "रजत ट्रॉफी",
+          trophyBronze: "कांस्य ट्रॉफी",
+          badgeQuizMaster: "क्विज़ मास्टर",
+          badgeQuizMasterHint: "पूरा स्कोर",
+          badgeSpeedDemon: "तेज़ खिलाड़ी",
+          badgeSpeedDemonHint: "औसतन 6 सेकंड से कम में जवाब",
+          badgeKnowledgeSeeker: "ज्ञान साधक",
+          badgeKnowledgeSeekerHint: "60% या अधिक सटीकता",
+          correct: "सही",
+          incorrectAnswers: "गलत",
+          round: "राउंड",
+          questions: "सवाल",
+          resultQuestions: "सवाल",
+          stayCurious: "जिज्ञासु बने रहें।",
+          sideNote: "हर जवाब याद रखने लायक एक नई जानकारी है।",
+          orbitComplete: "आपका राउंड पूरा हुआ",
+          categoryComplete: "पूरा",
+          resultPerfectTitle: "शानदार प्रदर्शन।",
+          resultPerfectMessage: "कमाल का राउंड। आपको हर जवाब पता था।",
+          resultStrongTitle: "बहुत खूब।",
+          resultStrongMessage: "एक मज़बूत राउंड और साथ में कुछ नई बातें।",
+          resultLowTitle: "जिज्ञासा आप पर खूब जँचती है।",
+          resultLowMessage: "हर सवाल सीखने का एक मौका था। एक और राउंड खेलें?",
+          resultDefaultTitle: "एक प्यारा-सा राउंड।",
+          resultDefaultMessage: "आपने जिज्ञासा के साथ पूरा खेल खेला।",
+          category: "श्रेणी",
+          chooseSubject: "कोई विषय चुनें",
+          playAgain: "फिर से खेलें",
+          optionLetters: ["क", "ख", "ग", "घ"]
+        },
+        es: {
+          pageTitle: "Quiz Orbit — Juego de preguntas 3D",
+          metaDescription: "Juega a un colorido quiz 3D. Elige un tema, sigue tu curiosidad y pon a prueba tus conocimientos.",
+          language: "Idioma",
+          topNote: "Un pequeño espacio para la curiosidad",
+          brandHome: "Inicio de Quiz Orbit",
+          welcomeEyebrow: "Un quiz con otra perspectiva",
+          welcomeTitle: "Descubre un poco <span>más.</span>",
+          welcomeDescription: "Tres temas curiosos. Diez buenas preguntas. Tómate un momento y descubre hasta dónde te lleva tu conocimiento.",
+          orbitLabel: "Explora a tu ritmo",
+          categoryHeading: "Elige tu tema",
+          categoryHeadingHint: "Elige una categoría · sin límite de tiempo",
+          categoryGroup: "Elige una categoría del quiz",
+          categoryLabels: {
+            "General Knowledge": "Cultura general",
+            Science: "Ciencia",
+            Technology: "Tecnología"
+          },
+          categoryDescriptions: {
+            "General Knowledge": "Un poco de todo",
+            Science: "El mundo, explicado con claridad",
+            Technology: "Ideas que nos hacen avanzar"
+          },
+          startGame: "Empezar partida",
+          startHint: "Elige un tema para comenzar.",
+          selectedHint: "{category} seleccionado · cuando quieras.",
+          totalQuestions: "{count} preguntas de cultura general · {levels} niveles",
+          instantAnswers: "Respuestas al instante",
+          justForFun: "Solo por diversión",
+          quizRound: "Ronda de preguntas",
+          progress: "Progreso del quiz",
+          question: "Pregunta",
+          of: "de",
+          option: "Opción",
+          questionKicker: "Tómate un momento",
+          answerOptions: "Opciones de respuesta",
+          chooseAnswer: "Elige la respuesta que te parezca correcta.",
+          correctFeedback: "¡Correcto! +{points} puntos · racha {multiplier}×.",
+          incorrectFeedback: "No se descontaron puntos; la respuesta correcta es {answer}.",
+          penaltyFeedback: "−{points} puntos; la respuesta correcta es {answer}.",
+          noPointsLost: "No hay puntos que perder",
+          chooseAnother: "Elegir otro tema",
+          checkAnswer: "Comprobar respuesta",
+          nextQuestion: "Siguiente pregunta",
+          seeScore: "Ver tu puntuación",
+          yourScore: "Tu puntuación",
+          pointsSoFar: "puntos hasta ahora",
+          pointsUnit: "puntos",
+          netPoints: "puntos netos",
+          liveScore: "EN VIVO",
+          levelSelectTitle: "Elige un nivel",
+          levelSelectDescription: "Acierta al menos 6 de 10 para desbloquear el siguiente nivel.",
+          levelProgress: "{unlocked} de {total} niveles desbloqueados",
+          levelBack: "Volver a los temas",
+          levelNumber: "Nivel {level}",
+          levelUnlocked: "Desbloqueado",
+          levelLocked: "Bloqueado",
+          levelComplete: "Completado",
+          levelQuestions: "{count} preguntas",
+          levelUnlockNotice: "¡Nivel {level} desbloqueado!",
+          levelFailNotice: "Necesitas {count} aciertos para desbloquear el siguiente nivel. Repite con preguntas nuevas.",
+          nextLevel: "Siguiente nivel",
+          retryLevel: "Repetir nivel",
+          streak: "Racha",
+          streakHint: "3 seguidas: 2× · 5: 3×",
+          streakCombo: "🔥 Racha de {streak} · combo ×{multiplier}",
+          accuracy: "Aciertos",
+          bestStreak: "Mejor racha",
+          achievements: "Insignias desbloqueadas",
+          noAchievements: "Aún no has desbloqueado insignias en esta ronda.",
+          trophyAward: "Recompensa de la ronda",
+          trophyGold: "Trofeo de oro",
+          trophySilver: "Trofeo de plata",
+          trophyBronze: "Trofeo de bronce",
+          badgeQuizMaster: "Maestro del quiz",
+          badgeQuizMasterHint: "Puntuación perfecta",
+          badgeSpeedDemon: "Rayo veloz",
+          badgeSpeedDemonHint: "Promedio de respuesta menor a 6 segundos",
+          badgeKnowledgeSeeker: "Buscador de conocimiento",
+          badgeKnowledgeSeekerHint: "60% de aciertos o más",
+          correct: "Correctas",
+          incorrectAnswers: "Incorrectas",
+          round: "Ronda",
+          questions: "preguntas",
+          resultQuestions: "Preguntas",
+          stayCurious: "Sigue con curiosidad.",
+          sideNote: "Cada respuesta es un dato nuevo que vale la pena recordar.",
+          orbitComplete: "Tu ronda ha terminado",
+          categoryComplete: "completada",
+          resultPerfectTitle: "¡Lo has bordado!",
+          resultPerfectMessage: "Una ronda brillante. Te sabías todas las respuestas.",
+          resultStrongTitle: "¡Qué bien lo has hecho!",
+          resultStrongMessage: "Una gran ronda, con algunos datos nuevos por el camino.",
+          resultLowTitle: "La curiosidad te sienta bien.",
+          resultLowMessage: "Cada pregunta fue una oportunidad para aprender. ¿Otra ronda?",
+          resultDefaultTitle: "Una ronda estupenda.",
+          resultDefaultMessage: "Seguiste tu curiosidad hasta el final.",
+          category: "Categoría",
+          chooseSubject: "Elegir un tema",
+          playAgain: "Volver a jugar",
+          optionLetters: ["A", "B", "C", "D"]
+        },
+        fr: {
+          pageTitle: "Quiz Orbit — Quiz 3D",
+          metaDescription: "Jouez à un quiz 3D haut en couleur. Choisissez un thème, suivez votre curiosité et testez vos connaissances.",
+          language: "Langue",
+          topNote: "Un petit espace pour la curiosité",
+          brandHome: "Accueil de Quiz Orbit",
+          welcomeEyebrow: "Un quiz sous un nouvel angle",
+          welcomeTitle: "Explorez un peu <span>plus.</span>",
+          welcomeDescription: "Trois thèmes passionnants. Dix bonnes questions. Prenez un instant et découvrez jusqu’où vos connaissances vous mènent.",
+          orbitLabel: "Explorez à votre rythme",
+          categoryHeading: "Choisissez un thème",
+          categoryHeadingHint: "Choisissez une catégorie · sans chronomètre",
+          categoryGroup: "Choisissez une catégorie de quiz",
+          categoryLabels: {
+            "General Knowledge": "Culture générale",
+            Science: "Sciences",
+            Technology: "Technologie"
+          },
+          categoryDescriptions: {
+            "General Knowledge": "Un peu de tout",
+            Science: "Le monde expliqué avec clarté",
+            Technology: "Des idées pour aller plus loin"
+          },
+          startGame: "Lancer la partie",
+          startHint: "Choisissez un thème pour commencer.",
+          selectedHint: "{category} sélectionné · à vous de jouer.",
+          totalQuestions: "{count} questions de culture générale · {levels} niveaux",
+          instantAnswers: "Réponses immédiates",
+          justForFun: "Juste pour le plaisir",
+          quizRound: "Manche de quiz",
+          progress: "Progression du quiz",
+          question: "Question",
+          of: "sur",
+          option: "Option",
+          questionKicker: "Prenez un instant",
+          answerOptions: "Choix de réponse",
+          chooseAnswer: "Choisissez la réponse qui vous semble juste.",
+          correctFeedback: "Bonne réponse ! +{points} points · série ×{multiplier}.",
+          incorrectFeedback: "Aucun point retiré ; la bonne réponse est {answer}.",
+          penaltyFeedback: "−{points} points ; la bonne réponse est {answer}.",
+          noPointsLost: "Aucun point à retirer",
+          chooseAnother: "Choisir un autre thème",
+          checkAnswer: "Vérifier la réponse",
+          nextQuestion: "Question suivante",
+          seeScore: "Voir votre score",
+          yourScore: "Votre score",
+          pointsSoFar: "points pour le moment",
+          pointsUnit: "points",
+          netPoints: "points nets",
+          liveScore: "EN DIRECT",
+          levelSelectTitle: "Choisissez un niveau",
+          levelSelectDescription: "Répondez correctement à au moins 6 questions sur 10 pour débloquer le niveau suivant.",
+          levelProgress: "{unlocked}/{total} niveaux débloqués",
+          levelBack: "Retour aux thèmes",
+          levelNumber: "Niveau {level}",
+          levelUnlocked: "Débloqué",
+          levelLocked: "Verrouillé",
+          levelComplete: "Terminé",
+          levelQuestions: "{count} questions",
+          levelUnlockNotice: "Niveau {level} débloqué !",
+          levelFailNotice: "Il faut {count} bonnes réponses pour débloquer le niveau suivant. Rejouez avec de nouvelles questions.",
+          nextLevel: "Niveau suivant",
+          retryLevel: "Rejouer le niveau",
+          streak: "Série",
+          streakHint: "3 de suite : ×2 · 5 : ×3",
+          streakCombo: "🔥 Série de {streak} · combo ×{multiplier}",
+          accuracy: "Précision",
+          bestStreak: "Meilleure série",
+          achievements: "Badges débloqués",
+          noAchievements: "Aucun badge débloqué pour cette manche.",
+          trophyAward: "Récompense de la manche",
+          trophyGold: "Trophée d’or",
+          trophySilver: "Trophée d’argent",
+          trophyBronze: "Trophée de bronze",
+          badgeQuizMaster: "As du quiz",
+          badgeQuizMasterHint: "Score parfait",
+          badgeSpeedDemon: "Éclair",
+          badgeSpeedDemonHint: "Réponse moyenne en moins de 6 secondes",
+          badgeKnowledgeSeeker: "Curieux de savoir",
+          badgeKnowledgeSeekerHint: "Précision de 60 % ou plus",
+          correct: "Bonnes réponses",
+          incorrectAnswers: "Incorrectes",
+          round: "Manche",
+          questions: "questions",
+          resultQuestions: "Questions",
+          stayCurious: "Restez curieux.",
+          sideNote: "Chaque réponse est une nouvelle petite chose à retenir.",
+          orbitComplete: "Votre manche est terminée",
+          categoryComplete: "terminée",
+          resultPerfectTitle: "Un sans-faute !",
+          resultPerfectMessage: "Une manche remarquable. Vous connaissiez toutes les réponses.",
+          resultStrongTitle: "Très belle performance !",
+          resultStrongMessage: "Une excellente manche, avec quelques nouvelles découvertes.",
+          resultLowTitle: "La curiosité vous va bien.",
+          resultLowMessage: "Chaque question était une occasion d’apprendre. On recommence ?",
+          resultDefaultTitle: "Une belle petite manche.",
+          resultDefaultMessage: "Vous avez suivi votre curiosité jusqu’au bout.",
+          category: "Catégorie",
+          chooseSubject: "Choisir un thème",
+          playAgain: "Rejouer",
+          optionLetters: ["A", "B", "C", "D"]
+        }
+      };
+
+      // Expand the General Knowledge bank in exact groups of 10 questions:
+      // each consecutive group becomes one level. Every question and its four
+      // options must include all five locales with the same zero-based answer.
+      // Add another translated block of 10 to append a new level automatically.
+      const quizData = {
+        "General Knowledge": [
+          { question: { en: "What is the capital of Japan?", bn: "জাপানের রাজধানী কোনটি?", hi: "जापान की राजधानी क्या है?", es: "¿Cuál es la capital de Japón?", fr: "Quelle est la capitale du Japon ?" }, options: { en: ["Tokyo", "Kyoto", "Osaka", "Sapporo"], bn: ["টোকিও", "কিয়োটো", "ওসাকা", "সাপ্পোরো"], hi: ["टोक्यो", "क्योटो", "ओसाका", "साप्पोरो"], es: ["Tokio", "Kioto", "Osaka", "Sapporo"], fr: ["Tokyo", "Kyoto", "Osaka", "Sapporo"] }, answer: 0 },
+          { question: { en: "Which is Earth's largest ocean?", bn: "পৃথিবীর বৃহত্তম মহাসাগর কোনটি?", hi: "पृथ्वी का सबसे बड़ा महासागर कौन-सा है?", es: "¿Cuál es el océano más grande de la Tierra?", fr: "Quel est le plus grand océan de la Terre ?" }, options: { en: ["Atlantic", "Indian", "Arctic", "Pacific"], bn: ["আটলান্টিক মহাসাগর", "ভারত মহাসাগর", "আর্কটিক মহাসাগর", "প্রশান্ত মহাসাগর"], hi: ["अटलांटिक", "हिंद महासागर", "आर्कटिक", "प्रशांत"], es: ["Atlántico", "Índico", "Ártico", "Pacífico"], fr: ["Atlantique", "Indien", "Arctique", "Pacifique"] }, answer: 3 },
+          { question: { en: "The Eiffel Tower is in which city?", bn: "আইফেল টাওয়ার কোন শহরে অবস্থিত?", hi: "एफिल टॉवर किस शहर में है?", es: "¿En qué ciudad está la Torre Eiffel?", fr: "Dans quelle ville se trouve la tour Eiffel ?" }, options: { en: ["Rome", "Paris", "Madrid", "Vienna"], bn: ["রোম", "প্যারিস", "মাদ্রিদ", "ভিয়েনা"], hi: ["रोम", "पेरिस", "मैड्रिड", "वियना"], es: ["Roma", "París", "Madrid", "Viena"], fr: ["Rome", "Paris", "Madrid", "Vienne"] }, answer: 1 },
+          { question: { en: "How many sides does a hexagon have?", bn: "ষড়ভুজের কয়টি বাহু থাকে?", hi: "षट्भुज की कितनी भुजाएँ होती हैं?", es: "¿Cuántos lados tiene un hexágono?", fr: "Combien de côtés possède un hexagone ?" }, options: { en: ["Five", "Six", "Seven", "Eight"], bn: ["পাঁচটি", "ছয়টি", "সাতটি", "আটটি"], hi: ["पाँच", "छह", "सात", "आठ"], es: ["Cinco", "Seis", "Siete", "Ocho"], fr: ["Cinq", "Six", "Sept", "Huit"] }, answer: 1 },
+          { question: { en: "The Pyramids of Giza are in which country?", bn: "গিজার পিরামিড কোন দেশে অবস্থিত?", hi: "गीज़ा के पिरामिड किस देश में हैं?", es: "¿En qué país están las pirámides de Guiza?", fr: "Dans quel pays se trouvent les pyramides de Gizeh ?" }, options: { en: ["Greece", "Italy", "Egypt", "Mexico"], bn: ["গ্রিস", "ইতালি", "মিশর", "মেক্সিকো"], hi: ["यूनान", "इटली", "मिस्र", "मेक्सिको"], es: ["Grecia", "Italia", "Egipto", "México"], fr: ["Grèce", "Italie", "Égypte", "Mexique"] }, answer: 2 },
+          { question: { en: "Which language is primarily spoken in Brazil?", bn: "ব্রাজিলে প্রধানত কোন ভাষায় কথা বলা হয়?", hi: "ब्राज़ील में मुख्य रूप से कौन-सी भाषा बोली जाती है?", es: "¿Qué idioma se habla principalmente en Brasil?", fr: "Quelle langue est principalement parlée au Brésil ?" }, options: { en: ["Spanish", "Portuguese", "French", "Italian"], bn: ["স্প্যানিশ", "পর্তুগিজ", "ফরাসি", "ইতালীয়"], hi: ["स्पैनिश", "पुर्तगाली", "फ़्रेंच", "इतालवी"], es: ["Español", "Portugués", "Francés", "Italiano"], fr: ["Espagnol", "Portugais", "Français", "Italien"] }, answer: 1 },
+          { question: { en: "How many continents are there?", bn: "পৃথিবীতে কয়টি মহাদেশ আছে?", hi: "पृथ्वी पर कितने महाद्वीप हैं?", es: "¿Cuántos continentes hay?", fr: "Combien y a-t-il de continents ?" }, options: { en: ["Five", "Six", "Seven", "Eight"], bn: ["পাঁচটি", "ছয়টি", "সাতটি", "আটটি"], hi: ["पाँच", "छह", "सात", "आठ"], es: ["Cinco", "Seis", "Siete", "Ocho"], fr: ["Cinq", "Six", "Sept", "Huit"] }, answer: 2 },
+          { question: { en: "Which river flows through London?", bn: "লন্ডনের মধ্য দিয়ে কোন নদী বয়ে গেছে?", hi: "लंदन से कौन-सी नदी बहती है?", es: "¿Qué río atraviesa Londres?", fr: "Quel fleuve traverse Londres ?" }, options: { en: ["Seine", "Danube", "Tiber", "Thames"], bn: ["সেন", "ডানিউব", "টাইবার", "টেমস"], hi: ["सीन", "डैन्यूब", "टाइबर", "टेम्स"], es: ["Sena", "Danubio", "Tíber", "Támesis"], fr: ["Seine", "Danube", "Tibre", "Tamise"] }, answer: 3 },
+          { question: { en: "What is the currency of Japan?", bn: "জাপানের মুদ্রার নাম কী?", hi: "जापान की मुद्रा क्या है?", es: "¿Cuál es la moneda de Japón?", fr: "Quelle est la monnaie du Japon ?" }, options: { en: ["Yen", "Won", "Baht", "Rupee"], bn: ["ইয়েন", "ওন", "বাত", "রুপি"], hi: ["येन", "वॉन", "बात", "रुपया"], es: ["Yen", "Won", "Baht", "Rupia"], fr: ["Yen", "Won", "Baht", "Roupie"] }, answer: 0 },
+          { question: { en: "Who painted the Mona Lisa?", bn: "মোনালিসা কে এঁকেছিলেন?", hi: "मोना लिसा किसने बनाई थी?", es: "¿Quién pintó la Mona Lisa?", fr: "Qui a peint la Joconde ?" }, options: { en: ["Claude Monet", "Leonardo da Vinci", "Pablo Picasso", "Vincent van Gogh"], bn: ["ক্লদ মনে", "লিওনার্দো দা ভিঞ্চি", "পাবলো পিকাসো", "ভিনসেন্ট ভ্যান গখ"], hi: ["क्लॉद मोने", "लियोनार्डो दा विंची", "पाब्लो पिकासो", "विन्सेंट वैन गॉग"], es: ["Claude Monet", "Leonardo da Vinci", "Pablo Picasso", "Vincent van Gogh"], fr: ["Claude Monet", "Léonard de Vinci", "Pablo Picasso", "Vincent van Gogh"] }, answer: 1 },
+          { question: { en: "Which sport uses a shuttlecock?", bn: "কোন খেলায় শাটলকক ব্যবহার করা হয়?", hi: "शटलकॉक का उपयोग किस खेल में होता है?", es: "¿En qué deporte se usa un volante?", fr: "Dans quel sport utilise-t-on un volant ?" }, options: { en: ["Tennis", "Squash", "Badminton", "Table tennis"], bn: ["টেনিস", "স্কোয়াশ", "ব্যাডমিন্টন", "টেবিল টেনিস"], hi: ["टेनिस", "स्क्वैश", "बैडमिंटन", "टेबल टेनिस"], es: ["Tenis", "Squash", "Bádminton", "Tenis de mesa"], fr: ["Tennis", "Squash", "Badminton", "Tennis de table"] }, answer: 2 },
+          { question: { en: "What is the largest mammal?", bn: "পৃথিবীর বৃহত্তম স্তন্যপায়ী প্রাণী কোনটি?", hi: "सबसे बड़ा स्तनधारी जीव कौन-सा है?", es: "¿Cuál es el mamífero más grande?", fr: "Quel est le plus grand mammifère ?" }, options: { en: ["Elephant", "Giraffe", "Great white shark", "Blue whale"], bn: ["হাতি", "জিরাফ", "বড় সাদা হাঙর", "নীল তিমি"], hi: ["हाथी", "जिराफ़", "महान सफ़ेद शार्क", "नीली व्हेल"], es: ["Elefante", "Jirafa", "Tiburón blanco", "Ballena azul"], fr: ["Éléphant", "Girafe", "Grand requin blanc", "Baleine bleue"] }, answer: 3 },
+          { question: { en: "How many keys does a standard piano have?", bn: "একটি সাধারণ পিয়ানোতে কয়টি কী থাকে?", hi: "एक सामान्य पियानो में कितनी कुंजियाँ होती हैं?", es: "¿Cuántas teclas tiene un piano estándar?", fr: "Combien de touches possède un piano standard ?" }, options: { en: ["88", "76", "80", "92"], bn: ["৮৮", "৭৬", "৮০", "৯২"], hi: ["८८", "७६", "८०", "९२"], es: ["88", "76", "80", "92"], fr: ["88", "76", "80", "92"] }, answer: 0 },
+          { question: { en: "Which country gifted the Statue of Liberty to the United States?", bn: "যুক্তরাষ্ট্রকে স্ট্যাচু অব লিবার্টি উপহার দিয়েছিল কোন দেশ?", hi: "संयुक्त राज्य को स्टैच्यू ऑफ़ लिबर्टी किस देश ने भेंट की थी?", es: "¿Qué país regaló la Estatua de la Libertad a Estados Unidos?", fr: "Quel pays a offert la Statue de la Liberté aux États-Unis ?" }, options: { en: ["Italy", "Spain", "France", "Canada"], bn: ["ইতালি", "স্পেন", "ফ্রান্স", "কানাডা"], hi: ["इटली", "स्पेन", "फ़्रांस", "कनाडा"], es: ["Italia", "España", "Francia", "Canadá"], fr: ["Italie", "Espagne", "France", "Canada"] }, answer: 2 },
+          { question: { en: "What is the name of the fairy in Peter Pan?", bn: "পিটার প্যানের পরীর নাম কী?", hi: "पीटर पैन की परी का नाम क्या है?", es: "¿Cómo se llama el hada de Peter Pan?", fr: "Comment s’appelle la fée de Peter Pan ?" }, options: { en: ["Wendy", "Tinker Bell", "Alice", "Cinderella"], bn: ["ওয়েন্ডি", "টিঙ্কার বেল", "অ্যালিস", "সিন্ডারেলা"], hi: ["वेंडी", "टिंकर बेल", "एलिस", "सिंड्रेला"], es: ["Wendy", "Campanilla", "Alicia", "Cenicienta"], fr: ["Wendy", "Clochette", "Alice", "Cendrillon"] }, answer: 1 },
+          { question: { en: "How many minutes are in one hour?", bn: "এক ঘণ্টায় কত মিনিট?", hi: "एक घंटे में कितने मिनट होते हैं?", es: "¿Cuántos minutos tiene una hora?", fr: "Combien de minutes y a-t-il dans une heure ?" }, options: { en: ["30", "45", "60", "90"], bn: ["৩০", "৪৫", "৬০", "৯০"], hi: ["३०", "४५", "६०", "९०"], es: ["30", "45", "60", "90"], fr: ["30", "45", "60", "90"] }, answer: 2 },
+          { question: { en: "In which direction does the sun rise?", bn: "সূর্য কোন দিক থেকে ওঠে?", hi: "सूरज किस दिशा से उगता है?", es: "¿Por qué dirección sale el sol?", fr: "Dans quelle direction le soleil se lève-t-il ?" }, options: { en: ["East", "West", "North", "South"], bn: ["পূর্ব", "পশ্চিম", "উত্তর", "দক্ষিণ"], hi: ["पूर्व", "पश्चिम", "उत्तर", "दक्षिण"], es: ["Este", "Oeste", "Norte", "Sur"], fr: ["Est", "Ouest", "Nord", "Sud"] }, answer: 0 },
+          { question: { en: "What is the smallest prime number?", bn: "সবচেয়ে ছোট মৌলিক সংখ্যা কোনটি?", hi: "सबसे छोटी अभाज्य संख्या कौन-सी है?", es: "¿Cuál es el menor número primo?", fr: "Quel est le plus petit nombre premier ?" }, options: { en: ["1", "0", "2", "3"], bn: ["১", "০", "২", "৩"], hi: ["१", "०", "२", "३"], es: ["1", "0", "2", "3"], fr: ["1", "0", "2", "3"] }, answer: 2 },
+          { question: { en: "Which animal is known as the ship of the desert?", bn: "কোন প্রাণীকে মরুভূমির জাহাজ বলা হয়?", hi: "किस जानवर को रेगिस्तान का जहाज़ कहा जाता है?", es: "¿Qué animal es conocido como el barco del desierto?", fr: "Quel animal est surnommé le navire du désert ?" }, options: { en: ["Horse", "Llama", "Donkey", "Camel"], bn: ["ঘোড়া", "লামা", "গাধা", "উট"], hi: ["घोड़ा", "लामा", "गधा", "ऊँट"], es: ["Caballo", "Llama", "Burro", "Camello"], fr: ["Cheval", "Lama", "Âne", "Chameau"] }, answer: 3 },
+          { question: { en: "Which month has 28 days in a common year?", bn: "সাধারণ বছরে কোন মাসে ২৮ দিন থাকে?", hi: "सामान्य वर्ष में किस महीने में २८ दिन होते हैं?", es: "¿Qué mes tiene 28 días en un año común?", fr: "Quel mois compte 28 jours lors d’une année normale ?" }, options: { en: ["January", "February", "March", "April"], bn: ["জানুয়ারি", "ফেব্রুয়ারি", "মার্চ", "এপ্রিল"], hi: ["जनवरी", "फ़रवरी", "मार्च", "अप्रैल"], es: ["Enero", "Febrero", "Marzo", "Abril"], fr: ["Janvier", "Février", "Mars", "Avril"] }, answer: 1 },
+          { question: { en: "What is the main ingredient in guacamole?", bn: "গুয়াকামোলের প্রধান উপাদান কী?", hi: "ग्वाकामोले का मुख्य घटक क्या है?", es: "¿Cuál es el ingrediente principal del guacamole?", fr: "Quel est l’ingrédient principal du guacamole ?" }, options: { en: ["Avocado", "Tomato", "Cucumber", "Lemon"], bn: ["অ্যাভোকাডো", "টমেটো", "শসা", "লেবু"], hi: ["एवोकाडो", "टमाटर", "खीरा", "नींबू"], es: ["Aguacate", "Tomate", "Pepino", "Limón"], fr: ["Avocat", "Tomate", "Concombre", "Citron"] }, answer: 0 },
+          { question: { en: "Which city hosted the 2016 Summer Olympics?", bn: "২০১৬ সালের গ্রীষ্মকালীন অলিম্পিক কোন শহরে হয়েছিল?", hi: "२०१६ के ग्रीष्मकालीन ओलंपिक किस शहर में हुए थे?", es: "¿Qué ciudad acogió los Juegos Olímpicos de verano de 2016?", fr: "Quelle ville a accueilli les Jeux olympiques d’été de 2016 ?" }, options: { en: ["Tokyo", "London", "Rio de Janeiro", "Sydney"], bn: ["টোকিও", "লন্ডন", "রিও দি জেনেইরো", "সিডনি"], hi: ["टोक्यो", "लंदन", "रियो डी जनेरियो", "सिडनी"], es: ["Tokio", "Londres", "Río de Janeiro", "Sídney"], fr: ["Tokyo", "Londres", "Rio de Janeiro", "Sydney"] }, answer: 2 },
+          { question: { en: "What is Earth's natural satellite?", bn: "পৃথিবীর প্রাকৃতিক উপগ্রহ কী?", hi: "पृथ्वी का प्राकृतिक उपग्रह कौन-सा है?", es: "¿Cuál es el satélite natural de la Tierra?", fr: "Quel est le satellite naturel de la Terre ?" }, options: { en: ["Mars", "The Moon", "Venus", "The Sun"], bn: ["মঙ্গল", "চাঁদ", "শুক্র", "সূর্য"], hi: ["मंगल", "चंद्रमा", "शुक्र", "सूर्य"], es: ["Marte", "La Luna", "Venus", "El Sol"], fr: ["Mars", "La Lune", "Vénus", "Le Soleil"] }, answer: 1 },
+          { question: { en: "How many colors are in a traditional rainbow?", bn: "প্রচলিত রংধনুতে কয়টি রং থাকে?", hi: "पारंपरिक इंद्रधनुष में कितने रंग होते हैं?", es: "¿Cuántos colores tiene el arcoíris tradicional?", fr: "Combien de couleurs compte l’arc-en-ciel traditionnel ?" }, options: { en: ["Seven", "Five", "Six", "Eight"], bn: ["সাতটি", "পাঁচটি", "ছয়টি", "আটটি"], hi: ["सात", "पाँच", "छह", "आठ"], es: ["Siete", "Cinco", "Seis", "Ocho"], fr: ["Sept", "Cinq", "Six", "Huit"] }, answer: 0 },
+          { question: { en: "Which country is known as the Land of the Rising Sun?", bn: "কোন দেশকে সূর্যোদয়ের দেশ বলা হয়?", hi: "किस देश को उगते सूरज का देश कहा जाता है?", es: "¿Qué país es conocido como la tierra del sol naciente?", fr: "Quel pays est surnommé le pays du Soleil-Levant ?" }, options: { en: ["China", "Thailand", "South Korea", "Japan"], bn: ["চীন", "থাইল্যান্ড", "দক্ষিণ কোরিয়া", "জাপান"], hi: ["चीन", "थाईलैंड", "दक्षिण कोरिया", "जापान"], es: ["China", "Tailandia", "Corea del Sur", "Japón"], fr: ["Chine", "Thaïlande", "Corée du Sud", "Japon"] }, answer: 3 },
+          { question: { en: "What is the world's largest hot desert?", bn: "পৃথিবীর বৃহত্তম উষ্ণ মরুভূমি কোনটি?", hi: "दुनिया का सबसे बड़ा गर्म रेगिस्तान कौन-सा है?", es: "¿Cuál es el desierto cálido más grande del mundo?", fr: "Quel est le plus grand désert chaud du monde ?" }, options: { en: ["Gobi", "Kalahari", "Sahara", "Arabian"], bn: ["গোবি", "কালাহারি", "সাহারা", "আরব মরুভূমি"], hi: ["गोबी", "कालाहारी", "सहारा", "अरबी रेगिस्तान"], es: ["Gobi", "Kalahari", "Sáhara", "Arábigo"], fr: ["Gobi", "Kalahari", "Sahara", "Arabique"] }, answer: 2 },
+          { question: { en: "Which gas do humans need to breathe to survive?", bn: "বেঁচে থাকার জন্য মানুষ কোন গ্যাস শ্বাস নেয়?", hi: "जीवित रहने के लिए मनुष्य कौन-सी गैस साँस में लेते हैं?", es: "¿Qué gas necesitan respirar los seres humanos para vivir?", fr: "Quel gaz les humains doivent-ils respirer pour vivre ?" }, options: { en: ["Nitrogen", "Oxygen", "Carbon dioxide", "Helium"], bn: ["নাইট্রোজেন", "অক্সিজেন", "কার্বন ডাই-অক্সাইড", "হিলিয়াম"], hi: ["नाइट्रोजन", "ऑक्सीजन", "कार्बन डाइऑक्साइड", "हीलियम"], es: ["Nitrógeno", "Oxígeno", "Dióxido de carbono", "Helio"], fr: ["Azote", "Oxygène", "Dioxyde de carbone", "Hélium"] }, answer: 1 },
+          { question: { en: "Which shape has three sides?", bn: "কোন আকৃতির তিনটি বাহু থাকে?", hi: "किस आकृति की तीन भुजाएँ होती हैं?", es: "¿Qué figura tiene tres lados?", fr: "Quelle forme possède trois côtés ?" }, options: { en: ["Triangle", "Square", "Pentagon", "Hexagon"], bn: ["ত্রিভুজ", "বর্গক্ষেত্র", "পঞ্চভুজ", "ষড়ভুজ"], hi: ["त्रिभुज", "वर्ग", "पंचभुज", "षट्भुज"], es: ["Triángulo", "Cuadrado", "Pentágono", "Hexágono"], fr: ["Triangle", "Carré", "Pentagone", "Hexagone"] }, answer: 0 },
+          { question: { en: "Barcelona is a city in which country?", bn: "বার্সেলোনা কোন দেশে অবস্থিত?", hi: "बार्सिलोना किस देश में है?", es: "¿En qué país está Barcelona?", fr: "Dans quel pays se trouve Barcelone ?" }, options: { en: ["Portugal", "Italy", "Spain", "France"], bn: ["পর্তুগাল", "ইতালি", "স্পেন", "ফ্রান্স"], hi: ["पुर्तगाल", "इटली", "स्पेन", "फ़्रांस"], es: ["Portugal", "Italia", "España", "Francia"], fr: ["Portugal", "Italie", "Espagne", "France"] }, answer: 2 },
+          { question: { en: "Which ocean lies between Africa and Australia?", bn: "আফ্রিকা ও অস্ট্রেলিয়ার মাঝখানে কোন মহাসাগর?", hi: "अफ़्रीका और ऑस्ट्रेलिया के बीच कौन-सा महासागर है?", es: "¿Qué océano se encuentra entre África y Australia?", fr: "Quel océan se situe entre l’Afrique et l’Australie ?" }, options: { en: ["Atlantic", "Pacific", "Arctic", "Indian"], bn: ["আটলান্টিক", "প্রশান্ত", "আর্কটিক", "ভারত মহাসাগর"], hi: ["अटलांटिक", "प्रशांत", "आर्कटिक", "हिंद महासागर"], es: ["Atlántico", "Pacífico", "Ártico", "Índico"], fr: ["Atlantique", "Pacifique", "Arctique", "Indien"] }, answer: 3 }
+        ],
+        Science: [
+          { question: { en: "Which planet is known as the Red Planet?", bn: "কোন গ্রহটি লাল গ্রহ নামে পরিচিত?", hi: "किस ग्रह को लाल ग्रह कहते हैं?", es: "¿Qué planeta se conoce como el planeta rojo?", fr: "Quelle planète est surnommée la planète rouge ?" }, options: { en: ["Venus", "Mars", "Jupiter", "Mercury"], bn: ["শুক্র", "মঙ্গল", "বৃহস্পতি", "বুধ"], hi: ["शुक्र", "मंगल", "बृहस्पति", "बुध"], es: ["Venus", "Marte", "Júpiter", "Mercurio"], fr: ["Vénus", "Mars", "Jupiter", "Mercure"] }, answer: 1 },
+          { question: { en: "What is the chemical formula for water?", bn: "পানির রাসায়নিক সংকেত কী?", hi: "पानी का रासायनिक सूत्र क्या है?", es: "¿Cuál es la fórmula química del agua?", fr: "Quelle est la formule chimique de l’eau ?" }, options: { en: ["CO₂", "O₂", "H₂O", "NaCl"], bn: ["কার্বন ডাই-অক্সাইড (CO₂)", "অক্সিজেন (O₂)", "পানি (H₂O)", "সোডিয়াম ক্লোরাইড (NaCl)"], hi: ["CO₂", "O₂", "H₂O", "NaCl"], es: ["CO₂", "O₂", "H₂O", "NaCl"], fr: ["CO₂", "O₂", "H₂O", "NaCl"] }, answer: 2 },
+          { question: { en: "What star is at the center of our solar system?", bn: "আমাদের সৌরজগতের কেন্দ্রে কোন নক্ষত্রটি আছে?", hi: "हमारे सौरमंडल के केंद्र में कौन-सा तारा है?", es: "¿Qué estrella está en el centro de nuestro sistema solar?", fr: "Quelle étoile se trouve au centre de notre système solaire ?" }, options: { en: ["Sirius", "Polaris", "The Sun", "Vega"], bn: ["সিরিয়াস", "ধ্রুবতারা", "সূর্য", "ভেগা"], hi: ["सीरियस", "पोलारिस", "सूर्य", "वेगा"], es: ["Sirio", "Polaris", "El Sol", "Vega"], fr: ["Sirius", "Polaris", "Le Soleil", "Véga"] }, answer: 2 }
+        ],
+        Technology: [
+          { question: { en: "What does CPU stand for?", bn: "CPU-এর পূর্ণরূপ কী?", hi: "CPU का पूरा नाम क्या है?", es: "¿Qué significan las siglas CPU?", fr: "Que signifie le sigle CPU ?" }, options: { en: ["Central Processing Unit", "Computer Power Utility", "Core Program Unit", "Central Peripheral User"], bn: ["কেন্দ্রীয় প্রক্রিয়াকরণ একক", "কম্পিউটার শক্তি উপযোগিতা", "মূল প্রোগ্রাম একক", "কেন্দ্রীয় পেরিফেরাল ব্যবহারকারী"], hi: ["केंद्रीय प्रसंस्करण इकाई", "कंप्यूटर पावर उपयोगिता", "कोर प्रोग्राम इकाई", "केंद्रीय परिधीय उपयोगकर्ता"], es: ["Unidad central de procesamiento", "Utilidad de potencia informática", "Unidad de programa central", "Usuario periférico central"], fr: ["Unité centrale de traitement", "Utilitaire de puissance informatique", "Unité de programme centrale", "Utilisateur périphérique central"] }, answer: 0 },
+          { question: { en: "What does HTML stand for?", bn: "HTML-এর পূর্ণরূপ কী?", hi: "HTML का पूरा नाम क्या है?", es: "¿Qué significan las siglas HTML?", fr: "Que signifie le sigle HTML ?" }, options: { en: ["HyperText Markup Language", "High Transfer Machine Logic", "Home Tool Markup Link", "Hyperlink Text Management Layer"], bn: ["হাইপারটেক্সট মার্কআপ ল্যাঙ্গুয়েজ", "হাই ট্রান্সফার মেশিন লজিক", "হোম টুল মার্কআপ লিংক", "হাইপারলিংক টেক্সট ম্যানেজমেন্ট লেয়ার"], hi: ["हाइपरटेक्स्ट मार्कअप भाषा", "हाई ट्रांसफर मशीन लॉजिक", "होम टूल मार्कअप लिंक", "हाइपरलिंक टेक्स्ट मैनेजमेंट लेयर"], es: ["Lenguaje de marcado de hipertexto", "Lógica de máquina de alta transferencia", "Enlace de marcado de herramientas", "Capa de gestión de texto de hiperenlaces"], fr: ["Langage de balisage hypertexte", "Logique de machine à haut transfert", "Lien de balisage d’outils", "Couche de gestion de texte hyperlien"] }, answer: 0 },
+          { question: { en: "Which digits are used in binary?", bn: "বাইনারি সংখ্যায় কোন অঙ্ক দুটি ব্যবহৃত হয়?", hi: "बाइनरी में कौन-से अंक इस्तेमाल होते हैं?", es: "¿Qué dígitos se usan en el sistema binario?", fr: "Quels chiffres sont utilisés en binaire ?" }, options: { en: ["1 and 2", "0 and 1", "2 and 3", "0 and 9"], bn: ["১ এবং ২", "০ এবং ১", "২ এবং ৩", "০ এবং ৯"], hi: ["१ और २", "० और १", "२ और ३", "० और ९"], es: ["1 y 2", "0 y 1", "2 y 3", "0 y 9"], fr: ["1 et 2", "0 et 1", "2 et 3", "0 et 9"] }, answer: 1 }
+        ]
+      };
+
+      const QUESTIONS_PER_LEVEL = 10;
+      const LEVEL_PASSING_ACCURACY = 0.6;
+      const generalKnowledgeQuestionCount = quizData["General Knowledge"].length;
+      if (generalKnowledgeQuestionCount === 0 || generalKnowledgeQuestionCount % QUESTIONS_PER_LEVEL !== 0) {
+        throw new Error(`General Knowledge must contain complete ${QUESTIONS_PER_LEVEL}-question levels.`);
+      }
+      const generalKnowledgeLevels = Array.from(
+        { length: generalKnowledgeQuestionCount / QUESTIONS_PER_LEVEL },
+        (_, levelIndex) => ({
+          level: levelIndex + 1,
+          questionIndexes: Array.from(
+            { length: QUESTIONS_PER_LEVEL },
+            (_, questionOffset) => levelIndex * QUESTIONS_PER_LEVEL + questionOffset
+          )
+        })
+      );
+      const LEVEL_PROGRESS_STORAGE_KEY = "quiz-orbit-gk-unlocked-level";
+
+      function readUnlockedGeneralKnowledgeLevel() {
+        try {
+          const savedLevel = Number.parseInt(localStorage.getItem(LEVEL_PROGRESS_STORAGE_KEY), 10);
+          return Number.isInteger(savedLevel)
+            ? Math.min(generalKnowledgeLevels.length, Math.max(1, savedLevel))
+            : 1;
+        } catch {
+          return 1;
+        }
+      }
+
+      function saveUnlockedGeneralKnowledgeLevel(level) {
+        try {
+          localStorage.setItem(LEVEL_PROGRESS_STORAGE_KEY, String(level));
+        } catch {
+          // Progress still works for this visit if browser storage is unavailable.
+        }
+      }
+      const CORRECT_ANSWER_POINTS = 10;
+      const INCORRECT_ANSWER_PENALTY = 5;
+
+      const views = {
+        welcome: document.getElementById("welcomeView"),
+        levels: document.getElementById("levelView"),
+        game: document.getElementById("gameView"),
+        results: document.getElementById("resultsView")
+      };
+      const questionText = document.getElementById("questionText");
+      const optionsElement = document.getElementById("options");
+      const feedback = document.getElementById("feedback");
+      const scorePopupsElement = document.getElementById("scorePopups");
+      const quizCardElement = document.getElementById("quizCard");
+      const nextButton = document.getElementById("nextButton");
+      const progressFill = document.getElementById("progressFill");
+      const progressBar = document.querySelector('[role="progressbar"]');
+      const languageSelect = document.getElementById("languageSelect");
+      function readSavedLanguage() {
+        try {
+          const savedLanguage = localStorage.getItem("quiz-orbit-language");
+          return Object.hasOwn(translations, savedLanguage) ? savedLanguage : "en";
+        } catch {
+          return "en";
+        }
+      }
+      let currentLanguage = readSavedLanguage();
+      let currentText = translations[currentLanguage];
+      let currentCategory = "General Knowledge";
+      let selectedCategory = "General Knowledge";
+      let currentLevel = 1;
+      let unlockedGeneralKnowledgeLevel = readUnlockedGeneralKnowledgeLevel();
+      let levelJustUnlocked = false;
+      let levelFailed = false;
+      let sessionUsedQuestionIndexes = new Set();
+      let answeredQuestionIndexes = new Set();
+      let roundQuestionIndexes = [];
+      let currentQuestion = 0;
+      let score = 0;
+      let points = 0;
+      let currentStreak = 0;
+      let bestStreak = 0;
+      let lastPointsAwarded = 0;
+      let answerTimes = [];
+      let questionStartedAt = 0;
+      let rewardCelebrationAt = 0;
+      let answered = false;
+      let lastSelected = null;
+      let rewardGroup = null;
+      let rewardMaterials = [];
+      let audioContext = null;
+      let environmentTarget = 0;
+      const rewardTierPalettes = {
+        gold: {
+          label: "trophyGold",
+          cup: 0xffcf43, light: 0xffe990, cupGlow: 0x754500, lightGlow: 0x916000,
+          svgCup: "#FFD84D", svgAccent: "#FFB436", svgStroke: "#FFF2A3"
+        },
+        silver: {
+          label: "trophySilver",
+          cup: 0xbcc9dd, light: 0xf1f5ff, cupGlow: 0x394967, lightGlow: 0x566783,
+          svgCup: "#C8D4E8", svgAccent: "#8595B1", svgStroke: "#F5F8FF"
+        },
+        bronze: {
+          label: "trophyBronze",
+          cup: 0xcd7f32, light: 0xf2b46f, cupGlow: 0x54250d, lightGlow: 0x713915,
+          svgCup: "#CD7F32", svgAccent: "#A95D25", svgStroke: "#F2B46F"
+        }
+      };
+
+      // Keep the visible UI mode and the Three.js transition target in sync.
+      function setGameModeTheme(category) {
+        const isCosmic = category === "General Knowledge";
+        environmentTarget = isCosmic ? 1 : 0;
+        document.body.classList.toggle("theme-cosmic", isCosmic);
+      }
+
+      // Three consecutive correct answers start a 2× combo; five raise it to 3×.
+      function currentStreakMultiplier() {
+        return currentStreak >= 5 ? 3 : currentStreak >= 3 ? 2 : 1;
+      }
+
+      function maximumPossiblePoints(questionCount) {
+        const firstAnswers = Math.min(questionCount, 2) * CORRECT_ANSWER_POINTS;
+        const midStreakAnswers = Math.max(0, Math.min(questionCount, 4) - 2) * CORRECT_ANSWER_POINTS * 2;
+        const longStreakAnswers = Math.max(0, questionCount - 4) * CORRECT_ANSWER_POINTS * 3;
+        return firstAnswers + midStreakAnswers + longStreakAnswers;
+      }
+
+      // Refresh the live HUD together so score, level, question position, and combo never drift.
+      function updateScoreDisplay() {
+        document.getElementById("scoreValue").textContent = formatNumber(points);
+        document.getElementById("correctCount").textContent = formatNumber(score);
+        const multiplier = currentStreakMultiplier();
+        const streakValue = document.getElementById("streakValue");
+        streakValue.textContent = `${formatNumber(currentStreak)} · ${formatNumber(multiplier)}×`;
+        streakValue.classList.toggle("combo-active", currentStreak >= 3);
+        const levelLabel = currentCategory === "General Knowledge"
+          ? currentText.levelNumber.replace("{level}", formatNumber(currentLevel))
+          : categoryName(currentCategory);
+        document.getElementById("hudLevel").textContent =
+          `${levelLabel} · ${currentText.question} ${formatNumber(currentQuestion + 1)} ${currentText.of} ${formatNumber(roundLength())}`;
+        const comboBanner = document.getElementById("comboBanner");
+        comboBanner.hidden = currentStreak < 3;
+        if (currentStreak >= 3) {
+          comboBanner.textContent = currentText.streakCombo
+            .replace("{streak}", formatNumber(currentStreak))
+            .replace("{multiplier}", formatNumber(multiplier));
+        }
+      }
+
+      // The floating number mirrors the exact award after streak bonuses and the zero-point floor.
+      function spawnScorePopup(pointsAwarded, isCorrect, target) {
+        const popup = document.createElement("span");
+        const popupKind = isCorrect ? "correct" : pointsAwarded < 0 ? "incorrect" : "no-change";
+        popup.className = `score-popup ${popupKind}`;
+        popup.textContent = pointsAwarded > 0
+          ? `+${formatNumber(pointsAwarded)}`
+          : pointsAwarded < 0
+            ? `−${formatNumber(-pointsAwarded)}`
+            : currentText.noPointsLost;
+        const cardRect = quizCardElement.getBoundingClientRect();
+        const targetRect = target?.getBoundingClientRect();
+        const left = targetRect
+          ? targetRect.left - cardRect.left + targetRect.width / 2
+          : cardRect.width / 2;
+        const top = targetRect
+          ? Math.max(72, targetRect.top - cardRect.top - 4)
+          : cardRect.height * .65;
+        popup.style.left = `${left}px`;
+        popup.style.top = `${top}px`;
+        scorePopupsElement.append(popup);
+        popup.addEventListener("animationend", () => popup.remove(), { once: true });
+        window.setTimeout(() => popup.remove(), 1400);
+      }
+
+      function applyRewardTier(tier) {
+        const safeTier = Object.hasOwn(rewardTierPalettes, tier) ? tier : "bronze";
+        const palette = rewardTierPalettes[safeTier];
+        const tierName = currentText[palette.label];
+        document.getElementById("resultCard").dataset.tier = safeTier;
+        const trophyTierElement = document.getElementById("trophyTier");
+        trophyTierElement.dataset.tier = safeTier;
+        trophyTierElement.setAttribute("aria-label", `${currentText.trophyAward}: ${tierName}`);
+        document.getElementById("trophyTierText").textContent = tierName;
+        document.getElementById("resultTrophySvg").setAttribute("aria-label", tierName);
+        document.getElementById("trophyCup").setAttribute("fill", palette.svgCup);
+        document.getElementById("trophyCup").setAttribute("stroke", palette.svgStroke);
+        document.getElementById("trophyHandles").setAttribute("stroke", palette.svgAccent);
+        document.getElementById("trophyBase").setAttribute("fill", palette.svgAccent);
+        document.getElementById("trophyBase").setAttribute("stroke", palette.svgStroke);
+        if (rewardMaterials.length === 2) {
+          rewardMaterials[0].color.setHex(palette.cup);
+          rewardMaterials[0].emissive.setHex(palette.cupGlow);
+          rewardMaterials[1].color.setHex(palette.light);
+          rewardMaterials[1].emissive.setHex(palette.lightGlow);
+        }
+      }
+
+      function playAnswerCue(isCorrect) {
+        try {
+          const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+          if (!AudioContextClass) return;
+          audioContext ||= new AudioContextClass();
+          if (audioContext.state === "suspended") audioContext.resume().catch(() => {});
+          const oscillator = audioContext.createOscillator();
+          const gain = audioContext.createGain();
+          const now = audioContext.currentTime;
+          oscillator.type = "sine";
+          oscillator.frequency.setValueAtTime(isCorrect ? 660 : 245, now);
+          oscillator.frequency.exponentialRampToValueAtTime(isCorrect ? 990 : 170, now + .12);
+          gain.gain.setValueAtTime(.0001, now);
+          gain.gain.exponentialRampToValueAtTime(.075, now + .015);
+          gain.gain.exponentialRampToValueAtTime(.0001, now + .2);
+          oscillator.connect(gain);
+          gain.connect(audioContext.destination);
+          oscillator.start(now);
+          oscillator.stop(now + .21);
+        } catch {
+          // Audio is an optional delight; never block an answer.
+        }
+      }
+
+      function formatNumber(value) {
+        const locales = {
+          en: "en-US",
+          bn: "bn-BD",
+          hi: "hi-IN-u-nu-deva",
+          es: "es-ES",
+          fr: "fr-FR"
+        };
+        return new Intl.NumberFormat(locales[currentLanguage]).format(value);
+      }
+
+      function categoryName(category) {
+        return currentText.categoryLabels[category];
+      }
+
+      function roundQuestions() {
+        return roundQuestionIndexes.map((questionIndex) => {
+          const bankItem = quizData[currentCategory][questionIndex];
+          return {
+            question: bankItem.question[currentLanguage],
+            options: bankItem.options[currentLanguage],
+            answer: bankItem.answer
+          };
+        });
+      }
+
+      function roundLength() {
+        return roundQuestionIndexes.length;
+      }
+
+      function gameCategoryLabel(category) {
+        if (category !== "General Knowledge") return categoryName(category);
+        const levelName = currentText.levelNumber.replace("{level}", formatNumber(currentLevel));
+        return `${categoryName(category)} · ${levelName}`;
+      }
+
+      function randomIndex(maxExclusive) {
+        if (window.crypto && typeof window.crypto.getRandomValues === "function") {
+          try {
+            const randomValue = new Uint32Array(1);
+            const range = 0x100000000;
+            const unbiasedLimit = range - (range % maxExclusive);
+            let value;
+            do {
+              window.crypto.getRandomValues(randomValue);
+              value = randomValue[0];
+            } while (value >= unbiasedLimit);
+            return value % maxExclusive;
+          } catch {
+            // Keep the quiz playable if secure browser randomness is unavailable.
+          }
+        }
+        return Math.floor(Math.random() * maxExclusive);
+      }
+
+      // Draw without replacement from the complete General Knowledge bank.
+      // The session set spans level attempts, so questions are not repeated
+      // across levels until this finite bank has been used up.
+      function selectRoundQuestionIndexes(category, level = 1) {
+        let indexes;
+        if (category === "General Knowledge") {
+          if (!generalKnowledgeLevels[level - 1]) {
+            throw new RangeError(`General Knowledge level ${level} does not exist.`);
+          }
+          const masterIndexes = Array.from(
+            { length: quizData[category].length },
+            (_, index) => index
+          );
+          indexes = masterIndexes.filter((index) => !sessionUsedQuestionIndexes.has(index));
+          if (indexes.length < QUESTIONS_PER_LEVEL) {
+            // Start a fresh question cycle only after the current pool is exhausted.
+            sessionUsedQuestionIndexes.clear();
+            indexes = masterIndexes;
+          }
+        } else {
+          indexes = Array.from({ length: quizData[category].length }, (_, index) => index);
+        }
+        for (let index = indexes.length - 1; index > 0; index -= 1) {
+          const swapIndex = randomIndex(index + 1);
+          [indexes[index], indexes[swapIndex]] = [indexes[swapIndex], indexes[index]];
+        }
+        if (category === "General Knowledge") {
+          indexes = indexes.slice(0, QUESTIONS_PER_LEVEL);
+          indexes.forEach((index) => sessionUsedQuestionIndexes.add(index));
+        }
+        return indexes;
+      }
+
+      function renderLevelMap() {
+        const grid = document.getElementById("levelGrid");
+        grid.replaceChildren();
+        grid.setAttribute("aria-label", currentText.levelSelectTitle);
+        document.getElementById("levelEyebrow").textContent =
+          `${categoryName("General Knowledge")} · ${currentText.levelSelectTitle}`;
+        document.getElementById("levelCountLabel").textContent = currentText.levelProgress
+          .replace("{unlocked}", formatNumber(unlockedGeneralKnowledgeLevel))
+          .replace("{total}", formatNumber(generalKnowledgeLevels.length));
+        generalKnowledgeLevels.forEach(({ level }) => {
+          const isCompleted = level < unlockedGeneralKnowledgeLevel;
+          const isUnlocked = level <= unlockedGeneralKnowledgeLevel;
+          const stateLabel = isCompleted
+            ? currentText.levelComplete
+            : isUnlocked
+              ? currentText.levelUnlocked
+              : currentText.levelLocked;
+          const card = document.createElement("button");
+          card.type = "button";
+          card.disabled = !isUnlocked;
+          card.className = `level-card${isCompleted ? " completed" : isUnlocked ? " unlocked" : " locked"}`;
+          card.setAttribute("aria-label", `${currentText.levelNumber.replace("{level}", formatNumber(level))}, ${stateLabel}, ${currentText.levelQuestions.replace("{count}", formatNumber(QUESTIONS_PER_LEVEL))}`);
+          const number = document.createElement("span");
+          number.className = "level-card-number";
+          number.textContent = formatNumber(level);
+          const name = document.createElement("span");
+          name.className = "level-card-name";
+          name.textContent = currentText.levelNumber.replace("{level}", formatNumber(level));
+          const details = document.createElement("span");
+          details.className = "level-card-detail";
+          details.textContent = currentText.levelQuestions.replace("{count}", formatNumber(QUESTIONS_PER_LEVEL));
+          const status = document.createElement("span");
+          status.className = "level-card-status";
+          const indicator = document.createElement("span");
+          indicator.className = "level-card-indicator";
+          indicator.setAttribute("aria-hidden", "true");
+          indicator.textContent = isUnlocked ? "⭐" : "🔒";
+          status.append(indicator, document.createTextNode(stateLabel));
+          card.append(number, name, details, status);
+          card.addEventListener("click", () => startQuiz("General Knowledge", level));
+          grid.append(card);
+        });
+      }
+
+      function showView(name) {
+        Object.values(views).forEach((view) => view.classList.remove("active"));
+        views[name].classList.add("active");
+        if (rewardGroup) rewardGroup.visible = name === "results";
+        window.scrollTo({ top: 0, behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
+      }
+
+      function startQuiz(category, level = 1) {
+        if (category === "General Knowledge" &&
+            (!Number.isInteger(level) || level < 1 || level > unlockedGeneralKnowledgeLevel)) {
+          renderLevelMap();
+          showView("levels");
+          return;
+        }
+        currentCategory = category;
+        currentLevel = category === "General Knowledge" ? level : 0;
+        roundQuestionIndexes = selectRoundQuestionIndexes(category, currentLevel || 1);
+        answeredQuestionIndexes = new Set();
+        currentQuestion = 0;
+        score = 0;
+        points = 0;
+        currentStreak = 0;
+        bestStreak = 0;
+        lastPointsAwarded = 0;
+        answerTimes = [];
+        rewardCelebrationAt = 0;
+        levelJustUnlocked = false;
+        levelFailed = false;
+        answered = false;
+        lastSelected = null;
+        document.getElementById("gameCategory").textContent = gameCategoryLabel(category);
+        updateScoreDisplay();
+        document.getElementById("roundLength").textContent = `${formatNumber(roundLength())} ${currentText.questions}`;
+        progressBar.setAttribute("aria-valuemax", String(roundLength()));
+        showView("game");
+        renderQuestion();
+      }
+
+      function renderQuestion(preserveAnswer = false, moveFocus = true) {
+        const keepAnswer = preserveAnswer && answered;
+        const previousSelection = lastSelected;
+        const item = roundQuestions()[currentQuestion];
+        if (!keepAnswer) {
+          answered = false;
+          lastSelected = null;
+        }
+        if (!preserveAnswer) questionStartedAt = performance.now();
+        questionText.textContent = item.question;
+        const currentNumber = formatNumber(currentQuestion + 1);
+        const totalNumber = formatNumber(roundLength());
+        const questionCount = document.getElementById("questionCount");
+        questionCount.textContent = `${currentText.question} ${currentNumber} / ${totalNumber}`;
+        questionCount.setAttribute("aria-label", `${currentText.question} ${currentNumber} ${currentText.of} ${totalNumber}`);
+        updateScoreDisplay();
+        progressFill.style.width = `${(currentQuestion / roundLength()) * 100}%`;
+        progressBar.setAttribute("aria-valuenow", String(currentQuestion));
+        optionsElement.replaceChildren();
+        item.options.forEach((option, index) => {
+          const button = document.createElement("button");
+          button.type = "button";
+          button.className = "option";
+          button.setAttribute("aria-label", `${currentText.option} ${formatNumber(index + 1)}: ${option}`);
+          button.innerHTML = `<span class="option-key" aria-hidden="true">${currentText.optionLetters[index]}</span><span>${option}</span>`;
+          button.addEventListener("click", () => selectAnswer(index));
+          optionsElement.append(button);
+        });
+        feedback.className = "feedback";
+        feedback.textContent = currentText.chooseAnswer;
+        nextButton.disabled = !keepAnswer;
+        setNextButtonLabel(currentText.checkAnswer);
+        if (keepAnswer) {
+          lastSelected = previousSelection;
+          renderAnswerState();
+        }
+        if (moveFocus) questionText.focus({ preventScroll: true });
+      }
+
+      function setNextButtonLabel(label) {
+        nextButton.innerHTML = `${label} <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M4.2 10h11.6m-4.5-4.5 4.5 4.5-4.5 4.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+      }
+
+      function renderAnswerState() {
+        const item = roundQuestions()[currentQuestion];
+        const correctAnswer = item.answer;
+        const buttons = [...optionsElement.querySelectorAll(".option")];
+        buttons.forEach((button, buttonIndex) => {
+          button.disabled = true;
+          if (buttonIndex === correctAnswer) button.classList.add("correct");
+          else if (buttonIndex === lastSelected) button.classList.add("incorrect");
+          else button.classList.add("muted");
+        });
+        if (lastSelected === correctAnswer) {
+          feedback.className = "feedback good";
+          feedback.textContent = currentText.correctFeedback
+            .replace("{points}", formatNumber(lastPointsAwarded))
+            .replace("{multiplier}", formatNumber(currentStreakMultiplier()));
+        } else {
+          feedback.className = "feedback bad";
+          feedback.textContent = lastPointsAwarded < 0
+            ? currentText.penaltyFeedback
+              .replace("{points}", formatNumber(-lastPointsAwarded))
+              .replace("{answer}", item.options[correctAnswer])
+            : currentText.incorrectFeedback.replace("{answer}", item.options[correctAnswer]);
+        }
+        updateScoreDisplay();
+        progressFill.style.width = `${((currentQuestion + 1) / roundLength()) * 100}%`;
+        progressBar.setAttribute("aria-valuenow", String(currentQuestion + 1));
+        nextButton.disabled = false;
+        setNextButtonLabel(currentQuestion === roundLength() - 1 ? currentText.seeScore : currentText.nextQuestion);
+      }
+
+      function selectAnswer(index) {
+        if (answered) return;
+        const questionIndex = roundQuestionIndexes[currentQuestion];
+        if (answeredQuestionIndexes.has(questionIndex)) return;
+        answeredQuestionIndexes.add(questionIndex);
+        const selectedOption = optionsElement.querySelectorAll(".option")[index];
+        lastSelected = index;
+        const correctAnswer = roundQuestions()[currentQuestion].answer;
+        const isCorrect = index === correctAnswer;
+        answered = true;
+        answerTimes.push(Math.max(0, (performance.now() - questionStartedAt) / 1000));
+        if (isCorrect) {
+          score += 1;
+          currentStreak += 1;
+          bestStreak = Math.max(bestStreak, currentStreak);
+          lastPointsAwarded = CORRECT_ANSWER_POINTS * currentStreakMultiplier();
+          points += lastPointsAwarded;
+        } else {
+          currentStreak = 0;
+          const deductedPoints = Math.min(points, INCORRECT_ANSWER_PENALTY);
+          lastPointsAwarded = deductedPoints ? -deductedPoints : 0;
+          points -= deductedPoints;
+        }
+        playAnswerCue(isCorrect);
+        renderAnswerState();
+        spawnScorePopup(lastPointsAwarded, isCorrect, selectedOption);
+        if (!isCorrect && lastPointsAwarded < 0) {
+          const scoreValue = document.getElementById("scoreValue");
+          scoreValue.classList.remove("penalty-hit");
+          void scoreValue.offsetWidth;
+          scoreValue.classList.add("penalty-hit");
+          feedback.classList.add("penalty-warning");
+          quizCardElement.classList.remove("penalty-screen");
+          void quizCardElement.offsetWidth;
+          quizCardElement.classList.add("penalty-screen");
+        }
+      }
+
+      function renderAchievementBadges(accuracy, averageAnswerSeconds) {
+        const badges = [
+          {
+            unlocked: accuracy === 100,
+            icon: "✦",
+            title: currentText.badgeQuizMaster,
+            hint: currentText.badgeQuizMasterHint
+          },
+          {
+            unlocked: accuracy >= 60 && averageAnswerSeconds < 6,
+            icon: "⚡",
+            title: currentText.badgeSpeedDemon,
+            hint: currentText.badgeSpeedDemonHint
+          },
+          {
+            unlocked: accuracy >= 60,
+            icon: "◇",
+            title: currentText.badgeKnowledgeSeeker,
+            hint: currentText.badgeKnowledgeSeekerHint
+          }
+        ];
+        const unlockedBadges = badges.filter((badge) => badge.unlocked);
+        const list = document.getElementById("achievementList");
+        list.replaceChildren();
+        document.getElementById("achievementCount").textContent = formatNumber(unlockedBadges.length);
+        list.setAttribute("aria-label", currentText.achievements);
+        if (unlockedBadges.length === 0) {
+          const emptyMessage = document.createElement("p");
+          emptyMessage.className = "achievement-empty";
+          emptyMessage.setAttribute("role", "listitem");
+          emptyMessage.textContent = currentText.noAchievements;
+          list.append(emptyMessage);
+          return;
+        }
+        unlockedBadges.forEach((badge) => {
+          const card = document.createElement("div");
+          card.className = "achievement-badge";
+          card.setAttribute("role", "listitem");
+          const icon = document.createElement("span");
+          icon.className = "achievement-icon";
+          icon.setAttribute("aria-hidden", "true");
+          icon.textContent = badge.icon;
+          const copy = document.createElement("span");
+          copy.className = "achievement-copy";
+          const title = document.createElement("strong");
+          title.textContent = badge.title;
+          const hint = document.createElement("small");
+          hint.textContent = badge.hint;
+          copy.append(title, hint);
+          card.append(icon, copy);
+          list.append(card);
+        });
+      }
+
+      function renderResults() {
+        const total = roundLength();
+        const accuracy = total ? Math.round((score / total) * 100) : 0;
+        const averageAnswerSeconds = answerTimes.length
+          ? answerTimes.reduce((sum, seconds) => sum + seconds, 0) / answerTimes.length
+          : Number.POSITIVE_INFINITY;
+        const maximumPoints = maximumPossiblePoints(total);
+        const scoreRatio = maximumPoints ? points / maximumPoints : 0;
+        const tier = scoreRatio >= .8 ? "gold" : scoreRatio >= .5 ? "silver" : "bronze";
+        document.getElementById("finalScore").textContent = formatNumber(points);
+        document.getElementById("finalDenominator").textContent = currentText.netPoints;
+        document.getElementById("finalCorrect").textContent = formatNumber(score);
+        document.getElementById("finalIncorrect").textContent = formatNumber(total - score);
+        document.getElementById("finalAccuracy").textContent = `${formatNumber(accuracy)}%`;
+        document.getElementById("finalBestStreak").textContent = formatNumber(bestStreak);
+        document.getElementById("finalTotal").textContent = formatNumber(total);
+        document.getElementById("resultCategory").textContent = `${categoryName(currentCategory)} · ${currentText.categoryComplete}`;
+        const isLevelRun = currentCategory === "General Knowledge";
+        const resultLevel = document.getElementById("resultLevel");
+        resultLevel.hidden = !isLevelRun;
+        if (isLevelRun) {
+          resultLevel.textContent = currentText.levelNumber.replace("{level}", formatNumber(currentLevel));
+        }
+        const levelUnlockNotice = document.getElementById("levelUnlockNotice");
+        levelUnlockNotice.hidden = !levelJustUnlocked && !levelFailed;
+        if (levelJustUnlocked) {
+          levelUnlockNotice.textContent = currentText.levelUnlockNotice
+            .replace("{level}", formatNumber(currentLevel + 1));
+        } else if (levelFailed) {
+          levelUnlockNotice.textContent = currentText.levelFailNotice
+            .replace("{count}", formatNumber(Math.ceil(QUESTIONS_PER_LEVEL * LEVEL_PASSING_ACCURACY)));
+        }
+        const nextLevelButton = document.getElementById("nextLevelButton");
+        nextLevelButton.hidden = !isLevelRun || currentLevel >= unlockedGeneralKnowledgeLevel;
+        document.getElementById("nextLevelLabel").textContent = currentText.nextLevel;
+        const replayLabel = isLevelRun ? currentText.retryLevel : currentText.playAgain;
+        document.getElementById("playAgainButton").firstChild.nodeValue = `${replayLabel} `;
+        applyRewardTier(tier);
+        renderAchievementBadges(accuracy, averageAnswerSeconds);
+        let title = currentText.resultDefaultTitle;
+        let message = currentText.resultDefaultMessage;
+        if (score === total) {
+          title = currentText.resultPerfectTitle;
+          message = currentText.resultPerfectMessage;
+        } else if (score / total >= .6) {
+          title = currentText.resultStrongTitle;
+          message = currentText.resultStrongMessage;
+        } else if (score / total <= .3) {
+          title = currentText.resultLowTitle;
+          message = currentText.resultLowMessage;
+        }
+        document.getElementById("resultTitle").textContent = title;
+        document.getElementById("resultMessage").textContent = message;
+      }
+
+      function finishQuiz() {
+        levelJustUnlocked = false;
+        levelFailed = false;
+        if (currentCategory === "General Knowledge" &&
+            currentLevel === unlockedGeneralKnowledgeLevel &&
+            currentLevel < generalKnowledgeLevels.length) {
+          const requiredCorrect = Math.ceil(roundLength() * LEVEL_PASSING_ACCURACY);
+          if (score >= requiredCorrect) {
+            unlockedGeneralKnowledgeLevel = currentLevel + 1;
+            saveUnlockedGeneralKnowledgeLevel(unlockedGeneralKnowledgeLevel);
+            levelJustUnlocked = true;
+          } else {
+            levelFailed = true;
+          }
+        }
+        rewardCelebrationAt = performance.now();
+        renderResults();
+        showView("results");
+      }
+
+      const categoryButtons = [...document.querySelectorAll(".category")];
+      const startGameButton = document.getElementById("startGameButton");
+      const startHint = document.getElementById("startHint");
+      categoryButtons.forEach((button) => {
+        const isSelected = button.dataset.category === selectedCategory;
+        button.classList.toggle("selected", isSelected);
+        button.setAttribute("aria-pressed", String(isSelected));
+      });
+      startGameButton.disabled = !selectedCategory;
+      function setLanguage(language) {
+        currentLanguage = Object.hasOwn(translations, language) ? language : "en";
+        currentText = translations[currentLanguage];
+        document.documentElement.lang = currentLanguage;
+        languageSelect.value = currentLanguage;
+        languageSelect.setAttribute("aria-label", currentText.language);
+        document.getElementById("languageLabel").textContent = currentText.language;
+        document.title = currentText.pageTitle;
+        document.getElementById("metaDescription").content = currentText.metaDescription;
+        try {
+          localStorage.setItem("quiz-orbit-language", currentLanguage);
+        } catch {
+          // The game still works when browser storage is unavailable.
+        }
+
+        const textById = {
+          topNoteText: "topNote",
+          welcomeEyebrow: "welcomeEyebrow",
+          welcomeDescription: "welcomeDescription",
+          orbitLabel: "orbitLabel",
+          categoryHeading: "categoryHeading",
+          categoryHeadingHint: "categoryHeadingHint",
+          startGameLabel: "startGame",
+          levelTitle: "levelSelectTitle",
+          levelDescription: "levelSelectDescription",
+          levelBackLabel: "levelBack",
+          totalQuestionsLabel: "totalQuestions",
+          instantAnswersLabel: "instantAnswers",
+          justForFunLabel: "justForFun",
+          questionKicker: "questionKicker",
+          quitButtonLabel: "chooseAnother",
+          scoreLabel: "yourScore",
+          scoreCaption: "pointsSoFar",
+          liveScoreLabel: "liveScore",
+          correctLabel: "correct",
+          finalIncorrectLabel: "incorrectAnswers",
+          streakLabel: "streak",
+          streakHint: "streakHint",
+          roundLabel: "round",
+          sideNoteTitle: "stayCurious",
+          sideNoteBody: "sideNote",
+          finalCorrectLabel: "correct",
+          finalAccuracyLabel: "accuracy",
+          finalBestStreakLabel: "bestStreak",
+          finalTotalLabel: "resultQuestions",
+          achievementHeading: "achievements",
+          homeButtonLabel: "chooseSubject"
+        };
+        Object.entries(textById).forEach(([id, key]) => {
+          const value = id === "totalQuestionsLabel"
+            ? currentText[key]
+              .replace("{count}", formatNumber(quizData["General Knowledge"].length))
+              .replace("{levels}", formatNumber(generalKnowledgeLevels.length))
+            : currentText[key];
+          document.getElementById(id).textContent = value;
+        });
+        document.getElementById("welcomeTitle").innerHTML = currentText.welcomeTitle;
+        document.getElementById("brandHome").setAttribute("aria-label", currentText.brandHome);
+        document.getElementById("categoryGrid").setAttribute("aria-label", currentText.categoryGroup);
+        document.getElementById("gameView").setAttribute("aria-label", currentText.quizRound);
+        document.getElementById("progressTrack").setAttribute("aria-label", currentText.progress);
+        document.getElementById("levelGrid").setAttribute("aria-label", currentText.levelSelectTitle);
+        optionsElement.setAttribute("aria-label", currentText.answerOptions);
+        const replayLabel = currentCategory === "General Knowledge" ? currentText.retryLevel : currentText.playAgain;
+        document.getElementById("playAgainButton").firstChild.nodeValue = `${replayLabel} `;
+        categoryButtons.forEach((button) => {
+          const category = button.dataset.category;
+          button.querySelector("[data-category-title]").textContent = categoryName(category);
+          button.querySelector("[data-category-detail]").textContent = currentText.categoryDescriptions[category];
+        });
+        startHint.textContent = selectedCategory
+          ? currentText.selectedHint.replace("{category}", categoryName(selectedCategory))
+          : currentText.startHint;
+
+        if (views.game.classList.contains("active")) {
+          document.getElementById("gameCategory").textContent = gameCategoryLabel(currentCategory);
+          updateScoreDisplay();
+          document.getElementById("roundLength").textContent = `${formatNumber(roundLength())} ${currentText.questions}`;
+          renderQuestion(true, false);
+        } else if (views.levels.classList.contains("active")) {
+          renderLevelMap();
+        } else if (views.results.classList.contains("active")) {
+          renderResults();
+        }
+      }
+
+      languageSelect.addEventListener("change", (event) => setLanguage(event.target.value));
+      categoryButtons.forEach((button) => {
+        button.addEventListener("click", () => {
+          selectedCategory = button.dataset.category;
+          setGameModeTheme(selectedCategory);
+          categoryButtons.forEach((categoryButton) => {
+            const isSelected = categoryButton === button;
+            categoryButton.classList.toggle("selected", isSelected);
+            categoryButton.setAttribute("aria-pressed", String(isSelected));
+          });
+          startGameButton.disabled = false;
+          startHint.textContent = currentText.selectedHint.replace("{category}", categoryName(selectedCategory));
+        });
+      });
+      startGameButton.addEventListener("click", () => {
+        if (selectedCategory) {
+          setGameModeTheme(selectedCategory);
+          if (selectedCategory === "General Knowledge") {
+            sessionUsedQuestionIndexes.clear();
+            renderLevelMap();
+            showView("levels");
+          } else {
+            startQuiz(selectedCategory);
+          }
+        }
+      });
+      nextButton.addEventListener("click", () => {
+        if (!answered) return;
+        if (currentQuestion === roundLength() - 1) {
+          finishQuiz();
+          return;
+        }
+        currentQuestion += 1;
+        renderQuestion();
+      });
+      document.getElementById("quitButton").addEventListener("click", () => showView("welcome"));
+      document.getElementById("homeButton").addEventListener("click", () => showView("welcome"));
+      document.getElementById("levelBackButton").addEventListener("click", () => showView("welcome"));
+      document.getElementById("nextLevelButton").addEventListener("click", () => {
+        if (currentCategory === "General Knowledge" && currentLevel < unlockedGeneralKnowledgeLevel) {
+          startQuiz("General Knowledge", currentLevel + 1);
+        }
+      });
+      document.getElementById("playAgainButton").addEventListener("click", () => startQuiz(currentCategory, currentLevel || 1));
+      document.getElementById("brandHome").addEventListener("click", (event) => {
+        event.preventDefault();
+        showView("welcome");
+      });
+      document.addEventListener("keydown", (event) => {
+        if (!views.game.classList.contains("active") || answered) return;
+        if (event.key >= "1" && event.key <= "4") selectAnswer(Number(event.key) - 1);
+        else if (event.key.toLowerCase() >= "a" && event.key.toLowerCase() <= "d") {
+          selectAnswer(event.key.toLowerCase().charCodeAt(0) - 97);
+        }
+      });
+      setLanguage(currentLanguage);
+
+      // A small, low-cost procedural orbit scene; the quiz remains usable if WebGL is unavailable.
+      const sceneRoot = document.getElementById("scene");
+      let renderer;
+      try {
+        const rendererCanvas = document.createElement("canvas");
+        const webglContext = rendererCanvas.getContext("webgl2", { alpha: true, antialias: true });
+        if (!webglContext) throw new Error("WebGL2 is unavailable");
+        renderer = new THREE.WebGLRenderer({ canvas: rendererCanvas, context: webglContext, alpha: true, antialias: true });
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.6));
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setClearColor(0x000000, 0);
+        renderer.outputColorSpace = THREE.SRGBColorSpace;
+        sceneRoot.appendChild(renderer.domElement);
+        document.body.classList.add("webgl-ready");
+
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(34, window.innerWidth / window.innerHeight, .1, 100);
+        camera.position.set(0, 0, 12);
+        const ambient = new THREE.AmbientLight(0xffffff, 2.1);
+        scene.add(ambient);
+        const keyLight = new THREE.DirectionalLight(0xffffff, 2.2);
+        keyLight.position.set(-3, 5, 7);
+        scene.add(keyLight);
+        const lobbyEnvironment = new THREE.Group();
+        scene.add(lobbyEnvironment);
+        const lobbyMaterials = [];
+        const cosmicMaterials = [];
+        const registerLobbyMaterial = (material) => {
+          material.userData.themeBaseOpacity = material.opacity;
+          material.transparent = true;
+          lobbyMaterials.push(material);
+          return material;
+        };
+        const registerCosmicMaterial = (material) => {
+          material.userData.themeBaseOpacity = material.opacity;
+          material.transparent = true;
+          material.opacity = 0;
+          material.depthWrite = false;
+          cosmicMaterials.push(material);
+          return material;
+        };
+        const group = new THREE.Group();
+        lobbyEnvironment.add(group);
+        const confetti = new THREE.Group();
+        scene.add(confetti);
+        const confettiGeometries = [
+          new THREE.IcosahedronGeometry(.075, 0),
+          new THREE.TetrahedronGeometry(.09, 0),
+          new THREE.SphereGeometry(.055, 8, 6)
+        ];
+        const confettiMaterials = [0xff4fa3, 0xffa33b, 0x4d70ff, 0x19bd91, 0x8a57ff].map((color) =>
+          new THREE.MeshStandardMaterial({ color, roughness: .38, metalness: .08, transparent: true })
+        );
+        const floaters = [];
+        for (let i = 0; i < 24; i += 1) {
+          const piece = new THREE.Mesh(confettiGeometries[i % confettiGeometries.length], confettiMaterials[i % confettiMaterials.length]);
+          const angle = i * 2.399;
+          const radius = 3.1 + (i % 5) * .43;
+          piece.position.set(Math.cos(angle) * radius, Math.sin(angle * 1.31) * 2.25, -1.2 - (i % 3) * .35);
+          piece.rotation.set(i * .34, i * .57, i * .22);
+          piece.userData = { phase: i * .7, baseX: piece.position.x, baseY: piece.position.y, burstAngle: angle * 1.7 };
+          confetti.add(piece);
+          floaters.push(piece);
+        }
+        rewardGroup = new THREE.Group();
+        rewardGroup.position.set(4.15, 1.85, .4);
+        rewardGroup.scale.setScalar(.86);
+        rewardGroup.visible = false;
+        const goldMaterial = new THREE.MeshStandardMaterial({ color: 0xffc83d, roughness: .28, metalness: .28 });
+        const lightGoldMaterial = new THREE.MeshStandardMaterial({ color: 0xffe88b, roughness: .25, metalness: .2 });
+        rewardMaterials = [goldMaterial, lightGoldMaterial];
+        rewardMaterials.forEach((material) => {
+          material.userData.baseEmissiveIntensity = material.emissiveIntensity;
+        });
+        const cup = new THREE.Mesh(new THREE.CylinderGeometry(.48, .29, .47, 20, 1, true), goldMaterial);
+        cup.position.y = .42;
+        rewardGroup.add(cup);
+        const cupBottom = new THREE.Mesh(new THREE.CylinderGeometry(.29, .25, .09, 20), goldMaterial);
+        cupBottom.position.y = .19;
+        rewardGroup.add(cupBottom);
+        [-1, 1].forEach((side) => {
+          const handle = new THREE.Mesh(new THREE.TorusGeometry(.22, .055, 8, 18, Math.PI), lightGoldMaterial);
+          handle.position.set(side * .43, .43, 0);
+          handle.rotation.z = side < 0 ? Math.PI / 2 : -Math.PI / 2;
+          rewardGroup.add(handle);
+        });
+        const trophyStem = new THREE.Mesh(new THREE.CylinderGeometry(.09, .13, .35, 12), goldMaterial);
+        trophyStem.position.y = .03;
+        rewardGroup.add(trophyStem);
+        const trophyBase = new THREE.Mesh(new THREE.CylinderGeometry(.31, .36, .13, 16), lightGoldMaterial);
+        trophyBase.position.y = -.2;
+        rewardGroup.add(trophyBase);
+        scene.add(rewardGroup);
+        let rewardBaseY = 1.85;
+        const setRewardLayout = () => {
+          const compact = window.innerWidth < 650;
+          rewardBaseY = compact ? 2.25 : 1.85;
+          rewardGroup.position.set(compact ? 2.25 : 4.15, rewardBaseY, .4);
+          rewardGroup.scale.setScalar(compact ? .62 : .86);
+        };
+        setRewardLayout();
+        const coreMaterial = registerLobbyMaterial(new THREE.MeshStandardMaterial({ color: 0x7e9ff1, roughness: .3, metalness: .12 }));
+        const core = new THREE.Mesh(new THREE.IcosahedronGeometry(1.12, 1), coreMaterial);
+        group.add(core);
+        const edge = new THREE.Mesh(new THREE.IcosahedronGeometry(1.14, 1), registerLobbyMaterial(new THREE.MeshBasicMaterial({ color: 0xffffff, wireframe: true, transparent: true, opacity: .13 })));
+        group.add(edge);
+        const ringMaterial = registerLobbyMaterial(new THREE.MeshBasicMaterial({ color: 0x7292d7, transparent: true, opacity: .29 }));
+        const ring1 = new THREE.Mesh(new THREE.TorusGeometry(1.75, .012, 8, 100), ringMaterial);
+        ring1.rotation.set(.95, .28, -.38);
+        group.add(ring1);
+        const ring2 = new THREE.Mesh(new THREE.TorusGeometry(2.18, .009, 8, 100), registerLobbyMaterial(new THREE.MeshBasicMaterial({ color: 0x58b99f, transparent: true, opacity: .28 })));
+        ring2.rotation.set(1.18, -.4, .55);
+        group.add(ring2);
+        const orbitDots = [];
+        const dotSpecs = [
+          [2.03, .22, .15, 0x55bda0, .13], [1.76, 2.5, .1, 0xe89083, .09],
+          [2.2, 4.1, -.12, 0x7695e1, .10], [1.92, 5.6, .2, 0xe9bd70, .075]
+        ];
+        dotSpecs.forEach(([radius, angle, tilt, color, size]) => {
+          const dot = new THREE.Mesh(new THREE.SphereGeometry(size, 18, 14), registerLobbyMaterial(new THREE.MeshStandardMaterial({ color, roughness: .34, metalness: .05 })));
+          dot.userData = { radius, angle, tilt };
+          group.add(dot);
+          orbitDots.push(dot);
+        });
+        const stars = new THREE.Group();
+        const starMaterial = registerLobbyMaterial(new THREE.MeshBasicMaterial({ color: 0x88a0c7, transparent: true, opacity: .38 }));
+        const starPositions = [[-4.2,1.9,-1],[3.8,2.4,-2],[-3,-2.2,-1],[4.1,-1.9,-1],[2.6,.7,-2],[-4.3,.2,-2]];
+        starPositions.forEach(([x,y,z], index) => {
+          const star = new THREE.Mesh(new THREE.SphereGeometry(index % 2 ? .025 : .035, 8, 8), starMaterial);
+          star.position.set(x,y,z);
+          stars.add(star);
+        });
+        lobbyEnvironment.add(stars);
+
+        // The General Knowledge scene is built from procedural geometry only.
+        // A single blend value fades the lobby out while the stars, planets,
+        // and nebula fade in; the camera also pans slightly for a soft handoff.
+        const cosmicEnvironment = new THREE.Group();
+        scene.add(cosmicEnvironment);
+        let cosmicSeed = 73621;
+        const cosmicRandom = () => {
+          cosmicSeed = cosmicSeed * 16807 % 2147483647;
+          return (cosmicSeed - 1) / 2147483646;
+        };
+        const starCount = 420;
+        const cosmicStarPositions = new Float32Array(starCount * 3);
+        const starColors = new Float32Array(starCount * 3);
+        const starPalette = [0x8eeaff, 0xffffff, 0xb9a6ff, 0xffa8e3].map((hex) => new THREE.Color(hex));
+        for (let i = 0; i < starCount; i += 1) {
+          const offset = i * 3;
+          cosmicStarPositions[offset] = (cosmicRandom() - .5) * 22;
+          cosmicStarPositions[offset + 1] = (cosmicRandom() - .5) * 14;
+          cosmicStarPositions[offset + 2] = -2 - cosmicRandom() * 15;
+          const color = starPalette[Math.floor(cosmicRandom() * starPalette.length)];
+          starColors[offset] = color.r;
+          starColors[offset + 1] = color.g;
+          starColors[offset + 2] = color.b;
+        }
+        const cosmicStarGeometry = new THREE.BufferGeometry();
+        cosmicStarGeometry.setAttribute("position", new THREE.BufferAttribute(cosmicStarPositions, 3));
+        cosmicStarGeometry.setAttribute("color", new THREE.BufferAttribute(starColors, 3));
+        const cosmicStarMaterial = registerCosmicMaterial(new THREE.PointsMaterial({
+          color: 0xffffff,
+          size: .055,
+          vertexColors: true,
+          transparent: true,
+          opacity: .85,
+          sizeAttenuation: true
+        }));
+        const cosmicStarfield = new THREE.Points(cosmicStarGeometry, cosmicStarMaterial);
+        cosmicEnvironment.add(cosmicStarfield);
+
+        const nebulaCount = 180;
+        const nebulaPositions = new Float32Array(nebulaCount * 3);
+        const nebulaColors = new Float32Array(nebulaCount * 3);
+        const nebulaCenters = [[-3.4, 1.1, -6], [3.3, -1.3, -7.5], [.2, 2.7, -10]];
+        const nebulaPalette = [0x654bff, 0xe34dd2, 0x31cfff, 0xff6ab4].map((hex) => new THREE.Color(hex));
+        for (let i = 0; i < nebulaCount; i += 1) {
+          const offset = i * 3;
+          const center = nebulaCenters[i % nebulaCenters.length];
+          nebulaPositions[offset] = center[0] + (cosmicRandom() - .5) * 3.8;
+          nebulaPositions[offset + 1] = center[1] + (cosmicRandom() - .5) * 2.7;
+          nebulaPositions[offset + 2] = center[2] + (cosmicRandom() - .5) * 2.4;
+          const color = nebulaPalette[Math.floor(cosmicRandom() * nebulaPalette.length)];
+          nebulaColors[offset] = color.r;
+          nebulaColors[offset + 1] = color.g;
+          nebulaColors[offset + 2] = color.b;
+        }
+        const nebulaGeometry = new THREE.BufferGeometry();
+        nebulaGeometry.setAttribute("position", new THREE.BufferAttribute(nebulaPositions, 3));
+        nebulaGeometry.setAttribute("color", new THREE.BufferAttribute(nebulaColors, 3));
+        const nebulaMaterial = registerCosmicMaterial(new THREE.PointsMaterial({
+          color: 0xffffff,
+          size: .17,
+          vertexColors: true,
+          transparent: true,
+          opacity: .44,
+          blending: THREE.AdditiveBlending,
+          depthWrite: false,
+          sizeAttenuation: true
+        }));
+        const nebula = new THREE.Points(nebulaGeometry, nebulaMaterial);
+        cosmicEnvironment.add(nebula);
+
+        const mainPlanetMaterial = registerCosmicMaterial(new THREE.MeshStandardMaterial({
+          color: 0x624bdb, emissive: 0x271568, emissiveIntensity: .75, roughness: .5, metalness: .18
+        }));
+        const mainPlanet = new THREE.Mesh(new THREE.SphereGeometry(1.12, 32, 24), mainPlanetMaterial);
+        cosmicEnvironment.add(mainPlanet);
+        const mainPlanetRingMaterial = registerCosmicMaterial(new THREE.MeshStandardMaterial({
+          color: 0x79eaff, emissive: 0x27b4ef, emissiveIntensity: .9, roughness: .32, metalness: .32
+        }));
+        const mainPlanetRing = new THREE.Mesh(new THREE.TorusGeometry(1.58, .035, 10, 96), mainPlanetRingMaterial);
+        mainPlanetRing.rotation.set(1.08, .18, -.32);
+        cosmicEnvironment.add(mainPlanetRing);
+
+        const amberPlanetMaterial = registerCosmicMaterial(new THREE.MeshStandardMaterial({
+          color: 0xff9f54, emissive: 0x9e3d56, emissiveIntensity: .52, roughness: .48, metalness: .12
+        }));
+        const amberPlanet = new THREE.Mesh(new THREE.SphereGeometry(.52, 24, 18), amberPlanetMaterial);
+        cosmicEnvironment.add(amberPlanet);
+        const icePlanetMaterial = registerCosmicMaterial(new THREE.MeshStandardMaterial({
+          color: 0x45d9e8, emissive: 0x115d9d, emissiveIntensity: .6, roughness: .42, metalness: .2
+        }));
+        const icePlanet = new THREE.Mesh(new THREE.SphereGeometry(.3, 20, 16), icePlanetMaterial);
+        cosmicEnvironment.add(icePlanet);
+        const setCosmicLayout = () => {
+          const compact = window.innerWidth < 650;
+          mainPlanet.position.set(compact ? -1.2 : -3.7, compact ? 2.8 : .45, -3.8);
+          mainPlanetRing.position.copy(mainPlanet.position);
+          amberPlanet.position.set(compact ? 1.2 : 3.6, compact ? 2.6 : 1.65, -5.3);
+          icePlanet.position.set(compact ? 1.25 : -2.8, compact ? -2.4 : -1.8, -3.2);
+        };
+        setCosmicLayout();
+
+        const clock = new THREE.Clock();
+        let cosmicBlend = 0;
+        function animate() {
+          requestAnimationFrame(animate);
+          const delta = Math.min(clock.getDelta(), .05);
+          const elapsed = clock.elapsedTime;
+          cosmicBlend = THREE.MathUtils.damp(cosmicBlend, environmentTarget, 1.65, delta);
+          lobbyMaterials.forEach((material) => {
+            material.opacity = material.userData.themeBaseOpacity * (1 - cosmicBlend);
+          });
+          cosmicMaterials.forEach((material) => {
+            material.opacity = material.userData.themeBaseOpacity * cosmicBlend;
+          });
+          cosmicStarMaterial.opacity = cosmicStarMaterial.userData.themeBaseOpacity * cosmicBlend * (.78 + Math.sin(elapsed * 2.1) * .18);
+          nebulaMaterial.opacity = nebulaMaterial.userData.themeBaseOpacity * cosmicBlend * (.8 + Math.sin(elapsed * .7) * .16);
+          const showResultsConfetti = views.results.classList.contains("active");
+          const confettiOpacity = showResultsConfetti ? 1 : 1 - cosmicBlend;
+          confettiMaterials.forEach((material) => { material.opacity = confettiOpacity; });
+          const burstAge = showResultsConfetti ? Math.max(0, (performance.now() - rewardCelebrationAt) / 1000) : 2;
+          const burst = showResultsConfetti && burstAge < 1.7
+            ? Math.sin((burstAge / 1.7) * Math.PI)
+            : 0;
+          cosmicEnvironment.visible = cosmicBlend > .008;
+          lobbyEnvironment.scale.setScalar(1 - cosmicBlend * .2);
+          lobbyEnvironment.position.x = -.35 * cosmicBlend;
+          cosmicEnvironment.scale.setScalar(.84 + cosmicBlend * .16);
+          cosmicEnvironment.rotation.y = Math.sin(elapsed * .11) * .035;
+          camera.position.set(.45 * cosmicBlend, .16 * cosmicBlend, 12 - .35 * cosmicBlend);
+          camera.lookAt(0, 0, 0);
+          group.rotation.y = elapsed * .14;
+          group.rotation.x = Math.sin(elapsed * .22) * .055;
+          core.rotation.y = elapsed * .12;
+          core.rotation.x = elapsed * .09;
+          floaters.forEach((piece) => {
+            piece.rotation.x += .002;
+            piece.rotation.y += .003;
+            piece.position.x = piece.userData.baseX + Math.cos(piece.userData.burstAngle) * burst * 1.05;
+            piece.position.y = piece.userData.baseY + Math.sin(elapsed * .8 + piece.userData.phase) * .12 + Math.sin(piece.userData.burstAngle) * burst * .85;
+          });
+          if (rewardGroup) {
+            rewardGroup.rotation.y = elapsed * .62;
+            rewardGroup.rotation.x = Math.sin(elapsed * .9) * .055;
+            rewardGroup.position.y = rewardBaseY + Math.sin(elapsed * 1.5) * .1;
+            const rewardPulse = showResultsConfetti ? 1 + Math.sin(elapsed * 3.5) * .045 : 1;
+            rewardGroup.scale.setScalar((window.innerWidth < 650 ? .62 : .86) * rewardPulse);
+            rewardMaterials.forEach((material) => {
+              material.emissiveIntensity = material.userData.baseEmissiveIntensity *
+                (showResultsConfetti ? 1.2 + Math.sin(elapsed * 4) * .32 : .3);
+            });
+          }
+          cosmicStarfield.rotation.y = elapsed * .004;
+          nebula.rotation.z = Math.sin(elapsed * .09) * .035;
+          mainPlanet.rotation.y = elapsed * .055;
+          amberPlanet.rotation.y = -elapsed * .08;
+          icePlanet.rotation.y = elapsed * .1;
+          mainPlanetRing.rotation.z = Math.sin(elapsed * .1) * .06;
+          orbitDots.forEach((dot) => {
+            const { radius, angle, tilt } = dot.userData;
+            const phase = angle + elapsed * .26;
+            dot.position.set(Math.cos(phase) * radius, Math.sin(phase) * radius * .45 + tilt, Math.sin(phase) * .66);
+          });
+          renderer.render(scene, camera);
+        }
+        animate();
+        window.addEventListener("resize", () => {
+          camera.aspect = window.innerWidth / window.innerHeight;
+          camera.updateProjectionMatrix();
+          setCosmicLayout();
+          setRewardLayout();
+          renderer.setSize(window.innerWidth, window.innerHeight);
+          renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.6));
+        });
+      } catch {
+        document.body.classList.remove("webgl-ready");
+        sceneRoot.hidden = true;
+      }
+    </script>
+  </body>
+</html>
