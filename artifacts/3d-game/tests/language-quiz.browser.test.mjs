@@ -78,6 +78,28 @@ try {
         return array;
       },
     });
+    window.__answerCueOscillators = 0;
+    window.AudioContext = class {
+      state = "running";
+      currentTime = 0;
+      destination = {};
+      createOscillator() {
+        window.__answerCueOscillators += 1;
+        return {
+          type: "",
+          frequency: { setValueAtTime() {}, exponentialRampToValueAtTime() {} },
+          connect() {},
+          start() {},
+          stop() {},
+        };
+      }
+      createGain() {
+        return {
+          gain: { setValueAtTime() {}, exponentialRampToValueAtTime() {} },
+          connect() {},
+        };
+      }
+    };
   });
   const page = await context.newPage();
   page.setDefaultTimeout(10_000);
@@ -95,6 +117,16 @@ try {
   await page.reload({ waitUntil: "domcontentloaded" });
   assert.equal(await page.locator("html").getAttribute("lang"), "en");
   assert.equal(await page.locator("#welcomeTitle").innerText(), "Wonder a little further.");
+  assert.equal(await page.locator("#soundToggle").innerText(), "Answer sounds on");
+  await page.locator("#soundToggle").tap();
+  assert.equal(await page.locator("#soundToggle").getAttribute("aria-pressed"), "false");
+  assert.equal(
+    await page.evaluate(() => localStorage.getItem("quiz-orbit-answer-sounds-muted")),
+    "true",
+  );
+  await page.reload({ waitUntil: "domcontentloaded" });
+  assert.equal(await page.locator("#soundToggle").innerText(), "Answer sounds off");
+  assert.equal(await page.locator("#soundToggle").getAttribute("aria-pressed"), "false");
 
   await page.locator("#startGameButton").click();
   assert.equal(await page.locator("#levelView").evaluate((node) => node.classList.contains("active")), true);
@@ -108,14 +140,31 @@ try {
   ]);
 
   await page.keyboard.press("4");
+  assert.equal(await page.evaluate(() => window.__answerCueOscillators), 0, "muted answers do not create sound cues");
   assert.match(await page.locator("#feedback").innerText(), /Correct! \+10 points/);
   assert.equal(await page.locator("#scoreValue").innerText(), "10");
   assert.equal(await page.locator("#correctCount").innerText(), "1");
   assert.equal(await page.locator(".option").nth(3).getAttribute("disabled"), "");
   assert.equal(await page.locator(".option").nth(3).getAttribute("class").then((value) => value.includes("correct")), true);
+  await page.locator("#soundToggle").tap();
+  assert.equal(await page.locator("#soundToggle").innerText(), "Answer sounds on");
+  const audioTestPage = await context.newPage();
+  audioTestPage.on("pageerror", (error) => pageErrors.push(error.message));
+  await audioTestPage.goto(baseUrl, { waitUntil: "domcontentloaded" });
+  await audioTestPage.locator("#startGameButton").tap();
+  await audioTestPage.locator(".level-card.unlocked").tap();
+  assert.equal(await audioTestPage.locator("#questionText").innerText(), "Which is Earth's largest ocean?");
+  await audioTestPage.locator(".option").nth(3).tap();
+  assert.equal(
+    await audioTestPage.evaluate(() => window.__answerCueOscillators),
+    1,
+    "enabled answers play a sound cue",
+  );
+  await audioTestPage.close();
 
   await page.selectOption("#languageSelect", "bn");
   assert.equal(await page.locator("#questionText").innerText(), "পৃথিবীর বৃহত্তম মহাসাগর কোনটি?");
+  assert.equal(await page.locator("#soundToggle").innerText(), "উত্তরের শব্দ চালু");
   assert.deepEqual(await page.locator(".option span:nth-child(2)").allInnerTexts(), [
     "আটলান্টিক মহাসাগর",
     "ভারত মহাসাগর",
@@ -147,7 +196,7 @@ try {
   await page.reload({ waitUntil: "domcontentloaded" });
   assert.equal(await page.locator("html").getAttribute("lang"), "bn");
   assert.equal(await page.locator("#welcomeTitle").innerText(), "আরও একটু জেনে নিন।");
-  assert.equal(await page.locator("#categoryHeading").innerText(), "আপনার বিষয় বেছে নিন");
+  assert.equal(await page.locator("#categoryHeading").innerText(), "মোড বেছে নিন");
 
   await page.locator("#startGameButton").tap();
   await page.locator(".level-card.unlocked").tap();

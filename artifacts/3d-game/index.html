@@ -57,6 +57,12 @@
       .topbar-actions { display: flex; align-items: center; gap: 18px; }
       .language-select { min-width: 126px; min-height: 36px; padding: 0 30px 0 11px; color: #40516a; border: 1px solid rgba(106,126,154,.2); border-radius: 11px; background: rgba(255,255,255,.76); font: inherit; font-size: 11px; font-weight: 700; cursor: pointer; }
       .language-select:focus-visible { outline: 3px solid rgba(76,120,232,.38); outline-offset: 2px; }
+      .sound-toggle { min-height: 36px; padding: 0 10px; display: inline-flex; align-items: center; justify-content: center; gap: 7px; color: #40516a; border: 1px solid rgba(106,126,154,.2); border-radius: 11px; background: rgba(255,255,255,.76); font: inherit; font-size: 11px; font-weight: 700; white-space: nowrap; cursor: pointer; }
+      .sound-toggle:hover { background: white; border-color: rgba(106,126,154,.38); }
+      .sound-toggle:focus-visible { outline: 3px solid rgba(76,120,232,.38); outline-offset: 2px; }
+      .sound-toggle svg { width: 16px; height: 16px; flex: 0 0 16px; }
+      .sound-toggle .sound-muted-icon, .sound-toggle[aria-pressed="false"] .sound-on-icon { display: none; }
+      .sound-toggle[aria-pressed="false"] .sound-muted-icon { display: block; }
       main { max-width: 1220px; margin: 0 auto; }
       .view { display: none; animation: appear .45s cubic-bezier(.2,.7,.2,1) both; }
       .view.active { display: block; }
@@ -885,6 +891,11 @@
             <option value="es">Español</option>
             <option value="fr">Français</option>
           </select>
+          <button class="sound-toggle" type="button" id="soundToggle" aria-pressed="true">
+            <svg class="sound-on-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 10v4h4l5 4V6l-5 4H4Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M16 9a5 5 0 0 1 0 6m2-8a8 8 0 0 1 0 10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+            <svg class="sound-muted-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 10v4h4l5 4V6l-5 4H4Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="m17 9 5 6m0-6-5 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+            <span id="soundToggleLabel">Sound on</span>
+          </button>
         </div>
       </header>
 
@@ -1057,6 +1068,8 @@
           language: "Language",
           topNote: "A small space for curiosity",
           brandHome: "Quiz Orbit home",
+          answerSoundsOn: "Answer sounds on",
+          answerSoundsOff: "Answer sounds off",
           welcomeEyebrow: "A quiz with a little perspective",
           welcomeTitle: "Wonder a little <span>further.</span>",
           welcomeDescription: "Two ways to explore: discover the world, or race the clock with logic and patterns.",
@@ -1171,6 +1184,8 @@
           language: "ভাষা",
           topNote: "কৌতূহলের জন্য ছোট্ট এক জগৎ",
           brandHome: "কুইজ অরবিটের হোম",
+          answerSoundsOn: "উত্তরের শব্দ চালু",
+          answerSoundsOff: "উত্তরের শব্দ বন্ধ",
           welcomeEyebrow: "নতুন দৃষ্টিতে কুইজ",
           welcomeTitle: "আরও একটু <span>জেনে নিন।</span>",
           welcomeDescription: "অনুসন্ধানের দুটি পথ: বিশ্বকে জানুন, অথবা যুক্তি ও ধাঁধার সঙ্গে সময়ের দৌড়ে নামুন।",
@@ -1728,6 +1743,15 @@
       }
       const CORRECT_ANSWER_POINTS = 10;
       const INCORRECT_ANSWER_PENALTY = 5;
+      const ANSWER_SOUND_STORAGE_KEY = "quiz-orbit-answer-sounds-muted";
+
+      function readAnswerSoundsMuted() {
+        try {
+          return localStorage.getItem(ANSWER_SOUND_STORAGE_KEY) === "true";
+        } catch {
+          return false;
+        }
+      }
 
       const views = {
         welcome: document.getElementById("welcomeView"),
@@ -1780,6 +1804,7 @@
       let rewardGroup = null;
       let rewardMaterials = [];
       let audioContext = null;
+      let answerSoundsMuted = readAnswerSoundsMuted();
       let environmentTarget = 0;
       let cyberEnvironmentTarget = 0;
       const rewardTierPalettes = {
@@ -1947,6 +1972,7 @@
       }
 
       function playAnswerCue(isCorrect) {
+        if (answerSoundsMuted) return;
         try {
           const AudioContextClass = window.AudioContext || window.webkitAudioContext;
           if (!AudioContextClass) return;
@@ -2431,6 +2457,7 @@
         languageSelect.value = currentLanguage;
         languageSelect.setAttribute("aria-label", currentText.language);
         document.getElementById("languageLabel").textContent = currentText.language;
+        updateSoundToggle();
         document.title = currentText.pageTitle;
         document.getElementById("metaDescription").content = currentText.metaDescription;
         try {
@@ -2515,6 +2542,24 @@
           renderResults();
         }
       }
+
+      function updateSoundToggle() {
+        const soundToggle = document.getElementById("soundToggle");
+        const label = answerSoundsMuted ? currentText.answerSoundsOff : currentText.answerSoundsOn;
+        soundToggle.setAttribute("aria-pressed", String(!answerSoundsMuted));
+        soundToggle.setAttribute("aria-label", label);
+        document.getElementById("soundToggleLabel").textContent = label;
+      }
+
+      document.getElementById("soundToggle").addEventListener("click", () => {
+        answerSoundsMuted = !answerSoundsMuted;
+        try {
+          localStorage.setItem(ANSWER_SOUND_STORAGE_KEY, String(answerSoundsMuted));
+        } catch {
+          // The setting still applies for this visit if browser storage is unavailable.
+        }
+        updateSoundToggle();
+      });
 
       languageSelect.addEventListener("change", (event) => setLanguage(event.target.value));
       categoryButtons.forEach((button) => {
