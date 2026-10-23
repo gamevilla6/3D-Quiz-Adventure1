@@ -232,6 +232,17 @@ try {
   assert.equal(await page.locator("#finalTotal").innerText(), "১০");
   assert.equal(await page.locator("#finalDenominator").innerText(), "নেট পয়েন্ট");
   assert.match(await page.locator("#finalScore").innerText(), /[১-৯]/);
+  const savedCollection = await page.evaluate(() => JSON.parse(localStorage.getItem("quiz-orbit-reward-collection")));
+  const earnedTier = await page.locator("#resultCard").getAttribute("data-tier");
+  assert.equal(savedCollection.version, 1, "the reward collection has a storage version");
+  assert.ok(savedCollection.trophies.includes(earnedTier), "the round trophy is persisted");
+  assert.ok(savedCollection.badges.includes("quizMaster"), "the earned badge is persisted");
+  assert.equal(savedCollection.bestStreak, 10, "the personal best streak is updated");
+  assert.equal(
+    new Intl.NumberFormat("bn-BD").format(savedCollection.bestPoints),
+    await page.locator("#finalScore").innerText(),
+    "the personal best points match the round",
+  );
 
   await page.locator("#playAgainButton").tap();
   assert.equal(await page.locator("#gameView").evaluate((node) => node.classList.contains("active")), true);
@@ -239,9 +250,50 @@ try {
   assert.equal(await page.locator("#scoreValue").innerText(), "০");
   assert.equal(await page.locator("#correctCount").innerText(), "০");
   assert.equal(await page.locator(".option").count(), 4);
+  for (let questionIndex = 0; questionIndex < 10; questionIndex += 1) {
+    await page.locator(".option").first().tap();
+    if (questionIndex < 9) await page.locator("#nextButton").tap();
+  }
+  await page.locator("#nextButton").tap();
+  const mergedCollection = await page.evaluate(() => JSON.parse(localStorage.getItem("quiz-orbit-reward-collection")));
+  assert.ok(mergedCollection.trophies.includes("gold"), "a later round keeps the previously earned gold trophy");
+  assert.ok(mergedCollection.badges.includes("quizMaster"), "a later round keeps previously earned badges");
+  assert.equal(mergedCollection.bestStreak, 10, "a later round does not reduce the personal best streak");
+
+  await page.locator("#homeButton").tap();
+  assert.equal(await page.locator("#welcomeView").evaluate((node) => node.classList.contains("active")), true);
+  assert.match(await page.locator("#collectionTrophies").innerText(), /ট্রফি/);
+  assert.match(await page.locator("#collectionBadges").innerText(), /কুইজ মাস্টার/);
+  await page.reload({ waitUntil: "domcontentloaded" });
+  assert.match(await page.locator("#collectionTrophies").innerText(), /ট্রফি/);
+  assert.match(await page.locator("#collectionBadges").innerText(), /কুইজ মাস্টার/);
+
+  await page.evaluate(() => localStorage.setItem("quiz-orbit-reward-collection", "{not valid json"));
+  await page.reload({ waitUntil: "domcontentloaded" });
+  assert.equal(await page.locator("#collectionBestPoints").innerText(), "০");
+  assert.equal(await page.locator("#collectionBestStreak").innerText(), "০");
+  assert.equal(await page.locator("#collectionTrophies").innerText(), "এখনো কিছু নেই");
+  assert.equal(await page.locator("#collectionBadges").innerText(), "এখনো কিছু নেই");
+
+  const blockedStoragePage = await context.newPage();
+  blockedStoragePage.setDefaultTimeout(10_000);
+  const blockedStorageErrors = [];
+  blockedStoragePage.on("pageerror", (error) => blockedStorageErrors.push(error.message));
+  await blockedStoragePage.addInitScript(() => {
+    const storageBlocked = () => {
+      throw new DOMException("Browser storage is blocked", "SecurityError");
+    };
+    Storage.prototype.getItem = storageBlocked;
+    Storage.prototype.setItem = storageBlocked;
+  });
+  await blockedStoragePage.goto(baseUrl, { waitUntil: "domcontentloaded" });
+  assert.equal(await blockedStoragePage.locator("#collectionBestPoints").innerText(), "0");
+  await blockedStoragePage.locator("#startGameButton").click();
+  assert.equal(await blockedStoragePage.locator("#levelView").evaluate((node) => node.classList.contains("active")), true);
+  assert.deepEqual(blockedStorageErrors, [], "the game remains usable when browser storage is blocked");
 
   assert.deepEqual(pageErrors, [], `The game page raised browser errors: ${pageErrors.join("; ")}`);
-  console.log("Browser check passed: English and Bengali, saved language, translated feedback/options, scoring, level results, replay, keyboard, and touch.");
+  console.log("Browser check passed: saved reward collection, personal bests, invalid storage recovery, English and Bengali, scoring, replay, keyboard, and touch.");
 } finally {
   await browser?.close();
   server.kill("SIGTERM");

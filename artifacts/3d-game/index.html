@@ -807,6 +807,31 @@
       .achievement-copy strong { display: block; color: #30214e; font-size: 11px; line-height: 1.25; }
       .achievement-copy small { display: block; margin-top: 3px; color: #72658f; font-size: 9px; line-height: 1.3; }
       .achievement-empty { margin: 0; padding: 13px; color: #6c6284; border: 1px dashed #d8cfee; border-radius: 13px; background: #faf8ff; font-size: 12px; text-align: center; }
+      .collection-panel {
+        max-width: 790px;
+        margin: 24px auto 0;
+        padding: 18px;
+        border: 1px solid rgba(255,255,255,.88);
+        border-radius: 20px;
+        background: rgba(255,255,255,.78);
+        box-shadow: var(--shadow);
+        backdrop-filter: blur(22px);
+        -webkit-backdrop-filter: blur(22px);
+      }
+      .collection-heading { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 12px; }
+      .collection-heading h2 { margin: 0; color: #34215d; font-size: 15px; font-weight: 850; }
+      .collection-stats { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px; margin-bottom: 14px; }
+      .collection-stat { padding: 10px 12px; border-radius: 13px; background: #f2edff; }
+      .collection-stat strong { display: block; color: #35215e; font-size: 20px; line-height: 1; font-variant-numeric: tabular-nums; }
+      .collection-stat span { display: block; margin-top: 5px; color: #72658f; font-size: 9px; font-weight: 750; text-transform: uppercase; letter-spacing: .07em; }
+      .collection-rewards { display: grid; gap: 9px; }
+      .collection-reward-group h3 { margin: 0 0 6px; color: #51436f; font-size: 10px; font-weight: 850; text-transform: uppercase; letter-spacing: .08em; }
+      .collection-reward-list { display: flex; flex-wrap: wrap; gap: 6px; }
+      .collection-reward { display: inline-flex; align-items: center; gap: 6px; padding: 6px 9px; color: #453188; border: 1px solid #dfd6f8; border-radius: 999px; background: linear-gradient(135deg, #fff, #f3efff); font-size: 10px; font-weight: 800; }
+      .collection-reward.tier-gold { color: #765000; border-color: #f1d681; background: #fff5c9; }
+      .collection-reward.tier-silver { color: #45546e; border-color: #d5ddec; background: #f3f6fb; }
+      .collection-reward.tier-bronze { color: #7b4a22; border-color: #eac7a7; background: #fff0df; }
+      .collection-reward-empty { color: #827996; font-size: 10px; font-style: italic; }
       .streak-hint { margin-top: 5px; color: #dfd8f9; font-size: 9px; font-weight: 650; letter-spacing: .01em; }
       [hidden] { display: none !important; }
       .level-selection { padding: clamp(26px, 5vh, 54px) 0 48px; }
@@ -873,6 +898,8 @@
         .result-stat { padding: 10px 7px; }
         .achievement-list { grid-template-columns: 1fr; }
         .achievement-panel { margin-bottom: 21px; }
+        .collection-panel { margin-top: 20px; padding: 15px; }
+        .collection-stat { padding: 9px; }
         .game-sidebar .side-card:first-child .streak-hint { grid-column: 1 / -1; }
         .level-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
         .level-card { min-height: 132px; padding: 14px; }
@@ -1459,6 +1486,23 @@
             <div class="start-hint" id="startHint" aria-live="polite">Choose a subject to begin your orbit.</div>
           </div>
           <div class="welcome-foot"><span><b class="tiny-check">✓</b> <span id="totalQuestionsLabel">30 General Knowledge questions</span></span><span><b class="tiny-check">✓</b> <span id="instantAnswersLabel">Instant answers</span></span><span><b class="tiny-check">✓</b> <span id="justForFunLabel">Just for fun</span></span></div>
+          <section class="collection-panel" aria-labelledby="collectionTitle">
+            <div class="collection-heading"><h2 id="collectionTitle">Your collection</h2></div>
+            <div class="collection-stats">
+              <div class="collection-stat"><strong id="collectionBestPoints">0</strong><span id="collectionBestPointsLabel">Personal best points</span></div>
+              <div class="collection-stat"><strong id="collectionBestStreak">0</strong><span id="collectionBestStreakLabel">Personal best streak</span></div>
+            </div>
+            <div class="collection-rewards">
+              <section class="collection-reward-group" aria-labelledby="collectionTrophiesLabel">
+                <h3 id="collectionTrophiesLabel">Trophies</h3>
+                <div class="collection-reward-list" id="collectionTrophies" role="list"></div>
+              </section>
+              <section class="collection-reward-group" aria-labelledby="collectionBadgesLabel">
+                <h3 id="collectionBadgesLabel">Badges</h3>
+                <div class="collection-reward-list" id="collectionBadges" role="list"></div>
+              </section>
+            </div>
+          </section>
         </section>
 
         <section class="view level-selection" id="levelView" aria-labelledby="levelTitle">
@@ -1665,6 +1709,12 @@
           streakCombo: "🔥 {streak} streak · {multiplier}× combo",
           accuracy: "Accuracy",
           bestStreak: "Best streak",
+          collectionTitle: "Your collection",
+          collectionBestPoints: "Personal best points",
+          collectionBestStreak: "Personal best streak",
+          collectionTrophies: "Trophies",
+          collectionBadges: "Badges",
+          collectionEmpty: "None yet",
           achievements: "Unlocked badges",
           noAchievements: "No badges unlocked this round yet.",
           trophyAward: "Round reward",
@@ -1786,6 +1836,12 @@
           streakCombo: "🔥 টানা {streak}টি · {multiplier}× কম্বো",
           accuracy: "সঠিকতার হার",
           bestStreak: "সর্বোচ্চ ধারা",
+          collectionTitle: "আপনার সংগ্রহ",
+          collectionBestPoints: "সর্বোচ্চ পয়েন্ট",
+          collectionBestStreak: "সর্বোচ্চ ধারাবাহিকতা",
+          collectionTrophies: "ট্রফি",
+          collectionBadges: "ব্যাজ",
+          collectionEmpty: "এখনো কিছু নেই",
           achievements: "অর্জিত ব্যাজ",
           noAchievements: "এই পর্বে এখনো কোনো ব্যাজ মেলেনি।",
           trophyAward: "এই পর্বের পুরস্কার",
@@ -1907,6 +1963,12 @@
           streakCombo: "🔥 लगातार {streak} · {multiplier}× कॉम्बो",
           accuracy: "सटीकता",
           bestStreak: "सबसे लंबी स्ट्रीक",
+          collectionTitle: "आपका संग्रह",
+          collectionBestPoints: "सर्वश्रेष्ठ अंक",
+          collectionBestStreak: "सबसे लंबी स्ट्रीक",
+          collectionTrophies: "ट्रॉफियाँ",
+          collectionBadges: "बैज",
+          collectionEmpty: "अभी कुछ नहीं",
           achievements: "अनलॉक बैज",
           noAchievements: "इस राउंड में अभी कोई बैज नहीं मिला।",
           trophyAward: "इस राउंड का इनाम",
@@ -2028,6 +2090,12 @@
           streakCombo: "🔥 Racha de {streak} · combo ×{multiplier}",
           accuracy: "Aciertos",
           bestStreak: "Mejor racha",
+          collectionTitle: "Tu colección",
+          collectionBestPoints: "Mejor puntuación",
+          collectionBestStreak: "Mejor racha",
+          collectionTrophies: "Trofeos",
+          collectionBadges: "Insignias",
+          collectionEmpty: "Todavía no hay nada",
           achievements: "Insignias desbloqueadas",
           noAchievements: "Aún no has desbloqueado insignias en esta ronda.",
           trophyAward: "Recompensa de la ronda",
@@ -2149,6 +2217,12 @@
           streakCombo: "🔥 Série de {streak} · combo ×{multiplier}",
           accuracy: "Précision",
           bestStreak: "Meilleure série",
+          collectionTitle: "Votre collection",
+          collectionBestPoints: "Meilleur score",
+          collectionBestStreak: "Meilleure série",
+          collectionTrophies: "Trophées",
+          collectionBadges: "Badges",
+          collectionEmpty: "Pas encore de récompense",
           achievements: "Badges débloqués",
           noAchievements: "Aucun badge débloqué pour cette manche.",
           trophyAward: "Récompense de la manche",
@@ -2310,6 +2384,48 @@
       const CORRECT_ANSWER_POINTS = 10;
       const INCORRECT_ANSWER_PENALTY = 5;
       const ANSWER_SOUND_STORAGE_KEY = "quiz-orbit-answer-sounds-muted";
+      const REWARD_COLLECTION_STORAGE_KEY = "quiz-orbit-reward-collection";
+      const REWARD_COLLECTION_VERSION = 1;
+      const TROPHY_TIERS = ["gold", "silver", "bronze"];
+      const BADGE_IDS = ["quizMaster", "logicMaster", "speedDemon", "quizSpeedster", "knowledgeSeeker"];
+
+      function emptyRewardCollection() {
+        return { version: REWARD_COLLECTION_VERSION, trophies: [], badges: [], bestPoints: 0, bestStreak: 0 };
+      }
+
+      function readRewardCollection() {
+        try {
+          const serialized = localStorage.getItem(REWARD_COLLECTION_STORAGE_KEY);
+          if (!serialized) return emptyRewardCollection();
+          const saved = JSON.parse(serialized);
+          if (!saved || typeof saved !== "object" || saved.version !== REWARD_COLLECTION_VERSION) {
+            return emptyRewardCollection();
+          }
+          const validNonNegativeNumber = (value) =>
+            typeof value === "number" && Number.isFinite(value) && value >= 0;
+          return {
+            version: REWARD_COLLECTION_VERSION,
+            trophies: Array.isArray(saved.trophies)
+              ? [...new Set(saved.trophies.filter((tier) => TROPHY_TIERS.includes(tier)))]
+              : [],
+            badges: Array.isArray(saved.badges)
+              ? [...new Set(saved.badges.filter((badgeId) => BADGE_IDS.includes(badgeId)))]
+              : [],
+            bestPoints: validNonNegativeNumber(saved.bestPoints) ? saved.bestPoints : 0,
+            bestStreak: validNonNegativeNumber(saved.bestStreak) ? Math.floor(saved.bestStreak) : 0
+          };
+        } catch {
+          return emptyRewardCollection();
+        }
+      }
+
+      function saveRewardCollection(collection) {
+        try {
+          localStorage.setItem(REWARD_COLLECTION_STORAGE_KEY, JSON.stringify(collection));
+        } catch {
+          // Rewards remain available in memory for this visit if browser storage is unavailable.
+        }
+      }
 
       function readAnswerSoundsMuted() {
         try {
@@ -2377,6 +2493,7 @@
       let rewardMaterials = [];
       let audioContext = null;
       let answerSoundsMuted = readAnswerSoundsMuted();
+      let rewardCollection = readRewardCollection();
       let environmentTarget = 0;
       let cyberEnvironmentTarget = 0;
       const rewardTierPalettes = {
@@ -3173,28 +3290,34 @@
         }
       }
 
-      function renderAchievementBadges(accuracy, averageAnswerSeconds) {
+      function getAchievementBadges(accuracy, averageAnswerSeconds) {
         const isIQRun = currentCategory === "IQ Check";
-        const badges = [
+        return [
           {
+            id: isIQRun ? "logicMaster" : "quizMaster",
             unlocked: isIQRun ? accuracy >= 80 : accuracy === 100,
             icon: "✦",
             title: isIQRun ? currentText.badgeLogicMaster : currentText.badgeQuizMaster,
             hint: isIQRun ? currentText.badgeLogicMasterHint : currentText.badgeQuizMasterHint
           },
           {
+            id: isIQRun ? "quizSpeedster" : "speedDemon",
             unlocked: accuracy >= 60 && averageAnswerSeconds < 6,
             icon: "⚡",
             title: isIQRun ? currentText.badgeQuizSpeedster : currentText.badgeSpeedDemon,
             hint: isIQRun ? currentText.badgeQuizSpeedsterHint : currentText.badgeSpeedDemonHint
           },
           {
+            id: "knowledgeSeeker",
             unlocked: accuracy >= 60,
             icon: "◇",
             title: currentText.badgeKnowledgeSeeker,
             hint: currentText.badgeKnowledgeSeekerHint
           }
         ];
+      }
+
+      function renderAchievementBadges(badges) {
         const unlockedBadges = badges.filter((badge) => badge.unlocked);
         const list = document.getElementById("achievementList");
         list.replaceChildren();
@@ -3226,6 +3349,67 @@
           card.append(icon, copy);
           list.append(card);
         });
+      }
+
+      function getAllBadgeDefinitions() {
+        return [
+          { id: "quizMaster", icon: "✦", title: currentText.badgeQuizMaster },
+          { id: "logicMaster", icon: "✦", title: currentText.badgeLogicMaster },
+          { id: "speedDemon", icon: "⚡", title: currentText.badgeSpeedDemon },
+          { id: "quizSpeedster", icon: "⚡", title: currentText.badgeQuizSpeedster },
+          { id: "knowledgeSeeker", icon: "◇", title: currentText.badgeKnowledgeSeeker }
+        ];
+      }
+
+      function renderCollectionRewardList(element, rewards) {
+        element.replaceChildren();
+        if (rewards.length === 0) {
+          const empty = document.createElement("span");
+          empty.className = "collection-reward-empty";
+          empty.setAttribute("role", "listitem");
+          empty.textContent = currentText.collectionEmpty;
+          element.append(empty);
+          return;
+        }
+        rewards.forEach(({ icon, label, className = "" }) => {
+          const reward = document.createElement("span");
+          reward.className = `collection-reward ${className}`.trim();
+          reward.setAttribute("role", "listitem");
+          const mark = document.createElement("span");
+          mark.setAttribute("aria-hidden", "true");
+          mark.textContent = icon;
+          const name = document.createElement("span");
+          name.textContent = label;
+          reward.append(mark, name);
+          element.append(reward);
+        });
+      }
+
+      function renderRewardCollection() {
+        document.getElementById("collectionTitle").textContent = currentText.collectionTitle;
+        document.getElementById("collectionBestPointsLabel").textContent = currentText.collectionBestPoints;
+        document.getElementById("collectionBestStreakLabel").textContent = currentText.collectionBestStreak;
+        document.getElementById("collectionTrophiesLabel").textContent = currentText.collectionTrophies;
+        document.getElementById("collectionBadgesLabel").textContent = currentText.collectionBadges;
+        document.getElementById("collectionBestPoints").textContent = formatNumber(rewardCollection.bestPoints);
+        document.getElementById("collectionBestStreak").textContent = formatNumber(rewardCollection.bestStreak);
+        renderCollectionRewardList(
+          document.getElementById("collectionTrophies"),
+          TROPHY_TIERS
+            .filter((tier) => rewardCollection.trophies.includes(tier))
+            .map((tier) => ({
+              icon: "🏆",
+              label: currentText[rewardTierPalettes[tier].label],
+              className: `tier-${tier}`
+            }))
+        );
+        const badgeTitles = getAllBadgeDefinitions();
+        renderCollectionRewardList(
+          document.getElementById("collectionBadges"),
+          badgeTitles
+            .filter((badge) => rewardCollection.badges.includes(badge.id))
+            .map(({ icon, title }) => ({ icon, label: title }))
+        );
       }
 
       function renderResults() {
@@ -3282,7 +3466,8 @@
         const replayLabel = isLevelRun ? currentText.retryLevel : currentText.playAgain;
         document.getElementById("playAgainButton").firstChild.nodeValue = `${replayLabel} `;
         applyRewardTier(tier);
-        renderAchievementBadges(accuracy, averageAnswerSeconds);
+        const badges = getAchievementBadges(accuracy, averageAnswerSeconds);
+        renderAchievementBadges(badges);
         let title = currentText.resultDefaultTitle;
         let message = currentText.resultDefaultMessage;
         if (score === total) {
@@ -3297,6 +3482,7 @@
         }
         document.getElementById("resultTitle").textContent = title;
         document.getElementById("resultMessage").textContent = message;
+        return { tier, unlockedBadges: badges.filter((badge) => badge.unlocked) };
       }
 
       function finishQuiz() {
@@ -3322,7 +3508,16 @@
           }
         }
         rewardCelebrationAt = performance.now();
-        renderResults();
+        const { tier, unlockedBadges } = renderResults();
+        rewardCollection = {
+          ...rewardCollection,
+          trophies: [...new Set([...rewardCollection.trophies, tier])],
+          badges: [...new Set([...rewardCollection.badges, ...unlockedBadges.map((badge) => badge.id)])],
+          bestPoints: Math.max(rewardCollection.bestPoints, points),
+          bestStreak: Math.max(rewardCollection.bestStreak, bestStreak)
+        };
+        saveRewardCollection(rewardCollection);
+        renderRewardCollection();
         showView("results");
       }
 
@@ -3417,6 +3612,7 @@
         startHint.textContent = selectedCategory
           ? currentText.selectedHint.replace("{category}", categoryName(selectedCategory))
           : currentText.startHint;
+        renderRewardCollection();
 
         if (views.game.classList.contains("active")) {
           document.getElementById("gameCategory").textContent = gameCategoryLabel(currentCategory);
