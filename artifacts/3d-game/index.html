@@ -389,6 +389,7 @@
       .progress-fill { background: linear-gradient(90deg, #ff9c38, #ff4ea1 52%, #5444ff); }
       .question-kicker { color: #7054bb; }
       .question { color: #241443; font-weight: 830; }
+      .question:focus { outline: 3px solid #6946d5; outline-offset: 5px; border-radius: 8px; }
       .option {
         min-height: 68px;
         color: #241443;
@@ -704,10 +705,18 @@
       .iq-timer-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; font-size: 12px; font-weight: 700; }
       .iq-timer-heading strong { color: #6338d7; font-size: 14px; font-variant-numeric: tabular-nums; }
       .iq-timer-track { height: 7px; margin-top: 9px; overflow: hidden; border-radius: 999px; background: #dfe4f4; }
-      .iq-timer-track span { display: block; width: 100%; height: 100%; border-radius: inherit; background: linear-gradient(90deg, #18cdb8, #5275ff 56%, #d34fda); transition: width .18s linear; }
+      .iq-timer-track span { display: block; width: 100%; height: 100%; border-radius: inherit; background: linear-gradient(90deg, #24c98a, #8bd848); transition: width .12s linear, background .2s ease; }
+      .iq-timer.warning .iq-timer-heading strong { color: #d39218; }
+      .iq-timer.warning .iq-timer-track span { background: linear-gradient(90deg, #f2d348, #f1a930); }
       .iq-timer.urgent .iq-timer-heading strong { color: #d83969; }
-      .iq-timer.urgent .iq-timer-track span { background: linear-gradient(90deg, #ff9d56, #ec3e79); }
+      .iq-timer.urgent .iq-timer-track span { background: linear-gradient(90deg, #ff765e, #e52c5c); animation: timer-danger-flash .72s ease-in-out infinite; }
+      .iq-timer.urgent .iq-timer-heading strong { animation: timer-danger-flash .72s ease-in-out infinite; }
       .iq-timer p { margin: 7px 0 0; color: #626b87; font-size: 11px; line-height: 1.4; }
+      @keyframes timer-danger-flash { 0%, 100% { opacity: 1; filter: saturate(1); } 50% { opacity: .58; filter: saturate(1.5); } }
+      @media (prefers-reduced-motion: reduce) {
+        .iq-timer.urgent .iq-timer-track span,
+        .iq-timer.urgent .iq-timer-heading strong { animation: none !important; }
+      }
       .iq-summary {
         max-width: 420px;
         margin: 17px auto 0;
@@ -816,11 +825,11 @@
       .level-intro p:last-child { max-width: 540px; margin: 0 auto; color: #f0edff; font-size: 14px; line-height: 1.6; }
       .level-toolbar { display: flex; justify-content: space-between; align-items: center; gap: 14px; margin: 22px 0 13px; }
       .level-count { padding: 8px 12px; color: #453188; border: 1px solid #dbd2ff; border-radius: 99px; background: #fff; font-size: 11px; font-weight: 800; }
-      .level-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 13px; }
+      .level-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 11px; }
       .level-card {
         min-width: 0;
-        min-height: 145px;
-        padding: 18px;
+        min-height: 132px;
+        padding: 15px;
         display: flex;
         align-items: flex-start;
         flex-direction: column;
@@ -845,6 +854,10 @@
       .level-card-detail { color: inherit; font-size: 11px; font-weight: 650; opacity: .86; }
       .level-card-status { display: inline-flex; align-items: center; gap: 6px; margin-top: auto; align-self: flex-end; padding: 5px 9px; border-radius: 99px; background: rgba(21,15,61,.24); font-size: 10px; font-weight: 850; }
       .level-card-indicator { display: grid; width: 20px; height: 20px; place-items: center; border-radius: 50%; background: rgba(255,255,255,.2); font-size: 13px; line-height: 1; }
+      .level-pagination { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 12px; margin-top: 18px; padding: 12px; border: 1px solid rgba(255,255,255,.15); border-radius: 16px; background: rgba(18,12,57,.28); }
+      .level-pagination .secondary-button { min-height: 38px; padding: 0 13px; font-size: 12px; }
+      .level-pagination .secondary-button:disabled { opacity: .45; cursor: not-allowed; }
+      .level-page-label { min-width: 120px; color: #fff; text-align: center; font-size: 12px; font-weight: 850; font-variant-numeric: tabular-nums; }
       .level-card.locked .level-card-status { background: rgba(59,55,83,.1); }
       .level-card.locked .level-card-indicator { background: #d8d6e1; filter: grayscale(1); }
       .result-level-label { margin: 6px 0 0; color: #ffe778; font-size: 13px; font-weight: 850; }
@@ -869,9 +882,517 @@
         .level-grid { grid-template-columns: 1fr; }
         .level-toolbar { align-items: flex-start; flex-direction: column; }
       }
+      /* Focused quiz HUD: cinematic glass panels, with the existing game controls
+         kept in place so scoring, localization, and answer handlers stay unchanged. */
+      body[data-view="game"] {
+        color-scheme: dark;
+        color: #f8f7ff;
+      }
+      body[data-view="game"]::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        z-index: 0;
+        pointer-events: none;
+        background:
+          radial-gradient(ellipse at 18% 8%, rgba(113, 61, 255, .22), transparent 34%),
+          radial-gradient(ellipse at 88% 78%, rgba(17, 195, 220, .13), transparent 34%),
+          linear-gradient(180deg, rgba(5, 7, 20, .18), rgba(5, 7, 20, .72));
+      }
+      body.theme-iq[data-view="game"]::before {
+        background:
+          radial-gradient(ellipse at 16% 7%, rgba(0, 245, 212, .18), transparent 34%),
+          radial-gradient(ellipse at 88% 78%, rgba(255, 54, 194, .16), transparent 34%),
+          linear-gradient(180deg, rgba(5, 7, 20, .2), rgba(5, 7, 20, .72));
+      }
+      body[data-view="game"] .app { padding-top: 15px; }
+      body[data-view="game"] .topbar {
+        max-width: 1060px;
+        min-height: 54px;
+        padding: 8px 12px;
+        border: 1px solid rgba(190, 197, 255, .2);
+        border-radius: 17px;
+        background: rgba(8, 11, 31, .72);
+        box-shadow: 0 12px 36px rgba(0, 0, 0, .2), inset 0 1px rgba(255, 255, 255, .08);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+      }
+      body[data-view="game"] .brand { color: #fff; }
+      body[data-view="game"] .brand-mark {
+        background: linear-gradient(145deg, #a17bff, #6548e8);
+        box-shadow: 0 0 22px rgba(131, 92, 255, .35);
+      }
+      body[data-view="game"] .top-note { color: #bbc5e6; }
+      body[data-view="game"] .live-dot { background: #53f2c1; box-shadow: 0 0 0 4px rgba(83, 242, 193, .14); }
+      body[data-view="game"] .topbar-actions { gap: 8px; }
+      body[data-view="game"] .language-select,
+      body[data-view="game"] .sound-toggle {
+        min-height: 36px;
+        color: #f6f5ff;
+        border-color: rgba(191, 198, 255, .23);
+        background: rgba(20, 24, 55, .88);
+      }
+      body[data-view="game"] .language-select option { color: #fff; background: #11152e; }
+      body[data-view="game"] .sound-toggle:hover { background: rgba(45, 48, 91, .96); }
+      .game-layout {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr);
+        grid-template-areas: "hud" "quiz";
+        gap: 13px;
+        max-width: 960px;
+        margin: 18px auto 0;
+      }
+      .game-layout > #quizCard { grid-area: quiz; }
+      .game-layout > .game-sidebar { grid-area: hud; }
+      .game-sidebar { position: static; display: block; }
+      .game-sidebar .side-card:first-child.score-hud-card {
+        display: block;
+        padding: 15px 19px;
+        color: #fff;
+        border: 1px solid rgba(174, 183, 255, .25);
+        border-radius: 18px;
+        background: linear-gradient(115deg, rgba(12, 16, 42, .94), rgba(25, 24, 65, .86));
+        box-shadow: 0 16px 40px rgba(0, 0, 0, .25), inset 0 1px rgba(255, 255, 255, .1);
+        backdrop-filter: blur(24px);
+        -webkit-backdrop-filter: blur(24px);
+      }
+      .game-sidebar .side-card:last-child { display: none; }
+      .score-hud-top { margin: 0 0 11px; }
+      .score-level-chip { max-width: min(78%, 560px); padding: 7px 11px; color: #f3efff; border-color: rgba(194, 186, 255, .24); background: rgba(9, 11, 31, .58); font-size: 10px; }
+      .score-live-tag { font-size: 9px; }
+      .score-hud-bottom { display: grid; grid-template-columns: minmax(160px, .7fr) minmax(0, 1.7fr); align-items: center; gap: 18px; }
+      .score-total { display: grid; grid-template-columns: auto 1fr; align-items: end; column-gap: 10px; }
+      .score-total .side-label { grid-column: 1 / -1; color: #c5c9e7; font-size: 9px; }
+      .score-total .score-value { margin: 5px 0 0; min-width: 70px; padding: 7px 10px 8px; font-size: 32px; }
+      .score-total .score-caption { align-self: end; margin: 0 0 5px; font-size: 10px; }
+      .score-metrics { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); align-items: center; gap: 8px; }
+      .score-metrics .side-detail {
+        min-height: 41px;
+        flex-direction: column;
+        justify-content: center;
+        gap: 4px;
+        padding: 0 12px;
+        border-left: 1px solid rgba(221, 224, 255, .18);
+        color: #c9cce5;
+        font-size: 10px;
+      }
+      .score-metrics .side-detail strong { color: #fff; font-size: 13px; }
+      .score-metrics .streak-detail strong { color: #ffe77b; }
+      .score-metrics .streak-hint { grid-column: 1 / -1; margin-top: 0; color: #c9cce5; font-size: 9px; }
+      .score-hud-bottom .combo-banner { grid-column: 1 / -1; margin: 0; padding: 7px 10px; }
+      .quiz-card {
+        min-height: 0;
+        padding: clamp(23px, 4vw, 42px);
+        overflow: hidden;
+        color: #f8f7ff;
+        border: 1px solid rgba(178, 186, 255, .25);
+        border-radius: 24px;
+        background: linear-gradient(145deg, rgba(12, 16, 42, .96), rgba(15, 19, 49, .93));
+        box-shadow: 0 24px 70px rgba(0, 0, 0, .35), inset 0 1px rgba(255, 255, 255, .1);
+        backdrop-filter: blur(28px);
+        -webkit-backdrop-filter: blur(28px);
+      }
+      .quiz-meta { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 12px; }
+      #quitButton {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+        min-height: 36px;
+        padding: 0 11px;
+        color: #d7d9f1;
+        border: 1px solid rgba(197, 200, 255, .2);
+        border-radius: 11px;
+        background: rgba(255, 255, 255, .055);
+        font-size: 11px;
+        white-space: nowrap;
+      }
+      #quitButton:hover { color: #fff; border-color: rgba(197, 200, 255, .44); background: rgba(255, 255, 255, .1); }
+      .category-tag { justify-self: center; color: #fff; background: linear-gradient(105deg, #7654ec, #a442d5); box-shadow: 0 5px 18px rgba(120, 70, 232, .24); }
+      .category-tag .tag-dot { box-shadow: 0 0 10px currentColor; }
+      .question-count { color: #c6c9e2; font-size: 12px; }
+      .progress-track { height: 8px; margin: 18px 0 31px; border: 1px solid rgba(196, 200, 255, .13); background: rgba(255, 255, 255, .08); }
+      .progress-fill { background: linear-gradient(90deg, #41e8d3, #7284ff 52%, #d75ce7); box-shadow: 0 0 18px rgba(119, 115, 255, .52); }
+      body.theme-iq[data-view="game"] .progress-fill { background: linear-gradient(90deg, #00f5d4, #31b8ff 52%, #ff51c9); }
+      .question-kicker { color: #a99aff; font-size: 10px; }
+      body.theme-iq[data-view="game"] .question-kicker { color: #76f5e7; }
+      .question {
+        max-width: 760px;
+        color: #fff;
+        font-size: clamp(28px, 4.2vw, 43px);
+        line-height: 1.2;
+        letter-spacing: -.035em;
+        font-weight: 790;
+        text-shadow: 0 2px 18px rgba(8, 10, 25, .28);
+        overflow-wrap: anywhere;
+      }
+      .question:focus { outline: 2px solid rgba(155, 142, 255, .8); outline-offset: 7px; border-radius: 8px; }
+      .options { gap: 12px; margin-top: 29px; }
+      .option {
+        position: relative;
+        min-height: 66px;
+        padding: 12px 46px 12px 14px;
+        color: #f1f2ff;
+        border: 1px solid rgba(185, 192, 255, .2);
+        border-radius: 15px;
+        background: linear-gradient(115deg, rgba(38, 43, 83, .8), rgba(24, 29, 62, .86));
+        font-size: 14px;
+        font-weight: 640;
+        line-height: 1.35;
+        overflow-wrap: anywhere;
+      }
+      .option:nth-child(2), .option:nth-child(3), .option:nth-child(4) { background: linear-gradient(115deg, rgba(38, 43, 83, .8), rgba(24, 29, 62, .86)); }
+      .option:hover:not(:disabled) {
+        transform: translateY(-2px);
+        color: #fff;
+        border-color: rgba(151, 137, 255, .72);
+        background: linear-gradient(115deg, rgba(63, 55, 123, .92), rgba(34, 42, 89, .95));
+        box-shadow: 0 9px 24px rgba(0, 0, 0, .2), 0 0 0 1px rgba(143, 126, 255, .14);
+      }
+      .option-key { flex-basis: 31px; height: 31px; color: #e6e1ff; border: 1px solid rgba(202, 193, 255, .22); background: rgba(126, 102, 235, .26); font-size: 11px; }
+      .option:nth-child(2) .option-key { color: #d1fbff; background: rgba(15, 151, 181, .27); }
+      .option:nth-child(3) .option-key { color: #ffe0f1; background: rgba(190, 54, 132, .24); }
+      .option:nth-child(4) .option-key { color: #fff0cd; background: rgba(184, 106, 22, .25); }
+      .option.correct { color: #eafff6; border-color: #24dca0; background: linear-gradient(115deg, rgba(9, 105, 79, .78), rgba(8, 69, 65, .92)); box-shadow: 0 0 0 1px rgba(36, 220, 160, .16), 0 0 22px rgba(36, 220, 160, .12); }
+      .option.correct .option-key { color: #06241a; background: #62efba; }
+      .option.incorrect { color: #fff0f2; border-color: #ff667d; background: linear-gradient(115deg, rgba(123, 37, 61, .78), rgba(76, 27, 57, .92)); box-shadow: 0 0 0 1px rgba(255, 102, 125, .16), 0 0 22px rgba(255, 102, 125, .12); }
+      .option.incorrect .option-key { color: #38121b; background: #ff8491; }
+      .option.correct::after, .option.incorrect::after { position: absolute; right: 16px; top: 50%; display: grid; width: 23px; height: 23px; place-items: center; border-radius: 50%; font-size: 16px; font-weight: 900; transform: translateY(-50%); }
+      .option.correct::after { content: "✓"; color: #06241a; background: #62efba; }
+      .option.incorrect::after { content: "×"; color: #38121b; background: #ff8491; }
+      .option.muted { opacity: .52; }
+      .feedback { min-height: 42px; padding-top: 15px; color: #c7c9df; font-size: 13px; }
+      .feedback.good { color: #78f2c3; }
+      .feedback.bad { color: #ff9aaa; }
+      .feedback.good::before, .feedback.bad::before { display: inline-grid; width: 20px; height: 20px; margin-right: 8px; place-items: center; border-radius: 50%; font-size: 12px; vertical-align: -4px; }
+      .feedback.good::before { content: "✓"; color: #06241a; background: #62efba; }
+      .feedback.bad::before { content: "×"; color: #38121b; background: #ff8491; }
+      .quiz-actions { justify-content: flex-end; margin-top: 8px; padding-top: 17px; border-top: 1px solid rgba(197, 200, 255, .14); }
+      .primary-button:not(.start-button) {
+        min-height: 46px;
+        color: #fff;
+        border: 1px solid rgba(255, 255, 255, .16);
+        border-radius: 13px;
+        background: linear-gradient(110deg, #7654ec, #5368f4 62%, #397be8);
+        box-shadow: 0 8px 22px rgba(92, 87, 230, .28), inset 0 1px rgba(255, 255, 255, .18);
+      }
+      .primary-button:not(.start-button):hover:not(:disabled) { box-shadow: 0 11px 27px rgba(92, 87, 230, .38), inset 0 1px rgba(255, 255, 255, .22); }
+      body.theme-iq[data-view="game"] .primary-button:not(.start-button) { color: #061927; background: linear-gradient(110deg, #00e2cb, #46b8ff 58%, #bc70ff); }
+      .iq-timer {
+        margin: -10px 0 23px;
+        color: #f4f3ff;
+        border-color: rgba(135, 137, 255, .25);
+        background: linear-gradient(110deg, rgba(47, 44, 104, .82), rgba(61, 39, 91, .7));
+      }
+      .iq-timer-heading strong { color: #a7a3ff; }
+      .iq-timer-track { background: rgba(255, 255, 255, .12); }
+      .iq-timer p { color: #d1cfea; }
+      body.theme-iq .iq-timer.warning,
+      body.theme-cosmic .iq-timer.warning {
+        border-color: rgba(255, 218, 104, .55);
+        background: linear-gradient(110deg, rgba(91, 72, 35, .9), rgba(66, 48, 43, .86));
+      }
+      body.theme-iq .iq-timer.warning .iq-timer-heading strong,
+      body.theme-cosmic .iq-timer.warning .iq-timer-heading strong { color: #ffe17a; }
+      .iq-timer.urgent {
+        border-color: rgba(255, 97, 125, .7);
+        background: linear-gradient(110deg, rgba(110, 35, 64, .92), rgba(69, 27, 60, .88));
+        box-shadow: 0 0 0 1px rgba(255, 97, 125, .16), 0 0 24px rgba(255, 65, 105, .16);
+      }
+      .iq-timer.urgent .iq-timer-heading strong { color: #ff9aaa; }
+      body.theme-cosmic .iq-timer.urgent .iq-timer-heading strong { color: #ff9aaa; }
+      @media (max-width: 650px) {
+        body[data-view="game"] .app { padding: 12px 12px 22px; }
+        body[data-view="game"] .topbar { min-height: 48px; padding: 6px 8px; border-radius: 14px; }
+        body[data-view="game"] .brand { gap: 7px; }
+        body[data-view="game"] .brand-mark { width: 30px; height: 30px; border-radius: 10px; }
+        body[data-view="game"] .brand-name { font-size: 13px; }
+        body[data-view="game"] .topbar-actions { gap: 6px; }
+        body[data-view="game"] .language-select { min-width: 86px; width: 92px; min-height: 33px; padding-left: 8px; font-size: 10px; }
+        body[data-view="game"] .sound-toggle { min-height: 33px; padding: 0 8px; font-size: 10px; }
+        .game-layout { margin-top: 12px; gap: 10px; }
+        .game-sidebar .side-card:first-child.score-hud-card { padding: 11px 12px; border-radius: 15px; }
+        .score-hud-top { margin-bottom: 8px; }
+        .score-hud-bottom { grid-template-columns: 1fr; gap: 8px; }
+        .score-total { display: flex; align-items: center; gap: 8px; }
+        .score-total .side-label { flex: 0 0 auto; }
+        .score-total .score-value { min-width: 55px; margin: 0; padding: 5px 8px; font-size: 25px; }
+        .score-total .score-caption { margin: 0; }
+        .score-metrics { gap: 3px; }
+        .score-metrics .side-detail { min-height: 34px; padding: 0 7px; font-size: 9px; }
+        .score-metrics .side-detail strong { font-size: 12px; }
+        .score-metrics .streak-hint { font-size: 8px; }
+        .quiz-card { padding: 19px 16px 16px; border-radius: 19px; }
+        .quiz-meta { grid-template-columns: auto 1fr auto; gap: 7px; }
+        #quitButton { min-height: 33px; padding: 0 8px; font-size: 10px; }
+        .category-tag { gap: 5px; padding: 7px 8px; font-size: 9px; letter-spacing: .04em; }
+        .question-count { font-size: 10px; }
+        .progress-track { margin: 15px 0 24px; }
+        .question { font-size: clamp(25px, 7.1vw, 34px); }
+        .options { grid-template-columns: 1fr; gap: 8px; margin-top: 21px; }
+        .option { min-height: 56px; padding: 10px 42px 10px 11px; border-radius: 13px; font-size: 13px; }
+        .option-key { flex-basis: 29px; height: 29px; }
+        .feedback { min-height: 38px; padding-top: 12px; font-size: 12px; }
+        .quiz-actions { margin-top: 4px; padding-top: 13px; }
+      }
+      @media (max-width: 390px) {
+        body[data-view="game"] .brand-name { font-size: 12px; }
+        body[data-view="game"] .language-select { min-width: 76px; width: 80px; }
+        body[data-view="game"] .sound-toggle { font-size: 0; gap: 0; }
+        body[data-view="game"] .sound-toggle svg { width: 17px; height: 17px; }
+        .score-live-tag { font-size: 8px; }
+        .score-level-chip { max-width: 72%; font-size: 9px; }
+        #quitButton { gap: 4px; font-size: 9px; }
+      }
+      /* Cinematic welcome hub */
+      body[data-view="welcome"] {
+        color-scheme: dark;
+        color: #f7f6ff;
+        background:
+          radial-gradient(ellipse at 12% 8%, rgba(105, 61, 238, .25), transparent 32%),
+          radial-gradient(ellipse at 88% 18%, rgba(17, 184, 226, .16), transparent 34%),
+          radial-gradient(ellipse at 52% 100%, rgba(204, 49, 180, .15), transparent 38%),
+          #080b1e;
+      }
+      body[data-view="welcome"] .app { padding-top: 18px; }
+      body[data-view="welcome"] .topbar {
+        max-width: 1180px;
+        min-height: 54px;
+        padding: 8px 12px;
+        border: 1px solid rgba(189, 196, 255, .18);
+        border-radius: 17px;
+        background: rgba(7, 11, 31, .62);
+        box-shadow: 0 12px 36px rgba(0, 0, 0, .18), inset 0 1px rgba(255, 255, 255, .08);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+      }
+      body[data-view="welcome"] .brand { color: #fff; }
+      body[data-view="welcome"] .brand-mark {
+        background: linear-gradient(145deg, #39dfff, #7457ff 58%, #bb46e8);
+        box-shadow: 0 0 22px rgba(110, 92, 255, .34);
+      }
+      body[data-view="welcome"] .top-note { color: #cbd0ee; }
+      body[data-view="welcome"] .live-dot { background: #57f2c2; box-shadow: 0 0 0 4px rgba(87, 242, 194, .14); }
+      body[data-view="welcome"] .topbar-actions { gap: 9px; }
+      body[data-view="welcome"] .language-select,
+      body[data-view="welcome"] .sound-toggle {
+        min-height: 36px;
+        color: #f7f6ff;
+        border-color: rgba(195, 198, 255, .21);
+        background: rgba(19, 24, 54, .88);
+      }
+      body[data-view="welcome"] .language-select option { color: #fff; background: #11152e; }
+      body[data-view="welcome"] .sound-toggle:hover { background: rgba(43, 48, 92, .96); }
+      body[data-view="welcome"] .welcome { padding-top: clamp(25px, 5vh, 56px); }
+      body[data-view="welcome"] .hero {
+        min-height: 350px;
+        border: 1px solid rgba(192, 196, 255, .22);
+        border-radius: 30px;
+        background:
+          radial-gradient(ellipse at 83% 17%, rgba(87, 112, 255, .28), transparent 31%),
+          radial-gradient(ellipse at 55% 103%, rgba(211, 59, 202, .22), transparent 43%),
+          linear-gradient(122deg, rgba(9, 15, 43, .98), rgba(28, 22, 72, .93) 52%, rgba(10, 45, 79, .95));
+        box-shadow: 0 28px 72px rgba(0, 0, 0, .3), 0 0 50px rgba(91, 69, 229, .13), inset 0 1px rgba(255, 255, 255, .12);
+        isolation: isolate;
+      }
+      body[data-view="welcome"] .hero::before {
+        z-index: 0;
+        opacity: .8;
+        background:
+          radial-gradient(circle at 78% 19%, rgba(166, 150, 255, .34) 0 6%, transparent 6.5%),
+          radial-gradient(circle at 88% 60%, rgba(64, 220, 255, .14), transparent 26%),
+          linear-gradient(115deg, rgba(255, 255, 255, .08), transparent 42%);
+        animation: welcomeAurora 12s ease-in-out infinite alternate;
+      }
+      body[data-view="welcome"] .hero::after {
+        content: "";
+        position: absolute;
+        z-index: 0;
+        inset: 0;
+        pointer-events: none;
+        opacity: .2;
+        background-image:
+          linear-gradient(rgba(177, 188, 255, .1) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(177, 188, 255, .1) 1px, transparent 1px);
+        background-size: 42px 42px;
+        mask-image: linear-gradient(90deg, transparent, #000 58%, transparent);
+      }
+      body[data-view="welcome"] .hero-copy { max-width: 640px; }
+      body[data-view="welcome"] .hero .eyebrow { color: #84efff; }
+      body[data-view="welcome"] #welcomeTitle {
+        color: #fff;
+        font-size: clamp(48px, 6vw, 78px);
+        line-height: .99;
+        letter-spacing: -.065em;
+        text-shadow: 0 8px 34px rgba(6, 8, 29, .42);
+      }
+      body[data-view="welcome"] #welcomeTitle span {
+        color: #82eaff;
+        text-shadow: 0 0 22px rgba(83, 221, 255, .28);
+        animation: welcomeTitleGlow 3.8s ease-in-out infinite alternate;
+      }
+      body[data-view="welcome"] #welcomeDescription {
+        max-width: 490px;
+        color: #e1e4fb;
+        font-size: 15px;
+        line-height: 1.75;
+        animation: welcomeTextReveal .8s .18s both;
+      }
+      body[data-view="welcome"] .hero-aside { transform-style: preserve-3d; }
+      body[data-view="welcome"] .hero-aside::before {
+        opacity: .95;
+        background:
+          radial-gradient(circle at 16% 23%, #fff 0 1px, transparent 2px),
+          radial-gradient(circle at 79% 19%, #9cefff 0 1.5px, transparent 2.5px),
+          radial-gradient(circle at 70% 76%, #ffd6fa 0 1px, transparent 2px),
+          radial-gradient(circle at 28% 70%, #fff 0 1px, transparent 2px),
+          radial-gradient(ellipse at 50% 50%, rgba(91, 82, 255, .28), transparent 72%);
+        animation: cosmicTwinkle 4s ease-in-out infinite alternate;
+      }
+      body[data-view="welcome"] .fallback-orbit { border-color: rgba(108, 221, 255, .58); animation: welcomeOrbitDrift 18s ease-in-out infinite alternate; }
+      body[data-view="welcome"] .fallback-orbit.orbit-b { border-color: rgba(206, 128, 255, .48); animation-duration: 23s; animation-direction: alternate-reverse; }
+      body[data-view="welcome"] .fallback-planet {
+        border-radius: 50%;
+        background: linear-gradient(145deg, #5bedff, #6251e7 62%, #222c88);
+        box-shadow: inset -12px -14px 24px rgba(15, 12, 68, .38), inset 8px 8px 16px rgba(255,255,255,.38), 0 22px 38px rgba(20, 9, 80, .48);
+        animation: welcomePlanetFloat 7s ease-in-out infinite alternate;
+      }
+      body[data-view="welcome"] .fallback-moon { background: linear-gradient(135deg, #ffe878, #ff8a45); animation: welcomeMoonFloat 5.6s ease-in-out infinite alternate; }
+      body[data-view="welcome"] .orbit-label {
+        color: #111535;
+        border-color: rgba(255, 255, 255, .5);
+        background: linear-gradient(100deg, #84efff, #b9a5ff);
+        box-shadow: 0 8px 25px rgba(32, 38, 120, .28);
+      }
+      body[data-view="welcome"] .section-heading h2 { color: #f8f6ff; font-size: 21px; font-weight: 820; }
+      body[data-view="welcome"] .section-heading p,
+      body[data-view="welcome"] .welcome-foot,
+      body[data-view="welcome"] .start-hint { color: #c6c9e3; }
+      body[data-view="welcome"] .section-heading p { font-size: 12px; }
+      body[data-view="welcome"] .category {
+        min-height: 116px;
+        color: #f6f5ff;
+        border: 1px solid rgba(182, 188, 255, .2);
+        border-radius: 19px;
+        background: linear-gradient(135deg, rgba(19, 25, 60, .9), rgba(23, 27, 59, .86));
+        box-shadow: 0 15px 34px rgba(0, 0, 0, .18), inset 0 1px rgba(255, 255, 255, .07);
+        backdrop-filter: blur(18px);
+        -webkit-backdrop-filter: blur(18px);
+      }
+      body[data-view="welcome"] .category:nth-child(2) { background: linear-gradient(135deg, rgba(13, 39, 62, .92), rgba(32, 24, 67, .9)); }
+      body[data-view="welcome"] .category:hover {
+        transform: translateY(-5px);
+        border-color: rgba(143, 190, 255, .55);
+        background: linear-gradient(135deg, rgba(30, 39, 83, .96), rgba(29, 32, 73, .96));
+        box-shadow: 0 20px 42px rgba(0, 0, 0, .26), 0 0 26px rgba(97, 104, 255, .14), inset 0 1px rgba(255, 255, 255, .1);
+      }
+      body[data-view="welcome"] .category:nth-child(2):hover { border-color: rgba(99, 240, 221, .55); }
+      body[data-view="welcome"] .category.selected {
+        border-color: #81eaff;
+        background: linear-gradient(135deg, rgba(27, 53, 96, .96), rgba(39, 32, 91, .96));
+        box-shadow: 0 0 0 1px rgba(104, 221, 255, .24), 0 0 30px rgba(65, 173, 255, .15), inset 0 1px rgba(255, 255, 255, .14);
+      }
+      body[data-view="welcome"] .category:nth-child(2).selected {
+        border-color: #70f1dc;
+        background: linear-gradient(135deg, rgba(14, 62, 76, .96), rgba(41, 34, 91, .96));
+        box-shadow: 0 0 0 1px rgba(112, 241, 220, .22), 0 0 30px rgba(51, 211, 199, .15), inset 0 1px rgba(255, 255, 255, .14);
+      }
+      body[data-view="welcome"] .category-title { color: #fff; font-size: 15px; font-weight: 820; }
+      body[data-view="welcome"] .category-detail { color: #c6c9e3; font-size: 12px; }
+      body[data-view="welcome"] .category-arrow { color: #8feeff; }
+      body[data-view="welcome"] .category:nth-child(2) .category-arrow { color: #7df1dc; }
+      body[data-view="welcome"] .tiny-check { color: #74efca; }
+      body[data-view="welcome"] .start-button {
+        position: relative;
+        overflow: hidden;
+        min-width: 226px;
+        min-height: 58px;
+        border: 1px solid rgba(255, 255, 255, .3);
+        border-radius: 16px;
+        background: linear-gradient(100deg, #ffe46d, #ff9d48 48%, #ff5aa9);
+        box-shadow: 0 7px 0 #a93478, 0 14px 34px rgba(246, 81, 169, .28), inset 0 1px rgba(255, 255, 255, .45);
+        animation: startBounce 2.6s ease-in-out infinite, welcomeCtaGlow 3s ease-in-out infinite;
+      }
+      body[data-view="welcome"] .start-button::after {
+        content: "";
+        position: absolute;
+        inset: -18px;
+        pointer-events: none;
+        border: 2px solid rgba(255, 255, 255, .72);
+        border-radius: inherit;
+        opacity: 0;
+        transform: scale(.84);
+      }
+      body[data-view="welcome"] .start-button:active::after { animation: startRipple .48s ease-out; }
+      body[data-view="welcome"] .start-button:hover:not(:disabled) {
+        transform: translateY(-2px);
+        box-shadow: 0 9px 0 #a93478, 0 19px 40px rgba(246, 81, 169, .36), inset 0 1px rgba(255, 255, 255, .48);
+      }
+      body.theme-iq[data-view="welcome"] {
+        background:
+          radial-gradient(ellipse at 12% 8%, rgba(0, 245, 212, .17), transparent 30%),
+          radial-gradient(ellipse at 88% 12%, rgba(255, 54, 194, .22), transparent 32%),
+          radial-gradient(ellipse at 50% 100%, rgba(73, 79, 255, .22), transparent 38%),
+          #080b20;
+      }
+      body.theme-iq[data-view="welcome"] .hero {
+        background:
+          radial-gradient(ellipse at 83% 17%, rgba(255, 54, 194, .24), transparent 31%),
+          radial-gradient(ellipse at 55% 103%, rgba(0, 245, 212, .16), transparent 43%),
+          linear-gradient(122deg, rgba(8, 20, 43, .98), rgba(22, 23, 69, .93) 52%, rgba(24, 18, 64, .95));
+      }
+      body.theme-iq[data-view="welcome"] #welcomeTitle span { color: #ff75d8; text-shadow: 0 0 22px rgba(255, 67, 199, .3); }
+      body.theme-iq[data-view="welcome"] .hero .eyebrow { color: #75f7e7; }
+      body.theme-iq[data-view="welcome"] .category.selected {
+        border-color: #70f1dc;
+        background: linear-gradient(135deg, rgba(14, 62, 76, .96), rgba(41, 34, 91, .96));
+        box-shadow: 0 0 0 1px rgba(112, 241, 220, .22), 0 0 30px rgba(51, 211, 199, .15);
+      }
+      @keyframes welcomeAurora { from { transform: translateX(-1.5%) scale(1); opacity: .6; } to { transform: translateX(1.5%) scale(1.04); opacity: .95; } }
+      @keyframes welcomeTitleGlow { from { filter: drop-shadow(0 0 3px rgba(71, 218, 255, .1)); } to { filter: drop-shadow(0 0 13px rgba(71, 218, 255, .34)); } }
+      @keyframes welcomeTextReveal { from { opacity: 0; transform: translateY(9px); } to { opacity: 1; transform: translateY(0); } }
+      @keyframes welcomeOrbitDrift { from { transform: rotateX(64deg) rotate(-34deg) translateY(4px); } to { transform: rotateX(64deg) rotate(-24deg) translateY(-4px); } }
+      @keyframes welcomePlanetFloat { from { transform: rotate(-11deg) translateY(5px); } to { transform: rotate(6deg) translateY(-6px); } }
+      @keyframes welcomeMoonFloat { from { transform: translate(0, 4px); } to { transform: translate(-5px, -5px); } }
+      @keyframes welcomeCtaGlow { 0%, 100% { filter: brightness(1); } 50% { filter: brightness(1.08); } }
+      @keyframes startRipple { 0% { opacity: .82; transform: scale(.84); } 100% { opacity: 0; transform: scale(1.18); } }
+      @media (max-width: 650px) {
+        body[data-view="welcome"] .app { padding: 12px 12px 22px; }
+        body[data-view="welcome"] .topbar { min-height: 48px; padding: 6px 8px; border-radius: 14px; }
+        body[data-view="welcome"] .brand { gap: 7px; }
+        body[data-view="welcome"] .brand-mark { width: 30px; height: 30px; border-radius: 10px; }
+        body[data-view="welcome"] .brand-name { font-size: 13px; }
+        body[data-view="welcome"] .topbar-actions { gap: 6px; }
+        body[data-view="welcome"] .language-select { min-width: 86px; width: 92px; min-height: 33px; padding-left: 8px; font-size: 10px; }
+        body[data-view="welcome"] .sound-toggle { min-height: 33px; padding: 0 8px; font-size: 10px; }
+        body[data-view="welcome"] .welcome { padding-top: 24px; }
+        body[data-view="welcome"] .hero { border-radius: 22px; padding: 27px 21px 18px; }
+        body[data-view="welcome"] #welcomeTitle { font-size: clamp(42px, 11vw, 58px); }
+        body[data-view="welcome"] #welcomeDescription { margin-top: 14px; font-size: 13px; }
+        body[data-view="welcome"] .hero-aside { height: 130px; }
+        body[data-view="welcome"] .section-heading h2 { font-size: 19px; }
+        body[data-view="welcome"] .category { min-height: 82px; }
+        body[data-view="welcome"] .start-button { width: 100%; max-width: 360px; }
+        body[data-view="welcome"] .welcome-foot { justify-content: center; text-align: center; line-height: 1.7; }
+      }
+      @media (max-width: 390px) {
+        body[data-view="welcome"] .brand-name { font-size: 12px; }
+        body[data-view="welcome"] .language-select { min-width: 76px; width: 80px; }
+        body[data-view="welcome"] .sound-toggle { font-size: 0; gap: 0; }
+        body[data-view="welcome"] .sound-toggle svg { width: 17px; height: 17px; }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        body[data-view="welcome"] .hero::before,
+        body[data-view="welcome"] #welcomeTitle span,
+        body[data-view="welcome"] #welcomeDescription,
+        body[data-view="welcome"] .fallback-orbit,
+        body[data-view="welcome"] .fallback-planet,
+        body[data-view="welcome"] .fallback-moon,
+        body[data-view="welcome"] .start-button { animation: none !important; }
+      }
     </style>
   </head>
-  <body>
+  <body data-view="welcome">
     <div id="scene" aria-hidden="true"></div>
     <div class="app">
       <header class="topbar">
@@ -952,6 +1473,11 @@
               <span class="level-count" id="levelCountLabel" aria-live="polite"></span>
             </div>
             <div class="level-grid" id="levelGrid" role="group" aria-label="Choose a level"></div>
+            <nav class="level-pagination" aria-label="Level map pages">
+              <button class="secondary-button" type="button" id="levelPreviousButton"><span aria-hidden="true">← </span><span id="levelPreviousLabel">Previous page</span></button>
+              <span class="level-page-label" id="levelPageLabel" aria-live="polite">Page 1 of 20</span>
+              <button class="secondary-button" type="button" id="levelNextButton"><span id="levelNextLabel">Next page</span><span aria-hidden="true"> →</span></button>
+            </nav>
           </div>
         </section>
 
@@ -960,39 +1486,44 @@
             <article class="quiz-card" id="quizCard">
               <div class="score-popups" id="scorePopups" aria-hidden="true"></div>
               <div class="quiz-meta">
+                <button class="text-button" type="button" id="quitButton">← <span id="quitButtonLabel">Choose another subject</span></button>
                 <div class="category-tag"><span class="tag-dot"></span><span id="gameCategory">Science</span></div>
                 <div class="question-count" id="questionCount">01 <span aria-hidden="true">/</span> 04</div>
               </div>
               <div class="progress-track" id="progressTrack" role="progressbar" aria-label="Quiz progress" aria-valuemin="0" aria-valuemax="4" aria-valuenow="0"><div class="progress-fill" id="progressFill"></div></div>
-              <section class="iq-timer" id="iqTimer" hidden aria-label="IQ question timer">
+              <section class="iq-timer" id="iqTimer" hidden aria-label="Question timer">
                 <div class="iq-timer-heading"><span id="iqTimerLabel">Time left</span><strong id="iqTimerValue">15 s</strong></div>
                 <div class="iq-timer-track" id="iqTimerBar" role="progressbar" aria-label="Time remaining" aria-valuemin="0" aria-valuemax="15" aria-valuenow="15"><span id="iqTimerFill"></span></div>
-                <p id="iqTimerNote">Fast correct answers earn up to 15 bonus points.</p>
+                <p id="iqTimerNote">Answer correctly in under 5 seconds to earn +5 bonus points.</p>
               </section>
               <p class="question-kicker" id="questionKicker">Take a moment</p>
               <h1 class="question" id="questionText" tabindex="-1">Question goes here</h1>
               <div class="options" id="options" role="group" aria-label="Answer options"></div>
               <div class="feedback" id="feedback" aria-live="polite">Choose the answer that feels right.</div>
               <div class="quiz-actions">
-                <button class="text-button" type="button" id="quitButton">← <span id="quitButtonLabel">Choose another subject</span></button>
                 <button class="primary-button" type="button" id="nextButton" disabled>Check answer</button>
               </div>
             </article>
             <aside class="game-sidebar" aria-label="Round details">
-              <div class="side-card">
+              <div class="side-card score-hud-card">
                 <div class="score-hud-top">
                   <span class="score-level-chip" id="hudLevel">Level 1 · Question 1 of 10</span>
                   <span class="score-live-tag"><span class="score-live-dot" aria-hidden="true"></span><span id="liveScoreLabel">LIVE</span></span>
                 </div>
-                <div class="side-label" id="scoreLabel">Your score</div>
-                <div class="score-value" id="scoreValue" aria-live="polite" aria-atomic="true">0</div>
-                <div class="score-caption" id="scoreCaption">points so far</div>
-                <div class="combo-banner" id="comboBanner" hidden></div>
-                <div class="side-divider"></div>
-                <div class="side-detail"><span id="correctLabel">Correct</span><strong id="correctCount">0</strong></div>
-                <div class="side-detail" style="margin-top:11px"><span id="streakLabel">Streak</span><strong id="streakValue">0 · 1×</strong></div>
-                <div class="streak-hint" id="streakHint">3 in a row: 2× · 5: 3×</div>
-                <div class="side-detail" style="margin-top:11px"><span id="roundLabel">Round</span><strong id="roundLength">4 questions</strong></div>
+                <div class="score-hud-bottom">
+                  <div class="score-total">
+                    <div class="side-label" id="scoreLabel">Your score</div>
+                    <div class="score-value" id="scoreValue" aria-live="polite" aria-atomic="true">0</div>
+                    <div class="score-caption" id="scoreCaption">points so far</div>
+                  </div>
+                  <div class="score-metrics">
+                    <div class="side-detail"><span id="correctLabel">Correct</span><strong id="correctCount">0</strong></div>
+                    <div class="side-detail streak-detail"><span id="streakLabel">Streak</span><strong id="streakValue">0 · 1×</strong></div>
+                    <div class="side-detail"><span id="roundLabel">Round</span><strong id="roundLength">4 questions</strong></div>
+                    <div class="streak-hint" id="streakHint">3 in a row: 2× · 5: 3×</div>
+                  </div>
+                  <div class="combo-banner" id="comboBanner" hidden></div>
+                </div>
               </div>
               <div class="side-card">
                 <div class="orbit-mini" aria-hidden="true"><span class="mini-ring"></span><span class="mini-ring ring-two"></span><span class="mini-core"></span><span class="mini-orb"></span></div>
@@ -1068,14 +1599,14 @@
           language: "Language",
           topNote: "A small space for curiosity",
           brandHome: "Quiz Orbit home",
-          answerSoundsOn: "Answer sounds on",
-          answerSoundsOff: "Answer sounds off",
+          answerSoundsOn: "Game sounds on",
+          answerSoundsOff: "Game sounds off",
           welcomeEyebrow: "A quiz with a little perspective",
           welcomeTitle: "Wonder a little <span>further.</span>",
           welcomeDescription: "Two ways to explore: discover the world, or race the clock with logic and patterns.",
           orbitLabel: "Explore at your own pace",
           categoryHeading: "Choose your mode",
-          categoryHeadingHint: "Choose a mode · IQ has a timer",
+          categoryHeadingHint: "Both modes · 15 seconds per question",
           categoryGroup: "Choose a quiz mode",
           categoryLabels: {
             "General Knowledge": "General Knowledge",
@@ -1103,7 +1634,7 @@
           incorrectFeedback: "No points deducted — the answer is {answer}.",
           penaltyFeedback: "−{points} points — the answer is {answer}.",
           noPointsLost: "No points to lose",
-          chooseAnother: "Choose another mode",
+          chooseAnother: "Back",
           checkAnswer: "Check answer",
           nextQuestion: "Next question",
           seeScore: "See your score",
@@ -1115,6 +1646,9 @@
           levelSelectTitle: "Choose a level",
           levelSelectDescription: "Answer at least 6 of 10 correctly to unlock the next level.",
           levelProgress: "{unlocked} of {total} levels unlocked",
+          levelPreviousPage: "Previous page",
+          levelNextPage: "Next page",
+          levelPageStatus: "Page {page} of {pages}",
           levelBack: "Back to modes",
           levelNumber: "Level {level}",
           levelUnlocked: "Unlocked",
@@ -1123,6 +1657,7 @@
           levelQuestions: "{count} questions",
           levelUnlockNotice: "Level {level} unlocked!",
           levelFailNotice: "Get {count} correct to unlock the next level. Retry for a new set.",
+          allLevelsComplete: "All 500 levels complete — incredible work!",
           nextLevel: "Next level",
           retryLevel: "Retry level",
           streak: "Streak",
@@ -1148,7 +1683,7 @@
           questions: "questions",
           resultQuestions: "Questions",
           stayCurious: "Stay curious.",
-          sideNote: "Every answer is a new little fact to keep.",
+          sideNote: "Every answer helps you discover a little more.",
           orbitComplete: "Your orbit is complete",
           categoryComplete: "complete",
           resultPerfectTitle: "Brilliantly done.",
@@ -1162,10 +1697,11 @@
           category: "Category",
           chooseSubject: "Choose a mode",
           playAgain: "Play again",
+          questionTimer: "Question timer",
           iqTimerLabel: "Time left",
-          iqTimerExpired: "Time is up — no more speed bonus.",
+          iqTimerExpired: "Time's up!",
           secondsUnit: "s",
-          iqTimerNote: "Fast correct answers earn up to 15 bonus points.",
+          iqTimerNote: "Answer correctly in under 5 seconds to earn +5 bonus points.",
           speedBonusFeedback: "+{bonus} speed bonus.",
           iqEstimateLabel: "IQ-style analytical estimate",
           iqDisclaimer: "For fun only; this is not a clinical IQ test.",
@@ -1184,14 +1720,14 @@
           language: "ভাষা",
           topNote: "কৌতূহলের জন্য ছোট্ট এক জগৎ",
           brandHome: "কুইজ অরবিটের হোম",
-          answerSoundsOn: "উত্তরের শব্দ চালু",
-          answerSoundsOff: "উত্তরের শব্দ বন্ধ",
+          answerSoundsOn: "গেমের শব্দ চালু",
+          answerSoundsOff: "গেমের শব্দ বন্ধ",
           welcomeEyebrow: "নতুন দৃষ্টিতে কুইজ",
           welcomeTitle: "আরও একটু <span>জেনে নিন।</span>",
           welcomeDescription: "অনুসন্ধানের দুটি পথ: বিশ্বকে জানুন, অথবা যুক্তি ও ধাঁধার সঙ্গে সময়ের দৌড়ে নামুন।",
           orbitLabel: "নিজের গতিতে ঘুরে দেখুন",
           categoryHeading: "মোড বেছে নিন",
-          categoryHeadingHint: "মোড বেছে নিন · আইকিউতে সময়সীমা আছে",
+          categoryHeadingHint: "দুই মোডেই প্রতি প্রশ্নে ১৫ সেকেন্ড",
           categoryGroup: "কুইজের মোড বেছে নিন",
           categoryLabels: {
             "General Knowledge": "সাধারণ জ্ঞান",
@@ -1219,7 +1755,7 @@
           incorrectFeedback: "পয়েন্ট কমেনি — সঠিক উত্তর: {answer}।",
           penaltyFeedback: "−{points} পয়েন্ট — সঠিক উত্তর: {answer}।",
           noPointsLost: "কমানোর মতো পয়েন্ট নেই",
-          chooseAnother: "অন্য মোড বেছে নিন",
+          chooseAnother: "ফিরে যান",
           checkAnswer: "উত্তর যাচাই",
           nextQuestion: "পরের প্রশ্ন",
           seeScore: "আপনার ফল দেখুন",
@@ -1231,6 +1767,9 @@
           levelSelectTitle: "একটি লেভেল বেছে নিন",
           levelSelectDescription: "পরের লেভেল খুলতে ১০টির মধ্যে অন্তত ৬টি সঠিক উত্তর দিন।",
           levelProgress: "{total}টির মধ্যে {unlocked}টি লেভেল খোলা",
+          levelPreviousPage: "আগের পৃষ্ঠা",
+          levelNextPage: "পরের পৃষ্ঠা",
+          levelPageStatus: "{pages}টির মধ্যে {page} পৃষ্ঠা",
           levelBack: "মোড বাছাইয়ে ফিরুন",
           levelNumber: "লেভেল {level}",
           levelUnlocked: "খোলা",
@@ -1239,6 +1778,7 @@
           levelQuestions: "{count}টি প্রশ্ন",
           levelUnlockNotice: "লেভেল {level} খুলেছে!",
           levelFailNotice: "পরের লেভেল খুলতে {count}টি সঠিক উত্তর দরকার। নতুন প্রশ্নে আবার খেলুন।",
+          allLevelsComplete: "সব ৫০০টি লেভেল সম্পন্ন — অসাধারণ!",
           nextLevel: "পরের লেভেল",
           retryLevel: "আবার খেলুন",
           streak: "ধারাবাহিক সঠিক উত্তর",
@@ -1264,7 +1804,7 @@
           questions: "টি প্রশ্ন",
           resultQuestions: "প্রশ্ন",
           stayCurious: "কৌতূহলী থাকুন।",
-          sideNote: "প্রতিটি উত্তরই মনে রাখার মতো নতুন একটি তথ্য।",
+          sideNote: "প্রতিটি উত্তর আপনাকে আরও কিছু জানতে সাহায্য করে।",
           orbitComplete: "আপনার পর্ব শেষ",
           categoryComplete: "সম্পন্ন",
           resultPerfectTitle: "অসাধারণ করেছেন।",
@@ -1278,10 +1818,11 @@
           category: "বিষয়",
           chooseSubject: "মোড বেছে নিন",
           playAgain: "আবার খেলুন",
+          questionTimer: "প্রশ্নের টাইমার",
           iqTimerLabel: "সময় বাকি",
-          iqTimerExpired: "সময় শেষ — এবার আর গতি-বোনাস নেই।",
+          iqTimerExpired: "সময় শেষ!",
           secondsUnit: "সে.",
-          iqTimerNote: "দ্রুত সঠিক উত্তরে সর্বোচ্চ ১৫ বোনাস পয়েন্ট।",
+          iqTimerNote: "৫ সেকেন্ডের মধ্যে সঠিক উত্তর দিলে +৫ বোনাস পয়েন্ট।",
           speedBonusFeedback: "দ্রুত উত্তরের জন্য +{bonus} বোনাস পয়েন্ট।",
           iqEstimateLabel: "আইকিউ-ধাঁচের বিশ্লেষণী অনুমান",
           iqDisclaimer: "শুধু গেমের বিনোদনমূলক অনুমান; এটি ক্লিনিক্যাল আইকিউ পরীক্ষা নয়।",
@@ -1300,12 +1841,14 @@
           language: "भाषा",
           topNote: "जिज्ञासा के लिए एक छोटी-सी जगह",
           brandHome: "क्विज़ ऑर्बिट होम",
+          answerSoundsOn: "गेम की ध्वनि चालू",
+          answerSoundsOff: "गेम की ध्वनि बंद",
           welcomeEyebrow: "एक नए नज़रिए वाला क्विज़",
           welcomeTitle: "थोड़ा और <span>जानें।</span>",
           welcomeDescription: "जिज्ञासा के दो रास्ते: दुनिया जानें या तर्क और पैटर्न के साथ समय को चुनौती दें।",
           orbitLabel: "अपनी गति से खेलें",
           categoryHeading: "अपना मोड चुनें",
-          categoryHeadingHint: "मोड चुनें · IQ में टाइमर है",
+          categoryHeadingHint: "दोनों मोड · हर सवाल के लिए 15 सेकंड",
           categoryGroup: "क्विज़ मोड चुनें",
           categoryLabels: {
             "General Knowledge": "सामान्य ज्ञान",
@@ -1333,7 +1876,7 @@
           incorrectFeedback: "कोई अंक नहीं कटे — सही जवाब: {answer}।",
           penaltyFeedback: "−{points} अंक — सही जवाब: {answer}।",
           noPointsLost: "घटाने को कोई अंक नहीं",
-          chooseAnother: "कोई और मोड चुनें",
+          chooseAnother: "वापस",
           checkAnswer: "जवाब जाँचें",
           nextQuestion: "अगला सवाल",
           seeScore: "अपना स्कोर देखें",
@@ -1345,6 +1888,9 @@
           levelSelectTitle: "एक स्तर चुनें",
           levelSelectDescription: "अगला स्तर खोलने के लिए 10 में से कम से कम 6 सही जवाब दें।",
           levelProgress: "{total} में से {unlocked} स्तर खुले",
+          levelPreviousPage: "पिछला पृष्ठ",
+          levelNextPage: "अगला पृष्ठ",
+          levelPageStatus: "{pages} में से पृष्ठ {page}",
           levelBack: "मोड चुनने पर लौटें",
           levelNumber: "स्तर {level}",
           levelUnlocked: "खुला",
@@ -1353,6 +1899,7 @@
           levelQuestions: "{count} सवाल",
           levelUnlockNotice: "स्तर {level} खुल गया!",
           levelFailNotice: "अगला स्तर खोलने के लिए {count} सही जवाब दें। नए सवालों के साथ फिर खेलें।",
+          allLevelsComplete: "सभी 500 स्तर पूरे — शानदार!",
           nextLevel: "अगला स्तर",
           retryLevel: "स्तर फिर से खेलें",
           streak: "लगातार सही जवाब",
@@ -1378,7 +1925,7 @@
           questions: "सवाल",
           resultQuestions: "सवाल",
           stayCurious: "जिज्ञासु बने रहें।",
-          sideNote: "हर जवाब याद रखने लायक एक नई जानकारी है।",
+          sideNote: "हर जवाब आपको थोड़ा और जानने में मदद करता है।",
           orbitComplete: "आपका राउंड पूरा हुआ",
           categoryComplete: "पूरा",
           resultPerfectTitle: "शानदार प्रदर्शन।",
@@ -1392,10 +1939,11 @@
           category: "श्रेणी",
           chooseSubject: "कोई मोड चुनें",
           playAgain: "फिर से खेलें",
+          questionTimer: "प्रश्न का टाइमर",
           iqTimerLabel: "समय शेष",
-          iqTimerExpired: "समय पूरा — अब स्पीड बोनस नहीं मिलेगा।",
+          iqTimerExpired: "समय समाप्त!",
           secondsUnit: "से.",
-          iqTimerNote: "तेज़ सही जवाबों पर 15 बोनस अंक तक मिलते हैं।",
+          iqTimerNote: "5 सेकंड में सही जवाब दें और +5 बोनस अंक पाएं।",
           speedBonusFeedback: "तेज़ जवाब के लिए +{bonus} बोनस अंक।",
           iqEstimateLabel: "IQ-शैली का विश्लेषणात्मक अनुमान",
           iqDisclaimer: "केवल खेल के लिए; यह क्लिनिकल IQ परीक्षण नहीं है।",
@@ -1414,12 +1962,14 @@
           language: "Idioma",
           topNote: "Un pequeño espacio para la curiosidad",
           brandHome: "Inicio de Quiz Orbit",
+          answerSoundsOn: "Sonidos del juego activados",
+          answerSoundsOff: "Sonidos del juego desactivados",
           welcomeEyebrow: "Un quiz con otra perspectiva",
           welcomeTitle: "Descubre un poco <span>más.</span>",
           welcomeDescription: "Dos formas de explorar: descubre el mundo o resuelve patrones contra reloj.",
           orbitLabel: "Explora a tu ritmo",
           categoryHeading: "Elige un modo",
-          categoryHeadingHint: "Elige un modo · IQ tiene temporizador",
+          categoryHeadingHint: "Ambos modos · 15 segundos por pregunta",
           categoryGroup: "Elige un modo de juego",
           categoryLabels: {
             "General Knowledge": "Cultura general",
@@ -1447,7 +1997,7 @@
           incorrectFeedback: "No se descontaron puntos; la respuesta correcta es {answer}.",
           penaltyFeedback: "−{points} puntos; la respuesta correcta es {answer}.",
           noPointsLost: "No hay puntos que perder",
-          chooseAnother: "Elegir otro modo",
+          chooseAnother: "Volver",
           checkAnswer: "Comprobar respuesta",
           nextQuestion: "Siguiente pregunta",
           seeScore: "Ver tu puntuación",
@@ -1459,6 +2009,9 @@
           levelSelectTitle: "Elige un nivel",
           levelSelectDescription: "Acierta al menos 6 de 10 para desbloquear el siguiente nivel.",
           levelProgress: "{unlocked} de {total} niveles desbloqueados",
+          levelPreviousPage: "Página anterior",
+          levelNextPage: "Página siguiente",
+          levelPageStatus: "Página {page} de {pages}",
           levelBack: "Volver a los modos",
           levelNumber: "Nivel {level}",
           levelUnlocked: "Desbloqueado",
@@ -1467,6 +2020,7 @@
           levelQuestions: "{count} preguntas",
           levelUnlockNotice: "¡Nivel {level} desbloqueado!",
           levelFailNotice: "Necesitas {count} aciertos para desbloquear el siguiente nivel. Repite con preguntas nuevas.",
+          allLevelsComplete: "¡Has completado los 500 niveles!",
           nextLevel: "Siguiente nivel",
           retryLevel: "Repetir nivel",
           streak: "Racha",
@@ -1492,7 +2046,7 @@
           questions: "preguntas",
           resultQuestions: "Preguntas",
           stayCurious: "Sigue con curiosidad.",
-          sideNote: "Cada respuesta es un dato nuevo que vale la pena recordar.",
+          sideNote: "Cada respuesta te ayuda a descubrir un poco más.",
           orbitComplete: "Tu ronda ha terminado",
           categoryComplete: "completada",
           resultPerfectTitle: "¡Lo has bordado!",
@@ -1506,10 +2060,11 @@
           category: "Categoría",
           chooseSubject: "Elegir un modo",
           playAgain: "Volver a jugar",
+          questionTimer: "Temporizador de pregunta",
           iqTimerLabel: "Tiempo restante",
-          iqTimerExpired: "Se acabó el tiempo: ya no hay bonificación por velocidad.",
+          iqTimerExpired: "¡Se acabó el tiempo!",
           secondsUnit: "s",
-          iqTimerNote: "Las respuestas correctas rápidas suman hasta 15 puntos extra.",
+          iqTimerNote: "Acierta en menos de 5 segundos y gana +5 puntos extra.",
           speedBonusFeedback: "+{bonus} puntos extra por velocidad.",
           iqEstimateLabel: "Estimación analítica tipo IQ",
           iqDisclaimer: "Solo por diversión; no es una prueba clínica de IQ.",
@@ -1528,12 +2083,14 @@
           language: "Langue",
           topNote: "Un petit espace pour la curiosité",
           brandHome: "Accueil de Quiz Orbit",
+          answerSoundsOn: "Sons du jeu activés",
+          answerSoundsOff: "Sons du jeu désactivés",
           welcomeEyebrow: "Un quiz sous un nouvel angle",
           welcomeTitle: "Explorez un peu <span>plus.</span>",
           welcomeDescription: "Deux façons d’explorer : découvrez le monde ou résolvez des énigmes contre la montre.",
           orbitLabel: "Explorez à votre rythme",
           categoryHeading: "Choisissez un mode",
-          categoryHeadingHint: "Choisissez un mode · IQ est chronométré",
+          categoryHeadingHint: "Deux modes · 15 secondes par question",
           categoryGroup: "Choisissez un mode de jeu",
           categoryLabels: {
             "General Knowledge": "Culture générale",
@@ -1561,7 +2118,7 @@
           incorrectFeedback: "Aucun point retiré ; la bonne réponse est {answer}.",
           penaltyFeedback: "−{points} points ; la bonne réponse est {answer}.",
           noPointsLost: "Aucun point à retirer",
-          chooseAnother: "Choisir un autre mode",
+          chooseAnother: "Retour",
           checkAnswer: "Vérifier la réponse",
           nextQuestion: "Question suivante",
           seeScore: "Voir votre score",
@@ -1573,6 +2130,9 @@
           levelSelectTitle: "Choisissez un niveau",
           levelSelectDescription: "Répondez correctement à au moins 6 questions sur 10 pour débloquer le niveau suivant.",
           levelProgress: "{unlocked}/{total} niveaux débloqués",
+          levelPreviousPage: "Page précédente",
+          levelNextPage: "Page suivante",
+          levelPageStatus: "Page {page} sur {pages}",
           levelBack: "Retour aux modes",
           levelNumber: "Niveau {level}",
           levelUnlocked: "Débloqué",
@@ -1581,6 +2141,7 @@
           levelQuestions: "{count} questions",
           levelUnlockNotice: "Niveau {level} débloqué !",
           levelFailNotice: "Il faut {count} bonnes réponses pour débloquer le niveau suivant. Rejouez avec de nouvelles questions.",
+          allLevelsComplete: "Vous avez terminé les 500 niveaux !",
           nextLevel: "Niveau suivant",
           retryLevel: "Rejouer le niveau",
           streak: "Série",
@@ -1606,7 +2167,7 @@
           questions: "questions",
           resultQuestions: "Questions",
           stayCurious: "Restez curieux.",
-          sideNote: "Chaque réponse est une nouvelle petite chose à retenir.",
+          sideNote: "Chaque réponse aide à découvrir un peu plus.",
           orbitComplete: "Votre manche est terminée",
           categoryComplete: "terminée",
           resultPerfectTitle: "Un sans-faute !",
@@ -1620,10 +2181,11 @@
           category: "Catégorie",
           chooseSubject: "Choisir un mode",
           playAgain: "Rejouer",
+          questionTimer: "Minuteur de question",
           iqTimerLabel: "Temps restant",
-          iqTimerExpired: "Temps écoulé : plus de bonus de vitesse.",
+          iqTimerExpired: "Temps écoulé !",
           secondsUnit: "s",
-          iqTimerNote: "Les bonnes réponses rapides rapportent jusqu’à 15 points bonus.",
+          iqTimerNote: "Répondez juste en moins de 5 s pour gagner +5 points bonus.",
           speedBonusFeedback: "+{bonus} points bonus de vitesse.",
           iqEstimateLabel: "Estimation analytique de type QI",
           iqDisclaimer: "Pour s’amuser seulement ; ce n’est pas un test de QI clinique.",
@@ -1704,22 +2266,26 @@
 
       const QUESTIONS_PER_LEVEL = 10;
       const IQ_QUESTIONS_PER_ROUND = 10;
-      const IQ_TIME_LIMIT_SECONDS = 15;
-      const IQ_SPEED_BONUS_MAX = 15;
+      const QUESTION_TIME_LIMIT_SECONDS = 15;
+      const SPEED_BONUS_WINDOW_SECONDS = 5;
+      const SPEED_BONUS_POINTS = 5;
       const LEVEL_PASSING_ACCURACY = 0.6;
-      const generalKnowledgeQuestionCount = quizData["General Knowledge"].length;
-      if (generalKnowledgeQuestionCount === 0 || generalKnowledgeQuestionCount % QUESTIONS_PER_LEVEL !== 0) {
-        throw new Error(`General Knowledge must contain complete ${QUESTIONS_PER_LEVEL}-question levels.`);
+      const GENERAL_KNOWLEDGE_LEVEL_COUNT = 500;
+      const GENERAL_KNOWLEDGE_POOL_SIZE = 20;
+      const LEVELS_PER_PAGE = 25;
+      const curatedGeneralKnowledgeCount = quizData["General Knowledge"].length;
+      if (curatedGeneralKnowledgeCount === 0 || curatedGeneralKnowledgeCount % QUESTIONS_PER_LEVEL !== 0) {
+        throw new Error(`The curated General Knowledge bank must contain complete ${QUESTIONS_PER_LEVEL}-question levels.`);
       }
+      const curatedGeneralKnowledgeLevelCount = curatedGeneralKnowledgeCount / QUESTIONS_PER_LEVEL;
+      if (curatedGeneralKnowledgeLevelCount > GENERAL_KNOWLEDGE_LEVEL_COUNT) {
+        throw new Error("The curated question bank cannot contain more levels than the level map.");
+      }
+      // Keep map metadata-only: build a question pool only after a level is selected.
+      const generalKnowledgeQuestionCount = GENERAL_KNOWLEDGE_LEVEL_COUNT * QUESTIONS_PER_LEVEL;
       const generalKnowledgeLevels = Array.from(
-        { length: generalKnowledgeQuestionCount / QUESTIONS_PER_LEVEL },
-        (_, levelIndex) => ({
-          level: levelIndex + 1,
-          questionIndexes: Array.from(
-            { length: QUESTIONS_PER_LEVEL },
-            (_, questionOffset) => levelIndex * QUESTIONS_PER_LEVEL + questionOffset
-          )
-        })
+        { length: GENERAL_KNOWLEDGE_LEVEL_COUNT },
+        (_, levelIndex) => ({ level: levelIndex + 1 })
       );
       const LEVEL_PROGRESS_STORAGE_KEY = "quiz-orbit-gk-unlocked-level";
 
@@ -1784,9 +2350,13 @@
       let unlockedGeneralKnowledgeLevel = readUnlockedGeneralKnowledgeLevel();
       let levelJustUnlocked = false;
       let levelFailed = false;
-      let sessionUsedQuestionIndexes = new Set();
+      let allLevelsComplete = false;
+      let sessionUsedQuestionIds = new Set();
       let answeredQuestionIndexes = new Set();
       let roundQuestionIndexes = [];
+      let activeGeneralKnowledgePool = [];
+      let currentLevelPage = 0;
+      let questionSessionOffset = 0;
       let currentQuestion = 0;
       let score = 0;
       let points = 0;
@@ -1797,6 +2367,8 @@
       let questionStartedAt = 0;
       let questionDeadline = 0;
       let questionTimerInterval = null;
+      let lastTimerTickSecond = null;
+      let lastAnswerTimedOut = false;
       let lastSpeedBonus = 0;
       let rewardCelebrationAt = 0;
       let answered = false;
@@ -1840,11 +2412,11 @@
         return currentStreak >= 5 ? 3 : currentStreak >= 3 ? 2 : 1;
       }
 
-      function maximumPossiblePoints(questionCount, category = currentCategory) {
+      function maximumPossiblePoints(questionCount) {
         const firstAnswers = Math.min(questionCount, 2) * CORRECT_ANSWER_POINTS;
         const midStreakAnswers = Math.max(0, Math.min(questionCount, 4) - 2) * CORRECT_ANSWER_POINTS * 2;
         const longStreakAnswers = Math.max(0, questionCount - 4) * CORRECT_ANSWER_POINTS * 3;
-        const speedBonusMaximum = category === "IQ Check" ? questionCount * IQ_SPEED_BONUS_MAX : 0;
+        const speedBonusMaximum = questionCount * SPEED_BONUS_POINTS;
         return firstAnswers + midStreakAnswers + longStreakAnswers + speedBonusMaximum;
       }
 
@@ -1897,22 +2469,29 @@
 
       function renderQuestionTimer() {
         const timer = document.getElementById("iqTimer");
-        const enabled = currentCategory === "IQ Check";
-        timer.hidden = !enabled;
+        const enabled = currentCategory === "General Knowledge" || currentCategory === "IQ Check";
+        timer.hidden = !views.game.classList.contains("active") || !enabled;
         if (!enabled) return;
         const secondsLeft = questionDeadline
           ? Math.max(0, (questionDeadline - performance.now()) / 1000)
-          : IQ_TIME_LIMIT_SECONDS;
+          : QUESTION_TIME_LIMIT_SECONDS;
         const roundedSeconds = Math.ceil(secondsLeft);
         const value = document.getElementById("iqTimerValue");
         const label = document.getElementById("iqTimerLabel");
         const bar = document.getElementById("iqTimerBar");
+        const fill = document.getElementById("iqTimerFill");
         value.textContent = `${formatNumber(roundedSeconds)} ${currentText.secondsUnit}`;
         label.textContent = roundedSeconds === 0 ? currentText.iqTimerExpired : currentText.iqTimerLabel;
         bar.setAttribute("aria-valuenow", String(Math.round(secondsLeft)));
         bar.setAttribute("aria-valuetext", `${formatNumber(roundedSeconds)} ${currentText.secondsUnit}`);
         bar.setAttribute("aria-label", currentText.iqTimerLabel);
+        fill.style.width = `${Math.max(0, Math.min(100, (secondsLeft / QUESTION_TIME_LIMIT_SECONDS) * 100))}%`;
+        timer.classList.toggle("warning", roundedSeconds <= 10 && roundedSeconds > 5);
         timer.classList.toggle("urgent", roundedSeconds <= 5);
+        if (!answered && secondsLeft > 0 && roundedSeconds <= 5 && roundedSeconds !== lastTimerTickSecond) {
+          lastTimerTickSecond = roundedSeconds;
+          playTimerCue();
+        }
       }
 
       function clearQuestionTimer() {
@@ -1924,18 +2503,17 @@
 
       function startQuestionTimer() {
         clearQuestionTimer();
-        if (currentCategory !== "IQ Check") {
-          questionDeadline = 0;
-          renderQuestionTimer();
-          return;
-        }
-        questionDeadline = performance.now() + IQ_TIME_LIMIT_SECONDS * 1000;
+        lastTimerTickSecond = null;
+        questionDeadline = performance.now() + QUESTION_TIME_LIMIT_SECONDS * 1000;
         renderQuestionTimer();
-        // After zero the player can still answer; only the optional speed bonus expires.
         questionTimerInterval = window.setInterval(() => {
           renderQuestionTimer();
-          if (performance.now() >= questionDeadline) clearQuestionTimer();
-        }, 200);
+          if (performance.now() >= questionDeadline && !answered) {
+            clearQuestionTimer();
+            playTimerCue(true);
+            selectAnswer(-1, true);
+          }
+        }, 100);
       }
 
       function stopQuestionTimer() {
@@ -1943,9 +2521,8 @@
         renderQuestionTimer();
       }
 
-      function calculateIQSpeedBonus(elapsedSeconds) {
-        const remaining = Math.max(0, IQ_TIME_LIMIT_SECONDS - Math.min(IQ_TIME_LIMIT_SECONDS, elapsedSeconds));
-        return Math.round((remaining / IQ_TIME_LIMIT_SECONDS) * IQ_SPEED_BONUS_MAX);
+      function calculateSpeedBonus(elapsedSeconds) {
+        return elapsedSeconds < SPEED_BONUS_WINDOW_SECONDS ? SPEED_BONUS_POINTS : 0;
       }
 
       function applyRewardTier(tier) {
@@ -1996,7 +2573,33 @@
         }
       }
 
-      function formatNumber(value) {
+      function playTimerCue(isExpired = false) {
+        if (answerSoundsMuted) return;
+        try {
+          const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+          if (!AudioContextClass) return;
+          audioContext ||= new AudioContextClass();
+          if (audioContext.state === "suspended") audioContext.resume().catch(() => {});
+          const oscillator = audioContext.createOscillator();
+          const gain = audioContext.createGain();
+          const now = audioContext.currentTime;
+          const duration = isExpired ? .34 : .055;
+          oscillator.type = isExpired ? "triangle" : "sine";
+          oscillator.frequency.setValueAtTime(isExpired ? 190 : 820, now);
+          if (isExpired) oscillator.frequency.exponentialRampToValueAtTime(95, now + duration);
+          gain.gain.setValueAtTime(.0001, now);
+          gain.gain.exponentialRampToValueAtTime(isExpired ? .095 : .025, now + .008);
+          gain.gain.exponentialRampToValueAtTime(.0001, now + duration);
+          oscillator.connect(gain);
+          gain.connect(audioContext.destination);
+          oscillator.start(now);
+          oscillator.stop(now + duration + .01);
+        } catch {
+          // Optional timer audio must never block the quiz.
+        }
+      }
+
+      function formatNumber(value, language = currentLanguage) {
         const locales = {
           en: "en-US",
           bn: "bn-BD",
@@ -2004,7 +2607,7 @@
           es: "es-ES",
           fr: "fr-FR"
         };
-        return new Intl.NumberFormat(locales[currentLanguage]).format(value);
+        return new Intl.NumberFormat(locales[language] || locales.en).format(value);
       }
 
       function categoryName(category) {
@@ -2013,7 +2616,9 @@
 
       function roundQuestions() {
         return roundQuestionIndexes.map((questionIndex) => {
-          const bankItem = quizData[currentCategory][questionIndex];
+          const bankItem = currentCategory === "General Knowledge"
+            ? activeGeneralKnowledgePool[questionIndex]
+            : quizData[currentCategory][questionIndex];
           return {
             question: bankItem.question[currentLanguage],
             options: bankItem.options[currentLanguage],
@@ -2051,24 +2656,256 @@
         return Math.floor(Math.random() * maxExclusive);
       }
 
-      // Draw without replacement from the complete General Knowledge bank.
-      // The session set spans level attempts, so questions are not repeated
-      // across levels until this finite bank has been used up.
+      // Procedurally create one localized question. Each of the ten families uses
+      // a level-and-variant number that only increases, so generated prompts never
+      // repeat between levels. Numeric distractors are shuffled for each pool build.
+      function makeGeneratedGeneralKnowledgeQuestion(level, family, variant) {
+        const instance = (level - 1) * 2 + variant + 1 + questionSessionOffset;
+        const difficulty = 1 + Math.floor((level - 1) / 50);
+        const n = (value, language) => formatNumber(value, language);
+        let answer;
+        let optionStep;
+        let question;
+
+        switch (family) {
+          case 0: {
+            const starting = 20 + instance * 2;
+            const added = 5 + (instance % (5 + difficulty)) + difficulty;
+            const sold = 1 + (instance % (3 + difficulty));
+            answer = starting + added - sold;
+            optionStep = difficulty + 2;
+            question = {
+              en: `A shop has ${n(starting, "en")} notebooks. It receives ${n(added, "en")} more, then sells ${n(sold, "en")}. How many remain?`,
+              bn: `একটি দোকানে ${n(starting, "bn")}টি খাতা আছে। আরও ${n(added, "bn")}টি এল, তারপর ${n(sold, "bn")}টি বিক্রি হলো। কতটি খাতা রইল?`,
+              hi: `एक दुकान में ${n(starting, "hi")} कॉपियाँ हैं। ${n(added, "hi")} और आईं, फिर ${n(sold, "hi")} बिक गईं। कितनी बचीं?`,
+              es: `Una tienda tiene ${n(starting, "es")} cuadernos. Recibe ${n(added, "es")} más y luego vende ${n(sold, "es")}. ¿Cuántos quedan?`,
+              fr: `Une boutique a ${n(starting, "fr")} cahiers. Elle en reçoit ${n(added, "fr")}, puis en vend ${n(sold, "fr")}. Combien en reste-t-il ?`
+            };
+            break;
+          }
+          case 1: {
+            const rows = 2 + (instance % 8);
+            const seats = 3 + instance * 2 + difficulty;
+            answer = rows * seats;
+            optionStep = Math.max(rows, difficulty + 2);
+            question = {
+              en: `A hall has ${n(rows, "en")} rows with ${n(seats, "en")} seats in each row. How many seats are there?`,
+              bn: `একটি হলের ${n(rows, "bn")}টি সারিতে প্রতিটিতে ${n(seats, "bn")}টি আসন আছে। মোট আসন কত?`,
+              hi: `एक हॉल में ${n(rows, "hi")} कतारें हैं और हर कतार में ${n(seats, "hi")} सीटें हैं। कुल कितनी सीटें हैं?`,
+              es: `Una sala tiene ${n(rows, "es")} filas con ${n(seats, "es")} asientos en cada una. ¿Cuántos asientos hay?`,
+              fr: `Une salle compte ${n(rows, "fr")} rangées de ${n(seats, "fr")} sièges. Combien y a-t-il de sièges ?`
+            };
+            break;
+          }
+          case 2: {
+            const capacity = 100 + instance * 20;
+            const percent = [10, 20, 25, 50][(level + variant) % 4];
+            answer = capacity * percent / 100;
+            optionStep = Math.max(2, difficulty * 2);
+            question = {
+              en: `A tank is ${n(percent, "en")}% full. Its capacity is ${n(capacity, "en")} liters. How many liters are in it?`,
+              bn: `একটি ট্যাংক ${n(percent, "bn")}% পূর্ণ। এর ধারণক্ষমতা ${n(capacity, "bn")} লিটার। এতে কত লিটার পানি আছে?`,
+              hi: `एक टैंक ${n(percent, "hi")}% भरा है। इसकी क्षमता ${n(capacity, "hi")} लीटर है। इसमें कितने लीटर पानी है?`,
+              es: `Un depósito está lleno al ${n(percent, "es")}%. Su capacidad es de ${n(capacity, "es")} litros. ¿Cuántos litros contiene?`,
+              fr: `Un réservoir est rempli à ${n(percent, "fr")} %. Sa capacité est de ${n(capacity, "fr")} litres. Combien de litres contient-il ?`
+            };
+            break;
+          }
+          case 3: {
+            const first = 2 + instance * 3;
+            const step = 2 + difficulty + (instance % 7);
+            const terms = Array.from({ length: 5 }, (_, index) => first + step * index);
+            answer = first + step * 5;
+            optionStep = step;
+            question = {
+              en: `What number comes next in this sequence: ${terms.map((value) => n(value, "en")).join(", ")}, ...?`,
+              bn: `এই ধারার পরের সংখ্যাটি কত: ${terms.map((value) => n(value, "bn")).join(", ")}, ...?`,
+              hi: `इस क्रम में अगली संख्या क्या है: ${terms.map((value) => n(value, "hi")).join(", ")}, ...?`,
+              es: `¿Qué número sigue en esta serie: ${terms.map((value) => n(value, "es")).join(", ")}, ...?`,
+              fr: `Quel nombre suit cette suite : ${terms.map((value) => n(value, "fr")).join(", ")}, ... ?`
+            };
+            break;
+          }
+          case 4: {
+            const amount = instance;
+            if (difficulty <= 3) {
+              answer = amount * 1000;
+              question = {
+                en: `How many meters are there in ${n(amount, "en")} kilometers?`,
+                bn: `${n(amount, "bn")} কিলোমিটারে কত মিটার আছে?`,
+                hi: `${n(amount, "hi")} किलोमीटर में कितने मीटर होते हैं?`,
+                es: `¿Cuántos metros hay en ${n(amount, "es")} kilómetros?`,
+                fr: `Combien de mètres y a-t-il dans ${n(amount, "fr")} kilomètres ?`
+              };
+            } else if (difficulty <= 6) {
+              answer = amount * 60;
+              question = {
+                en: `How many minutes are there in ${n(amount, "en")} hours?`,
+                bn: `${n(amount, "bn")} ঘণ্টায় কত মিনিট আছে?`,
+                hi: `${n(amount, "hi")} घंटे में कितने मिनट होते हैं?`,
+                es: `¿Cuántos minutos hay en ${n(amount, "es")} horas?`,
+                fr: `Combien de minutes y a-t-il dans ${n(amount, "fr")} heures ?`
+              };
+            } else {
+              answer = amount * 1000;
+              question = {
+                en: `How many grams are there in ${n(amount, "en")} kilograms?`,
+                bn: `${n(amount, "bn")} কিলোগ্রামে কত গ্রাম আছে?`,
+                hi: `${n(amount, "hi")} किलोग्राम में कितने ग्राम होते हैं?`,
+                es: `¿Cuántos gramos hay en ${n(amount, "es")} kilogramos?`,
+                fr: `Combien de grammes y a-t-il dans ${n(amount, "fr")} kilogrammes ?`
+              };
+            }
+            optionStep = Math.max(10, Math.floor(answer / 100) + difficulty);
+            break;
+          }
+          case 5: {
+            const length = 4 + instance * 2;
+            const width = 3 + (instance % (5 + difficulty));
+            answer = length * width;
+            optionStep = width;
+            question = {
+              en: `A rectangular garden is ${n(length, "en")} meters long and ${n(width, "en")} meters wide. What is its area in square meters?`,
+              bn: `একটি আয়তাকার বাগান ${n(length, "bn")} মিটার লম্বা ও ${n(width, "bn")} মিটার চওড়া। ক্ষেত্রফল কত বর্গমিটার?`,
+              hi: `एक आयताकार बगीचा ${n(length, "hi")} मीटर लंबा और ${n(width, "hi")} मीटर चौड़ा है। उसका क्षेत्रफल कितने वर्ग मीटर है?`,
+              es: `Un jardín rectangular mide ${n(length, "es")} metros de largo y ${n(width, "es")} de ancho. ¿Cuál es su área en metros cuadrados?`,
+              fr: `Un jardin rectangulaire mesure ${n(length, "fr")} mètres de long et ${n(width, "fr")} de large. Quelle est son aire en mètres carrés ?`
+            };
+            break;
+          }
+          case 6: {
+            const hours = 1 + (instance % 5);
+            const speed = 20 + instance * 3;
+            const distance = speed * hours;
+            answer = speed;
+            optionStep = difficulty + 2;
+            question = {
+              en: `A train travels ${n(distance, "en")} kilometers in ${n(hours, "en")} hours. What is its average speed in km/h?`,
+              bn: `একটি ট্রেন ${n(hours, "bn")} ঘণ্টায় ${n(distance, "bn")} কিলোমিটার যায়। এর গড় গতি কত কিমি/ঘণ্টা?`,
+              hi: `एक ट्रेन ${n(hours, "hi")} घंटे में ${n(distance, "hi")} किलोमीटर चलती है। इसकी औसत गति कितनी किमी/घंटा है?`,
+              es: `Un tren recorre ${n(distance, "es")} kilómetros en ${n(hours, "es")} horas. ¿Cuál es su velocidad media en km/h?`,
+              fr: `Un train parcourt ${n(distance, "fr")} kilomètres en ${n(hours, "fr")} heures. Quelle est sa vitesse moyenne en km/h ?`
+            };
+            break;
+          }
+          case 7: {
+            const first = 10 + instance * 3;
+            const second = first + 2 * difficulty;
+            const third = first + 4 * difficulty;
+            answer = first + 2 * difficulty;
+            optionStep = Math.max(2, difficulty);
+            question = {
+              en: `What is the average of ${n(first, "en")}, ${n(second, "en")}, and ${n(third, "en")}?`,
+              bn: `${n(first, "bn")}, ${n(second, "bn")} ও ${n(third, "bn")}-এর গড় কত?`,
+              hi: `${n(first, "hi")}, ${n(second, "hi")} और ${n(third, "hi")} का औसत क्या है?`,
+              es: `¿Cuál es el promedio de ${n(first, "es")}, ${n(second, "es")} y ${n(third, "es")}?`,
+              fr: `Quelle est la moyenne de ${n(first, "fr")}, ${n(second, "fr")} et ${n(third, "fr")} ?`
+            };
+            break;
+          }
+          case 8: {
+            const price = 400 + instance * 20;
+            const percent = [10, 20, 25, 30, 40, 50][(instance + difficulty) % 6];
+            answer = price * (100 - percent) / 100;
+            optionStep = Math.max(10, difficulty * 10);
+            question = {
+              en: `A product costs ${n(price, "en")} units and has a ${n(percent, "en")}% discount. What is the sale price?`,
+              bn: `একটি পণ্যের দাম ${n(price, "bn")} একক। এতে ${n(percent, "bn")}% ছাড় দিলে বিক্রয়মূল্য কত?`,
+              hi: `एक वस्तु की कीमत ${n(price, "hi")} इकाई है। ${n(percent, "hi")}% छूट के बाद कीमत क्या होगी?`,
+              es: `Un artículo cuesta ${n(price, "es")} unidades y tiene un descuento del ${n(percent, "es")}%. ¿Cuál es el precio final?`,
+              fr: `Un article coûte ${n(price, "fr")} unités et bénéficie d’une remise de ${n(percent, "fr")} %. Quel est son prix après remise ?`
+            };
+            break;
+          }
+          case 9: {
+            const root = 5 + instance + difficulty * 2;
+            const square = root * root;
+            answer = root;
+            optionStep = Math.max(2, difficulty);
+            question = {
+              en: `What is the positive square root of ${n(square, "en")}?`,
+              bn: `${n(square, "bn")}-এর ধনাত্মক বর্গমূল কত?`,
+              hi: `${n(square, "hi")} का धनात्मक वर्गमूल क्या है?`,
+              es: `¿Cuál es la raíz cuadrada positiva de ${n(square, "es")}?`,
+              fr: `Quelle est la racine carrée positive de ${n(square, "fr")} ?`
+            };
+            break;
+          }
+          default:
+            throw new RangeError(`Unknown generated question family: ${family}`);
+        }
+
+        const numericOptions = [
+          answer,
+          answer + optionStep,
+          Math.max(0, answer - optionStep),
+          answer + optionStep * 2
+        ];
+        for (let index = numericOptions.length - 1; index > 0; index -= 1) {
+          const swapIndex = randomIndex(index + 1);
+          [numericOptions[index], numericOptions[swapIndex]] = [numericOptions[swapIndex], numericOptions[index]];
+        }
+        const languages = ["en", "bn", "hi", "es", "fr"];
+        return {
+          id: `generated-gk-${level}-${family}-${variant}`,
+          question,
+          options: Object.fromEntries(languages.map((language) => [
+            language,
+            numericOptions.map((value) => formatNumber(value, language))
+          ])),
+          answer: numericOptions.indexOf(answer)
+        };
+      }
+
+      // Build just one level's 20-question candidate pool on demand. The first
+      // three levels retain their curated 10-question sets plus 10 generated
+      // alternatives; later levels use 20 generated candidates. Every round
+      // shuffles and selects 10, and stable IDs prevent repeats until that level's
+      // candidates are exhausted. Unique level parameters prevent cross-level overlap.
+      function getGeneralKnowledgeQuestionPool(level) {
+        if (!Number.isInteger(level) || level < 1 || level > GENERAL_KNOWLEDGE_LEVEL_COUNT) {
+          throw new RangeError(`General Knowledge level ${level} does not exist.`);
+        }
+        const curated = level <= curatedGeneralKnowledgeLevelCount
+          ? quizData["General Knowledge"]
+            .slice((level - 1) * QUESTIONS_PER_LEVEL, level * QUESTIONS_PER_LEVEL)
+            .map((item, index) => ({ ...item, id: `curated-gk-${level}-${index}` }))
+          : [];
+        const generatedCount = GENERAL_KNOWLEDGE_POOL_SIZE - curated.length;
+        const generated = Array.from({ length: generatedCount }, (_, index) =>
+          makeGeneratedGeneralKnowledgeQuestion(
+            level,
+            index % 10,
+            Math.floor(index / 10)
+          )
+        );
+        return [...curated, ...generated];
+      }
+
+      // Select a shuffled round without replacement within this session.
       function selectRoundQuestionIndexes(category, level = 1) {
         let indexes;
         if (category === "General Knowledge") {
           if (!generalKnowledgeLevels[level - 1]) {
             throw new RangeError(`General Knowledge level ${level} does not exist.`);
           }
-          const masterIndexes = Array.from(
-            { length: quizData[category].length },
+          const allPoolIndexes = Array.from(
+            { length: activeGeneralKnowledgePool.length },
             (_, index) => index
           );
-          indexes = masterIndexes.filter((index) => !sessionUsedQuestionIndexes.has(index));
-          if (indexes.length < QUESTIONS_PER_LEVEL) {
-            // Start a fresh question cycle only after the current pool is exhausted.
-            sessionUsedQuestionIndexes.clear();
-            indexes = masterIndexes;
+          indexes = allPoolIndexes.filter((index) =>
+            !sessionUsedQuestionIds.has(activeGeneralKnowledgePool[index].id)
+          );
+          const poolHasGeneratedQuestions = activeGeneralKnowledgePool.some((item) =>
+            item.id.startsWith("generated-gk-")
+          );
+          const generatedQuestionsRemain = indexes.some((index) =>
+            activeGeneralKnowledgePool[index].id.startsWith("generated-gk-")
+          );
+          if (indexes.length < QUESTIONS_PER_LEVEL || (poolHasGeneratedQuestions && !generatedQuestionsRemain)) {
+            // Start a new cycle for this level only after its candidate pool is used.
+            activeGeneralKnowledgePool.forEach((item) => sessionUsedQuestionIds.delete(item.id));
+            indexes = allPoolIndexes;
           }
         } else {
           indexes = Array.from({ length: quizData[category].length }, (_, index) => index);
@@ -2079,7 +2916,21 @@
         }
         if (category === "General Knowledge") {
           indexes = indexes.slice(0, QUESTIONS_PER_LEVEL);
-          indexes.forEach((index) => sessionUsedQuestionIndexes.add(index));
+          // Early levels mix curated and generated content. Keep at least one
+          // session-specific generated question in every round for variety.
+          const hasGenerated = indexes.some((index) =>
+            activeGeneralKnowledgePool[index].id.startsWith("generated-gk-")
+          );
+          if (!hasGenerated) {
+            const chosen = new Set(indexes);
+            const replacement = allPoolIndexes.find((index) =>
+              activeGeneralKnowledgePool[index].id.startsWith("generated-gk-") &&
+              !sessionUsedQuestionIds.has(activeGeneralKnowledgePool[index].id) &&
+              !chosen.has(index)
+            );
+            if (replacement !== undefined) indexes[indexes.length - 1] = replacement;
+          }
+          indexes.forEach((index) => sessionUsedQuestionIds.add(activeGeneralKnowledgePool[index].id));
         } else if (category === "IQ Check") {
           indexes = indexes.slice(0, Math.min(IQ_QUESTIONS_PER_ROUND, indexes.length));
         }
@@ -2095,7 +2946,15 @@
         document.getElementById("levelCountLabel").textContent = currentText.levelProgress
           .replace("{unlocked}", formatNumber(unlockedGeneralKnowledgeLevel))
           .replace("{total}", formatNumber(generalKnowledgeLevels.length));
-        generalKnowledgeLevels.forEach(({ level }) => {
+        const pageCount = Math.ceil(generalKnowledgeLevels.length / LEVELS_PER_PAGE);
+        currentLevelPage = Math.min(Math.max(0, currentLevelPage), pageCount - 1);
+        const pageStart = currentLevelPage * LEVELS_PER_PAGE;
+        document.getElementById("levelPageLabel").textContent = currentText.levelPageStatus
+          .replace("{page}", formatNumber(currentLevelPage + 1))
+          .replace("{pages}", formatNumber(pageCount));
+        document.getElementById("levelPreviousButton").disabled = currentLevelPage === 0;
+        document.getElementById("levelNextButton").disabled = currentLevelPage >= pageCount - 1;
+        generalKnowledgeLevels.slice(pageStart, pageStart + LEVELS_PER_PAGE).forEach(({ level }) => {
           const isCompleted = level < unlockedGeneralKnowledgeLevel;
           const isUnlocked = level <= unlockedGeneralKnowledgeLevel;
           const stateLabel = isCompleted
@@ -2132,6 +2991,8 @@
 
       function showView(name) {
         if (name !== "game") stopQuestionTimer();
+        document.getElementById("iqTimer").hidden = name !== "game";
+        document.body.dataset.view = name;
         Object.values(views).forEach((view) => view.classList.remove("active"));
         views[name].classList.add("active");
         if (rewardGroup) rewardGroup.visible = name === "results";
@@ -2149,6 +3010,9 @@
         setGameModeTheme(category);
         currentCategory = category;
         currentLevel = category === "General Knowledge" ? level : 0;
+        activeGeneralKnowledgePool = category === "General Knowledge"
+          ? getGeneralKnowledgeQuestionPool(currentLevel)
+          : [];
         roundQuestionIndexes = selectRoundQuestionIndexes(category, currentLevel || 1);
         answeredQuestionIndexes = new Set();
         currentQuestion = 0;
@@ -2158,10 +3022,12 @@
         bestStreak = 0;
         lastPointsAwarded = 0;
         lastSpeedBonus = 0;
+        lastAnswerTimedOut = false;
         answerTimes = [];
         rewardCelebrationAt = 0;
         levelJustUnlocked = false;
         levelFailed = false;
+        allLevelsComplete = false;
         answered = false;
         lastSelected = null;
         document.getElementById("gameCategory").textContent = gameCategoryLabel(category);
@@ -2179,6 +3045,7 @@
         if (!keepAnswer) {
           answered = false;
           lastSelected = null;
+          lastAnswerTimedOut = false;
         }
         if (!preserveAnswer) {
           questionStartedAt = performance.now();
@@ -2240,11 +3107,14 @@
           }
         } else {
           feedback.className = "feedback bad";
-          feedback.textContent = lastPointsAwarded < 0
+          const incorrectMessage = lastPointsAwarded < 0
             ? currentText.penaltyFeedback
               .replace("{points}", formatNumber(-lastPointsAwarded))
               .replace("{answer}", item.options[correctAnswer])
             : currentText.incorrectFeedback.replace("{answer}", item.options[correctAnswer]);
+          feedback.textContent = lastAnswerTimedOut
+            ? `${currentText.iqTimerExpired} ${incorrectMessage}`
+            : incorrectMessage;
         }
         updateScoreDisplay();
         progressFill.style.width = `${((currentQuestion + 1) / roundLength()) * 100}%`;
@@ -2253,16 +3123,23 @@
         setNextButtonLabel(currentQuestion === roundLength() - 1 ? currentText.seeScore : currentText.nextQuestion);
       }
 
-      function selectAnswer(index) {
+      function selectAnswer(index, timedOut = false) {
         if (answered) return;
+        if (!timedOut && questionDeadline && performance.now() >= questionDeadline) {
+          clearQuestionTimer();
+          playTimerCue(true);
+          selectAnswer(-1, true);
+          return;
+        }
         const questionIndex = roundQuestionIndexes[currentQuestion];
         if (answeredQuestionIndexes.has(questionIndex)) return;
         answeredQuestionIndexes.add(questionIndex);
-        const selectedOption = optionsElement.querySelectorAll(".option")[index];
+        const selectedOption = index >= 0 ? optionsElement.querySelectorAll(".option")[index] : null;
         lastSelected = index;
         const correctAnswer = roundQuestions()[currentQuestion].answer;
         const isCorrect = index === correctAnswer;
         answered = true;
+        lastAnswerTimedOut = timedOut;
         const elapsedSeconds = Math.max(0, (performance.now() - questionStartedAt) / 1000);
         answerTimes.push(elapsedSeconds);
         stopQuestionTimer();
@@ -2272,7 +3149,7 @@
           currentStreak += 1;
           bestStreak = Math.max(bestStreak, currentStreak);
           const streakPoints = CORRECT_ANSWER_POINTS * currentStreakMultiplier();
-          lastSpeedBonus = currentCategory === "IQ Check" ? calculateIQSpeedBonus(elapsedSeconds) : 0;
+          lastSpeedBonus = calculateSpeedBonus(elapsedSeconds);
           lastPointsAwarded = streakPoints + lastSpeedBonus;
           points += lastPointsAwarded;
         } else {
@@ -2281,7 +3158,7 @@
           lastPointsAwarded = deductedPoints ? -deductedPoints : 0;
           points -= deductedPoints;
         }
-        playAnswerCue(isCorrect);
+        if (!timedOut) playAnswerCue(isCorrect);
         renderAnswerState();
         spawnScorePopup(lastPointsAwarded, isCorrect, selectedOption);
         if (!isCorrect && lastPointsAwarded < 0) {
@@ -2373,7 +3250,7 @@
         iqSummary.hidden = !isIQRun;
         if (isIQRun) {
           // A lightweight game-only estimate blends accuracy with average response speed.
-          const speedRatio = Math.max(0, 1 - Math.min(IQ_TIME_LIMIT_SECONDS, averageAnswerSeconds) / IQ_TIME_LIMIT_SECONDS);
+          const speedRatio = Math.max(0, 1 - Math.min(QUESTION_TIME_LIMIT_SECONDS, averageAnswerSeconds) / QUESTION_TIME_LIMIT_SECONDS);
           const estimatedIQ = Math.round(70 + accuracy * .55 + speedRatio * 20);
           document.getElementById("iqEstimate").textContent = formatNumber(estimatedIQ);
           document.getElementById("iqRating").textContent = estimatedIQ >= 120
@@ -2389,13 +3266,15 @@
           resultLevel.textContent = currentText.levelNumber.replace("{level}", formatNumber(currentLevel));
         }
         const levelUnlockNotice = document.getElementById("levelUnlockNotice");
-        levelUnlockNotice.hidden = !levelJustUnlocked && !levelFailed;
+        levelUnlockNotice.hidden = !levelJustUnlocked && !levelFailed && !allLevelsComplete;
         if (levelJustUnlocked) {
           levelUnlockNotice.textContent = currentText.levelUnlockNotice
             .replace("{level}", formatNumber(currentLevel + 1));
         } else if (levelFailed) {
           levelUnlockNotice.textContent = currentText.levelFailNotice
             .replace("{count}", formatNumber(Math.ceil(QUESTIONS_PER_LEVEL * LEVEL_PASSING_ACCURACY)));
+        } else if (allLevelsComplete) {
+          levelUnlockNotice.textContent = currentText.allLevelsComplete;
         }
         const nextLevelButton = document.getElementById("nextLevelButton");
         nextLevelButton.hidden = !isLevelRun || currentLevel >= unlockedGeneralKnowledgeLevel;
@@ -2424,14 +3303,20 @@
         stopQuestionTimer();
         levelJustUnlocked = false;
         levelFailed = false;
+        allLevelsComplete = false;
         if (currentCategory === "General Knowledge" &&
-            currentLevel === unlockedGeneralKnowledgeLevel &&
-            currentLevel < generalKnowledgeLevels.length) {
+            currentLevel === unlockedGeneralKnowledgeLevel) {
           const requiredCorrect = Math.ceil(roundLength() * LEVEL_PASSING_ACCURACY);
           if (score >= requiredCorrect) {
-            unlockedGeneralKnowledgeLevel = currentLevel + 1;
-            saveUnlockedGeneralKnowledgeLevel(unlockedGeneralKnowledgeLevel);
-            levelJustUnlocked = true;
+            if (currentLevel < generalKnowledgeLevels.length) {
+              unlockedGeneralKnowledgeLevel = currentLevel + 1;
+              saveUnlockedGeneralKnowledgeLevel(unlockedGeneralKnowledgeLevel);
+              currentLevelPage = Math.floor((unlockedGeneralKnowledgeLevel - 1) / LEVELS_PER_PAGE);
+              levelJustUnlocked = true;
+            } else {
+              allLevelsComplete = true;
+              saveUnlockedGeneralKnowledgeLevel(currentLevel);
+            }
           } else {
             levelFailed = true;
           }
@@ -2477,6 +3362,8 @@
           levelTitle: "levelSelectTitle",
           levelDescription: "levelSelectDescription",
           levelBackLabel: "levelBack",
+          levelPreviousLabel: "levelPreviousPage",
+          levelNextLabel: "levelNextPage",
           totalQuestionsLabel: "totalQuestions",
           instantAnswersLabel: "instantAnswers",
           justForFunLabel: "justForFun",
@@ -2506,7 +3393,7 @@
         Object.entries(textById).forEach(([id, key]) => {
           const value = id === "totalQuestionsLabel"
             ? currentText[key]
-              .replace("{count}", formatNumber(quizData["General Knowledge"].length))
+              .replace("{count}", formatNumber(generalKnowledgeQuestionCount))
               .replace("{levels}", formatNumber(generalKnowledgeLevels.length))
               .replace("{iqCount}", formatNumber(quizData["IQ Check"].length))
             : currentText[key];
@@ -2517,7 +3404,7 @@
         document.getElementById("categoryGrid").setAttribute("aria-label", currentText.categoryGroup);
         document.getElementById("gameView").setAttribute("aria-label", currentText.quizRound);
         document.getElementById("progressTrack").setAttribute("aria-label", currentText.progress);
-        document.getElementById("iqTimer").setAttribute("aria-label", currentText.iqTimerLabel);
+        document.getElementById("iqTimer").setAttribute("aria-label", currentText.questionTimer);
         document.getElementById("levelGrid").setAttribute("aria-label", currentText.levelSelectTitle);
         optionsElement.setAttribute("aria-label", currentText.answerOptions);
         const replayLabel = currentCategory === "General Knowledge" ? currentText.retryLevel : currentText.playAgain;
@@ -2579,7 +3466,9 @@
         if (selectedCategory) {
           setGameModeTheme(selectedCategory);
           if (selectedCategory === "General Knowledge") {
-            sessionUsedQuestionIndexes.clear();
+            sessionUsedQuestionIds.clear();
+            questionSessionOffset = randomIndex(1_000_000);
+            currentLevelPage = Math.floor((unlockedGeneralKnowledgeLevel - 1) / LEVELS_PER_PAGE);
             renderLevelMap();
             showView("levels");
           } else {
@@ -2602,6 +3491,19 @@
       });
       document.getElementById("homeButton").addEventListener("click", () => showView("welcome"));
       document.getElementById("levelBackButton").addEventListener("click", () => showView("welcome"));
+      document.getElementById("levelPreviousButton").addEventListener("click", () => {
+        if (currentLevelPage > 0) {
+          currentLevelPage -= 1;
+          renderLevelMap();
+        }
+      });
+      document.getElementById("levelNextButton").addEventListener("click", () => {
+        const pageCount = Math.ceil(generalKnowledgeLevels.length / LEVELS_PER_PAGE);
+        if (currentLevelPage < pageCount - 1) {
+          currentLevelPage += 1;
+          renderLevelMap();
+        }
+      });
       document.getElementById("nextLevelButton").addEventListener("click", () => {
         if (currentCategory === "General Knowledge" && currentLevel < unlockedGeneralKnowledgeLevel) {
           startQuiz("General Knowledge", currentLevel + 1);
@@ -2672,6 +3574,10 @@
           cyberMaterials.push(material);
           return material;
         };
+        const registerCyberMaterials = (materials) =>
+          Array.isArray(materials)
+            ? materials.map(registerCyberMaterial)
+            : registerCyberMaterial(materials);
         const group = new THREE.Group();
         lobbyEnvironment.add(group);
         const confetti = new THREE.Group();
@@ -2764,6 +3670,40 @@
           stars.add(star);
         });
         lobbyEnvironment.add(stars);
+        // Lightweight, seeded home-screen particles add depth without external assets.
+        const lobbyParticleCount = window.innerWidth < 650 ? 120 : 240;
+        const lobbyParticlePositions = new Float32Array(lobbyParticleCount * 3);
+        const lobbyParticleColors = new Float32Array(lobbyParticleCount * 3);
+        const lobbyPalette = [0x9beeff, 0xd2b7ff, 0xffffff, 0xffa8e3].map((hex) => new THREE.Color(hex));
+        let lobbyParticleSeed = 38171;
+        const lobbyRandom = () => {
+          lobbyParticleSeed = lobbyParticleSeed * 16807 % 2147483647;
+          return (lobbyParticleSeed - 1) / 2147483646;
+        };
+        for (let index = 0; index < lobbyParticleCount; index += 1) {
+          const offset = index * 3;
+          lobbyParticlePositions[offset] = (lobbyRandom() - .5) * 23;
+          lobbyParticlePositions[offset + 1] = (lobbyRandom() - .5) * 14;
+          lobbyParticlePositions[offset + 2] = -4 - lobbyRandom() * 12;
+          const color = lobbyPalette[Math.floor(lobbyRandom() * lobbyPalette.length)];
+          lobbyParticleColors[offset] = color.r;
+          lobbyParticleColors[offset + 1] = color.g;
+          lobbyParticleColors[offset + 2] = color.b;
+        }
+        const lobbyParticleGeometry = new THREE.BufferGeometry();
+        lobbyParticleGeometry.setAttribute("position", new THREE.BufferAttribute(lobbyParticlePositions, 3));
+        lobbyParticleGeometry.setAttribute("color", new THREE.BufferAttribute(lobbyParticleColors, 3));
+        const lobbyParticleMaterial = registerLobbyMaterial(new THREE.PointsMaterial({
+          color: 0xffffff,
+          size: .055,
+          vertexColors: true,
+          transparent: true,
+          opacity: .34,
+          depthWrite: false,
+          sizeAttenuation: true
+        }));
+        const lobbyParticles = new THREE.Points(lobbyParticleGeometry, lobbyParticleMaterial);
+        lobbyEnvironment.add(lobbyParticles);
 
         // The General Knowledge scene is built from procedural geometry only.
         // A single blend value fades the lobby out while the stars, planets,
@@ -2880,12 +3820,12 @@
         cyberEnvironment.add(floorPlane);
         const floorGrid = new THREE.GridHelper(30, 30, 0x00f5d4, 0x566bff);
         floorGrid.position.set(0, -2.55, -2.5);
-        floorGrid.material = floorGrid.material.map(registerCyberMaterial);
+        floorGrid.material = registerCyberMaterials(floorGrid.material);
         cyberEnvironment.add(floorGrid);
         const backGrid = new THREE.GridHelper(20, 20, 0xff45c8, 0x00c9ef);
         backGrid.rotation.x = Math.PI / 2;
         backGrid.position.set(0, 0, -8);
-        backGrid.material = backGrid.material.map(registerCyberMaterial);
+        backGrid.material = registerCyberMaterials(backGrid.material);
         cyberEnvironment.add(backGrid);
         for (let index = 0; index < 10; index += 1) {
           const sideIndex = index < 5 ? index : index - 5;
@@ -2942,6 +3882,24 @@
         cyberEnvironment.add(cyberRing);
 
         const clock = new THREE.Clock();
+        const pointerParallaxEnabled =
+          window.matchMedia("(hover: hover) and (pointer: fine)").matches &&
+          !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        let pointerTargetX = 0;
+        let pointerTargetY = 0;
+        let pointerX = 0;
+        let pointerY = 0;
+        if (pointerParallaxEnabled) {
+          window.addEventListener("pointermove", (event) => {
+            if (event.pointerType === "touch") return;
+            pointerTargetX = THREE.MathUtils.clamp((event.clientX / window.innerWidth - .5) * 2, -1, 1);
+            pointerTargetY = THREE.MathUtils.clamp((event.clientY / window.innerHeight - .5) * 2, -1, 1);
+          }, { passive: true });
+          window.addEventListener("pointerleave", () => {
+            pointerTargetX = 0;
+            pointerTargetY = 0;
+          }, { passive: true });
+        }
         let cosmicBlend = 0;
         let cyberBlend = 0;
         function animate() {
@@ -2954,6 +3912,8 @@
           lobbyMaterials.forEach((material) => {
             material.opacity = material.userData.themeBaseOpacity * (1 - lobbyBlend);
           });
+          lobbyParticleMaterial.opacity = lobbyParticleMaterial.userData.themeBaseOpacity *
+            (1 - lobbyBlend) * (.82 + Math.sin(elapsed * .8) * .12);
           cosmicMaterials.forEach((material) => {
             material.opacity = material.userData.themeBaseOpacity * cosmicBlend;
           });
@@ -2971,14 +3931,26 @@
             : 0;
           cosmicEnvironment.visible = cosmicBlend > .008;
           cyberEnvironment.visible = cyberBlend > .008;
+          const homeParallax = views.welcome.classList.contains("active") && pointerParallaxEnabled ? 1 : 0;
+          pointerX = THREE.MathUtils.damp(pointerX, pointerTargetX * homeParallax, 4.5, delta);
+          pointerY = THREE.MathUtils.damp(pointerY, pointerTargetY * homeParallax, 4.5, delta);
           lobbyEnvironment.scale.setScalar(1 - lobbyBlend * .2);
-          lobbyEnvironment.position.x = -.35 * cosmicBlend + .35 * cyberBlend;
+          lobbyEnvironment.position.x = -.35 * cosmicBlend + .35 * cyberBlend + pointerX * .16 * (1 - lobbyBlend);
+          lobbyEnvironment.position.y = -pointerY * .1 * (1 - lobbyBlend);
           cosmicEnvironment.scale.setScalar(.84 + cosmicBlend * .16);
+          cosmicEnvironment.position.x = pointerX * .12 * cosmicBlend;
+          cosmicEnvironment.position.y = -pointerY * .08 * cosmicBlend;
           cosmicEnvironment.rotation.y = Math.sin(elapsed * .11) * .035;
           cyberEnvironment.scale.setScalar(.84 + cyberBlend * .16);
+          cyberEnvironment.position.x = pointerX * .12 * cyberBlend;
+          cyberEnvironment.position.y = -pointerY * .08 * cyberBlend;
           cyberEnvironment.rotation.y = Math.sin(elapsed * .14) * .045;
-          camera.position.set(.45 * cosmicBlend - .35 * cyberBlend, .16 * cosmicBlend + .1 * cyberBlend, 12 - .35 * lobbyBlend);
-          camera.lookAt(0, 0, 0);
+          camera.position.set(
+            .45 * cosmicBlend - .35 * cyberBlend + pointerX * .42,
+            .16 * cosmicBlend + .1 * cyberBlend - pointerY * .28,
+            12 - .35 * lobbyBlend
+          );
+          camera.lookAt(pointerX * .12, -pointerY * .08, 0);
           group.rotation.y = elapsed * .14;
           group.rotation.x = Math.sin(elapsed * .22) * .055;
           core.rotation.y = elapsed * .12;
@@ -3000,6 +3972,8 @@
                 (showResultsConfetti ? 1.2 + Math.sin(elapsed * 4) * .32 : .3);
             });
           }
+          lobbyParticles.rotation.y = elapsed * .004;
+          lobbyParticles.rotation.x = Math.sin(elapsed * .1) * .009;
           cosmicStarfield.rotation.y = elapsed * .004;
           nebula.rotation.z = Math.sin(elapsed * .09) * .035;
           mainPlanet.rotation.y = elapsed * .055;
@@ -3028,7 +4002,8 @@
           renderer.setSize(window.innerWidth, window.innerHeight);
           renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.6));
         });
-      } catch {
+      } catch (error) {
+        console.warn("3D scene initialization failed; using the CSS fallback.", error);
         document.body.classList.remove("webgl-ready");
         sceneRoot.hidden = true;
       }
