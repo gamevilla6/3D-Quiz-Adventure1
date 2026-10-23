@@ -100,7 +100,7 @@
       .section-heading { display: flex; align-items: end; justify-content: space-between; margin: 36px 2px 15px; }
       .section-heading h2 { margin: 0; font-size: 17px; letter-spacing: -.035em; }
       .section-heading p { margin: 0; color: var(--muted); font-size: 12px; }
-      .category-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+      .category-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
       .category {
         appearance: none;
         position: relative;
@@ -616,9 +616,111 @@
         box-shadow: 0 9px 0 #4c42bd, 0 18px 28px rgba(75, 119, 255, .4);
       }
       body.theme-cosmic .primary-button.start-button:disabled { opacity: .88; }
+      body.theme-iq {
+        color: #f7f8ff;
+        background:
+          radial-gradient(ellipse at 12% 8%, rgba(0, 245, 212, .18), transparent 30%),
+          radial-gradient(ellipse at 88% 12%, rgba(255, 54, 194, .24), transparent 32%),
+          radial-gradient(ellipse at 50% 100%, rgba(73, 79, 255, .25), transparent 38%),
+          #080b20;
+      }
+      body.theme-iq .brand { color: #f7f8ff; }
+      body.theme-iq .brand-mark {
+        background: linear-gradient(145deg, #00f5d4, #3a82ff 52%, #ff38c4);
+        box-shadow: 0 6px 0 #5930b9, 0 10px 20px rgba(11, 221, 221, .25);
+      }
+      body.theme-iq .top-note { color: #c8d7fa; }
+      body.theme-iq .hero {
+        background:
+          linear-gradient(rgba(10, 14, 42, .78), rgba(10, 14, 42, .78)),
+          repeating-linear-gradient(0deg, transparent 0 31px, rgba(0, 245, 212, .14) 32px),
+          repeating-linear-gradient(90deg, transparent 0 31px, rgba(255, 54, 194, .13) 32px),
+          linear-gradient(118deg, #10163f, #24134a 52%, #082b48);
+        box-shadow: 0 22px 48px rgba(0, 0, 0, .4), 0 0 42px rgba(0, 245, 212, .09);
+      }
+      body.theme-iq .hero::before { background: radial-gradient(circle at 71% 38%, rgba(255, 54, 194, .25), transparent 32%); }
+      body.theme-iq .hero .eyebrow { color: #73ffec; }
+      body.theme-iq .hero h1 span { color: #ff62d4; }
+      body.theme-iq .hero-copy > p:not(.eyebrow) { color: #e4e9ff; }
+      body.theme-iq .hero-aside::before {
+        opacity: 1;
+        background:
+          radial-gradient(circle at 19% 26%, #70fff0 0 2px, transparent 3px),
+          radial-gradient(circle at 81% 68%, #ff53d2 0 2px, transparent 3px),
+          repeating-linear-gradient(0deg, transparent 0 22px, rgba(0,245,212,.11) 23px),
+          repeating-linear-gradient(90deg, transparent 0 22px, rgba(255,54,194,.1) 23px);
+        animation: cyberGridPulse 3.4s ease-in-out infinite alternate;
+      }
+      body.theme-iq .fallback-orbit { border-color: rgba(0, 245, 212, .65); }
+      body.theme-iq .fallback-orbit.orbit-b { border-color: rgba(255, 54, 194, .66); }
+      body.theme-iq .fallback-planet {
+        border-radius: 18px;
+        background: linear-gradient(145deg, #00f5d4, #4777ff 52%, #ff38c4);
+        box-shadow: inset -12px -14px 24px rgba(8, 10, 40, .4), inset 8px 8px 16px rgba(255,255,255,.28), 0 0 32px rgba(0,245,212,.4);
+        animation: cyberFloat 4s ease-in-out infinite alternate;
+      }
+      body.theme-iq .fallback-moon { background: linear-gradient(135deg, #ff4bcc, #ff9f58); box-shadow: 0 0 18px rgba(255,54,194,.6); }
+      body.theme-iq .orbit-label { color: #07162a; background: #71ffeb; }
+      body.theme-iq .section-heading h2 { color: #f5f4ff; }
+      body.theme-iq .section-heading p,
+      body.theme-iq .welcome-foot,
+      body.theme-iq .start-hint { color: #c8d7fa; }
+      body.theme-iq .category {
+        color: #f6f8ff;
+        border-color: rgba(0, 245, 212, .24);
+        background: rgba(13, 20, 52, .9);
+        box-shadow: 0 10px 26px rgba(0, 0, 0, .24);
+      }
+      body.theme-iq .category:hover { background: rgba(23, 31, 69, .96); box-shadow: 0 0 24px rgba(0,245,212,.12); }
+      body.theme-iq .category.selected {
+        border-color: #ff4ccf;
+        background: linear-gradient(135deg, rgba(20, 40, 74, .98), rgba(47, 20, 75, .98));
+        box-shadow: 0 0 0 3px rgba(255, 76, 207, .17), 0 0 24px rgba(0, 245, 212, .16);
+      }
+      body.theme-iq .category.selected .category-arrow { color: #72ffec; }
+      body.theme-iq .category-icon { color: #07162a; background: linear-gradient(145deg, #00f5d4, #54b8ff); }
+      body.theme-iq .primary-button.start-button {
+        color: #07162a;
+        background: linear-gradient(100deg, #00f5d4, #31b8ff 52%, #ff51c9);
+        box-shadow: 0 7px 0 #5736b5, 0 13px 25px rgba(28, 178, 255, .22);
+      }
+      body.theme-iq .primary-button.start-button:hover:not(:disabled) { box-shadow: 0 9px 0 #5736b5, 0 18px 28px rgba(255, 54, 194, .24); }
+      @keyframes cyberGridPulse { from { opacity: .55; transform: scale(.98); } to { opacity: 1; transform: scale(1.02); } }
+      @keyframes cyberFloat { from { transform: rotate(-10deg) translateY(4px); } to { transform: rotate(8deg) translateY(-5px); } }
+      .iq-timer {
+        margin: -10px 0 23px;
+        padding: 12px 14px 10px;
+        border: 1px solid rgba(89, 89, 210, .16);
+        border-radius: 14px;
+        color: #25234b;
+        background: linear-gradient(110deg, rgba(240, 244, 255, .98), rgba(250, 238, 255, .92));
+      }
+      .iq-timer-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; font-size: 12px; font-weight: 700; }
+      .iq-timer-heading strong { color: #6338d7; font-size: 14px; font-variant-numeric: tabular-nums; }
+      .iq-timer-track { height: 7px; margin-top: 9px; overflow: hidden; border-radius: 999px; background: #dfe4f4; }
+      .iq-timer-track span { display: block; width: 100%; height: 100%; border-radius: inherit; background: linear-gradient(90deg, #18cdb8, #5275ff 56%, #d34fda); transition: width .18s linear; }
+      .iq-timer.urgent .iq-timer-heading strong { color: #d83969; }
+      .iq-timer.urgent .iq-timer-track span { background: linear-gradient(90deg, #ff9d56, #ec3e79); }
+      .iq-timer p { margin: 7px 0 0; color: #626b87; font-size: 11px; line-height: 1.4; }
+      .iq-summary {
+        max-width: 420px;
+        margin: 17px auto 0;
+        padding: 14px 17px;
+        border: 1px solid rgba(0, 245, 212, .25);
+        border-radius: 17px;
+        color: #f6f8ff;
+        background: linear-gradient(130deg, rgba(8, 23, 54, .96), rgba(38, 20, 67, .96));
+        box-shadow: 0 10px 26px rgba(7, 12, 39, .24);
+      }
+      .iq-summary-heading { display: flex; align-items: center; justify-content: space-between; gap: 14px; font-size: 12px; font-weight: 700; }
+      .iq-summary-heading strong { color: #71ffec; font-size: 30px; line-height: 1; font-variant-numeric: tabular-nums; text-shadow: 0 0 18px rgba(0,245,212,.28); }
+      .iq-summary p { margin: 8px 0 3px; color: #ff77d9; font-size: 13px; font-weight: 800; }
+      .iq-summary small { color: #d4daf0; font-size: 10px; line-height: 1.5; }
       @media (prefers-reduced-motion: reduce) {
         body.theme-cosmic .hero-aside::before,
-        body.theme-cosmic .fallback-planet { animation: none !important; }
+        body.theme-cosmic .fallback-planet,
+        body.theme-iq .hero-aside::before,
+        body.theme-iq .fallback-planet { animation: none !important; }
       }
       .result-stats {
         display: grid;
@@ -792,7 +894,7 @@
             <div class="hero-copy">
               <p class="eyebrow" id="welcomeEyebrow">A quiz with a little perspective</p>
               <h1 id="welcomeTitle">Wonder a little <span>further.</span></h1>
-            <p id="welcomeDescription">Three curious corners. Ten good questions. Take a quiet moment and see where your knowledge takes you.</p>
+            <p id="welcomeDescription">Two ways to explore: discover the world, or race the clock with logic and patterns.</p>
             </div>
             <div class="hero-aside">
               <div class="hero-orbit-fallback" aria-hidden="true">
@@ -807,21 +909,17 @@
             </div>
           </div>
           <div class="section-heading">
-            <h2 id="categoryHeading">Choose your orbit</h2>
-            <p id="categoryHeadingHint">Pick a subject · no timer</p>
+            <h2 id="categoryHeading">Choose your mode</h2>
+            <p id="categoryHeadingHint">Choose a mode · IQ has a timer</p>
           </div>
           <div class="category-grid" id="categoryGrid" role="group" aria-label="Choose a quiz category">
             <button class="category selected" type="button" data-category="General Knowledge" aria-pressed="true">
               <span class="category-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M4.5 6.2c2.4-1.1 4.8-.9 7.5.8v12c-2.7-1.7-5.1-1.9-7.5-.8v-12Zm15 0c-2.4-1.1-4.8-.9-7.5.8v12c2.7-1.7 5.1-1.9 7.5-.8v-12Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M8 9.2h1.4m6.6 0h1.4M8 12h1.4m6.6 0h1.4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></span>
               <span class="category-text"><span class="category-title" data-category-title>General Knowledge</span><span class="category-detail" data-category-detail>A little bit of everything</span></span><span class="category-arrow" aria-hidden="true">→</span>
             </button>
-            <button class="category" type="button" data-category="Science" aria-pressed="false">
-              <span class="category-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M9 3.5h6m-5 0v6.2l-4.7 7.8a2 2 0 0 0 1.7 3h10a2 2 0 0 0 1.7-3L14 9.7V3.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M8 15h8m-6.8-2h5.6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></span>
-              <span class="category-text"><span class="category-title" data-category-title>Science</span><span class="category-detail" data-category-detail>The world, wonderfully explained</span></span><span class="category-arrow" aria-hidden="true">→</span>
-            </button>
-            <button class="category" type="button" data-category="Technology" aria-pressed="false">
-              <span class="category-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><rect x="4" y="5" width="16" height="11.5" rx="2" stroke="currentColor" stroke-width="1.7"/><path d="M8 20h8m-4-3.5V20M8 9h3m-3 3h5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg></span>
-              <span class="category-text"><span class="category-title" data-category-title>Technology</span><span class="category-detail" data-category-detail>Ideas that move us forward</span></span><span class="category-arrow" aria-hidden="true">→</span>
+            <button class="category" type="button" data-category="IQ Check" aria-pressed="false">
+              <span class="category-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M12 3.8a3 3 0 0 0-5.1 2.1 3.3 3.3 0 0 0-1.2 5.9 3.2 3.2 0 0 0 1.8 5.8 3 3 0 0 0 4.5 2.4V3.8Zm0 0a3 3 0 0 1 5.1 2.1 3.3 3.3 0 0 1 1.2 5.9 3.2 3.2 0 0 1-1.8 5.8 3 3 0 0 1-4.5 2.4V3.8Z" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M8.5 9.3h1m5 0h1M9 14h1m4 0h1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></span>
+              <span class="category-text"><span class="category-title" data-category-title>IQ Check</span><span class="category-detail" data-category-detail>Logic, patterns, and a 15-second clock</span></span><span class="category-arrow" aria-hidden="true">→</span>
             </button>
           </div>
           <div class="start-row">
@@ -855,6 +953,11 @@
                 <div class="question-count" id="questionCount">01 <span aria-hidden="true">/</span> 04</div>
               </div>
               <div class="progress-track" id="progressTrack" role="progressbar" aria-label="Quiz progress" aria-valuemin="0" aria-valuemax="4" aria-valuenow="0"><div class="progress-fill" id="progressFill"></div></div>
+              <section class="iq-timer" id="iqTimer" hidden aria-label="IQ question timer">
+                <div class="iq-timer-heading"><span id="iqTimerLabel">Time left</span><strong id="iqTimerValue">15 s</strong></div>
+                <div class="iq-timer-track" id="iqTimerBar" role="progressbar" aria-label="Time remaining" aria-valuemin="0" aria-valuemax="15" aria-valuenow="15"><span id="iqTimerFill"></span></div>
+                <p id="iqTimerNote">Fast correct answers earn up to 15 bonus points.</p>
+              </section>
               <p class="question-kicker" id="questionKicker">Take a moment</p>
               <h1 class="question" id="questionText" tabindex="-1">Question goes here</h1>
               <div class="options" id="options" role="group" aria-label="Answer options"></div>
@@ -909,6 +1012,11 @@
                   <span id="trophyTierText">Bronze Trophy</span>
                 </div>
                 <div class="result-score"><span id="finalScore">0</span><small id="finalDenominator"> net points</small></div>
+                <section class="iq-summary" id="iqSummary" hidden aria-labelledby="iqSummaryTitle">
+                  <div class="iq-summary-heading"><span id="iqSummaryTitle">IQ-style analytical estimate</span><strong id="iqEstimate">100</strong></div>
+                  <p id="iqRating">Pattern solver</p>
+                  <small id="iqDisclaimer">Game estimate only, not a clinical IQ test.</small>
+                </section>
               </div>
               <div class="result-bottom">
                 <div class="result-stats">
@@ -951,25 +1059,23 @@
           brandHome: "Quiz Orbit home",
           welcomeEyebrow: "A quiz with a little perspective",
           welcomeTitle: "Wonder a little <span>further.</span>",
-          welcomeDescription: "Three curious corners. Ten good questions. Take a quiet moment and see where your knowledge takes you.",
+          welcomeDescription: "Two ways to explore: discover the world, or race the clock with logic and patterns.",
           orbitLabel: "Explore at your own pace",
-          categoryHeading: "Choose your orbit",
-          categoryHeadingHint: "Pick a subject · no timer",
-          categoryGroup: "Choose a quiz category",
+          categoryHeading: "Choose your mode",
+          categoryHeadingHint: "Choose a mode · IQ has a timer",
+          categoryGroup: "Choose a quiz mode",
           categoryLabels: {
             "General Knowledge": "General Knowledge",
-            Science: "Science",
-            Technology: "Technology"
+            "IQ Check": "IQ Check"
           },
           categoryDescriptions: {
             "General Knowledge": "A little bit of everything",
-            Science: "The world, wonderfully explained",
-            Technology: "Ideas that move us forward"
+            "IQ Check": "Logic, patterns, and a 15-second clock"
           },
           startGame: "Start game",
-          startHint: "Choose a subject to begin your orbit.",
+          startHint: "Choose a mode to begin.",
           selectedHint: "{category} selected · ready when you are.",
-          totalQuestions: "{count} General Knowledge questions · {levels} levels",
+          totalQuestions: "{count} General Knowledge questions · {levels} levels · {iqCount} IQ puzzles",
           instantAnswers: "Instant answers",
           justForFun: "Just for fun",
           quizRound: "Quiz round",
@@ -984,7 +1090,7 @@
           incorrectFeedback: "No points deducted — the answer is {answer}.",
           penaltyFeedback: "−{points} points — the answer is {answer}.",
           noPointsLost: "No points to lose",
-          chooseAnother: "Choose another subject",
+          chooseAnother: "Choose another mode",
           checkAnswer: "Check answer",
           nextQuestion: "Next question",
           seeScore: "See your score",
@@ -996,7 +1102,7 @@
           levelSelectTitle: "Choose a level",
           levelSelectDescription: "Answer at least 6 of 10 correctly to unlock the next level.",
           levelProgress: "{unlocked} of {total} levels unlocked",
-          levelBack: "Back to subjects",
+          levelBack: "Back to modes",
           levelNumber: "Level {level}",
           levelUnlocked: "Unlocked",
           levelLocked: "Locked",
@@ -1041,8 +1147,22 @@
           resultDefaultTitle: "A lovely little round.",
           resultDefaultMessage: "You followed your curiosity all the way through.",
           category: "Category",
-          chooseSubject: "Choose a subject",
+          chooseSubject: "Choose a mode",
           playAgain: "Play again",
+          iqTimerLabel: "Time left",
+          iqTimerExpired: "Time is up — no more speed bonus.",
+          secondsUnit: "s",
+          iqTimerNote: "Fast correct answers earn up to 15 bonus points.",
+          speedBonusFeedback: "+{bonus} speed bonus.",
+          iqEstimateLabel: "IQ-style analytical estimate",
+          iqDisclaimer: "For fun only; this is not a clinical IQ test.",
+          iqRatingStarter: "Keep practicing",
+          iqRatingSolver: "Pattern solver",
+          iqRatingStandout: "Sharp analyst",
+          badgeLogicMaster: "Logic Master",
+          badgeLogicMasterHint: "Answer at least 8 questions correctly",
+          badgeQuizSpeedster: "Quiz Speedster",
+          badgeQuizSpeedsterHint: "Average under 6 seconds per answer",
           optionLetters: ["A", "B", "C", "D"]
         },
         bn: {
@@ -1053,25 +1173,23 @@
           brandHome: "কুইজ অরবিটের হোম",
           welcomeEyebrow: "নতুন দৃষ্টিতে কুইজ",
           welcomeTitle: "আরও একটু <span>জেনে নিন।</span>",
-          welcomeDescription: "তিনটি কৌতূহলী বিষয়। দশটি মজার প্রশ্ন। একটু সময় নিয়ে দেখুন, আপনার জ্ঞান আপনাকে কোথায় নিয়ে যায়।",
+          welcomeDescription: "অনুসন্ধানের দুটি পথ: বিশ্বকে জানুন, অথবা যুক্তি ও ধাঁধার সঙ্গে সময়ের দৌড়ে নামুন।",
           orbitLabel: "নিজের গতিতে ঘুরে দেখুন",
-          categoryHeading: "আপনার বিষয় বেছে নিন",
-          categoryHeadingHint: "একটি বিষয় বেছে নিন · সময়সীমা নেই",
-          categoryGroup: "কুইজের বিষয় বেছে নিন",
+          categoryHeading: "মোড বেছে নিন",
+          categoryHeadingHint: "মোড বেছে নিন · আইকিউতে সময়সীমা আছে",
+          categoryGroup: "কুইজের মোড বেছে নিন",
           categoryLabels: {
             "General Knowledge": "সাধারণ জ্ঞান",
-            Science: "বিজ্ঞান",
-            Technology: "প্রযুক্তি"
+            "IQ Check": "আইকিউ পরীক্ষা"
           },
           categoryDescriptions: {
             "General Knowledge": "নানান বিষয়ের মজার তথ্য",
-            Science: "চমৎকারভাবে ব্যাখ্যা করা জগৎ",
-            Technology: "যে ধারণাগুলো আমাদের এগিয়ে নেয়"
+            "IQ Check": "ধাঁধা, যুক্তি ও ১৫ সেকেন্ডের সময়সীমা"
           },
           startGame: "খেলা শুরু করুন",
-          startHint: "শুরু করতে একটি বিষয় বেছে নিন।",
+          startHint: "শুরু করতে একটি মোড বেছে নিন।",
           selectedHint: "{category} বেছে নেওয়া হয়েছে · শুরু করতে প্রস্তুত।",
-          totalQuestions: "সাধারণ জ্ঞানের {count}টি প্রশ্ন · {levels}টি লেভেল",
+          totalQuestions: "সাধারণ জ্ঞানের {count}টি প্রশ্ন · {levels}টি লেভেল · {iqCount}টি আইকিউ ধাঁধা",
           instantAnswers: "তাৎক্ষণিক উত্তর",
           justForFun: "শুধু মজার জন্য",
           quizRound: "কুইজ পর্ব",
@@ -1086,7 +1204,7 @@
           incorrectFeedback: "পয়েন্ট কমেনি — সঠিক উত্তর: {answer}।",
           penaltyFeedback: "−{points} পয়েন্ট — সঠিক উত্তর: {answer}।",
           noPointsLost: "কমানোর মতো পয়েন্ট নেই",
-          chooseAnother: "অন্য বিষয় বেছে নিন",
+          chooseAnother: "অন্য মোড বেছে নিন",
           checkAnswer: "উত্তর যাচাই",
           nextQuestion: "পরের প্রশ্ন",
           seeScore: "আপনার ফল দেখুন",
@@ -1098,7 +1216,7 @@
           levelSelectTitle: "একটি লেভেল বেছে নিন",
           levelSelectDescription: "পরের লেভেল খুলতে ১০টির মধ্যে অন্তত ৬টি সঠিক উত্তর দিন।",
           levelProgress: "{total}টির মধ্যে {unlocked}টি লেভেল খোলা",
-          levelBack: "বিষয় বাছাইয়ে ফিরুন",
+          levelBack: "মোড বাছাইয়ে ফিরুন",
           levelNumber: "লেভেল {level}",
           levelUnlocked: "খোলা",
           levelLocked: "বন্ধ",
@@ -1143,8 +1261,22 @@
           resultDefaultTitle: "সুন্দর একটি পর্ব।",
           resultDefaultMessage: "কৌতূহলের টানে পুরো পর্বটি শেষ করেছেন।",
           category: "বিষয়",
-          chooseSubject: "বিষয় বেছে নিন",
+          chooseSubject: "মোড বেছে নিন",
           playAgain: "আবার খেলুন",
+          iqTimerLabel: "সময় বাকি",
+          iqTimerExpired: "সময় শেষ — এবার আর গতি-বোনাস নেই।",
+          secondsUnit: "সে.",
+          iqTimerNote: "দ্রুত সঠিক উত্তরে সর্বোচ্চ ১৫ বোনাস পয়েন্ট।",
+          speedBonusFeedback: "দ্রুত উত্তরের জন্য +{bonus} বোনাস পয়েন্ট।",
+          iqEstimateLabel: "আইকিউ-ধাঁচের বিশ্লেষণী অনুমান",
+          iqDisclaimer: "শুধু গেমের বিনোদনমূলক অনুমান; এটি ক্লিনিক্যাল আইকিউ পরীক্ষা নয়।",
+          iqRatingStarter: "অনুশীলন চালিয়ে যান",
+          iqRatingSolver: "যুক্তির সমাধানকারী",
+          iqRatingStandout: "দারুণ বিশ্লেষণ",
+          badgeLogicMaster: "লজিক মাস্টার",
+          badgeLogicMasterHint: "অন্তত ৮টি প্রশ্নের সঠিক উত্তর দিন",
+          badgeQuizSpeedster: "কুইজ স্পিডস্টার",
+          badgeQuizSpeedsterHint: "প্রতি উত্তরে গড়ে ৬ সেকেন্ডের কম",
           optionLetters: ["ক", "খ", "গ", "ঘ"]
         },
         hi: {
@@ -1155,25 +1287,23 @@
           brandHome: "क्विज़ ऑर्बिट होम",
           welcomeEyebrow: "एक नए नज़रिए वाला क्विज़",
           welcomeTitle: "थोड़ा और <span>जानें।</span>",
-          welcomeDescription: "तीन दिलचस्प विषय। दस मज़ेदार सवाल। थोड़ा समय निकालें और देखें कि आपका ज्ञान आपको कहाँ ले जाता है।",
+          welcomeDescription: "जिज्ञासा के दो रास्ते: दुनिया जानें या तर्क और पैटर्न के साथ समय को चुनौती दें।",
           orbitLabel: "अपनी गति से खेलें",
-          categoryHeading: "अपना विषय चुनें",
-          categoryHeadingHint: "विषय चुनें · कोई समय सीमा नहीं",
-          categoryGroup: "क्विज़ श्रेणी चुनें",
+          categoryHeading: "अपना मोड चुनें",
+          categoryHeadingHint: "मोड चुनें · IQ में टाइमर है",
+          categoryGroup: "क्विज़ मोड चुनें",
           categoryLabels: {
             "General Knowledge": "सामान्य ज्ञान",
-            Science: "विज्ञान",
-            Technology: "प्रौद्योगिकी"
+            "IQ Check": "IQ जाँच"
           },
           categoryDescriptions: {
             "General Knowledge": "हर विषय से थोड़ी-थोड़ी जानकारी",
-            Science: "दुनिया को आसान भाषा में समझें",
-            Technology: "आगे बढ़ने के नए विचार"
+            "IQ Check": "तर्क, पैटर्न और 15 सेकंड की घड़ी"
           },
           startGame: "खेल शुरू करें",
-          startHint: "शुरू करने के लिए कोई विषय चुनें।",
+          startHint: "शुरू करने के लिए कोई मोड चुनें।",
           selectedHint: "{category} चुना गया · जब चाहें शुरू करें।",
-          totalQuestions: "{count} सामान्य ज्ञान के सवाल · {levels} स्तर",
+          totalQuestions: "{count} सामान्य ज्ञान के सवाल · {levels} स्तर · {iqCount} IQ पहेलियाँ",
           instantAnswers: "तुरंत जवाब",
           justForFun: "सिर्फ़ मज़े के लिए",
           quizRound: "क्विज़ राउंड",
@@ -1188,7 +1318,7 @@
           incorrectFeedback: "कोई अंक नहीं कटे — सही जवाब: {answer}।",
           penaltyFeedback: "−{points} अंक — सही जवाब: {answer}।",
           noPointsLost: "घटाने को कोई अंक नहीं",
-          chooseAnother: "कोई और विषय चुनें",
+          chooseAnother: "कोई और मोड चुनें",
           checkAnswer: "जवाब जाँचें",
           nextQuestion: "अगला सवाल",
           seeScore: "अपना स्कोर देखें",
@@ -1200,7 +1330,7 @@
           levelSelectTitle: "एक स्तर चुनें",
           levelSelectDescription: "अगला स्तर खोलने के लिए 10 में से कम से कम 6 सही जवाब दें।",
           levelProgress: "{total} में से {unlocked} स्तर खुले",
-          levelBack: "विषय चुनने पर लौटें",
+          levelBack: "मोड चुनने पर लौटें",
           levelNumber: "स्तर {level}",
           levelUnlocked: "खुला",
           levelLocked: "बंद",
@@ -1245,8 +1375,22 @@
           resultDefaultTitle: "एक प्यारा-सा राउंड।",
           resultDefaultMessage: "आपने जिज्ञासा के साथ पूरा खेल खेला।",
           category: "श्रेणी",
-          chooseSubject: "कोई विषय चुनें",
+          chooseSubject: "कोई मोड चुनें",
           playAgain: "फिर से खेलें",
+          iqTimerLabel: "समय शेष",
+          iqTimerExpired: "समय पूरा — अब स्पीड बोनस नहीं मिलेगा।",
+          secondsUnit: "से.",
+          iqTimerNote: "तेज़ सही जवाबों पर 15 बोनस अंक तक मिलते हैं।",
+          speedBonusFeedback: "तेज़ जवाब के लिए +{bonus} बोनस अंक।",
+          iqEstimateLabel: "IQ-शैली का विश्लेषणात्मक अनुमान",
+          iqDisclaimer: "केवल खेल के लिए; यह क्लिनिकल IQ परीक्षण नहीं है।",
+          iqRatingStarter: "अभ्यास जारी रखें",
+          iqRatingSolver: "तर्क सुलझाने वाले",
+          iqRatingStandout: "तेज़ विश्लेषक",
+          badgeLogicMaster: "लॉजिक मास्टर",
+          badgeLogicMasterHint: "कम से कम 8 सवालों के सही जवाब दें",
+          badgeQuizSpeedster: "क्विज़ स्पीडस्टर",
+          badgeQuizSpeedsterHint: "हर जवाब में औसतन 6 सेकंड से कम",
           optionLetters: ["क", "ख", "ग", "घ"]
         },
         es: {
@@ -1257,25 +1401,23 @@
           brandHome: "Inicio de Quiz Orbit",
           welcomeEyebrow: "Un quiz con otra perspectiva",
           welcomeTitle: "Descubre un poco <span>más.</span>",
-          welcomeDescription: "Tres temas curiosos. Diez buenas preguntas. Tómate un momento y descubre hasta dónde te lleva tu conocimiento.",
+          welcomeDescription: "Dos formas de explorar: descubre el mundo o resuelve patrones contra reloj.",
           orbitLabel: "Explora a tu ritmo",
-          categoryHeading: "Elige tu tema",
-          categoryHeadingHint: "Elige una categoría · sin límite de tiempo",
-          categoryGroup: "Elige una categoría del quiz",
+          categoryHeading: "Elige un modo",
+          categoryHeadingHint: "Elige un modo · IQ tiene temporizador",
+          categoryGroup: "Elige un modo de juego",
           categoryLabels: {
             "General Knowledge": "Cultura general",
-            Science: "Ciencia",
-            Technology: "Tecnología"
+            "IQ Check": "Desafío de lógica"
           },
           categoryDescriptions: {
             "General Knowledge": "Un poco de todo",
-            Science: "El mundo, explicado con claridad",
-            Technology: "Ideas que nos hacen avanzar"
+            "IQ Check": "Lógica, patrones y 15 segundos por pregunta"
           },
           startGame: "Empezar partida",
-          startHint: "Elige un tema para comenzar.",
+          startHint: "Elige un modo para comenzar.",
           selectedHint: "{category} seleccionado · cuando quieras.",
-          totalQuestions: "{count} preguntas de cultura general · {levels} niveles",
+          totalQuestions: "{count} preguntas de cultura general · {levels} niveles · {iqCount} retos IQ",
           instantAnswers: "Respuestas al instante",
           justForFun: "Solo por diversión",
           quizRound: "Ronda de preguntas",
@@ -1290,7 +1432,7 @@
           incorrectFeedback: "No se descontaron puntos; la respuesta correcta es {answer}.",
           penaltyFeedback: "−{points} puntos; la respuesta correcta es {answer}.",
           noPointsLost: "No hay puntos que perder",
-          chooseAnother: "Elegir otro tema",
+          chooseAnother: "Elegir otro modo",
           checkAnswer: "Comprobar respuesta",
           nextQuestion: "Siguiente pregunta",
           seeScore: "Ver tu puntuación",
@@ -1302,7 +1444,7 @@
           levelSelectTitle: "Elige un nivel",
           levelSelectDescription: "Acierta al menos 6 de 10 para desbloquear el siguiente nivel.",
           levelProgress: "{unlocked} de {total} niveles desbloqueados",
-          levelBack: "Volver a los temas",
+          levelBack: "Volver a los modos",
           levelNumber: "Nivel {level}",
           levelUnlocked: "Desbloqueado",
           levelLocked: "Bloqueado",
@@ -1347,8 +1489,22 @@
           resultDefaultTitle: "Una ronda estupenda.",
           resultDefaultMessage: "Seguiste tu curiosidad hasta el final.",
           category: "Categoría",
-          chooseSubject: "Elegir un tema",
+          chooseSubject: "Elegir un modo",
           playAgain: "Volver a jugar",
+          iqTimerLabel: "Tiempo restante",
+          iqTimerExpired: "Se acabó el tiempo: ya no hay bonificación por velocidad.",
+          secondsUnit: "s",
+          iqTimerNote: "Las respuestas correctas rápidas suman hasta 15 puntos extra.",
+          speedBonusFeedback: "+{bonus} puntos extra por velocidad.",
+          iqEstimateLabel: "Estimación analítica tipo IQ",
+          iqDisclaimer: "Solo por diversión; no es una prueba clínica de IQ.",
+          iqRatingStarter: "Sigue practicando",
+          iqRatingSolver: "Buen razonamiento",
+          iqRatingStandout: "Analista destacado",
+          badgeLogicMaster: "Maestro de la lógica",
+          badgeLogicMasterHint: "Responde correctamente al menos 8 preguntas",
+          badgeQuizSpeedster: "Rayo del quiz",
+          badgeQuizSpeedsterHint: "Menos de 6 segundos de media por respuesta",
           optionLetters: ["A", "B", "C", "D"]
         },
         fr: {
@@ -1359,25 +1515,23 @@
           brandHome: "Accueil de Quiz Orbit",
           welcomeEyebrow: "Un quiz sous un nouvel angle",
           welcomeTitle: "Explorez un peu <span>plus.</span>",
-          welcomeDescription: "Trois thèmes passionnants. Dix bonnes questions. Prenez un instant et découvrez jusqu’où vos connaissances vous mènent.",
+          welcomeDescription: "Deux façons d’explorer : découvrez le monde ou résolvez des énigmes contre la montre.",
           orbitLabel: "Explorez à votre rythme",
-          categoryHeading: "Choisissez un thème",
-          categoryHeadingHint: "Choisissez une catégorie · sans chronomètre",
-          categoryGroup: "Choisissez une catégorie de quiz",
+          categoryHeading: "Choisissez un mode",
+          categoryHeadingHint: "Choisissez un mode · IQ est chronométré",
+          categoryGroup: "Choisissez un mode de jeu",
           categoryLabels: {
             "General Knowledge": "Culture générale",
-            Science: "Sciences",
-            Technology: "Technologie"
+            "IQ Check": "Défi logique"
           },
           categoryDescriptions: {
             "General Knowledge": "Un peu de tout",
-            Science: "Le monde expliqué avec clarté",
-            Technology: "Des idées pour aller plus loin"
+            "IQ Check": "Logique, motifs et 15 secondes par question"
           },
           startGame: "Lancer la partie",
-          startHint: "Choisissez un thème pour commencer.",
+          startHint: "Choisissez un mode pour commencer.",
           selectedHint: "{category} sélectionné · à vous de jouer.",
-          totalQuestions: "{count} questions de culture générale · {levels} niveaux",
+          totalQuestions: "{count} questions de culture générale · {levels} niveaux · {iqCount} défis IQ",
           instantAnswers: "Réponses immédiates",
           justForFun: "Juste pour le plaisir",
           quizRound: "Manche de quiz",
@@ -1392,7 +1546,7 @@
           incorrectFeedback: "Aucun point retiré ; la bonne réponse est {answer}.",
           penaltyFeedback: "−{points} points ; la bonne réponse est {answer}.",
           noPointsLost: "Aucun point à retirer",
-          chooseAnother: "Choisir un autre thème",
+          chooseAnother: "Choisir un autre mode",
           checkAnswer: "Vérifier la réponse",
           nextQuestion: "Question suivante",
           seeScore: "Voir votre score",
@@ -1404,7 +1558,7 @@
           levelSelectTitle: "Choisissez un niveau",
           levelSelectDescription: "Répondez correctement à au moins 6 questions sur 10 pour débloquer le niveau suivant.",
           levelProgress: "{unlocked}/{total} niveaux débloqués",
-          levelBack: "Retour aux thèmes",
+          levelBack: "Retour aux modes",
           levelNumber: "Niveau {level}",
           levelUnlocked: "Débloqué",
           levelLocked: "Verrouillé",
@@ -1449,8 +1603,22 @@
           resultDefaultTitle: "Une belle petite manche.",
           resultDefaultMessage: "Vous avez suivi votre curiosité jusqu’au bout.",
           category: "Catégorie",
-          chooseSubject: "Choisir un thème",
+          chooseSubject: "Choisir un mode",
           playAgain: "Rejouer",
+          iqTimerLabel: "Temps restant",
+          iqTimerExpired: "Temps écoulé : plus de bonus de vitesse.",
+          secondsUnit: "s",
+          iqTimerNote: "Les bonnes réponses rapides rapportent jusqu’à 15 points bonus.",
+          speedBonusFeedback: "+{bonus} points bonus de vitesse.",
+          iqEstimateLabel: "Estimation analytique de type QI",
+          iqDisclaimer: "Pour s’amuser seulement ; ce n’est pas un test de QI clinique.",
+          iqRatingStarter: "Continuez à vous entraîner",
+          iqRatingSolver: "Bon raisonnement",
+          iqRatingStandout: "Analyste remarquable",
+          badgeLogicMaster: "Maître de la logique",
+          badgeLogicMasterHint: "Répondez juste à au moins 8 questions",
+          badgeQuizSpeedster: "As du quiz",
+          badgeQuizSpeedsterHint: "Moins de 6 secondes en moyenne par réponse",
           optionLetters: ["A", "B", "C", "D"]
         }
       };
@@ -1501,10 +1669,28 @@
           { question: { en: "What does CPU stand for?", bn: "CPU-এর পূর্ণরূপ কী?", hi: "CPU का पूरा नाम क्या है?", es: "¿Qué significan las siglas CPU?", fr: "Que signifie le sigle CPU ?" }, options: { en: ["Central Processing Unit", "Computer Power Utility", "Core Program Unit", "Central Peripheral User"], bn: ["কেন্দ্রীয় প্রক্রিয়াকরণ একক", "কম্পিউটার শক্তি উপযোগিতা", "মূল প্রোগ্রাম একক", "কেন্দ্রীয় পেরিফেরাল ব্যবহারকারী"], hi: ["केंद्रीय प्रसंस्करण इकाई", "कंप्यूटर पावर उपयोगिता", "कोर प्रोग्राम इकाई", "केंद्रीय परिधीय उपयोगकर्ता"], es: ["Unidad central de procesamiento", "Utilidad de potencia informática", "Unidad de programa central", "Usuario periférico central"], fr: ["Unité centrale de traitement", "Utilitaire de puissance informatique", "Unité de programme centrale", "Utilisateur périphérique central"] }, answer: 0 },
           { question: { en: "What does HTML stand for?", bn: "HTML-এর পূর্ণরূপ কী?", hi: "HTML का पूरा नाम क्या है?", es: "¿Qué significan las siglas HTML?", fr: "Que signifie le sigle HTML ?" }, options: { en: ["HyperText Markup Language", "High Transfer Machine Logic", "Home Tool Markup Link", "Hyperlink Text Management Layer"], bn: ["হাইপারটেক্সট মার্কআপ ল্যাঙ্গুয়েজ", "হাই ট্রান্সফার মেশিন লজিক", "হোম টুল মার্কআপ লিংক", "হাইপারলিংক টেক্সট ম্যানেজমেন্ট লেয়ার"], hi: ["हाइपरटेक्स्ट मार्कअप भाषा", "हाई ट्रांसफर मशीन लॉजिक", "होम टूल मार्कअप लिंक", "हाइपरलिंक टेक्स्ट मैनेजमेंट लेयर"], es: ["Lenguaje de marcado de hipertexto", "Lógica de máquina de alta transferencia", "Enlace de marcado de herramientas", "Capa de gestión de texto de hiperenlaces"], fr: ["Langage de balisage hypertexte", "Logique de machine à haut transfert", "Lien de balisage d’outils", "Couche de gestion de texte hyperlien"] }, answer: 0 },
           { question: { en: "Which digits are used in binary?", bn: "বাইনারি সংখ্যায় কোন অঙ্ক দুটি ব্যবহৃত হয়?", hi: "बाइनरी में कौन-से अंक इस्तेमाल होते हैं?", es: "¿Qué dígitos se usan en el sistema binario?", fr: "Quels chiffres sont utilisés en binaire ?" }, options: { en: ["1 and 2", "0 and 1", "2 and 3", "0 and 9"], bn: ["১ এবং ২", "০ এবং ১", "২ এবং ৩", "০ এবং ৯"], hi: ["१ और २", "० और १", "२ और ३", "० और ९"], es: ["1 y 2", "0 y 1", "2 y 3", "0 y 9"], fr: ["1 et 2", "0 et 1", "2 et 3", "0 et 9"] }, answer: 1 }
+        ],
+        // Expand this separate translated reasoning pool; each run samples 10 unique items.
+        "IQ Check": [
+          { question: { en: "What number comes next: 2, 4, 8, 16, ...?", bn: "পরের সংখ্যাটি কত: ২, ৪, ৮, ১৬, ...?", hi: "अगली संख्या क्या होगी: 2, 4, 8, 16, ...?", es: "¿Qué número sigue: 2, 4, 8, 16, ...?", fr: "Quel nombre vient ensuite : 2, 4, 8, 16, ... ?" }, options: { en: ["24", "30", "32", "34"], bn: ["২৪", "৩০", "৩২", "৩৪"], hi: ["24", "30", "32", "34"], es: ["24", "30", "32", "34"], fr: ["24", "30", "32", "34"] }, answer: 2 },
+          { question: { en: "Which number completes the square pattern: 1, 4, 9, 16, ...?", bn: "বর্গসংখ্যার ধারায় পরেরটি কত: ১, ৪, ৯, ১৬, ...?", hi: "वर्ग संख्याओं की अगली संख्या क्या है: 1, 4, 9, 16, ...?", es: "¿Qué número completa la serie de cuadrados: 1, 4, 9, 16, ...?", fr: "Quel nombre complète la suite des carrés : 1, 4, 9, 16, ... ?" }, options: { en: ["20", "24", "25", "36"], bn: ["২০", "২৪", "২৫", "৩৬"], hi: ["20", "24", "25", "36"], es: ["20", "24", "25", "36"], fr: ["20", "24", "25", "36"] }, answer: 2 },
+          { question: { en: "What letter comes next: A, C, F, J, O, ...?", bn: "পরের বর্ণটি কী: A, C, F, J, O, ...?", hi: "अगला अक्षर क्या होगा: A, C, F, J, O, ...?", es: "¿Qué letra sigue: A, C, F, J, O, ...?", fr: "Quelle lettre vient ensuite : A, C, F, J, O, ... ?" }, options: { en: ["T", "U", "V", "W"], bn: ["T", "U", "V", "W"], hi: ["T", "U", "V", "W"], es: ["T", "U", "V", "W"], fr: ["T", "U", "V", "W"] }, answer: 1 },
+          { question: { en: "Which number does not belong with the prime numbers: 2, 3, 5, 9?", bn: "মৌলিক সংখ্যাগুলোর মধ্যে কোনটি মানায় না: ২, ৩, ৫, ৯?", hi: "अभाज्य संख्याओं में कौन-सी संख्या अलग है: 2, 3, 5, 9?", es: "¿Qué número no pertenece al grupo de primos: 2, 3, 5, 9?", fr: "Quel nombre ne fait pas partie des nombres premiers : 2, 3, 5, 9 ?" }, options: { en: ["2", "3", "5", "9"], bn: ["২", "৩", "৫", "৯"], hi: ["2", "3", "5", "9"], es: ["2", "3", "5", "9"], fr: ["2", "3", "5", "9"] }, answer: 3 },
+          { question: { en: "Five machines make five toys in five minutes. How long do 100 machines need to make 100 toys?", bn: "৫টি মেশিন ৫ মিনিটে ৫টি খেলনা বানায়। ১০০টি খেলনা বানাতে ১০০টি মেশিনের কত সময় লাগবে?", hi: "5 मशीनें 5 मिनट में 5 खिलौने बनाती हैं। 100 खिलौने बनाने में 100 मशीनों को कितना समय लगेगा?", es: "Cinco máquinas fabrican cinco juguetes en cinco minutos. ¿Cuánto tardan 100 máquinas en fabricar 100 juguetes?", fr: "Cinq machines fabriquent cinq jouets en cinq minutes. Combien de temps faut-il à 100 machines pour en fabriquer 100 ?" }, options: { en: ["5 minutes", "20 minutes", "100 minutes", "500 minutes"], bn: ["৫ মিনিট", "২০ মিনিট", "১০০ মিনিট", "৫০০ মিনিট"], hi: ["5 मिनट", "20 मिनट", "100 मिनट", "500 मिनट"], es: ["5 minutos", "20 minutos", "100 minutos", "500 minutos"], fr: ["5 minutes", "20 minutes", "100 minutes", "500 minutes"] }, answer: 0 },
+          { question: { en: "All Nors are Veks. All Veks are Lums. What must all Nors be?", bn: "সব Nors হলো Veks, আর সব Veks হলো Lums। সব Nors কী হবে?", hi: "सभी Nors, Veks हैं। सभी Veks, Lums हैं। सभी Nors क्या होंगे?", es: "Todos los Nors son Veks. Todos los Veks son Lums. ¿Qué son necesariamente todos los Nors?", fr: "Tous les Nors sont des Veks. Tous les Veks sont des Lums. Que sont forcément tous les Nors ?" }, options: { en: ["Lums", "Only Veks", "Neither", "Cannot be known"], bn: ["Lums", "শুধু Veks", "কোনোটিই নয়", "জানা যায় না"], hi: ["Lums", "केवल Veks", "कोई नहीं", "पता नहीं चल सकता"], es: ["Lums", "Solo Veks", "Ninguno", "No se puede saber"], fr: ["Lums", "Seulement des Veks", "Aucun des deux", "Impossible à savoir"] }, answer: 0 },
+          { question: { en: "What number completes the pattern: 1, 1, 2, 3, 5, 8, ...?", bn: "ধারাটির পরের সংখ্যাটি কত: ১, ১, ২, ৩, ৫, ৮, ...?", hi: "इस क्रम की अगली संख्या क्या है: 1, 1, 2, 3, 5, 8, ...?", es: "¿Qué número completa la serie: 1, 1, 2, 3, 5, 8, ...?", fr: "Quel nombre complète la suite : 1, 1, 2, 3, 5, 8, ... ?" }, options: { en: ["11", "12", "13", "15"], bn: ["১১", "১২", "১৩", "১৫"], hi: ["11", "12", "13", "15"], es: ["11", "12", "13", "15"], fr: ["11", "12", "13", "15"] }, answer: 2 },
+          { question: { en: "What comes next: 4, 7, 13, 25, 49, ...?", bn: "পরের সংখ্যাটি কত: ৪, ৭, ১৩, ২৫, ৪৯, ...?", hi: "अगली संख्या क्या होगी: 4, 7, 13, 25, 49, ...?", es: "¿Qué número sigue: 4, 7, 13, 25, 49, ...?", fr: "Quel nombre vient ensuite : 4, 7, 13, 25, 49, ... ?" }, options: { en: ["96", "97", "98", "99"], bn: ["৯৬", "৯৭", "৯৮", "৯৯"], hi: ["96", "97", "98", "99"], es: ["96", "97", "98", "99"], fr: ["96", "97", "98", "99"] }, answer: 1 },
+          { question: { en: "A glove is worn on a hand. What is worn on a foot?", bn: "হাতে গ্লাভস পরা হয়। পায়ে কী পরা হয়?", hi: "हाथ में दस्ताना पहना जाता है। पैर में क्या पहना जाता है?", es: "Un guante se usa en la mano. ¿Qué se usa en el pie?", fr: "On porte un gant à la main. Que porte-t-on au pied ?" }, options: { en: ["Belt", "Sock", "Hat", "Scarf"], bn: ["বেল্ট", "মোজা", "টুপি", "মাফলার"], hi: ["बेल्ट", "मोज़ा", "टोपी", "दुपट्टा"], es: ["Cinturón", "Calcetín", "Sombrero", "Bufanda"], fr: ["Ceinture", "Chaussette", "Chapeau", "Écharpe"] }, answer: 1 },
+          { question: { en: "Ava is taller than Ben. Ben is taller than Chi. Who is the shortest?", bn: "Ava, Ben-এর চেয়ে লম্বা। Ben, Chi-এর চেয়ে লম্বা। সবচেয়ে খাটো কে?", hi: "Ava, Ben से लंबी है। Ben, Chi से लंबा है। सबसे छोटा कौन है?", es: "Ava es más alta que Ben. Ben es más alto que Chi. ¿Quién es la persona más baja?", fr: "Ava est plus grande que Ben. Ben est plus grand que Chi. Qui est le plus petit ?" }, options: { en: ["Ava", "Ben", "Chi", "Cannot tell"], bn: ["Ava", "Ben", "Chi", "বলা যায় না"], hi: ["Ava", "Ben", "Chi", "नहीं बता सकते"], es: ["Ava", "Ben", "Chi", "No se puede saber"], fr: ["Ava", "Ben", "Chi", "Impossible à savoir"] }, answer: 2 },
+          { question: { en: "What is the smaller angle between the clock hands at exactly 3:00?", bn: "ঠিক ৩টায় ঘড়ির দুই কাঁটার মধ্যবর্তী ছোট কোণ কত?", hi: "ठीक 3 बजे घड़ी की सुइयों के बीच छोटा कोण कितना होता है?", es: "¿Cuál es el ángulo menor entre las agujas del reloj a las 3:00 en punto?", fr: "Quel est le plus petit angle entre les aiguilles à 3 h exactement ?" }, options: { en: ["45°", "90°", "120°", "180°"], bn: ["৪৫°", "৯০°", "১২০°", "১৮০°"], hi: ["45°", "90°", "120°", "180°"], es: ["45°", "90°", "120°", "180°"], fr: ["45°", "90°", "120°", "180°"] }, answer: 1 },
+          { question: { en: "What shape completes the repeating pattern: triangle, circle, circle, triangle, circle, circle, ...?", bn: "পুনরাবৃত্ত ধারাটিতে পরের আকৃতিটি কী: ত্রিভুজ, বৃত্ত, বৃত্ত, ত্রিভুজ, বৃত্ত, বৃত্ত, ...?", hi: "दोहराते क्रम में अगली आकृति क्या है: त्रिभुज, वृत्त, वृत्त, त्रिभुज, वृत्त, वृत्त, ...?", es: "¿Qué figura completa el patrón: triángulo, círculo, círculo, triángulo, círculo, círculo, ...?", fr: "Quelle forme complète le motif : triangle, cercle, cercle, triangle, cercle, cercle, ... ?" }, options: { en: ["Triangle", "Circle", "Square", "Cannot tell"], bn: ["ত্রিভুজ", "বৃত্ত", "বর্গ", "বলা যায় না"], hi: ["त्रिभुज", "वृत्त", "वर्ग", "नहीं बता सकते"], es: ["Triángulo", "Círculo", "Cuadrado", "No se puede saber"], fr: ["Triangle", "Cercle", "Carré", "Impossible à savoir"] }, answer: 0 }
         ]
       };
 
       const QUESTIONS_PER_LEVEL = 10;
+      const IQ_QUESTIONS_PER_ROUND = 10;
+      const IQ_TIME_LIMIT_SECONDS = 15;
+      const IQ_SPEED_BONUS_MAX = 15;
       const LEVEL_PASSING_ACCURACY = 0.6;
       const generalKnowledgeQuestionCount = quizData["General Knowledge"].length;
       if (generalKnowledgeQuestionCount === 0 || generalKnowledgeQuestionCount % QUESTIONS_PER_LEVEL !== 0) {
@@ -1585,6 +1771,9 @@
       let lastPointsAwarded = 0;
       let answerTimes = [];
       let questionStartedAt = 0;
+      let questionDeadline = 0;
+      let questionTimerInterval = null;
+      let lastSpeedBonus = 0;
       let rewardCelebrationAt = 0;
       let answered = false;
       let lastSelected = null;
@@ -1592,6 +1781,7 @@
       let rewardMaterials = [];
       let audioContext = null;
       let environmentTarget = 0;
+      let cyberEnvironmentTarget = 0;
       const rewardTierPalettes = {
         gold: {
           label: "trophyGold",
@@ -1613,8 +1803,11 @@
       // Keep the visible UI mode and the Three.js transition target in sync.
       function setGameModeTheme(category) {
         const isCosmic = category === "General Knowledge";
+        const isCyber = category === "IQ Check";
         environmentTarget = isCosmic ? 1 : 0;
+        cyberEnvironmentTarget = isCyber ? 1 : 0;
         document.body.classList.toggle("theme-cosmic", isCosmic);
+        document.body.classList.toggle("theme-iq", isCyber);
       }
 
       // Three consecutive correct answers start a 2× combo; five raise it to 3×.
@@ -1622,11 +1815,12 @@
         return currentStreak >= 5 ? 3 : currentStreak >= 3 ? 2 : 1;
       }
 
-      function maximumPossiblePoints(questionCount) {
+      function maximumPossiblePoints(questionCount, category = currentCategory) {
         const firstAnswers = Math.min(questionCount, 2) * CORRECT_ANSWER_POINTS;
         const midStreakAnswers = Math.max(0, Math.min(questionCount, 4) - 2) * CORRECT_ANSWER_POINTS * 2;
         const longStreakAnswers = Math.max(0, questionCount - 4) * CORRECT_ANSWER_POINTS * 3;
-        return firstAnswers + midStreakAnswers + longStreakAnswers;
+        const speedBonusMaximum = category === "IQ Check" ? questionCount * IQ_SPEED_BONUS_MAX : 0;
+        return firstAnswers + midStreakAnswers + longStreakAnswers + speedBonusMaximum;
       }
 
       // Refresh the live HUD together so score, level, question position, and combo never drift.
@@ -1674,6 +1868,59 @@
         scorePopupsElement.append(popup);
         popup.addEventListener("animationend", () => popup.remove(), { once: true });
         window.setTimeout(() => popup.remove(), 1400);
+      }
+
+      function renderQuestionTimer() {
+        const timer = document.getElementById("iqTimer");
+        const enabled = currentCategory === "IQ Check";
+        timer.hidden = !enabled;
+        if (!enabled) return;
+        const secondsLeft = questionDeadline
+          ? Math.max(0, (questionDeadline - performance.now()) / 1000)
+          : IQ_TIME_LIMIT_SECONDS;
+        const roundedSeconds = Math.ceil(secondsLeft);
+        const value = document.getElementById("iqTimerValue");
+        const label = document.getElementById("iqTimerLabel");
+        const bar = document.getElementById("iqTimerBar");
+        value.textContent = `${formatNumber(roundedSeconds)} ${currentText.secondsUnit}`;
+        label.textContent = roundedSeconds === 0 ? currentText.iqTimerExpired : currentText.iqTimerLabel;
+        bar.setAttribute("aria-valuenow", String(Math.round(secondsLeft)));
+        bar.setAttribute("aria-valuetext", `${formatNumber(roundedSeconds)} ${currentText.secondsUnit}`);
+        bar.setAttribute("aria-label", currentText.iqTimerLabel);
+        timer.classList.toggle("urgent", roundedSeconds <= 5);
+      }
+
+      function clearQuestionTimer() {
+        if (questionTimerInterval !== null) {
+          window.clearInterval(questionTimerInterval);
+          questionTimerInterval = null;
+        }
+      }
+
+      function startQuestionTimer() {
+        clearQuestionTimer();
+        if (currentCategory !== "IQ Check") {
+          questionDeadline = 0;
+          renderQuestionTimer();
+          return;
+        }
+        questionDeadline = performance.now() + IQ_TIME_LIMIT_SECONDS * 1000;
+        renderQuestionTimer();
+        // After zero the player can still answer; only the optional speed bonus expires.
+        questionTimerInterval = window.setInterval(() => {
+          renderQuestionTimer();
+          if (performance.now() >= questionDeadline) clearQuestionTimer();
+        }, 200);
+      }
+
+      function stopQuestionTimer() {
+        clearQuestionTimer();
+        renderQuestionTimer();
+      }
+
+      function calculateIQSpeedBonus(elapsedSeconds) {
+        const remaining = Math.max(0, IQ_TIME_LIMIT_SECONDS - Math.min(IQ_TIME_LIMIT_SECONDS, elapsedSeconds));
+        return Math.round((remaining / IQ_TIME_LIMIT_SECONDS) * IQ_SPEED_BONUS_MAX);
       }
 
       function applyRewardTier(tier) {
@@ -1807,6 +2054,8 @@
         if (category === "General Knowledge") {
           indexes = indexes.slice(0, QUESTIONS_PER_LEVEL);
           indexes.forEach((index) => sessionUsedQuestionIndexes.add(index));
+        } else if (category === "IQ Check") {
+          indexes = indexes.slice(0, Math.min(IQ_QUESTIONS_PER_ROUND, indexes.length));
         }
         return indexes;
       }
@@ -1856,6 +2105,7 @@
       }
 
       function showView(name) {
+        if (name !== "game") stopQuestionTimer();
         Object.values(views).forEach((view) => view.classList.remove("active"));
         views[name].classList.add("active");
         if (rewardGroup) rewardGroup.visible = name === "results";
@@ -1869,6 +2119,8 @@
           showView("levels");
           return;
         }
+        stopQuestionTimer();
+        setGameModeTheme(category);
         currentCategory = category;
         currentLevel = category === "General Knowledge" ? level : 0;
         roundQuestionIndexes = selectRoundQuestionIndexes(category, currentLevel || 1);
@@ -1879,6 +2131,7 @@
         currentStreak = 0;
         bestStreak = 0;
         lastPointsAwarded = 0;
+        lastSpeedBonus = 0;
         answerTimes = [];
         rewardCelebrationAt = 0;
         levelJustUnlocked = false;
@@ -1901,7 +2154,12 @@
           answered = false;
           lastSelected = null;
         }
-        if (!preserveAnswer) questionStartedAt = performance.now();
+        if (!preserveAnswer) {
+          questionStartedAt = performance.now();
+          startQuestionTimer();
+        } else {
+          renderQuestionTimer();
+        }
         questionText.textContent = item.question;
         const currentNumber = formatNumber(currentQuestion + 1);
         const totalNumber = formatNumber(roundLength());
@@ -1949,8 +2207,11 @@
         if (lastSelected === correctAnswer) {
           feedback.className = "feedback good";
           feedback.textContent = currentText.correctFeedback
-            .replace("{points}", formatNumber(lastPointsAwarded))
+            .replace("{points}", formatNumber(lastPointsAwarded - lastSpeedBonus))
             .replace("{multiplier}", formatNumber(currentStreakMultiplier()));
+          if (lastSpeedBonus > 0) {
+            feedback.textContent += ` ${currentText.speedBonusFeedback.replace("{bonus}", formatNumber(lastSpeedBonus))}`;
+          }
         } else {
           feedback.className = "feedback bad";
           feedback.textContent = lastPointsAwarded < 0
@@ -1976,12 +2237,17 @@
         const correctAnswer = roundQuestions()[currentQuestion].answer;
         const isCorrect = index === correctAnswer;
         answered = true;
-        answerTimes.push(Math.max(0, (performance.now() - questionStartedAt) / 1000));
+        const elapsedSeconds = Math.max(0, (performance.now() - questionStartedAt) / 1000);
+        answerTimes.push(elapsedSeconds);
+        stopQuestionTimer();
+        lastSpeedBonus = 0;
         if (isCorrect) {
           score += 1;
           currentStreak += 1;
           bestStreak = Math.max(bestStreak, currentStreak);
-          lastPointsAwarded = CORRECT_ANSWER_POINTS * currentStreakMultiplier();
+          const streakPoints = CORRECT_ANSWER_POINTS * currentStreakMultiplier();
+          lastSpeedBonus = currentCategory === "IQ Check" ? calculateIQSpeedBonus(elapsedSeconds) : 0;
+          lastPointsAwarded = streakPoints + lastSpeedBonus;
           points += lastPointsAwarded;
         } else {
           currentStreak = 0;
@@ -2005,18 +2271,19 @@
       }
 
       function renderAchievementBadges(accuracy, averageAnswerSeconds) {
+        const isIQRun = currentCategory === "IQ Check";
         const badges = [
           {
-            unlocked: accuracy === 100,
+            unlocked: isIQRun ? accuracy >= 80 : accuracy === 100,
             icon: "✦",
-            title: currentText.badgeQuizMaster,
-            hint: currentText.badgeQuizMasterHint
+            title: isIQRun ? currentText.badgeLogicMaster : currentText.badgeQuizMaster,
+            hint: isIQRun ? currentText.badgeLogicMasterHint : currentText.badgeQuizMasterHint
           },
           {
             unlocked: accuracy >= 60 && averageAnswerSeconds < 6,
             icon: "⚡",
-            title: currentText.badgeSpeedDemon,
-            hint: currentText.badgeSpeedDemonHint
+            title: isIQRun ? currentText.badgeQuizSpeedster : currentText.badgeSpeedDemon,
+            hint: isIQRun ? currentText.badgeQuizSpeedsterHint : currentText.badgeSpeedDemonHint
           },
           {
             unlocked: accuracy >= 60,
@@ -2075,6 +2342,20 @@
         document.getElementById("finalBestStreak").textContent = formatNumber(bestStreak);
         document.getElementById("finalTotal").textContent = formatNumber(total);
         document.getElementById("resultCategory").textContent = `${categoryName(currentCategory)} · ${currentText.categoryComplete}`;
+        const isIQRun = currentCategory === "IQ Check";
+        const iqSummary = document.getElementById("iqSummary");
+        iqSummary.hidden = !isIQRun;
+        if (isIQRun) {
+          // A lightweight game-only estimate blends accuracy with average response speed.
+          const speedRatio = Math.max(0, 1 - Math.min(IQ_TIME_LIMIT_SECONDS, averageAnswerSeconds) / IQ_TIME_LIMIT_SECONDS);
+          const estimatedIQ = Math.round(70 + accuracy * .55 + speedRatio * 20);
+          document.getElementById("iqEstimate").textContent = formatNumber(estimatedIQ);
+          document.getElementById("iqRating").textContent = estimatedIQ >= 120
+            ? currentText.iqRatingStandout
+            : estimatedIQ >= 100
+              ? currentText.iqRatingSolver
+              : currentText.iqRatingStarter;
+        }
         const isLevelRun = currentCategory === "General Knowledge";
         const resultLevel = document.getElementById("resultLevel");
         resultLevel.hidden = !isLevelRun;
@@ -2114,6 +2395,7 @@
       }
 
       function finishQuiz() {
+        stopQuestionTimer();
         levelJustUnlocked = false;
         levelFailed = false;
         if (currentCategory === "General Knowledge" &&
@@ -2176,6 +2458,10 @@
           scoreLabel: "yourScore",
           scoreCaption: "pointsSoFar",
           liveScoreLabel: "liveScore",
+          iqTimerLabel: "iqTimerLabel",
+          iqTimerNote: "iqTimerNote",
+          iqSummaryTitle: "iqEstimateLabel",
+          iqDisclaimer: "iqDisclaimer",
           correctLabel: "correct",
           finalIncorrectLabel: "incorrectAnswers",
           streakLabel: "streak",
@@ -2195,6 +2481,7 @@
             ? currentText[key]
               .replace("{count}", formatNumber(quizData["General Knowledge"].length))
               .replace("{levels}", formatNumber(generalKnowledgeLevels.length))
+              .replace("{iqCount}", formatNumber(quizData["IQ Check"].length))
             : currentText[key];
           document.getElementById(id).textContent = value;
         });
@@ -2203,6 +2490,7 @@
         document.getElementById("categoryGrid").setAttribute("aria-label", currentText.categoryGroup);
         document.getElementById("gameView").setAttribute("aria-label", currentText.quizRound);
         document.getElementById("progressTrack").setAttribute("aria-label", currentText.progress);
+        document.getElementById("iqTimer").setAttribute("aria-label", currentText.iqTimerLabel);
         document.getElementById("levelGrid").setAttribute("aria-label", currentText.levelSelectTitle);
         optionsElement.setAttribute("aria-label", currentText.answerOptions);
         const replayLabel = currentCategory === "General Knowledge" ? currentText.retryLevel : currentText.playAgain;
@@ -2263,7 +2551,10 @@
         currentQuestion += 1;
         renderQuestion();
       });
-      document.getElementById("quitButton").addEventListener("click", () => showView("welcome"));
+      document.getElementById("quitButton").addEventListener("click", () => {
+        stopQuestionTimer();
+        showView("welcome");
+      });
       document.getElementById("homeButton").addEventListener("click", () => showView("welcome"));
       document.getElementById("levelBackButton").addEventListener("click", () => showView("welcome"));
       document.getElementById("nextLevelButton").addEventListener("click", () => {
@@ -2274,6 +2565,7 @@
       document.getElementById("playAgainButton").addEventListener("click", () => startQuiz(currentCategory, currentLevel || 1));
       document.getElementById("brandHome").addEventListener("click", (event) => {
         event.preventDefault();
+        stopQuestionTimer();
         showView("welcome");
       });
       document.addEventListener("keydown", (event) => {
@@ -2312,6 +2604,7 @@
         scene.add(lobbyEnvironment);
         const lobbyMaterials = [];
         const cosmicMaterials = [];
+        const cyberMaterials = [];
         const registerLobbyMaterial = (material) => {
           material.userData.themeBaseOpacity = material.opacity;
           material.transparent = true;
@@ -2324,6 +2617,14 @@
           material.opacity = 0;
           material.depthWrite = false;
           cosmicMaterials.push(material);
+          return material;
+        };
+        const registerCyberMaterial = (material) => {
+          material.userData.themeBaseOpacity = material.opacity;
+          material.transparent = true;
+          material.opacity = 0;
+          material.depthWrite = false;
+          cyberMaterials.push(material);
           return material;
         };
         const group = new THREE.Group();
@@ -2520,34 +2821,118 @@
         };
         setCosmicLayout();
 
+        // IQ Check uses a separate procedural neon-grid scene; its meshes
+        // fade in as the lobby fades out, just like the cosmic quiz world.
+        const cyberEnvironment = new THREE.Group();
+        scene.add(cyberEnvironment);
+        const cyberObjects = [];
+        const floorPlane = new THREE.Mesh(
+          new THREE.PlaneGeometry(32, 24),
+          registerCyberMaterial(new THREE.MeshBasicMaterial({ color: 0x07152d, transparent: true, opacity: .76, side: THREE.DoubleSide }))
+        );
+        floorPlane.rotation.x = -Math.PI / 2;
+        floorPlane.position.set(0, -2.65, -2.5);
+        cyberEnvironment.add(floorPlane);
+        const floorGrid = new THREE.GridHelper(30, 30, 0x00f5d4, 0x566bff);
+        floorGrid.position.set(0, -2.55, -2.5);
+        floorGrid.material = floorGrid.material.map(registerCyberMaterial);
+        cyberEnvironment.add(floorGrid);
+        const backGrid = new THREE.GridHelper(20, 20, 0xff45c8, 0x00c9ef);
+        backGrid.rotation.x = Math.PI / 2;
+        backGrid.position.set(0, 0, -8);
+        backGrid.material = backGrid.material.map(registerCyberMaterial);
+        cyberEnvironment.add(backGrid);
+        for (let index = 0; index < 10; index += 1) {
+          const sideIndex = index < 5 ? index : index - 5;
+          const height = 1.25 + (index * 7 % 5) * .48;
+          const material = registerCyberMaterial(new THREE.MeshStandardMaterial({
+            color: index % 2 ? 0x173f63 : 0x37234f,
+            emissive: index % 2 ? 0x00bba8 : 0xc52b9c,
+            emissiveIntensity: .58,
+            roughness: .38,
+            metalness: .32,
+            transparent: true,
+            opacity: .7
+          }));
+          const tower = new THREE.Mesh(new THREE.BoxGeometry(.38, height, .34), material);
+          tower.position.set(index < 5 ? -5.2 + sideIndex * .55 : 3 + sideIndex * .55, -2.35 + height / 2, -3.5 - (index % 3) * .72);
+          cyberEnvironment.add(tower);
+        }
+        const cyberShapeSpecs = [
+          [-4.5, 1.65, -3.2, 0x00f5d4], [4.4, 1.25, -4.1, 0xff45c8],
+          [-3.6, -.85, -2.6, 0x6481ff], [3.8, -.95, -3.4, 0x00d9f5],
+          [-1.6, 2.3, -6.4, 0xff45c8], [1.8, 2.1, -6.1, 0x00f5d4]
+        ];
+        cyberShapeSpecs.forEach(([x, y, z, color], index) => {
+          const material = registerCyberMaterial(new THREE.MeshStandardMaterial({
+            color,
+            emissive: color,
+            emissiveIntensity: .76,
+            roughness: .27,
+            metalness: .28,
+            transparent: true,
+            opacity: .88,
+            wireframe: index % 2 === 1
+          }));
+          const geometry = index % 3 === 0
+            ? new THREE.OctahedronGeometry(.34, 0)
+            : index % 3 === 1
+              ? new THREE.TorusGeometry(.28, .045, 7, 24)
+              : new THREE.IcosahedronGeometry(.3, 0);
+          const shape = new THREE.Mesh(geometry, material);
+          shape.position.set(x, y, z);
+          shape.userData = { baseY: y, phase: index * .9 };
+          cyberEnvironment.add(shape);
+          cyberObjects.push(shape);
+        });
+        const cyberRingMaterial = registerCyberMaterial(new THREE.MeshBasicMaterial({
+          color: 0x00f5d4,
+          transparent: true,
+          opacity: .5,
+          side: THREE.DoubleSide
+        }));
+        const cyberRing = new THREE.Mesh(new THREE.TorusGeometry(1.32, .022, 8, 72), cyberRingMaterial);
+        cyberRing.position.set(0, .1, -4.2);
+        cyberRing.rotation.set(.42, .18, .2);
+        cyberEnvironment.add(cyberRing);
+
         const clock = new THREE.Clock();
         let cosmicBlend = 0;
+        let cyberBlend = 0;
         function animate() {
           requestAnimationFrame(animate);
           const delta = Math.min(clock.getDelta(), .05);
           const elapsed = clock.elapsedTime;
           cosmicBlend = THREE.MathUtils.damp(cosmicBlend, environmentTarget, 1.65, delta);
+          cyberBlend = THREE.MathUtils.damp(cyberBlend, cyberEnvironmentTarget, 1.65, delta);
+          const lobbyBlend = Math.max(cosmicBlend, cyberBlend);
           lobbyMaterials.forEach((material) => {
-            material.opacity = material.userData.themeBaseOpacity * (1 - cosmicBlend);
+            material.opacity = material.userData.themeBaseOpacity * (1 - lobbyBlend);
           });
           cosmicMaterials.forEach((material) => {
             material.opacity = material.userData.themeBaseOpacity * cosmicBlend;
           });
+          cyberMaterials.forEach((material) => {
+            material.opacity = material.userData.themeBaseOpacity * cyberBlend;
+          });
           cosmicStarMaterial.opacity = cosmicStarMaterial.userData.themeBaseOpacity * cosmicBlend * (.78 + Math.sin(elapsed * 2.1) * .18);
           nebulaMaterial.opacity = nebulaMaterial.userData.themeBaseOpacity * cosmicBlend * (.8 + Math.sin(elapsed * .7) * .16);
           const showResultsConfetti = views.results.classList.contains("active");
-          const confettiOpacity = showResultsConfetti ? 1 : 1 - cosmicBlend;
+          const confettiOpacity = showResultsConfetti ? 1 : 1 - lobbyBlend;
           confettiMaterials.forEach((material) => { material.opacity = confettiOpacity; });
           const burstAge = showResultsConfetti ? Math.max(0, (performance.now() - rewardCelebrationAt) / 1000) : 2;
           const burst = showResultsConfetti && burstAge < 1.7
             ? Math.sin((burstAge / 1.7) * Math.PI)
             : 0;
           cosmicEnvironment.visible = cosmicBlend > .008;
-          lobbyEnvironment.scale.setScalar(1 - cosmicBlend * .2);
-          lobbyEnvironment.position.x = -.35 * cosmicBlend;
+          cyberEnvironment.visible = cyberBlend > .008;
+          lobbyEnvironment.scale.setScalar(1 - lobbyBlend * .2);
+          lobbyEnvironment.position.x = -.35 * cosmicBlend + .35 * cyberBlend;
           cosmicEnvironment.scale.setScalar(.84 + cosmicBlend * .16);
           cosmicEnvironment.rotation.y = Math.sin(elapsed * .11) * .035;
-          camera.position.set(.45 * cosmicBlend, .16 * cosmicBlend, 12 - .35 * cosmicBlend);
+          cyberEnvironment.scale.setScalar(.84 + cyberBlend * .16);
+          cyberEnvironment.rotation.y = Math.sin(elapsed * .14) * .045;
+          camera.position.set(.45 * cosmicBlend - .35 * cyberBlend, .16 * cosmicBlend + .1 * cyberBlend, 12 - .35 * lobbyBlend);
           camera.lookAt(0, 0, 0);
           group.rotation.y = elapsed * .14;
           group.rotation.x = Math.sin(elapsed * .22) * .055;
@@ -2576,6 +2961,12 @@
           amberPlanet.rotation.y = -elapsed * .08;
           icePlanet.rotation.y = elapsed * .1;
           mainPlanetRing.rotation.z = Math.sin(elapsed * .1) * .06;
+          cyberRing.rotation.z = elapsed * .12;
+          cyberObjects.forEach((shape) => {
+            shape.rotation.x += .003;
+            shape.rotation.y += .004;
+            shape.position.y = shape.userData.baseY + Math.sin(elapsed * .8 + shape.userData.phase) * .13;
+          });
           orbitDots.forEach((dot) => {
             const { radius, angle, tilt } = dot.userData;
             const phase = angle + elapsed * .26;
