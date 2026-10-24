@@ -1141,9 +1141,42 @@
       .level-intro p:last-child { max-width: 540px; margin: 0 auto; color: #f0edff; font-size: 14px; line-height: 1.6; }
       .level-toolbar { display: flex; justify-content: space-between; align-items: center; gap: 14px; margin: 22px 0 13px; }
       .level-count { padding: 8px 12px; color: #453188; border: 1px solid #dbd2ff; border-radius: 99px; background: #fff; font-size: 11px; font-weight: 800; }
+      .level-category-tabs {
+        display: flex;
+        gap: 9px;
+        margin: 0 0 14px;
+        padding: 3px 2px 9px;
+        overflow-x: auto;
+        overscroll-behavior-x: contain;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: thin;
+        touch-action: pan-x;
+      }
+      .level-category-tab {
+        flex: 0 0 auto;
+        min-width: 48px;
+        min-height: 48px;
+        padding: 0 15px;
+        color: #e8e3ff;
+        border: 1px solid rgba(255,255,255,.25);
+        border-radius: 999px;
+        background: rgba(18,12,57,.34);
+        font: inherit;
+        font-size: 12px;
+        font-weight: 760;
+        cursor: pointer;
+        transition: transform .18s ease, background .18s ease, border-color .18s ease, box-shadow .18s ease;
+      }
+      .level-category-tab:hover { transform: translateY(-2px); border-color: rgba(255,255,255,.55); }
+      .level-category-tab[aria-selected="true"] {
+        color: #30205f;
+        border-color: #ffe36a;
+        background: linear-gradient(120deg, #fff08c, #ffbd55);
+        box-shadow: 0 5px 18px rgba(255,205,87,.24);
+      }
       .level-grid {
         display: grid;
-        grid-template-columns: repeat(4, minmax(0, 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(min(100%, 158px), 1fr));
         gap: 11px;
         max-height: min(65vh, 700px);
         overflow-y: auto;
@@ -1179,6 +1212,19 @@
       .level-card-number { color: inherit; font-size: 24px; line-height: 1; font-weight: 900; letter-spacing: -.04em; }
       .level-card-name { color: inherit; font-size: 15px; font-weight: 850; }
       .level-card-detail { color: inherit; font-size: 11px; font-weight: 650; opacity: .86; }
+      .level-card-rewardline {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 6px;
+        width: 100%;
+        color: inherit;
+        font-size: 10px;
+        font-weight: 800;
+        font-variant-numeric: tabular-nums;
+      }
+      .level-card-stars { color: #fff0a3; letter-spacing: .06em; white-space: nowrap; }
+      .level-card-coins { color: #fff5bb; white-space: nowrap; }
       .level-card-status { display: inline-flex; align-items: center; gap: 6px; margin-top: auto; align-self: flex-end; padding: 5px 9px; border-radius: 99px; background: rgba(21,15,61,.24); font-size: 10px; font-weight: 850; }
       .level-card-indicator { display: grid; width: 20px; height: 20px; place-items: center; border-radius: 50%; background: rgba(255,255,255,.2); font-size: 13px; line-height: 1; }
       .level-pagination { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 12px; margin-top: 18px; padding: 12px; border: 1px solid rgba(255,255,255,.15); border-radius: 16px; background: rgba(18,12,57,.28); }
@@ -1203,12 +1249,13 @@
         .collection-panel { margin-top: 20px; padding: 15px; }
         .collection-stat { padding: 9px; }
         .game-sidebar .side-card:first-child .streak-hint { grid-column: 1 / -1; }
-        .level-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+        .level-grid { grid-template-columns: repeat(auto-fit, minmax(min(100%, 142px), 1fr)); gap: 10px; max-height: min(62svh, 620px); }
+        .level-category-tabs { margin-right: -2px; }
         .level-card { min-height: 132px; padding: 14px; }
         .result-actions > button { flex: 1 1 auto; }
       }
       @media (max-width: 390px) {
-        .level-grid { grid-template-columns: 1fr; }
+        .level-grid { grid-template-columns: repeat(auto-fit, minmax(min(100%, 126px), 1fr)); }
         .level-toolbar { align-items: flex-start; flex-direction: column; }
       }
       /* Focused quiz HUD: cinematic glass panels, with the existing game controls
@@ -1245,6 +1292,9 @@
       }
       body[data-view="game"] .app { padding-top: 15px; }
       body[data-view="game"] .topbar {
+        position: sticky;
+        top: max(6px, env(safe-area-inset-top));
+        z-index: 80;
         max-width: 1060px;
         min-height: 54px;
         padding: 8px 12px;
@@ -1282,7 +1332,7 @@
       }
       .game-layout > #quizCard { grid-area: quiz; }
       .game-layout > .game-sidebar { grid-area: hud; }
-      .game-sidebar { position: static; display: block; }
+      .game-sidebar { position: sticky; top: calc(env(safe-area-inset-top) + 68px); z-index: 70; align-self: start; display: block; }
       .game-sidebar .side-card:first-child.score-hud-card {
         display: block;
         padding: 15px 19px;
@@ -1299,6 +1349,14 @@
       .score-level-chip { max-width: min(78%, 560px); padding: 7px 11px; color: #f3efff; border-color: rgba(194, 186, 255, .24); background: rgba(9, 11, 31, .58); font-size: 10px; }
       .score-live-tag { font-size: 9px; }
       .score-hud-bottom { display: grid; grid-template-columns: minmax(160px, .7fr) minmax(0, 1.7fr); align-items: center; gap: 18px; }
+      body[data-view="game"] .score-hud-card .iq-timer {
+        margin: 12px 0 0;
+        padding: 9px 12px 8px;
+        border-color: rgba(135, 137, 255, .25);
+        border-radius: 13px;
+        background: rgba(9, 12, 34, .62);
+      }
+      body[data-view="game"] .score-hud-card .iq-timer p { margin-top: 5px; font-size: 10px; }
       .score-total { display: grid; grid-template-columns: auto 1fr; align-items: end; column-gap: 10px; }
       .score-total .side-label { grid-column: 1 / -1; color: #c5c9e7; font-size: 9px; }
       .score-total .score-value { margin: 5px 0 0; min-width: 70px; padding: 7px 10px 8px; font-size: 32px; }
@@ -1503,25 +1561,27 @@
       .iq-timer.urgent .iq-timer-heading strong { color: #ff9aaa; }
       body.theme-cosmic .iq-timer.urgent .iq-timer-heading strong { color: #ff9aaa; }
       @media (max-width: 650px) {
+        body[data-view="game"] .game-sidebar { top: calc(env(safe-area-inset-top) + 60px); }
         body[data-view="game"] .app { padding: 12px 12px 22px; }
         body[data-view="game"] .topbar { min-height: 48px; padding: 6px 8px; border-radius: 14px; }
         body[data-view="game"] .brand { gap: 7px; }
         body[data-view="game"] .brand-mark { width: 30px; height: 30px; border-radius: 10px; }
-        body[data-view="game"] .brand-name { font-size: 13px; }
+        body[data-view="game"] .brand-name { font-size: 12px; white-space: nowrap; }
         body[data-view="game"] .topbar-actions { gap: 6px; }
         body[data-view="game"] .language-select { min-width: 86px; width: 92px; min-height: 33px; padding-left: 8px; font-size: 10px; }
-        body[data-view="game"] .sound-toggle { min-height: 33px; padding: 0 8px; font-size: 10px; }
+        body[data-view="game"] .sound-toggle { width: 48px; min-width: 48px; min-height: 48px; padding: 0; gap: 0; font-size: 0; }
+        body[data-view="game"] .sound-toggle span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
         .game-layout { margin-top: 12px; gap: 10px; }
         .game-sidebar .side-card:first-child.score-hud-card { padding: 11px 12px; border-radius: 15px; }
         .score-hud-top { margin-bottom: 8px; }
-        .score-hud-bottom { grid-template-columns: 1fr; gap: 8px; }
-        .score-total { display: flex; align-items: center; gap: 8px; }
-        .score-total .side-label { flex: 0 0 auto; }
-        .score-total .score-value { min-width: 55px; margin: 0; padding: 5px 8px; font-size: 25px; }
-        .score-total .score-caption { margin: 0; }
+        .score-hud-bottom { grid-template-columns: minmax(100px, .7fr) minmax(0, 1.3fr); gap: 8px; }
+        .score-total { display: grid; grid-template-columns: auto 1fr; align-items: end; column-gap: 5px; }
+        .score-total .side-label { grid-column: 1 / -1; }
+        .score-total .score-value { grid-column: 1; min-width: 48px; margin: 0; padding: 4px 6px; font-size: 23px; }
+        .score-total .score-caption { grid-column: 2; align-self: end; margin: 0 0 4px; font-size: 8px; }
         .score-metrics { gap: 3px; }
-        .score-metrics .side-detail { min-height: 34px; padding: 0 7px; font-size: 9px; }
-        .score-metrics .side-detail strong { font-size: 12px; }
+        .score-metrics .side-detail { min-width: 0; min-height: 38px; gap: 3px; padding: 0 4px; font-size: 8px; }
+        .score-metrics .side-detail strong { font-size: 10px; overflow-wrap: anywhere; }
         .score-metrics .streak-hint { font-size: 8px; }
         .quiz-card { padding: 19px 16px 16px; border-radius: 19px; }
         .quiz-meta { grid-template-columns: auto 1fr auto; gap: 7px; }
@@ -1535,6 +1595,28 @@
         .option-key { flex-basis: 29px; height: 29px; }
         .feedback { min-height: 38px; padding-top: 12px; font-size: 12px; }
         .quiz-actions { margin-top: 4px; padding-top: 13px; }
+        body[data-view="game"] .score-hud-card .iq-timer { margin-top: 8px; padding: 8px 10px 7px; }
+      }
+      @media (max-height: 500px) and (orientation: landscape) {
+        body[data-view="game"] .game-sidebar { top: calc(env(safe-area-inset-top) + 62px); }
+        body[data-view="game"] .score-hud-card { padding: 7px 11px; }
+        body[data-view="game"] .score-hud-top { margin-bottom: 5px; }
+        body[data-view="game"] .score-hud-bottom { grid-template-columns: minmax(105px, .55fr) minmax(0, 1.45fr); gap: 6px; }
+        body[data-view="game"] .score-total .score-value { min-width: 52px; margin-top: 2px; padding: 4px 7px; font-size: 23px; }
+        body[data-view="game"] .game-coin-balance,
+        body[data-view="game"] #scoreCaption,
+        body[data-view="game"] #streakHint,
+        body[data-view="game"] #iqTimerNote { display: none; }
+        body[data-view="game"] .score-hud-card .iq-timer {
+          display: grid;
+          grid-template-columns: max-content max-content minmax(0, 1fr);
+          align-items: center;
+          gap: 10px;
+          margin-top: 6px;
+          padding: 7px 10px;
+        }
+        body[data-view="game"] .score-hud-card .iq-timer-heading { display: contents; }
+        body[data-view="game"] .score-hud-card .iq-timer-track { margin-top: 0; }
       }
       @media (max-width: 390px) {
         body[data-view="game"] .brand-name { font-size: 12px; }
@@ -2716,6 +2798,7 @@
               <button class="secondary-button" type="button" id="levelBackButton"><span id="levelBackLabel">Back to subjects</span></button>
               <span class="level-count" id="levelCountLabel" aria-live="polite"></span>
             </div>
+            <div class="level-category-tabs" id="levelCategoryTabs" role="tablist" aria-label="Filter level map by category"></div>
             <div class="level-grid" id="levelGrid" role="group" aria-label="Choose a level"></div>
             <nav class="level-pagination" aria-label="Level map pages">
               <button class="secondary-button" type="button" id="levelPreviousButton"><span aria-hidden="true">← </span><span id="levelPreviousLabel">Previous page</span></button>
@@ -2752,6 +2835,11 @@
                   <span id="gameCoinLabel">Coins</span>
                   <strong id="gameCoinBalance">0</strong>
                 </div>
+                <section class="iq-timer" id="iqTimer" hidden aria-label="Question timer">
+                  <div class="iq-timer-heading"><span id="iqTimerLabel">Time left</span><strong id="iqTimerValue">15 s</strong></div>
+                  <div class="iq-timer-track" id="iqTimerBar" role="progressbar" aria-label="Time remaining" aria-valuemin="0" aria-valuemax="15" aria-valuenow="15"><span id="iqTimerFill"></span></div>
+                  <p id="iqTimerNote">Answer correctly in under 5 seconds to earn +5 bonus points.</p>
+                </section>
               </div>
               <div class="side-card">
                 <div class="orbit-mini" aria-hidden="true"><span class="mini-ring"></span><span class="mini-ring ring-two"></span><span class="mini-core"></span><span class="mini-orb"></span></div>
@@ -2766,11 +2854,6 @@
                 <div class="question-count" id="questionCount">01 <span aria-hidden="true">/</span> 04</div>
               </div>
               <div class="progress-track" id="progressTrack" role="progressbar" aria-label="Quiz progress" aria-valuemin="0" aria-valuemax="4" aria-valuenow="0"><div class="progress-fill" id="progressFill"></div></div>
-              <section class="iq-timer" id="iqTimer" hidden aria-label="Question timer">
-                <div class="iq-timer-heading"><span id="iqTimerLabel">Time left</span><strong id="iqTimerValue">15 s</strong></div>
-                <div class="iq-timer-track" id="iqTimerBar" role="progressbar" aria-label="Time remaining" aria-valuemin="0" aria-valuemax="15" aria-valuenow="15"><span id="iqTimerFill"></span></div>
-                <p id="iqTimerNote">Answer correctly in under 5 seconds to earn +5 bonus points.</p>
-              </section>
               <p class="question-kicker" id="questionKicker">Take a moment</p>
               <h1 class="question" id="questionText" tabindex="-1">Question goes here</h1>
               <section class="lifeline-panel" id="lifelinePanel" aria-label="Tactical lifelines">
@@ -2957,6 +3040,7 @@
           liveScore: "LIVE",
           levelSelectTitle: "Choose a level",
           levelSelectDescription: "Answer at least 6 of 10 correctly to unlock the next level.",
+          levelCategoryFilter: "Filter levels by category",
           levelProgress: "{unlocked} of {total} levels unlocked",
           levelPreviousPage: "Previous page",
           levelNextPage: "Next page",
@@ -2967,6 +3051,8 @@
           levelLocked: "Locked",
           levelComplete: "Completed",
           levelQuestions: "{count} questions",
+          levelStars: "{count} stars",
+          levelCoins: "{count} coins earned",
           levelUnlockNotice: "Level {level} unlocked!",
           levelFailNotice: "Get {count} correct to unlock the next level. Retry for a new set.",
           allLevelsComplete: "All 500 levels complete — incredible work!",
@@ -3154,6 +3240,7 @@
           liveScore: "লাইভ",
           levelSelectTitle: "একটি লেভেল বেছে নিন",
           levelSelectDescription: "পরের লেভেল খুলতে ১০টির মধ্যে অন্তত ৬টি সঠিক উত্তর দিন।",
+          levelCategoryFilter: "বিভাগ অনুযায়ী লেভেল দেখুন",
           levelProgress: "{total}টির মধ্যে {unlocked}টি লেভেল খোলা",
           levelPreviousPage: "আগের পৃষ্ঠা",
           levelNextPage: "পরের পৃষ্ঠা",
@@ -3164,6 +3251,8 @@
           levelLocked: "বন্ধ",
           levelComplete: "সম্পন্ন",
           levelQuestions: "{count}টি প্রশ্ন",
+          levelStars: "{count}টি তারকা",
+          levelCoins: "{count} কয়েন অর্জিত",
           levelUnlockNotice: "লেভেল {level} খুলেছে!",
           levelFailNotice: "পরের লেভেল খুলতে {count}টি সঠিক উত্তর দরকার। নতুন প্রশ্নে আবার খেলুন।",
           allLevelsComplete: "সব ৫০০টি লেভেল সম্পন্ন — অসাধারণ!",
@@ -3351,6 +3440,7 @@
           liveScore: "लाइव",
           levelSelectTitle: "एक स्तर चुनें",
           levelSelectDescription: "अगला स्तर खोलने के लिए 10 में से कम से कम 6 सही जवाब दें।",
+          levelCategoryFilter: "श्रेणी के अनुसार स्तर फ़िल्टर करें",
           levelProgress: "{total} में से {unlocked} स्तर खुले",
           levelPreviousPage: "पिछला पृष्ठ",
           levelNextPage: "अगला पृष्ठ",
@@ -3361,6 +3451,8 @@
           levelLocked: "बंद",
           levelComplete: "पूरा",
           levelQuestions: "{count} सवाल",
+          levelStars: "{count} सितारे",
+          levelCoins: "{count} कॉइन अर्जित",
           levelUnlockNotice: "स्तर {level} खुल गया!",
           levelFailNotice: "अगला स्तर खोलने के लिए {count} सही जवाब दें। नए सवालों के साथ फिर खेलें।",
           allLevelsComplete: "सभी 500 स्तर पूरे — शानदार!",
@@ -3548,6 +3640,7 @@
           liveScore: "EN VIVO",
           levelSelectTitle: "Elige un nivel",
           levelSelectDescription: "Acierta al menos 6 de 10 para desbloquear el siguiente nivel.",
+          levelCategoryFilter: "Filtrar niveles por categoría",
           levelProgress: "{unlocked} de {total} niveles desbloqueados",
           levelPreviousPage: "Página anterior",
           levelNextPage: "Página siguiente",
@@ -3558,6 +3651,8 @@
           levelLocked: "Bloqueado",
           levelComplete: "Completado",
           levelQuestions: "{count} preguntas",
+          levelStars: "{count} estrellas",
+          levelCoins: "{count} monedas ganadas",
           levelUnlockNotice: "¡Nivel {level} desbloqueado!",
           levelFailNotice: "Necesitas {count} aciertos para desbloquear el siguiente nivel. Repite con preguntas nuevas.",
           allLevelsComplete: "¡Has completado los 500 niveles!",
@@ -3745,6 +3840,7 @@
           liveScore: "EN DIRECT",
           levelSelectTitle: "Choisissez un niveau",
           levelSelectDescription: "Répondez correctement à au moins 6 questions sur 10 pour débloquer le niveau suivant.",
+          levelCategoryFilter: "Filtrer les niveaux par catégorie",
           levelProgress: "{unlocked}/{total} niveaux débloqués",
           levelPreviousPage: "Page précédente",
           levelNextPage: "Page suivante",
@@ -3755,6 +3851,8 @@
           levelLocked: "Verrouillé",
           levelComplete: "Terminé",
           levelQuestions: "{count} questions",
+          levelStars: "{count} étoiles",
+          levelCoins: "{count} pièces gagnées",
           levelUnlockNotice: "Niveau {level} débloqué !",
           levelFailNotice: "Il faut {count} bonnes réponses pour débloquer le niveau suivant. Rejouez avec de nouvelles questions.",
           allLevelsComplete: "Vous avez terminé les 500 niveaux !",
@@ -4477,7 +4575,7 @@
       const INCORRECT_ANSWER_PENALTY = 5;
       const ANSWER_SOUND_STORAGE_KEY = "quiz-orbit-answer-sounds-muted";
       const REWARD_COLLECTION_STORAGE_KEY = "quiz-orbit-reward-collection";
-      const REWARD_COLLECTION_VERSION = 4;
+      const REWARD_COLLECTION_VERSION = 5;
       const TROPHY_TIERS = ["gold", "silver", "bronze"];
       const BADGE_IDS = ["quizMaster", "logicMaster", "speedDemon", "quizSpeedster", "knowledgeSeeker", "streakGod"];
       const REWARD_MODES = PROGRESSION_CATEGORIES;
@@ -4499,6 +4597,7 @@
           badges: [],
           coins: 0,
           claimedLevelCoinRewards: [],
+          levelResults: [],
           bestPoints: 0,
           bestStreak: 0,
           trophyRecords: [],
@@ -4523,7 +4622,7 @@
           if (!serialized) return emptyRewardCollection();
           const saved = JSON.parse(serialized);
           // Migrate older reward collections without discarding earned trophies, badges, or progress.
-          if (!saved || typeof saved !== "object" || ![1, 2, 3, REWARD_COLLECTION_VERSION].includes(saved.version)) {
+          if (!saved || typeof saved !== "object" || ![1, 2, 3, 4, REWARD_COLLECTION_VERSION].includes(saved.version)) {
             return emptyRewardCollection();
           }
           const validNonNegativeNumber = (value) =>
@@ -4542,6 +4641,31 @@
                 level <= categoryLevels[category].length;
             }))]
             : [];
+          const levelResultKeys = new Set();
+          const levelResults = [];
+          if (Array.isArray(saved.levelResults)) {
+            saved.levelResults.forEach((record) => {
+              if (
+                !record ||
+                !REWARD_MODES.includes(record.category) ||
+                !Number.isInteger(record.level) ||
+                record.level < 1 ||
+                record.level > categoryLevels[record.category].length ||
+                !Number.isInteger(record.stars) ||
+                record.stars < 1 ||
+                record.stars > 3
+              ) return;
+              const key = `${record.category}:${record.level}`;
+              if (levelResultKeys.has(key)) return;
+              levelResultKeys.add(key);
+              levelResults.push({
+                category: record.category,
+                level: record.level,
+                stars: record.stars,
+                coins: validCount(record.coins)
+              });
+            });
+          }
           const trophyRecords = [];
           const trophyRecordKeys = new Set();
           if (Array.isArray(saved.trophyRecords)) {
@@ -4594,6 +4718,7 @@
               : [],
             coins: validCount(saved.coins),
             claimedLevelCoinRewards,
+            levelResults,
             bestPoints: validNonNegativeNumber(saved.bestPoints) ? saved.bestPoints : 0,
             bestStreak: validCount(saved.bestStreak),
             trophyRecords,
@@ -4875,12 +5000,11 @@
         return true;
       }
 
-      function renderQuestionTimer() {
+      function renderQuestionTimer(now = performance.now()) {
         const timer = document.getElementById("iqTimer");
         const enabled = PROGRESSION_CATEGORIES.includes(currentCategory);
         timer.hidden = !views.game.classList.contains("active") || !enabled;
         if (!enabled) return;
-        const now = performance.now();
         const isFrozen = timerFreezeUntil > now;
         const secondsLeft = isFrozen
           ? timerFreezeRemainingSeconds
@@ -4921,20 +5045,23 @@
         lastTimerTickSecond = null;
         timerFreezeUntil = 0;
         timerFreezeRemainingSeconds = 0;
-        questionDeadline = performance.now() + QUESTION_TIME_LIMIT_SECONDS * 1000;
-        renderQuestionTimer();
+        // One monotonic timestamp starts both elapsed-answer scoring and the deadline.
+        questionStartedAt = performance.now();
+        questionDeadline = questionStartedAt + QUESTION_TIME_LIMIT_SECONDS * 1000;
+        renderQuestionTimer(questionStartedAt);
         questionTimerInterval = window.setInterval(() => {
-          if (timerFreezeUntil && performance.now() >= timerFreezeUntil) {
+          const now = performance.now();
+          if (timerFreezeUntil && now >= timerFreezeUntil) {
             timerFreezeUntil = 0;
             timerFreezeRemainingSeconds = 0;
           }
-          renderQuestionTimer();
-          if (performance.now() >= questionDeadline && !answered) {
+          renderQuestionTimer(now);
+          if (now >= questionDeadline && !answered) {
             clearQuestionTimer();
             playTimerCue(true);
             selectAnswer(-1, true);
           }
-        }, 100);
+        }, 50);
       }
 
       function stopQuestionTimer() {
@@ -5951,12 +6078,60 @@
         return indexes;
       }
 
+      /*
+       * Render one 25-node window from the selected category's 500-level map. The
+       * category tabs call this again after reading that category's in-memory
+       * unlock token, which is initialized from and persisted to localStorage by
+       * the progression helpers above. Completion records decorate nodes only;
+       * they never grant access or override the unlock token.
+       */
       function renderLevelMap(category = currentCategory) {
         if (!PROGRESSION_CATEGORIES.includes(category)) category = "General Knowledge";
         currentCategory = category;
         const levels = categoryLevels[category];
         const unlockedLevel = unlockedLevelFor(category);
         const grid = document.getElementById("levelGrid");
+        const categoryTabs = document.getElementById("levelCategoryTabs");
+        categoryTabs.replaceChildren();
+        categoryTabs.setAttribute("aria-label", currentText.levelCategoryFilter);
+        PROGRESSION_CATEGORIES.forEach((mapCategory) => {
+          const tab = document.createElement("button");
+          tab.type = "button";
+          tab.className = "level-category-tab";
+          tab.dataset.category = mapCategory;
+          tab.setAttribute("role", "tab");
+          tab.setAttribute("aria-selected", String(mapCategory === category));
+          tab.setAttribute("aria-controls", "levelGrid");
+          tab.tabIndex = mapCategory === category ? 0 : -1;
+          tab.textContent = categoryName(mapCategory);
+          tab.addEventListener("click", () => {
+            if (mapCategory === currentCategory) return;
+            currentCategory = mapCategory;
+            currentLevelPage = Math.floor((unlockedLevelFor(mapCategory) - 1) / LEVELS_PER_PAGE);
+            // Explicit tap/click or keyboard activation switches category and opens its current unlocked chapter.
+            selectPortalMode(categoryButtons.find((button) => button.dataset.category === mapCategory));
+            renderLevelMap(mapCategory);
+            document.getElementById("levelGrid").scrollTop = 0;
+          });
+          tab.addEventListener("keydown", (event) => {
+            const selectedIndex = PROGRESSION_CATEGORIES.indexOf(mapCategory);
+            const nextIndex = event.key === "ArrowRight"
+              ? (selectedIndex + 1) % PROGRESSION_CATEGORIES.length
+              : event.key === "ArrowLeft"
+                ? (selectedIndex - 1 + PROGRESSION_CATEGORIES.length) % PROGRESSION_CATEGORIES.length
+                : event.key === "Home"
+                  ? 0
+                  : event.key === "End"
+                    ? PROGRESSION_CATEGORIES.length - 1
+                    : selectedIndex;
+            if (nextIndex === selectedIndex) return;
+            event.preventDefault();
+            const nextTab = categoryTabs.querySelectorAll('[role="tab"]')[nextIndex];
+            nextTab.focus();
+            nextTab.click();
+          });
+          categoryTabs.append(tab);
+        });
         grid.replaceChildren();
         grid.setAttribute("aria-label", currentText.levelSelectTitle);
         document.getElementById("levelEyebrow").textContent =
@@ -5973,8 +6148,19 @@
         document.getElementById("levelPreviousButton").disabled = currentLevelPage === 0;
         document.getElementById("levelNextButton").disabled = currentLevelPage >= pageCount - 1;
         levels.slice(pageStart, pageStart + LEVELS_PER_PAGE).forEach(({ level }) => {
-          const isCompleted = level < unlockedLevel;
+          const completionKey = `${category}:${level}`;
+          const savedResult = rewardCollection.levelResults.find((record) =>
+            record.category === category && record.level === level
+          );
+          const wasClaimed = rewardCollection.claimedLevelCoinRewards.includes(completionKey);
+          // Progress tokens remain the authority for access; result metadata only decorates already-unlocked nodes.
           const isUnlocked = level <= unlockedLevel;
+          const isCompleted = level < unlockedLevel ||
+            (level === LEVELS_PER_CATEGORY && Boolean(savedResult || wasClaimed));
+          const earnedStars = isCompleted ? savedResult?.stars ?? 1 : 0;
+          const earnedCoins = isCompleted
+            ? savedResult?.coins ?? (wasClaimed ? COIN_REWARDS.levelClear : 0)
+            : 0;
           const stateLabel = isCompleted
             ? currentText.levelComplete
             : isUnlocked
@@ -5984,7 +6170,11 @@
           card.type = "button";
           card.disabled = !isUnlocked;
           card.className = `level-card${isCompleted ? " completed" : isUnlocked ? " unlocked" : " locked"}`;
-          card.setAttribute("aria-label", `${currentText.levelNumber.replace("{level}", formatNumber(level))}, ${stateLabel}, ${currentText.levelQuestions.replace("{count}", formatNumber(QUESTIONS_PER_LEVEL))}`);
+          card.dataset.level = String(level);
+          const rewardA11y = isCompleted
+            ? `, ${currentText.levelStars.replace("{count}", formatNumber(earnedStars))}, ${currentText.levelCoins.replace("{count}", formatNumber(earnedCoins))}`
+            : "";
+          card.setAttribute("aria-label", `${currentText.levelNumber.replace("{level}", formatNumber(level))}, ${stateLabel}, ${currentText.levelQuestions.replace("{count}", formatNumber(QUESTIONS_PER_LEVEL))}${rewardA11y}`);
           const number = document.createElement("span");
           number.className = "level-card-number";
           number.textContent = formatNumber(level);
@@ -5994,14 +6184,29 @@
           const details = document.createElement("span");
           details.className = "level-card-detail";
           details.textContent = currentText.levelQuestions.replace("{count}", formatNumber(QUESTIONS_PER_LEVEL));
+          const rewardLine = document.createElement("span");
+          rewardLine.className = "level-card-rewardline";
+          if (isCompleted) {
+            const stars = document.createElement("span");
+            stars.className = "level-card-stars";
+            stars.textContent = `${"★".repeat(earnedStars)}${"☆".repeat(3 - earnedStars)}`;
+            stars.setAttribute("aria-label", currentText.levelStars.replace("{count}", formatNumber(earnedStars)));
+            const coins = document.createElement("span");
+            coins.className = "level-card-coins";
+            coins.textContent = `+${formatNumber(earnedCoins)} 🪙`;
+            coins.setAttribute("aria-label", currentText.levelCoins.replace("{count}", formatNumber(earnedCoins)));
+            rewardLine.append(stars, coins);
+          } else {
+            rewardLine.setAttribute("aria-hidden", "true");
+          }
           const status = document.createElement("span");
           status.className = "level-card-status";
           const indicator = document.createElement("span");
           indicator.className = "level-card-indicator";
           indicator.setAttribute("aria-hidden", "true");
-          indicator.textContent = isUnlocked ? "⭐" : "🔒";
+          indicator.textContent = isCompleted ? "🏆" : isUnlocked ? "⭐" : "🔒";
           status.append(indicator, document.createTextNode(stateLabel));
-          card.append(number, name, details, status);
+          card.append(number, name, details, rewardLine, status);
           card.addEventListener("click", () => startQuiz(category, level));
           grid.append(card);
         });
@@ -6070,7 +6275,6 @@
           lastAnswerInterrupted = false;
         }
         if (!preserveAnswer) {
-          questionStartedAt = performance.now();
           startQuestionTimer();
         } else {
           renderQuestionTimer();
@@ -6753,10 +6957,35 @@
         const levelRewardKey = `${currentCategory}:${currentLevel}`;
         // Persist each category-level claim once so retrying a cleared level cannot farm its completion payout.
         let claimedLevelCoinRewards = [...rewardCollection.claimedLevelCoinRewards];
+        let levelResults = [...rewardCollection.levelResults];
         let levelCoinBonus = 0;
         if (clearedFullLevel && !claimedLevelCoinRewards.includes(levelRewardKey)) {
           claimedLevelCoinRewards.push(levelRewardKey);
           levelCoinBonus = COIN_REWARDS.levelClear;
+        }
+        if (clearedFullLevel) {
+          const averageSeconds = answerTimes.length
+            ? answerTimes.reduce((sum, seconds) => sum + seconds, 0) / answerTimes.length
+            : QUESTION_TIME_LIMIT_SECONDS;
+          const earnedStars = score === QUESTIONS_PER_LEVEL && averageSeconds <= 7.5
+            ? 3
+            : score >= 8 || (score >= Math.ceil(QUESTIONS_PER_LEVEL * LEVEL_PASSING_ACCURACY) && averageSeconds <= 5)
+              ? 2
+              : 1;
+          const priorResultIndex = levelResults.findIndex((record) =>
+            record.category === currentCategory && record.level === currentLevel
+          );
+          const previousResult = priorResultIndex >= 0 ? levelResults[priorResultIndex] : null;
+          const levelResult = {
+            category: currentCategory,
+            level: currentLevel,
+            stars: Math.max(previousResult?.stars || 0, earnedStars),
+            coins: Math.max(previousResult?.coins || 0, claimedLevelCoinRewards.includes(levelRewardKey)
+              ? COIN_REWARDS.levelClear
+              : 0)
+          };
+          if (priorResultIndex >= 0) levelResults[priorResultIndex] = levelResult;
+          else levelResults.push(levelResult);
         }
         if (currentLevel === currentUnlockedLevel) {
           if (score >= requiredCorrect) {
@@ -6820,6 +7049,7 @@
         );
         rewardCollection = {
           ...rewardCollection,
+          levelResults,
           trophies: [...new Set([...rewardCollection.trophies, tier])],
           badges: [...new Set([...rewardCollection.badges, ...unlockedBadges.map((badge) => badge.id)])],
           bestPoints: Math.max(rewardCollection.bestPoints, points),
@@ -7072,6 +7302,7 @@
         document.getElementById("progressTrack").setAttribute("aria-label", currentText.progress);
         document.getElementById("iqTimer").setAttribute("aria-label", currentText.questionTimer);
         document.getElementById("levelGrid").setAttribute("aria-label", currentText.levelSelectTitle);
+        document.getElementById("levelCategoryTabs").setAttribute("aria-label", currentText.levelCategoryFilter);
         document.getElementById("closeRewardsButton").setAttribute("aria-label", currentText.closeRewards);
         optionsElement.setAttribute("aria-label", currentText.answerOptions);
         const replayLabel = currentText.retryLevel;

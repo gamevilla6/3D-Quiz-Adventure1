@@ -216,6 +216,24 @@ try {
     assert.equal(await page.locator("body").evaluate((node, expectedTheme) => node.classList.contains(expectedTheme), theme), true);
     await page.locator("#startGameButton").click();
     assert.equal(await page.locator("#levelView").evaluate((node) => node.classList.contains("active")), true);
+    assert.equal(await page.locator(".level-category-tab").count(), 5, "the roadmap filters all five categories");
+    assert.equal(
+      await page.locator(`.level-category-tab[data-category="${category}"]`).getAttribute("aria-selected"),
+      "true",
+      "the current mode is selected in the roadmap filters",
+    );
+    assert.ok(
+      await page.locator(".level-category-tabs").evaluate((node) => getComputedStyle(node).overflowX === "auto"),
+      "category filters remain horizontally swipeable on mobile",
+    );
+    const alternateMapCategory = category === "Science & Technology" ? "General Knowledge" : "Science & Technology";
+    await page.locator(`.level-category-tab[data-category="${alternateMapCategory}"]`).tap();
+    assert.equal(
+      await page.locator(`.level-category-tab[data-category="${alternateMapCategory}"]`).getAttribute("aria-selected"),
+      "true",
+      "tapping a category switches the roadmap",
+    );
+    await page.locator(`.level-category-tab[data-category="${category}"]`).tap();
     assert.equal(await page.locator("#levelGrid .level-card.unlocked").count(), 1);
     assert.equal(await page.locator("#levelGrid .level-card.locked").count(), 24);
     const levelMapScroll = await page.locator("#levelGrid").evaluate((node) => ({
@@ -233,6 +251,13 @@ try {
     assert.equal(await page.locator("#gameView").evaluate((node) => node.classList.contains("active")), true);
     assert.notEqual(await page.locator("#questionText").innerText(), "");
     assert.equal(await page.locator(".option").count(), 4);
+    assert.equal(
+      await page.locator("#iqTimer").evaluate((node) => node.closest(".score-hud-card") !== null),
+      true,
+      "the timer shares the sticky score, level, streak, and coin HUD",
+    );
+    assert.equal(await page.locator(".topbar").evaluate((node) => getComputedStyle(node).position), "sticky");
+    assert.equal(await page.locator(".game-sidebar").evaluate((node) => getComputedStyle(node).position), "sticky");
     const gameLayoutOrder = await page.locator(".game-layout").evaluate((node) =>
       [...node.children].map((child) => child.classList.contains("game-sidebar") ? "hud" : "quiz")
     );
@@ -244,8 +269,8 @@ try {
       );
     }
     assert.ok(
-      await page.locator(".option").first().evaluate((node) => node.getBoundingClientRect().height >= 48),
-      "answer options are large touch targets",
+      await page.locator(".option").first().evaluate((node) => node.getBoundingClientRect().height >= 50),
+      "answer options are at least 50px high touch targets",
     );
     assert.equal(await page.locator("#iqTimer").isVisible(), true, "the countdown is active in every category");
     assert.equal(await page.locator(".option").first().getAttribute("data-answer"), null);
@@ -308,6 +333,23 @@ try {
   assert.equal(await page.locator("#levelGrid .level-card.locked").count(), 24);
   await page.evaluate((key) => localStorage.removeItem(key), scienceProgressKey);
   await page.reload({ waitUntil: "domcontentloaded" });
+  await page.evaluate(() => localStorage.setItem("quiz-orbit-reward-collection", JSON.stringify({
+    version: 5,
+    levelResults: [{ category: "Science & Technology", level: 2, stars: 3, coins: 50 }],
+  })));
+  await page.reload({ waitUntil: "domcontentloaded" });
+  await page.locator('.category[data-category="Science & Technology"]').click();
+  await page.locator("#startGameButton").click();
+  assert.equal(await page.locator("#levelGrid .level-card.unlocked").count(), 1);
+  assert.equal(await page.locator("#levelGrid .level-card.locked").count(), 24);
+  assert.notEqual(
+    await page.locator('.level-card[data-level="2"]').getAttribute("disabled"),
+    null,
+    "saved reward decorations cannot unlock a level without its progression token",
+  );
+  await page.locator("#levelBackButton").click();
+  await page.evaluate(() => localStorage.removeItem("quiz-orbit-reward-collection"));
+  await page.reload({ waitUntil: "domcontentloaded" });
 
   await page.locator('.category[data-category="General Knowledge"]').click();
   await page.locator("#startGameButton").click();
@@ -368,9 +410,28 @@ try {
   await penaltyPage.goto(baseUrl, { waitUntil: "domcontentloaded" });
   await penaltyPage.locator("#startGameButton").tap();
   await penaltyPage.locator(".level-card.unlocked").tap();
+  await penaltyPage.setViewportSize({ width: 844, height: 390 });
+  assert.ok(
+    await penaltyPage.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth),
+    "the landscape quiz layout has no horizontal overflow",
+  );
+  assert.equal(await penaltyPage.locator(".game-sidebar").evaluate((node) => getComputedStyle(node).position), "sticky");
+  await penaltyPage.setViewportSize({ width: 390, height: 844 });
+  const initialTimerSeconds = Number((await penaltyPage.locator("#iqTimerValue").innerText()).match(/\d+/)?.[0]);
+  await penaltyPage.waitForTimeout(1200);
+  const elapsedTimerSeconds = Number((await penaltyPage.locator("#iqTimerValue").innerText()).match(/\d+/)?.[0]);
+  assert.ok(elapsedTimerSeconds < initialTimerSeconds, "the visible timer decreases from the active question's start");
   await penaltyPage.locator(".option").nth(1).tap();
+  const timerAtAnswer = await penaltyPage.locator("#iqTimerValue").innerText();
+  await penaltyPage.waitForTimeout(250);
+  assert.equal(await penaltyPage.locator("#iqTimerValue").innerText(), timerAtAnswer, "answer submission stops the timer immediately");
   const scoreBeforePenalty = Number(await penaltyPage.locator("#scoreValue").innerText());
   await penaltyPage.locator("#nextButton").tap();
+  assert.equal(
+    Number((await penaltyPage.locator("#iqTimerValue").innerText()).match(/\d+/)?.[0]),
+    15,
+    "each new question starts a fresh 15-second deadline",
+  );
   assert.equal(await penaltyPage.locator("#questionText").innerText(), "How many sides does a hexagon have?");
   await penaltyPage.locator(".option").first().tap();
   const scoreAfterPenalty = Number(await penaltyPage.locator("#scoreValue").innerText());
@@ -434,6 +495,12 @@ try {
   assert.equal(await page.locator("#categoryHeading").innerText(), "মোড বেছে নিন");
 
   await page.locator("#startGameButton").tap();
+  assert.equal(await page.locator(".level-category-tab").count(), 5);
+  assert.equal(
+    await page.locator('.level-category-tab[data-category="General Knowledge"]').innerText(),
+    "সাধারণ জ্ঞান",
+    "roadmap category filters update with the selected language",
+  );
   await page.locator(".level-card.unlocked").tap();
   assert.equal(await page.locator("#questionText").innerText(), "আইফেল টাওয়ার কোন শহরে অবস্থিত?");
   assert.deepEqual(await page.locator(".option span:nth-child(2)").allInnerTexts(), [
@@ -470,7 +537,12 @@ try {
   const savedCollection = await page.evaluate(() => JSON.parse(localStorage.getItem("quiz-orbit-reward-collection")));
   assert.notEqual(await page.evaluate(() => localStorage.getItem("quiz-orbit-gk-unlocked-level")), "1");
   const earnedTier = await page.locator("#resultCard").getAttribute("data-tier");
-  assert.equal(savedCollection.version, 4, "the reward collection has a storage version");
+  assert.equal(savedCollection.version, 5, "the reward collection has a storage version");
+  assert.deepEqual(
+    savedCollection.levelResults.find(({ category, level }) => category === "General Knowledge" && level === 1),
+    { category: "General Knowledge", level: 1, stars: 3, coins: 50 },
+    "the completed level stores its best star rating and one-time coin reward",
+  );
   assert.ok(savedCollection.trophies.includes(earnedTier), "the round trophy is persisted");
   assert.ok(savedCollection.badges.includes("quizMaster"), "the earned badge is persisted");
   assert.ok(savedCollection.badges.includes("streakGod"), "a five-answer streak unlocks the Streak God badge");
@@ -528,6 +600,9 @@ try {
   assert.equal(await page.locator("#levelGrid .level-card.completed").count(), 1);
   assert.equal(await page.locator("#levelGrid .level-card.unlocked").count(), 1);
   assert.equal(await page.locator("#levelGrid .level-card.locked").count(), 23);
+  assert.equal(await page.locator('.level-card.completed[data-level="1"] .level-card-stars').innerText(), "★★★");
+  assert.equal(await page.locator('.level-card.completed[data-level="1"] .level-card-coins').innerText(), "+৫০ 🪙");
+  assert.equal(await page.locator('.level-card.completed[data-level="1"] .level-card-indicator').innerText(), "🏆");
   await page.locator("#levelBackButton").tap();
   await page.reload({ waitUntil: "domcontentloaded" });
   assert.match(await page.locator("#collectionTrophies").innerText(), /ট্রফি/);
