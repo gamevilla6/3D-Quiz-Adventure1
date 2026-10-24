@@ -104,6 +104,8 @@ try {
   const page = await context.newPage();
   page.setDefaultTimeout(10_000);
   const pageErrors = [];
+  page.on("close", () => console.log("DEBUG: main test page closed"));
+  browser.on("disconnected", () => console.log("DEBUG: browser disconnected"));
   page.on("pageerror", (error) => pageErrors.push(error.message));
 
   await page.goto(baseUrl, { waitUntil: "domcontentloaded" });
@@ -293,6 +295,16 @@ try {
   assert.equal(await page.evaluate(() => window.__answerCueOscillators), 0, "muted answers do not create sound cues");
   assert.match(await page.locator("#feedback").innerText(), /Correct!/);
   assert.ok(Number(await page.locator("#scoreValue").innerText()) >= 10);
+  assert.ok(Number(await page.locator("#coinBalance").innerText()) >= 10, "a correct answer immediately awards coins");
+  assert.equal(
+    await page.locator("#gameCoinBalance").innerText(),
+    await page.locator("#coinBalance").innerText(),
+    "the home and game HUDs share one live coin balance",
+  );
+  assert.ok(
+    await page.evaluate(() => JSON.parse(localStorage.getItem("quiz-orbit-reward-collection")).coins >= 10),
+    "answer coins are saved immediately",
+  );
   assert.equal(await page.locator("#correctCount").innerText(), "1");
   assert.equal(await page.locator(".option").nth(1).getAttribute("disabled"), "");
   assert.equal(await page.locator(".option").nth(1).getAttribute("class").then((value) => value.includes("correct")), true);
@@ -307,8 +319,8 @@ try {
   await audioTestPage.locator(".option").nth(1).tap();
   assert.equal(
     await audioTestPage.evaluate(() => window.__answerCueOscillators),
-    1,
-    "enabled answers play a sound cue",
+    2,
+    "enabled correct answers play separate answer and coin sound cues",
   );
   await audioTestPage.close();
 
@@ -419,7 +431,7 @@ try {
   const savedCollection = await page.evaluate(() => JSON.parse(localStorage.getItem("quiz-orbit-reward-collection")));
   assert.notEqual(await page.evaluate(() => localStorage.getItem("quiz-orbit-gk-unlocked-level")), "1");
   const earnedTier = await page.locator("#resultCard").getAttribute("data-tier");
-  assert.equal(savedCollection.version, 3, "the reward collection has a storage version");
+  assert.equal(savedCollection.version, 4, "the reward collection has a storage version");
   assert.ok(savedCollection.trophies.includes(earnedTier), "the round trophy is persisted");
   assert.ok(savedCollection.badges.includes("quizMaster"), "the earned badge is persisted");
   assert.equal(savedCollection.bestStreak, 10, "the personal best streak is updated");
@@ -444,6 +456,12 @@ try {
   assert.ok(mergedCollection.trophies.includes("gold"), "a later round keeps the previously earned gold trophy");
   assert.ok(mergedCollection.badges.includes("quizMaster"), "a later round keeps previously earned badges");
   assert.equal(mergedCollection.bestStreak, 10, "a later round does not reduce the personal best streak");
+  assert.ok(mergedCollection.coins > 0, "the level completion and answer coin rewards persist");
+  assert.ok(mergedCollection.claimedLevelCoinRewards.includes("General Knowledge:1"), "the one-time level-clear reward is claimed");
+  assert.ok(
+    await page.locator("#resultCoinAmount").innerText().startsWith("+"),
+    "the results screen summarizes coins earned in the round",
+  );
 
   await page.locator("#homeButton").tap();
   assert.equal(await page.locator("#welcomeView").evaluate((node) => node.classList.contains("active")), true);
@@ -454,6 +472,19 @@ try {
   );
   assert.match(await page.locator("#collectionTrophies").innerText(), /ট্রফি/);
   assert.match(await page.locator("#collectionBadges").innerText(), /কুইজ মাস্টার/);
+  assert.notEqual(await page.locator("#collectionCoinBalance").innerText(), "০", "the home collection shows the saved coin balance");
+  assert.equal(
+    await page.locator("#coinBalance").innerText(),
+    await page.locator("#collectionCoinBalance").innerText(),
+    "the home HUD and collection panel stay in sync",
+  );
+  await page.locator("#openRewardsButton").tap();
+  assert.equal(
+    await page.locator("#dashboardCoinBalance").innerText(),
+    await page.locator("#coinBalance").innerText(),
+    "the collection dashboard shows the accumulated balance",
+  );
+  await page.locator("#closeRewardsButton").tap();
   await page.locator("#startGameButton").tap();
   assert.equal(await page.locator("#levelGrid .level-card.completed").count(), 1);
   assert.equal(await page.locator("#levelGrid .level-card.unlocked").count(), 1);

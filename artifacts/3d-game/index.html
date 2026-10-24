@@ -1866,6 +1866,89 @@
         .rewards-close-button { width: 48px; height: 48px; flex-basis: 48px; }
         .brand { min-width: 48px; min-height: 48px; }
       }
+      .coin-balance-chip {
+        min-height: 36px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        padding: 0 10px;
+        color: #4b3300;
+        border: 1px solid rgba(255,220,103,.72);
+        border-radius: 11px;
+        background: linear-gradient(135deg, #fff2a9, #ffc84c 58%, #ffdf76);
+        box-shadow: 0 5px 16px rgba(255,188,46,.2), inset 0 1px rgba(255,255,255,.7);
+        font-size: 11px;
+        font-weight: 850;
+        white-space: nowrap;
+      }
+      .coin-balance-chip strong { color: #352300; font-size: 13px; font-variant-numeric: tabular-nums; }
+      .coin-mark { font-size: 15px; }
+      .game-coin-balance {
+        width: fit-content;
+        min-height: 34px;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        margin-top: 10px;
+        padding: 5px 11px;
+        color: #fff1a8;
+        border: 1px solid rgba(255,216,99,.33);
+        border-radius: 11px;
+        background: linear-gradient(110deg, rgba(105,72,20,.38), rgba(40,33,62,.72));
+        box-shadow: inset 0 1px rgba(255,255,255,.08);
+        font-size: 11px;
+        font-weight: 750;
+      }
+      .game-coin-balance strong { color: #fff; font-size: 14px; font-weight: 900; font-variant-numeric: tabular-nums; }
+      .coin-popup-layer { position: fixed; z-index: 80; inset: 0; overflow: hidden; pointer-events: none; }
+      .coin-popup {
+        position: absolute;
+        color: #ffe36f;
+        font-size: clamp(16px, 2.6vw, 23px);
+        font-weight: 950;
+        line-height: 1;
+        white-space: nowrap;
+        text-shadow: 0 2px 2px rgba(55,30,0,.75), 0 0 22px rgba(255,195,39,.72);
+        animation: coinRise .95s cubic-bezier(.18,.68,.28,1) both;
+      }
+      @keyframes coinRise {
+        0% { opacity: 0; transform: translate(-50%, 6px) scale(.75); }
+        15% { opacity: 1; transform: translate(-50%, 0) scale(1.08); }
+        100% { opacity: 0; transform: translate(-50%, -48px) scale(1); }
+      }
+      .coin-analytics-card { position: relative; overflow: hidden; }
+      .coin-analytics-card::after { position: absolute; right: -28px; bottom: -42px; width: 128px; height: 128px; border-radius: 50%; background: radial-gradient(circle, rgba(255,205,74,.18), transparent 68%); content: ""; pointer-events: none; }
+      .coin-dashboard-value { color: #ffe27b; }
+      .result-coin-summary {
+        width: fit-content;
+        max-width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 14px;
+        margin: -7px auto 22px;
+        padding: 11px 16px;
+        color: #fff3bb;
+        border: 1px solid rgba(255,215,92,.34);
+        border-radius: 14px;
+        background: linear-gradient(110deg, rgba(110,76,17,.42), rgba(63,39,100,.42));
+        font-size: 12px;
+        font-weight: 750;
+      }
+      .result-coin-summary strong { color: #ffe170; font-size: 16px; font-weight: 950; white-space: nowrap; }
+      @media (max-width: 650px) {
+        .coin-balance-chip { min-height: 38px; gap: 4px; padding: 0 7px; }
+        .game-coin-balance { min-height: 38px; }
+        .result-coin-summary { width: 100%; gap: 8px; margin-bottom: 17px; padding: 10px; font-size: 11px; }
+      }
+      @media (max-width: 390px) {
+        .coin-balance-label { display: none; }
+        body[data-view="welcome"] .topbar-actions,
+        body[data-view="game"] .topbar-actions { gap: 4px; }
+        body[data-view="welcome"] .language-select,
+        body[data-view="game"] .language-select { min-width: 66px; width: 70px; }
+      }
       @media (prefers-reduced-motion: reduce) {
         html { scroll-behavior: auto; }
         button:active:not(:disabled), a:active { transform: none; }
@@ -1891,6 +1974,7 @@
       }, 9000);
     </script>
     <div id="scene" aria-hidden="true"></div>
+    <div class="coin-popup-layer" id="coinPopupLayer" aria-hidden="true"></div>
     <div class="app">
       <header class="topbar">
         <a class="brand" href="#" id="brandHome" aria-label="QuizVerse 3D home">
@@ -1901,6 +1985,11 @@
         </a>
         <div class="topbar-actions">
           <div class="top-note"><span class="live-dot"></span><span id="topNoteText">A small space for curiosity</span></div>
+          <div class="coin-balance-chip" id="coinBalanceChip" aria-label="Coin balance">
+            <span class="coin-mark" aria-hidden="true">🪙</span>
+            <strong id="coinBalance">0</strong>
+            <span class="coin-balance-label" id="coinBalanceLabel">Coins</span>
+          </div>
           <label class="visually-hidden" for="languageSelect" id="languageLabel">Language</label>
           <select class="language-select" id="languageSelect" aria-labelledby="languageLabel">
             <option value="en">English</option>
@@ -2038,6 +2127,7 @@
             <div class="collection-stats">
               <div class="collection-stat"><strong id="collectionBestPoints">0</strong><span id="collectionBestPointsLabel">Personal best points</span></div>
               <div class="collection-stat"><strong id="collectionBestStreak">0</strong><span id="collectionBestStreakLabel">Personal best streak</span></div>
+              <div class="collection-stat collection-coin-stat"><strong id="collectionCoinBalance">0</strong><span id="collectionCoinLabel">Coins</span></div>
             </div>
             <div class="collection-rewards">
               <section class="collection-reward-group" aria-labelledby="collectionTrophiesLabel">
@@ -2081,6 +2171,11 @@
                 <section class="analytics-card" aria-labelledby="dashboardOverviewTitle">
                   <h3 id="dashboardOverviewTitle">Collection stats</h3>
                   <div class="analytics-metrics" id="dashboardOverallMetrics"></div>
+                </section>
+                <section class="analytics-card coin-analytics-card" aria-labelledby="dashboardCoinsTitle">
+                  <h3 id="dashboardCoinsTitle">Coin balance</h3>
+                  <strong class="analytics-iq-score coin-dashboard-value" id="dashboardCoinBalance">0</strong>
+                  <p class="analytics-card-note" id="dashboardCoinsNote">Earn coins now; power-ups and themes can use them later.</p>
                 </section>
                 <section class="analytics-card category-progress-card" aria-labelledby="dashboardCategoryProgressTitle">
                   <h3 id="dashboardCategoryProgressTitle">Progress by category</h3>
@@ -2140,6 +2235,11 @@
                     <div class="streak-hint" id="streakHint">3 in a row: 2× · 5: 3×</div>
                   </div>
                   <div class="combo-banner" id="comboBanner" hidden></div>
+                </div>
+                <div class="game-coin-balance" id="gameCoinBalanceChip" aria-label="Coin balance">
+                  <span aria-hidden="true">🪙</span>
+                  <span id="gameCoinLabel">Coins</span>
+                  <strong id="gameCoinBalance">0</strong>
                 </div>
               </div>
               <div class="side-card">
@@ -2205,6 +2305,10 @@
                   <div class="result-stat"><strong id="finalAccuracy">0%</strong><span id="finalAccuracyLabel">Accuracy</span></div>
                   <div class="result-stat"><strong id="finalBestStreak">0</strong><span id="finalBestStreakLabel">Best streak</span></div>
                   <div class="result-stat"><strong id="finalTotal">4</strong><span id="finalTotalLabel">Questions</span></div>
+                </div>
+                <div class="result-coin-summary" aria-live="polite">
+                  <span id="resultCoinLabel">Coins earned this round</span>
+                  <strong id="resultCoinAmount">+0 🪙</strong>
                 </div>
                 <section class="achievement-panel" aria-labelledby="achievementHeading">
                   <div class="achievement-heading">
@@ -2341,9 +2445,14 @@
           collectionBestStreak: "Personal best streak",
           collectionTrophies: "Trophies",
           collectionBadges: "Badges",
+          coinBalanceLabel: "Coins",
+          coinBalanceAria: "Coin balance: {count}",
+          dashboardCoinsTitle: "Coin balance",
+          dashboardCoinsNote: "Earn coins for future power-ups and themes.",
+          resultCoinsEarned: "Coins earned this round",
           collectionEmpty: "None yet",
           rewardsDashboardTitle: "Your Collection",
-          rewardsDashboardDescription: "Your progress, trophies, badges, and game-only IQ estimate.",
+          rewardsDashboardDescription: "Your progress, coin balance, trophies, badges, and game-only IQ estimate.",
           closeRewards: "Close rewards dashboard",
           dashboardIQAttempts: "{count} IQ Check rounds",
           dashboardNoIQ: "Finish an IQ Check round to see your estimate.",
@@ -2526,9 +2635,14 @@
           collectionBestStreak: "সর্বোচ্চ ধারাবাহিকতা",
           collectionTrophies: "ট্রফি",
           collectionBadges: "ব্যাজ",
+          coinBalanceLabel: "কয়েন",
+          coinBalanceAria: "কয়েন ব্যালেন্স: {count}",
+          dashboardCoinsTitle: "কয়েন ব্যালেন্স",
+          dashboardCoinsNote: "ভবিষ্যতের পাওয়ার-আপ ও থিমের জন্য কয়েন জমা করুন।",
+          resultCoinsEarned: "এই পর্বে অর্জিত কয়েন",
           collectionEmpty: "এখনো কিছু নেই",
           rewardsDashboardTitle: "আপনার সংগ্রহ",
-          rewardsDashboardDescription: "আপনার অগ্রগতি, ট্রফি, ব্যাজ ও খেলার ভিত্তিতে IQ-ধাঁচের অনুমান একসঙ্গে দেখুন।",
+          rewardsDashboardDescription: "আপনার অগ্রগতি, কয়েন, ট্রফি, ব্যাজ ও খেলার ভিত্তিতে IQ-ধাঁচের অনুমান একসঙ্গে দেখুন।",
           closeRewards: "পুরস্কারের ড্যাশবোর্ড বন্ধ করুন",
           dashboardIQAttempts: "{count}টি আইকিউ পরীক্ষার পর্ব",
           dashboardNoIQ: "খেলার ভিত্তিতে অনুমান দেখতে একটি আইকিউ পরীক্ষার পর্ব শেষ করুন।",
@@ -2711,9 +2825,14 @@
           collectionBestStreak: "सबसे लंबी स्ट्रीक",
           collectionTrophies: "ट्रॉफियाँ",
           collectionBadges: "बैज",
+          coinBalanceLabel: "सिक्के",
+          coinBalanceAria: "सिक्का बैलेंस: {count}",
+          dashboardCoinsTitle: "सिक्का बैलेंस",
+          dashboardCoinsNote: "भविष्य के पावर-अप और थीम के लिए सिक्के कमाएँ।",
+          resultCoinsEarned: "इस राउंड में मिले सिक्के",
           collectionEmpty: "अभी कुछ नहीं",
           rewardsDashboardTitle: "आपका संग्रह",
-          rewardsDashboardDescription: "अपनी प्रगति, ट्रॉफियाँ, बैज और गेम-आधारित IQ अनुमान एक जगह देखें।",
+          rewardsDashboardDescription: "अपनी प्रगति, सिक्के, ट्रॉफियाँ, बैज और गेम-आधारित IQ अनुमान एक जगह देखें।",
           closeRewards: "इनाम डैशबोर्ड बंद करें",
           dashboardIQAttempts: "{count} IQ चेक राउंड",
           dashboardNoIQ: "अपना अनुमान देखने के लिए IQ चेक का एक राउंड पूरा करें।",
@@ -2896,9 +3015,14 @@
           collectionBestStreak: "Mejor racha",
           collectionTrophies: "Trofeos",
           collectionBadges: "Insignias",
+          coinBalanceLabel: "Monedas",
+          coinBalanceAria: "Saldo de monedas: {count}",
+          dashboardCoinsTitle: "Saldo de monedas",
+          dashboardCoinsNote: "Gana monedas para futuros potenciadores y temas.",
+          resultCoinsEarned: "Monedas ganadas en esta ronda",
           collectionEmpty: "Todavía no hay nada",
           rewardsDashboardTitle: "Tu colección",
-          rewardsDashboardDescription: "Consulta tu progreso, trofeos, insignias y estimación de IQ basada solo en el juego.",
+          rewardsDashboardDescription: "Consulta tu progreso, monedas, trofeos, insignias y estimación de IQ basada solo en el juego.",
           closeRewards: "Cerrar el panel de recompensas",
           dashboardIQAttempts: "{count} rondas de IQ Check",
           dashboardNoIQ: "Completa una ronda de IQ Check para ver tu estimación.",
@@ -3081,9 +3205,14 @@
           collectionBestStreak: "Meilleure série",
           collectionTrophies: "Trophées",
           collectionBadges: "Badges",
+          coinBalanceLabel: "Pièces",
+          coinBalanceAria: "Solde de pièces : {count}",
+          dashboardCoinsTitle: "Solde de pièces",
+          dashboardCoinsNote: "Gagnez des pièces pour de futurs bonus et thèmes.",
+          resultCoinsEarned: "Pièces gagnées cette manche",
           collectionEmpty: "Pas encore de récompense",
           rewardsDashboardTitle: "Votre collection",
-          rewardsDashboardDescription: "Retrouvez votre progression, vos trophées, vos badges et votre estimation de QI basée uniquement sur le jeu.",
+          rewardsDashboardDescription: "Retrouvez votre progression, vos pièces, vos trophées, vos badges et votre estimation de QI basée uniquement sur le jeu.",
           closeRewards: "Fermer le tableau des récompenses",
           dashboardIQAttempts: "{count} manches de test logique",
           dashboardNoIQ: "Terminez une manche de test logique pour voir votre estimation.",
@@ -3583,16 +3712,28 @@
       const INCORRECT_ANSWER_PENALTY = 5;
       const ANSWER_SOUND_STORAGE_KEY = "quiz-orbit-answer-sounds-muted";
       const REWARD_COLLECTION_STORAGE_KEY = "quiz-orbit-reward-collection";
-      const REWARD_COLLECTION_VERSION = 3;
+      const REWARD_COLLECTION_VERSION = 4;
       const TROPHY_TIERS = ["gold", "silver", "bronze"];
       const BADGE_IDS = ["quizMaster", "logicMaster", "speedDemon", "quizSpeedster", "knowledgeSeeker"];
       const REWARD_MODES = PROGRESSION_CATEGORIES;
+      // Simple reward tuning constants; the persistent balance is ready for future hint, skip, or theme purchases.
+      const COIN_REWARDS = {
+        correct: 10,
+        fastAnswer: 5,
+        streakThree: 5,
+        streakFive: 10,
+        levelClear: 50,
+        newBadge: 25,
+        trophy: { gold: 100, silver: 60, bronze: 30 }
+      };
 
       function emptyRewardCollection() {
         return {
           version: REWARD_COLLECTION_VERSION,
           trophies: [],
           badges: [],
+          coins: 0,
+          claimedLevelCoinRewards: [],
           bestPoints: 0,
           bestStreak: 0,
           trophyRecords: [],
@@ -3616,13 +3757,26 @@
           const serialized = localStorage.getItem(REWARD_COLLECTION_STORAGE_KEY);
           if (!serialized) return emptyRewardCollection();
           const saved = JSON.parse(serialized);
-          // Migrate v1 reward collections without discarding earned trophies or badges.
-          if (!saved || typeof saved !== "object" || ![1, 2, REWARD_COLLECTION_VERSION].includes(saved.version)) {
+          // Migrate older reward collections without discarding earned trophies, badges, or progress.
+          if (!saved || typeof saved !== "object" || ![1, 2, 3, REWARD_COLLECTION_VERSION].includes(saved.version)) {
             return emptyRewardCollection();
           }
           const validNonNegativeNumber = (value) =>
             typeof value === "number" && Number.isFinite(value) && value >= 0;
           const validCount = (value) => validNonNegativeNumber(value) ? Math.floor(value) : 0;
+          const claimedLevelCoinRewards = Array.isArray(saved.claimedLevelCoinRewards)
+            ? [...new Set(saved.claimedLevelCoinRewards.filter((key) => {
+              if (typeof key !== "string") return false;
+              const separator = key.lastIndexOf(":");
+              if (separator < 1) return false;
+              const category = key.slice(0, separator);
+              const level = Number(key.slice(separator + 1));
+              return REWARD_MODES.includes(category) &&
+                Number.isInteger(level) &&
+                level >= 1 &&
+                level <= categoryLevels[category].length;
+            }))]
+            : [];
           const trophyRecords = [];
           const trophyRecordKeys = new Set();
           if (Array.isArray(saved.trophyRecords)) {
@@ -3673,6 +3827,8 @@
             badges: Array.isArray(saved.badges)
               ? [...new Set(saved.badges.filter((badgeId) => BADGE_IDS.includes(badgeId)))]
               : [],
+            coins: validCount(saved.coins),
+            claimedLevelCoinRewards,
             bestPoints: validNonNegativeNumber(saved.bestPoints) ? saved.bestPoints : 0,
             bestStreak: validCount(saved.bestStreak),
             trophyRecords,
@@ -3761,6 +3917,7 @@
       let focusLossGraceTimeout = null;
       let lastSpeedBonus = 0;
       let rewardCelebrationAt = 0;
+      let roundCoinsEarned = 0;
       let answered = false;
       let lastSelected = null;
       let rewardGroup = null;
@@ -3829,6 +3986,7 @@
       function updateScoreDisplay() {
         document.getElementById("scoreValue").textContent = formatNumber(points);
         document.getElementById("correctCount").textContent = formatNumber(score);
+        updateCoinBalanceDisplays();
         const multiplier = currentStreakMultiplier();
         const streakValue = document.getElementById("streakValue");
         streakValue.textContent = `${formatNumber(currentStreak)} · ${formatNumber(multiplier)}×`;
@@ -3868,6 +4026,55 @@
         scorePopupsElement.append(popup);
         popup.addEventListener("animationend", () => popup.remove(), { once: true });
         window.setTimeout(() => popup.remove(), 1400);
+      }
+
+      function updateCoinBalanceDisplays() {
+        const balance = formatNumber(rewardCollection.coins);
+        document.getElementById("coinBalance").textContent = balance;
+        document.getElementById("gameCoinBalance").textContent = balance;
+        document.getElementById("collectionCoinBalance").textContent = balance;
+        document.getElementById("dashboardCoinBalance").textContent = balance;
+        document.getElementById("coinBalanceLabel").textContent = currentText.coinBalanceLabel;
+        document.getElementById("gameCoinLabel").textContent = currentText.coinBalanceLabel;
+        document.getElementById("collectionCoinLabel").textContent = currentText.coinBalanceLabel;
+        const accessibleBalance = currentText.coinBalanceAria.replace("{count}", balance);
+        document.getElementById("coinBalanceChip").setAttribute("aria-label", accessibleBalance);
+        document.getElementById("gameCoinBalanceChip").setAttribute("aria-label", accessibleBalance);
+      }
+
+      function spawnCoinPopup(amount, target = null) {
+        if (!amount) return;
+        // Anchor the transient coin animation to the HUD without shifting the question or result layout.
+        const anchor = target ||
+          (views.game.classList.contains("active")
+            ? document.getElementById("gameCoinBalanceChip")
+            : document.getElementById("coinBalanceChip"));
+        const rect = anchor?.getBoundingClientRect();
+        const popup = document.createElement("span");
+        popup.className = "coin-popup";
+        popup.textContent = `+${formatNumber(amount)} 🪙`;
+        popup.style.left = `${Math.max(64, Math.min(window.innerWidth - 64, rect ? rect.left + rect.width / 2 : window.innerWidth / 2))}px`;
+        popup.style.top = `${Math.max(48, rect ? rect.top + rect.height / 2 : window.innerHeight / 2)}px`;
+        const layer = document.getElementById("coinPopupLayer");
+        layer.append(popup);
+        popup.addEventListener("animationend", () => popup.remove(), { once: true });
+        window.setTimeout(() => popup.remove(), 1300);
+      }
+
+      function awardCoins(amount, target = null) {
+        const safeAmount = Number.isFinite(amount) ? Math.max(0, Math.floor(amount)) : 0;
+        if (!safeAmount) return 0;
+        // Every currency grant updates memory and localStorage immediately, then refreshes all visible balance counters.
+        rewardCollection = {
+          ...rewardCollection,
+          coins: Math.min(Number.MAX_SAFE_INTEGER, rewardCollection.coins + safeAmount)
+        };
+        roundCoinsEarned += safeAmount;
+        saveRewardCollection(rewardCollection);
+        updateCoinBalanceDisplays();
+        spawnCoinPopup(safeAmount, target);
+        playCoinCue();
+        return safeAmount;
       }
 
       function renderQuestionTimer() {
@@ -3973,6 +4180,31 @@
           oscillator.stop(now + .21);
         } catch {
           // Audio is an optional delight; never block an answer.
+        }
+      }
+
+      function playCoinCue() {
+        if (answerSoundsMuted) return;
+        try {
+          const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+          if (!AudioContextClass) return;
+          audioContext ||= new AudioContextClass();
+          if (audioContext.state === "suspended") audioContext.resume().catch(() => {});
+          const oscillator = audioContext.createOscillator();
+          const gain = audioContext.createGain();
+          const now = audioContext.currentTime;
+          oscillator.type = "triangle";
+          oscillator.frequency.setValueAtTime(740, now);
+          oscillator.frequency.exponentialRampToValueAtTime(1180, now + .13);
+          gain.gain.setValueAtTime(.0001, now);
+          gain.gain.exponentialRampToValueAtTime(.055, now + .012);
+          gain.gain.exponentialRampToValueAtTime(.0001, now + .19);
+          oscillator.connect(gain);
+          gain.connect(audioContext.destination);
+          oscillator.start(now);
+          oscillator.stop(now + .2);
+        } catch {
+          // Coin sounds are optional and must never delay or prevent a reward.
         }
       }
 
@@ -4833,6 +5065,7 @@
         lastAnswerInterrupted = false;
         answerTimes = [];
         rewardCelebrationAt = 0;
+        roundCoinsEarned = 0;
         levelJustUnlocked = false;
         levelFailed = false;
         allLevelsComplete = false;
@@ -4967,6 +5200,15 @@
           lastSpeedBonus = calculateSpeedBonus(elapsedSeconds);
           lastPointsAwarded = streakPoints + lastSpeedBonus;
           points += lastPointsAwarded;
+          const coinStreakBonus = currentStreak % 5 === 0
+            ? COIN_REWARDS.streakFive
+            : currentStreak % 3 === 0
+              ? COIN_REWARDS.streakThree
+              : 0;
+          const coinReward = COIN_REWARDS.correct +
+            (lastSpeedBonus ? COIN_REWARDS.fastAnswer : 0) +
+            coinStreakBonus;
+          awardCoins(coinReward, document.getElementById("gameCoinBalanceChip"));
         } else {
           currentStreak = 0;
           const deductedPoints = Math.min(points, INCORRECT_ANSWER_PENALTY);
@@ -5115,8 +5357,10 @@
         document.getElementById("collectionBestStreakLabel").textContent = currentText.collectionBestStreak;
         document.getElementById("collectionTrophiesLabel").textContent = currentText.collectionTrophies;
         document.getElementById("collectionBadgesLabel").textContent = currentText.collectionBadges;
+        document.getElementById("collectionCoinLabel").textContent = currentText.coinBalanceLabel;
         document.getElementById("collectionBestPoints").textContent = formatNumber(rewardCollection.bestPoints);
         document.getElementById("collectionBestStreak").textContent = formatNumber(rewardCollection.bestStreak);
+        updateCoinBalanceDisplays();
         renderCollectionRewardList(
           document.getElementById("collectionTrophies"),
           TROPHY_TIERS
@@ -5199,6 +5443,9 @@
         document.getElementById("dashboardIQFootnote").textContent = currentText.iqDisclaimer;
         document.getElementById("dashboardIQAttempts").textContent = currentText.dashboardIQAttempts
           .replace("{count}", formatNumber(rewardCollection.iqRuns));
+        document.getElementById("dashboardCoinsTitle").textContent = currentText.dashboardCoinsTitle;
+        document.getElementById("dashboardCoinsNote").textContent = currentText.dashboardCoinsNote;
+        updateCoinBalanceDisplays();
 
         document.getElementById("dashboardOverviewTitle").textContent = currentText.dashboardOverviewTitle;
         const answerTotals = PROGRESSION_CATEGORIES.reduce((totals, category) => {
@@ -5381,6 +5628,8 @@
         document.getElementById("finalAccuracy").textContent = `${formatNumber(accuracy)}%`;
         document.getElementById("finalBestStreak").textContent = formatNumber(bestStreak);
         document.getElementById("finalTotal").textContent = formatNumber(total);
+        document.getElementById("resultCoinLabel").textContent = currentText.resultCoinsEarned;
+        document.getElementById("resultCoinAmount").textContent = `+${formatNumber(roundCoinsEarned)} 🪙`;
         document.getElementById("resultCategory").textContent = `${categoryName(currentCategory)} · ${currentText.categoryComplete}`;
         const isIQRun = currentCategory === "IQ Check";
         let estimatedIQ = null;
@@ -5445,8 +5694,17 @@
         levelFailed = false;
         allLevelsComplete = false;
         const currentUnlockedLevel = unlockedLevelFor(currentCategory);
+        const requiredCorrect = Math.ceil(roundLength() * LEVEL_PASSING_ACCURACY);
+        const clearedFullLevel = roundLength() === QUESTIONS_PER_LEVEL && score >= requiredCorrect;
+        const levelRewardKey = `${currentCategory}:${currentLevel}`;
+        // Persist each category-level claim once so retrying a cleared level cannot farm its completion payout.
+        let claimedLevelCoinRewards = [...rewardCollection.claimedLevelCoinRewards];
+        let levelCoinBonus = 0;
+        if (clearedFullLevel && !claimedLevelCoinRewards.includes(levelRewardKey)) {
+          claimedLevelCoinRewards.push(levelRewardKey);
+          levelCoinBonus = COIN_REWARDS.levelClear;
+        }
         if (currentLevel === currentUnlockedLevel) {
-          const requiredCorrect = Math.ceil(roundLength() * LEVEL_PASSING_ACCURACY);
           if (score >= requiredCorrect) {
             if (currentLevel < categoryLevels[currentCategory].length) {
               unlockedLevelsByCategory[currentCategory] = currentLevel + 1;
@@ -5478,6 +5736,28 @@
             levelJustUnlocked || allLevelsComplete ? currentLevel : 0
           )
         };
+        const trophyRecordIsNew = !rewardCollection.trophyRecords.some(
+          (record) => record.tier === tier && record.mode === currentCategory
+        );
+        // First-time trophy records and badge unlocks grant milestone coins; repeats preserve collection rewards without duplicating milestone payouts.
+        const newBadgeIds = unlockedBadges
+          .filter((badge) => !rewardCollection.badges.includes(badge.id))
+          .map((badge) => badge.id);
+        const trophyCoinBonus = trophyRecordIsNew ? COIN_REWARDS.trophy[tier] : 0;
+        const achievementCoinBonus = newBadgeIds.length * COIN_REWARDS.newBadge;
+        const roundCompletionCoinBonus = levelCoinBonus + trophyCoinBonus + achievementCoinBonus;
+        if (roundCompletionCoinBonus > 0) {
+          rewardCollection = {
+            ...rewardCollection,
+            coins: Math.min(Number.MAX_SAFE_INTEGER, rewardCollection.coins + roundCompletionCoinBonus),
+            claimedLevelCoinRewards
+          };
+          roundCoinsEarned += roundCompletionCoinBonus;
+          saveRewardCollection(rewardCollection);
+          updateCoinBalanceDisplays();
+          spawnCoinPopup(roundCompletionCoinBonus, document.getElementById("coinBalanceChip"));
+          playCoinCue();
+        }
         const trophyRecords = [
           ...rewardCollection.trophyRecords,
           { tier, mode: currentCategory }
@@ -5506,9 +5786,12 @@
           iqLatestEstimate: isIQRun ? estimatedIQ : rewardCollection.iqLatestEstimate
         };
         saveRewardCollection(rewardCollection);
+        updateCoinBalanceDisplays();
         renderHomeHub();
         renderRewardCollection();
         renderRewardsDashboard();
+        document.getElementById("resultCoinLabel").textContent = currentText.resultCoinsEarned;
+        document.getElementById("resultCoinAmount").textContent = `+${formatNumber(roundCoinsEarned)} 🪙`;
         showView("results");
       }
 
