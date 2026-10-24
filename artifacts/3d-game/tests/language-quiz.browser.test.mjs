@@ -104,11 +104,25 @@ try {
   const page = await context.newPage();
   page.setDefaultTimeout(10_000);
   const pageErrors = [];
-  page.on("close", () => console.log("DEBUG: main test page closed"));
-  browser.on("disconnected", () => console.log("DEBUG: browser disconnected"));
   page.on("pageerror", (error) => pageErrors.push(error.message));
 
   await page.goto(baseUrl, { waitUntil: "domcontentloaded" });
+  await page.selectOption("#languageSelect", "en");
+  const portalLocaleCopy = {
+    en: ["Initiate sequence", "LIVE NEURAL TELEMETRY"],
+    bn: ["মিশন শুরু করুন", "লাইভ নিউরাল টেলিমেট্রি"],
+    hi: ["मिशन शुरू करें", "लाइव न्यूरल टेलीमेट्री"],
+    es: ["Iniciar secuencia", "TELEMETRÍA NEURAL EN VIVO"],
+    fr: ["Lancer la séquence", "TÉLÉMÉTRIE NEURALE EN DIRECT"],
+  };
+  for (const [language, [startAction, telemetryTitle]] of Object.entries(portalLocaleCopy)) {
+    await page.selectOption("#languageSelect", language);
+    assert.equal(
+      (await page.locator("#startGameLabel").innerText()).toLocaleUpperCase(),
+      startAction.toLocaleUpperCase(),
+    );
+    assert.equal(await page.locator("#portalTelemetryTitle").innerText(), telemetryTitle);
+  }
   await page.selectOption("#languageSelect", "en");
   assert.equal(await page.locator("html").getAttribute("lang"), "en");
   assert.equal(
@@ -160,15 +174,31 @@ try {
   assert.equal(await page.locator("#dashboardCategoryFilter option").count(), 6, "collection filter covers every category plus all");
   assert.equal(await page.locator("#dashboardStatusFilter option").count(), 3, "collection can sort by default, unlocked, or locked");
   assert.equal(await page.locator("#trophyGallery .trophy-showcase-card").count(), 3);
-  assert.equal(await page.locator("#badgeGallery .badge-showcase-card").count(), 5);
+  assert.equal(await page.locator("#badgeGallery .badge-showcase-card").count(), 6);
+  assert.equal(await page.locator(".collection-tab").count(), 4, "collection has All, Trophies, Badges, and Category Stats tabs");
+  assert.equal(await page.locator("#collectionTabAll").getAttribute("aria-selected"), "true");
+  await page.locator("#collectionTabAll").press("ArrowRight");
+  assert.equal(await page.locator("#collectionTabTrophies").getAttribute("aria-selected"), "true", "arrow keys move between collection tabs");
+  assert.equal(await page.locator("#trophyGallery").isVisible(), true);
+  assert.equal(await page.locator("#dashboardOverallMetrics").isVisible(), false);
+  await page.locator("#collectionTabBadges").click();
+  assert.equal(await page.locator("#badgeGallery").isVisible(), true);
+  assert.equal(await page.locator("#trophyGallery").isVisible(), false);
+  await page.locator("#collectionTabStats").click();
+  assert.equal(await page.locator("#dashboardCategoryProgressGrid").isVisible(), true);
+  assert.equal(await page.locator("#trophyGallery").isVisible(), false);
+  await page.locator("#dashboardCategoryFilter").selectOption("IQ Check");
+  assert.equal(await page.locator(".category-progress-item").count(), 1, "category filter narrows the stats tab");
+  await page.locator("#dashboardCategoryFilter").selectOption("all");
+  await page.locator("#collectionTabAll").click();
   assert.ok(
     await page.locator("#badgeGallery .badge-showcase-card.locked").first().getAttribute("data-tooltip"),
     "locked badges include their unlock instructions",
   );
   await page.locator("#dashboardCategoryFilter").selectOption("IQ Check");
-  assert.equal(await page.locator("#badgeGallery .badge-showcase-card").count(), 3, "IQ filter shows IQ-specific badges and the shared badge");
+  assert.equal(await page.locator("#badgeGallery .badge-showcase-card").count(), 4, "IQ filter shows IQ-specific badges and shared badges");
   await page.locator("#dashboardCategoryFilter").selectOption("Science & Technology");
-  assert.equal(await page.locator("#badgeGallery .badge-showcase-card").count(), 3, "category filter updates the collection gallery");
+  assert.equal(await page.locator("#badgeGallery .badge-showcase-card").count(), 4, "category filter updates the collection gallery");
   await page.locator("#dashboardCategoryFilter").selectOption("all");
   await page.locator("#dashboardStatusFilter").selectOption("locked");
   assert.ok(
@@ -283,19 +313,27 @@ try {
   await page.locator("#startGameButton").click();
   assert.equal(await page.locator("#levelView").evaluate((node) => node.classList.contains("active")), true);
   await page.locator(".level-card.unlocked").click();
-  assert.equal(await page.locator("#questionText").innerText(), "The Eiffel Tower is in which city?");
-  assert.deepEqual(await page.locator(".option span:nth-child(2)").allInnerTexts(), [
-    "Rome",
-    "Paris",
-    "Madrid",
-    "Vienna",
-  ]);
+  const portalRandomizedQuestionOptions = {
+    "The Eiffel Tower is in which city?": ["Rome", "Paris", "Madrid", "Vienna"],
+    "In which city is the Colosseum?": ["Athens", "Rome", "Istanbul", "Naples"],
+  };
+  const portalIntroQuestion = await page.locator("#questionText").innerText();
+  assert.ok(Object.hasOwn(portalRandomizedQuestionOptions, portalIntroQuestion), "the level draws a valid question from its randomized pool");
+  assert.deepEqual(
+    await page.locator(".option span:nth-child(2)").allInnerTexts(),
+    portalRandomizedQuestionOptions[portalIntroQuestion],
+  );
 
   await page.keyboard.press("2");
   assert.equal(await page.evaluate(() => window.__answerCueOscillators), 0, "muted answers do not create sound cues");
   assert.match(await page.locator("#feedback").innerText(), /Correct!/);
   assert.ok(Number(await page.locator("#scoreValue").innerText()) >= 10);
   assert.ok(Number(await page.locator("#coinBalance").innerText()) >= 10, "a correct answer immediately awards coins");
+  assert.equal(
+    await page.locator("#portalVaultBalance").innerText(),
+    await page.locator("#coinBalance").innerText(),
+    "the portal telemetry mirrors the live coin balance",
+  );
   assert.equal(
     await page.locator("#gameCoinBalance").innerText(),
     await page.locator("#coinBalance").innerText(),
@@ -315,7 +353,8 @@ try {
   await audioTestPage.goto(baseUrl, { waitUntil: "domcontentloaded" });
   await audioTestPage.locator("#startGameButton").tap();
   await audioTestPage.locator(".level-card.unlocked").tap();
-  assert.equal(await audioTestPage.locator("#questionText").innerText(), "The Eiffel Tower is in which city?");
+  const audioQuestion = await audioTestPage.locator("#questionText").innerText();
+  assert.ok(Object.hasOwn(portalRandomizedQuestionOptions, audioQuestion));
   await audioTestPage.locator(".option").nth(1).tap();
   assert.equal(
     await audioTestPage.evaluate(() => window.__answerCueOscillators),
@@ -434,6 +473,7 @@ try {
   assert.equal(savedCollection.version, 4, "the reward collection has a storage version");
   assert.ok(savedCollection.trophies.includes(earnedTier), "the round trophy is persisted");
   assert.ok(savedCollection.badges.includes("quizMaster"), "the earned badge is persisted");
+  assert.ok(savedCollection.badges.includes("streakGod"), "a five-answer streak unlocks the Streak God badge");
   assert.equal(savedCollection.bestStreak, 10, "the personal best streak is updated");
   assert.equal(
     new Intl.NumberFormat("bn-BD").format(savedCollection.bestPoints),
@@ -458,10 +498,8 @@ try {
   assert.equal(mergedCollection.bestStreak, 10, "a later round does not reduce the personal best streak");
   assert.ok(mergedCollection.coins > 0, "the level completion and answer coin rewards persist");
   assert.ok(mergedCollection.claimedLevelCoinRewards.includes("General Knowledge:1"), "the one-time level-clear reward is claimed");
-  assert.ok(
-    await page.locator("#resultCoinAmount").innerText().startsWith("+"),
-    "the results screen summarizes coins earned in the round",
-  );
+  const resultCoinSummary = await page.locator("#resultCoinAmount").innerText();
+  assert.ok(resultCoinSummary.startsWith("+"), "the results screen summarizes coins earned in the round");
 
   await page.locator("#homeButton").tap();
   assert.equal(await page.locator("#welcomeView").evaluate((node) => node.classList.contains("active")), true);
@@ -484,6 +522,7 @@ try {
     await page.locator("#coinBalance").innerText(),
     "the collection dashboard shows the accumulated balance",
   );
+  assert.ok(await page.locator("#trophyGallery .trophy-vector").count() > 0, "earned trophies render as rotating inline SVG models");
   await page.locator("#closeRewardsButton").tap();
   await page.locator("#startGameButton").tap();
   assert.equal(await page.locator("#levelGrid .level-card.completed").count(), 1);
@@ -524,8 +563,118 @@ try {
     "landscape resizing does not introduce horizontal overflow",
   );
   await page.setViewportSize({ width: 390, height: 844 });
+  const lifelinePage = await context.newPage();
+  lifelinePage.setDefaultTimeout(10_000);
+  lifelinePage.on("pageerror", (error) => pageErrors.push(error.message));
+  await lifelinePage.goto(baseUrl, { waitUntil: "domcontentloaded" });
+  await lifelinePage.evaluate(() => {
+    const key = "quiz-orbit-reward-collection";
+    const collection = {
+      version: 4,
+      trophies: [],
+      badges: [],
+      coins: 200,
+      claimedLevelCoinRewards: [],
+      bestPoints: 0,
+      bestStreak: 0,
+      trophyRecords: [],
+      categoryStats: Object.fromEntries([
+        "General Knowledge",
+        "Science & Technology",
+        "Pop Culture & Movies",
+        "History & Geography",
+        "IQ Check",
+      ].map((category) => [category, { runs: 0, correct: 0, incorrect: 0, completedLevels: 0 }])),
+      gkRuns: 0,
+      gkCorrect: 0,
+      gkIncorrect: 0,
+      gkCompletedLevels: 0,
+      iqRuns: 0,
+      iqCorrect: 0,
+      iqIncorrect: 0,
+      iqLatestEstimate: null,
+    };
+    localStorage.setItem(key, JSON.stringify(collection));
+    localStorage.setItem("quiz-orbit-answer-sounds-muted", "false");
+  });
+  await lifelinePage.reload({ waitUntil: "domcontentloaded" });
+  await lifelinePage.selectOption("#languageSelect", "en");
+  await lifelinePage.locator('.category[data-category="General Knowledge"]').tap();
+  await lifelinePage.locator("#startGameButton").tap();
+  await lifelinePage.locator(".level-card.unlocked").tap();
+  assert.deepEqual(
+    await lifelinePage.locator(".lifeline-cost").allInnerTexts(),
+    ["20 🪙", "15 🪙", "25 🪙", "40 🪙"],
+  );
+  assert.ok(
+    await lifelinePage.locator(".lifeline-button").evaluateAll((buttons) =>
+      buttons.every((button) => button.getBoundingClientRect().width >= 48 && button.getBoundingClientRect().height >= 48)
+    ),
+    "all four lifelines are touch-sized",
+  );
+
+  await lifelinePage.locator('[data-lifeline="fifty"]').tap();
+  assert.equal(await lifelinePage.locator(".option:not([hidden])").count(), 2, "50/50 keeps the correct choice and one distractor");
+  assert.equal(await lifelinePage.locator("#coinBalance").innerText(), "180");
+  assert.equal(await lifelinePage.locator("#gameCoinBalance").innerText(), "180");
+  assert.equal(
+    await lifelinePage.evaluate(() => JSON.parse(localStorage.getItem("quiz-orbit-reward-collection")).coins),
+    180,
+    "lifeline charges persist immediately",
+  );
+
+  await lifelinePage.waitForTimeout(1200);
+  await lifelinePage.locator('[data-lifeline="freeze"]').tap();
+  const frozenTimerValue = await lifelinePage.locator("#iqTimerValue").innerText();
+  assert.equal(await lifelinePage.locator("#iqTimer").evaluate((node) => node.classList.contains("frozen")), true);
+  await lifelinePage.waitForTimeout(1200);
+  assert.equal(await lifelinePage.locator("#iqTimerValue").innerText(), frozenTimerValue, "time freeze pauses the visible countdown");
+  assert.match(await lifelinePage.locator("#lifelineUseCount").innerText(), /2/);
+  assert.equal(await lifelinePage.locator('[data-lifeline="clue"]').isDisabled(), true, "the third distinct lifeline is locked");
+  assert.equal(await lifelinePage.locator('[data-lifeline="skip"]').isDisabled(), true, "the two-use limit locks remaining lifelines");
+  assert.equal(await lifelinePage.locator('[data-lifeline="fifty"]').isDisabled(), true, "a lifeline cannot be reused on one question");
+
+  const lifelineLocaleCopy = {
+    en: ["TACTICAL LIFELINES", "Skip question"],
+    bn: ["কৌশলগত লাইফলাইন", "প্রশ্ন বদলান"],
+    hi: ["रणनीतिक लाइफलाइन", "प्रश्न बदलें"],
+    es: ["SALVAVIDAS TÁCTICOS", "Cambiar pregunta"],
+    fr: ["JOKERS TACTIQUES", "Changer la question"],
+  };
+  for (const [language, [heading, skipLabel]] of Object.entries(lifelineLocaleCopy)) {
+    await lifelinePage.selectOption("#languageSelect", language);
+    assert.equal(await lifelinePage.locator("#lifelineHeading").innerText(), heading);
+    assert.equal(await lifelinePage.locator("#lifelineSkipLabel").innerText(), skipLabel);
+    assert.equal(await lifelinePage.locator(".option:not([hidden])").count(), 2, "language changes preserve the active 50/50 effect");
+  }
+  await lifelinePage.selectOption("#languageSelect", "en");
+  await lifelinePage.locator(".option:not([hidden])").first().tap();
+  await lifelinePage.locator("#nextButton").tap();
+  const scoreBeforeSkip = Number(await lifelinePage.locator("#scoreValue").innerText());
+  const questionBeforeSkip = await lifelinePage.locator("#questionText").innerText();
+  await lifelinePage.locator('[data-lifeline="skip"]').tap();
+  assert.notEqual(await lifelinePage.locator("#questionText").innerText(), questionBeforeSkip, "skip draws a fresh question from the unused pool");
+  assert.equal(Number(await lifelinePage.locator("#scoreValue").innerText()), scoreBeforeSkip, "skip does not add or deduct score points");
+  assert.equal(await lifelinePage.locator("#coinBalance").innerText(), "125");
+  assert.match(await lifelinePage.locator("#lifelineNotice").innerText(), /fresh question/i);
+  assert.equal(await lifelinePage.locator("#lifelineUseCount").innerText(), "0/2 used", "the replacement question gets its own two-use allowance");
+  await lifelinePage.locator('[data-lifeline="clue"]').tap();
+  const smartClue = await lifelinePage.locator("#lifelineNotice").innerText();
+  assert.match(smartClue, /^Clue:/);
+  assert.ok(
+    !(await lifelinePage.locator(".option span:nth-child(2)").allInnerTexts()).includes(smartClue.replace(/^Clue: /, "")),
+    "the contextual hint does not reveal an answer option",
+  );
+  assert.equal(await lifelinePage.locator("#coinBalance").innerText(), "100");
+  assert.equal(
+    await lifelinePage.evaluate(() => JSON.parse(localStorage.getItem("quiz-orbit-reward-collection")).coins),
+    100,
+  );
+  assert.ok(await lifelinePage.evaluate(() => window.__answerCueOscillators > 0), "lifeline use plays a synthetic Web Audio cue");
+  await lifelinePage.close();
+
   assert.deepEqual(pageErrors, [], `The game page raised browser errors: ${pageErrors.join("; ")}`);
-  console.log("Browser check passed: mobile touch targets and scrolling, orientation layout, rotating hero, five live mode previews, Continue Journey, localized rounds, independent level maps, timer/focus penalties, rewards, and storage recovery.");
+  console.log("Browser check passed: mobile touch targets and scrolling, orientation layout, five live mode previews, localized rounds, independent level maps, timer and focus penalties, coin economy, four strategic lifelines, rewards, and storage recovery.");
 } finally {
   await browser?.close();
   server.kill("SIGTERM");

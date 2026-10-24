@@ -1,1 +1,2 @@
 - [WebGL preview limitation](webgl-preview.md) — Replit's screenshot browser may lack WebGL2, showing the game's CSS fallback instead of its Three.js scene.
+- [Portal category hover](portal-category-hover.md) — Hover should highlight orbit modes; explicit click/tap or keyboard focus should change the selected category.

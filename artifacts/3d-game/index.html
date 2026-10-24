@@ -1032,6 +1032,15 @@
       .collection-filter-control select { width: 100%; min-width: 0; min-height: 42px; padding: 0 34px 0 11px; color: #fff; border: 1px solid rgba(202,197,255,.24); border-radius: 11px; background: #211d45; font: inherit; font-size: 12px; font-weight: 700; text-transform: none; letter-spacing: 0; cursor: pointer; }
       .collection-filter-control option { color: #fff; background: #211d45; }
       .collection-filter-control select:focus-visible { outline: 3px solid #83f0e1; outline-offset: 2px; }
+      .collection-tablist { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 7px; margin: 0 0 13px; padding: 6px; border: 1px solid rgba(255,255,255,.13); border-radius: 15px; background: rgba(9,8,28,.36); }
+      .collection-tab { min-width: 0; min-height: 44px; padding: 8px 10px; color: #d2cbe9; border: 1px solid transparent; border-radius: 10px; background: transparent; font: inherit; font-size: 11px; font-weight: 800; line-height: 1.25; cursor: pointer; transition: color .18s ease, background .18s ease, border-color .18s ease, transform .18s ease; }
+      .collection-tab:hover { color: #fff; background: rgba(255,255,255,.08); }
+      .collection-tab[aria-selected="true"] { color: #fff; border-color: rgba(157,136,255,.42); background: linear-gradient(120deg, rgba(111,78,235,.72), rgba(69,101,240,.66)); box-shadow: 0 6px 16px rgba(27,20,80,.25); }
+      .collection-tab:active { transform: scale(.98); }
+      .collection-tab:focus-visible { outline: 3px solid #83f0e1; outline-offset: 2px; }
+      .collection-tab-panel { min-height: 110px; }
+      .collection-tab-panel.is-switching { animation: collectionPanelFade .2s ease both; }
+      .badge-showcase-card:not(.locked) { border-color: rgba(153,236,216,.24); box-shadow: inset 0 0 18px rgba(88,212,194,.045); }
       .analytics-section { margin-top: 22px; }
       .analytics-section h3 { margin: 0 0 11px; color: #fff; font-size: 15px; font-weight: 900; }
       .trophy-gallery { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 11px; }
@@ -1041,6 +1050,14 @@
       .trophy-showcase-card.tier-silver { border-color: rgba(199,218,247,.4); background: linear-gradient(145deg, rgba(113,138,176,.23), rgba(255,255,255,.07)); }
       .trophy-showcase-card.tier-bronze { border-color: rgba(237,165,112,.38); background: linear-gradient(145deg, rgba(154,90,49,.24), rgba(255,255,255,.07)); }
       .trophy-showcase-art { display: grid; width: 58px; height: 58px; place-items: center; border-radius: 17px; background: rgba(0,0,0,.22); font-size: 35px; filter: drop-shadow(0 7px 7px rgba(0,0,0,.3)); transform: perspective(160px) rotateY(-13deg) rotateX(5deg); animation: trophyShowcaseFloat 4s ease-in-out infinite alternate; }
+      .tier-gold .trophy-showcase-art { --trophy-fill: #ffd766; --trophy-shadow: #d28c23; --trophy-highlight: #fff8d4; }
+      .tier-silver .trophy-showcase-art { --trophy-fill: #e5efff; --trophy-shadow: #9eafca; --trophy-highlight: #fff; }
+      .tier-bronze .trophy-showcase-art { --trophy-fill: #edaa76; --trophy-shadow: #b7653f; --trophy-highlight: #ffe2c6; }
+      .trophy-vector { width: 46px; height: 46px; overflow: visible; filter: drop-shadow(0 2px 3px rgba(0,0,0,.28)); }
+      .trophy-cup, .trophy-stem, .trophy-base { fill: var(--trophy-fill); }
+      .trophy-cup { stroke: var(--trophy-shadow); stroke-width: 1.5; }
+      .trophy-handle { fill: none; stroke: var(--trophy-shadow); stroke-linecap: round; stroke-width: 4; }
+      .trophy-star { fill: var(--trophy-highlight); }
       .trophy-showcase-card.tier-silver .trophy-showcase-art { animation-delay: .35s; }
       .trophy-showcase-card.tier-bronze .trophy-showcase-art { animation-delay: .7s; }
       .trophy-showcase-name { color: #fff; font-size: 12px; font-weight: 850; }
@@ -1077,6 +1094,7 @@
       .badge-showcase-copy strong { display: block; overflow-wrap: anywhere; color: #fff; font-size: 11px; line-height: 1.3; }
       .badge-showcase-copy small { display: block; margin-top: 3px; color: #cec7e4; font-size: 9px; line-height: 1.35; }
       @keyframes collectionCardIn { from { opacity: 0; transform: translateY(7px); } to { opacity: 1; transform: translateY(0); } }
+      @keyframes collectionPanelFade { from { opacity: .35; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
       @keyframes trophyShowcaseFloat { from { transform: perspective(160px) rotateY(-14deg) rotateX(5deg) translateY(1px); } to { transform: perspective(160px) rotateY(14deg) rotateX(-4deg) translateY(-3px); } }
       @media (max-width: 650px) {
         .collection-heading { align-items: flex-start; }
@@ -1087,6 +1105,8 @@
         .analytics-grid { grid-template-columns: 1fr; gap: 10px; }
         .analytics-card { padding: 15px; }
         .analytics-section { margin-top: 18px; }
+        .collection-tablist { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        .collection-tab { min-height: 48px; }
         .trophy-gallery { gap: 7px; }
         .trophy-showcase-card { padding: 12px 7px; }
         .trophy-showcase-art { width: 48px; height: 48px; font-size: 30px; }
@@ -1099,6 +1119,8 @@
       }
       @media (prefers-reduced-motion: reduce) {
         .trophy-showcase-art { animation: none !important; }
+        .collection-tab-panel.is-switching { animation: none !important; }
+        .collection-tab { transition: none; }
         .analytics-progress-fill { transition: none; }
       }
       .streak-hint { margin-top: 5px; color: #dfd8f9; font-size: 9px; font-weight: 650; letter-spacing: .01em; }
@@ -1412,6 +1434,60 @@
       .iq-timer-heading strong { color: #a7a3ff; }
       .iq-timer-track { background: rgba(255, 255, 255, .12); }
       .iq-timer p { color: #d1cfea; }
+      .iq-timer.frozen {
+        border-color: rgba(74, 233, 222, .48);
+        box-shadow: 0 0 24px rgba(54, 224, 216, .12), inset 0 0 22px rgba(54, 224, 216, .055);
+      }
+      .iq-timer.frozen .iq-timer-heading span,
+      .iq-timer.frozen .iq-timer-heading strong { color: #72f3e5; }
+      .lifeline-panel {
+        margin: 20px 0 2px;
+        padding: 13px;
+        border: 1px solid rgba(149, 163, 239, .2);
+        border-radius: 17px;
+        background: linear-gradient(130deg, rgba(24, 30, 67, .72), rgba(22, 26, 56, .68));
+      }
+      .lifeline-heading { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 8px; }
+      .lifeline-title { color: #c4c1ff; font-size: 10px; font-weight: 850; letter-spacing: .1em; }
+      .lifeline-use-count { padding: 5px 8px; border: 1px solid rgba(143, 154, 219, .22); border-radius: 999px; color: #dfe4ff; background: rgba(7, 12, 34, .55); font-size: 9px; font-weight: 750; white-space: nowrap; }
+      .lifeline-rule { margin: 0 0 10px; color: #aab3d3; font-size: 10px; line-height: 1.4; }
+      .lifeline-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+      .lifeline-button {
+        display: flex;
+        min-width: 0;
+        min-height: 60px;
+        align-items: center;
+        gap: 8px;
+        padding: 8px;
+        color: #f1f3ff;
+        border: 1px solid rgba(145, 157, 227, .25);
+        border-radius: 13px;
+        background: linear-gradient(145deg, rgba(35, 43, 83, .9), rgba(19, 25, 55, .94));
+        text-align: left;
+        transition: transform .16s ease, border-color .16s ease, opacity .16s ease, filter .16s ease;
+      }
+      .lifeline-symbol { display: grid; width: 32px; height: 32px; flex: 0 0 32px; place-items: center; border-radius: 10px; color: #fff; background: rgba(91, 218, 222, .19); font-size: 16px; font-weight: 850; }
+      .lifeline-copy { display: grid; min-width: 0; gap: 3px; }
+      .lifeline-name { color: #f3f4ff; font-size: 10px; font-weight: 780; line-height: 1.2; }
+      .lifeline-cost { color: #ffe18b; font-size: 9px; font-weight: 800; white-space: nowrap; }
+      .lifeline-button[data-lifeline="freeze"] .lifeline-symbol { color: #cbbcff; background: rgba(145, 103, 255, .22); }
+      .lifeline-button[data-lifeline="clue"] .lifeline-symbol { color: #ffe68c; background: rgba(255, 183, 67, .18); }
+      .lifeline-button[data-lifeline="skip"] .lifeline-symbol { color: #ffb1c0; background: rgba(255, 91, 128, .2); }
+      .lifeline-button:hover:not(:disabled) { transform: translateY(-2px); border-color: rgba(110, 229, 227, .68); box-shadow: 0 8px 22px rgba(0, 0, 0, .2); }
+      .lifeline-button:active:not(:disabled) { transform: scale(.97); }
+      .lifeline-button:focus-visible { outline: 3px solid #72f3e5; outline-offset: 2px; }
+      .lifeline-button:disabled { cursor: not-allowed; opacity: .48; filter: saturate(.5); }
+      .lifeline-button.is-used { border-color: rgba(104, 231, 188, .42); }
+      .lifeline-button.is-locked { opacity: .36; }
+      .lifeline-notice { margin: 9px 0 0; padding: 8px 10px; border-left: 3px solid #79e6dd; border-radius: 0 9px 9px 0; color: #e5ecff; background: rgba(45, 64, 108, .42); font-size: 11px; line-height: 1.45; }
+      .lifeline-notice[hidden] { display: none; }
+      .lifeline-notice[data-kind="hint"] { border-left-color: #ffd36e; color: #fff2c2; }
+      @media (max-width: 650px) {
+        .lifeline-panel { margin-top: 15px; padding: 10px; }
+        .lifeline-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 7px; }
+        .lifeline-button { min-height: 58px; gap: 7px; padding: 8px; }
+        .lifeline-symbol { width: 30px; height: 30px; flex-basis: 30px; }
+      }
       body.theme-iq .iq-timer.warning,
       body.theme-cosmic .iq-timer.warning {
         border-color: rgba(255, 218, 104, .55);
@@ -1945,13 +2021,431 @@
       @media (max-width: 390px) {
         .coin-balance-label { display: none; }
         body[data-view="welcome"] .topbar-actions,
-        body[data-view="game"] .topbar-actions { gap: 4px; }
+        body[data-view="game"] .topbar-actions { gap: 2px; }
+        .coin-balance-chip { padding-right: 5px; padding-left: 5px; }
         body[data-view="welcome"] .language-select,
-        body[data-view="game"] .language-select { min-width: 66px; width: 70px; }
+        body[data-view="game"] .language-select { min-width: 74px; width: 78px; }
       }
       @media (prefers-reduced-motion: reduce) {
         html { scroll-behavior: auto; }
         button:active:not(:disabled), a:active { transform: none; }
+      }
+      /* Portal welcome: editorial cockpit copy orbiting a real, selectable mode constellation. */
+      body[data-view="welcome"] {
+        color: #f2f0ff;
+        background:
+          radial-gradient(ellipse at 51% 40%, rgba(42, 58, 139, .22), transparent 42%),
+          radial-gradient(ellipse at 7% 11%, rgba(10, 176, 201, .12), transparent 31%),
+          radial-gradient(ellipse at 94% 78%, rgba(141, 51, 173, .15), transparent 34%),
+          #070a18;
+      }
+      body[data-view="welcome"] .app { padding: 18px clamp(15px, 4vw, 58px) 34px; }
+      body[data-view="welcome"] .topbar {
+        max-width: 1320px;
+        min-height: 54px;
+        border: 1px solid rgba(147, 169, 229, .18);
+        border-radius: 15px;
+        background: rgba(8, 13, 32, .73);
+        box-shadow: 0 14px 40px rgba(0, 0, 0, .22), inset 0 1px rgba(255,255,255,.06);
+      }
+      body[data-view="welcome"] .brand-mark {
+        border-radius: 11px;
+        background: linear-gradient(145deg, #47e3e7, #6669ff 58%, #c163dc);
+        box-shadow: 0 0 24px rgba(93, 154, 255, .27);
+      }
+      body[data-view="welcome"] .top-note { color: #aab7d8; font-size: 10px; letter-spacing: .1em; text-transform: uppercase; }
+      body[data-view="welcome"] .topbar-actions { gap: 8px; }
+      body[data-view="welcome"] .language-select,
+      body[data-view="welcome"] .sound-toggle {
+        min-height: 40px;
+        border: 1px solid rgba(155, 172, 224, .2);
+        border-radius: 10px;
+        color: #dfe7ff;
+        background: rgba(18, 25, 51, .82);
+      }
+      body[data-view="welcome"] .coin-balance-chip {
+        min-height: 40px;
+        color: #f6e7a5;
+        border-color: rgba(242, 207, 112, .26);
+        background: rgba(48, 40, 38, .58);
+      }
+      body[data-view="welcome"] .coin-mark svg { width: 18px; height: 18px; display: block; }
+      body[data-view="welcome"] .welcome { max-width: 1160px; padding-top: clamp(32px, 5vh, 60px); }
+      body[data-view="welcome"] .hero {
+        min-height: 315px;
+        grid-template-columns: minmax(0, 1fr) minmax(300px, .85fr);
+        padding: 16px clamp(8px, 2vw, 26px) 10px;
+        overflow: visible;
+        border: 0;
+        border-radius: 0;
+        background: transparent;
+        box-shadow: none;
+      }
+      body[data-view="welcome"] .hero::before,
+      body[data-view="welcome"] .hero::after { display: none; }
+      body[data-view="welcome"] .hero-copy { max-width: 650px; }
+      body[data-view="welcome"] .hero .eyebrow {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 18px;
+        color: #78e8e8;
+        font-size: 10px;
+        letter-spacing: .22em;
+      }
+      body[data-view="welcome"] .hero .eyebrow::before { content: ""; width: 26px; height: 1px; background: #63d9e1; box-shadow: 0 0 12px #63d9e1; }
+      body[data-view="welcome"] #welcomeTitle {
+        position: relative;
+        isolation: isolate;
+        max-width: 690px;
+        color: #f4f5ff;
+        font-size: clamp(54px, 7.4vw, 94px);
+        font-weight: 880;
+        line-height: .91;
+        letter-spacing: -.078em;
+        text-shadow: 0 2px rgba(255,255,255,.12), 0 0 30px rgba(106, 124, 255, .18);
+        animation: portalTitlePulse 5.8s ease-in-out infinite;
+      }
+      body[data-view="welcome"] #welcomeTitle::after {
+        content: attr(data-scanline);
+        position: absolute;
+        inset: 0;
+        overflow: hidden;
+        pointer-events: none;
+        color: transparent;
+        background: repeating-linear-gradient(
+          to bottom,
+          transparent 0 4px,
+          rgba(212, 255, 255, .8) 4px 5px
+        );
+        background-size: 100% 12px;
+        background-position: 0 -12px;
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        opacity: .2;
+        animation: portalScanSweep 6.4s steps(1, end) infinite;
+      }
+      body[data-view="welcome"] #welcomeTitle span {
+        display: inline-block;
+        color: #8cebf1;
+        text-shadow: 0 0 8px rgba(114,235,255,.76), 0 0 32px rgba(79,171,255,.5);
+      }
+      body[data-view="welcome"] #welcomeDescription {
+        max-width: 430px;
+        margin-top: 18px;
+        color: #aab6d2;
+        font-size: 14px;
+        line-height: 1.65;
+      }
+      body[data-view="welcome"] .hero-live-stats { max-width: 470px; margin-top: 20px; }
+      body[data-view="welcome"] .hero-stats-heading { color: #8c9abc; font-size: 8px; letter-spacing: .19em; }
+      body[data-view="welcome"] .hero-stats-grid { gap: 7px; }
+      body[data-view="welcome"] .hero-stat-tile {
+        min-height: 54px;
+        padding: 8px 10px;
+        border: 1px solid rgba(144, 162, 213, .15);
+        border-radius: 9px;
+        background: rgba(13, 19, 41, .65);
+        box-shadow: inset 0 1px rgba(255,255,255,.04);
+      }
+      body[data-view="welcome"] .hero-stat-label { color: #8793b1; font-size: 8px; letter-spacing: .06em; text-transform: uppercase; }
+      body[data-view="welcome"] .hero-stat-value { color: #e8f2ff; font-size: 13px; }
+      body[data-view="welcome"] .hero-stat-value.is-active { color: #66eac7; }
+      body[data-view="welcome"] .hero-aside {
+        width: min(100%, 405px);
+        height: 290px;
+        justify-self: center;
+        overflow: visible;
+      }
+      body[data-view="welcome"] .hero-aside::before {
+        opacity: 1;
+        background:
+          radial-gradient(circle at 18% 21%, #e9ffff 0 1px, transparent 2px),
+          radial-gradient(circle at 79% 24%, #a6f4ff 0 1px, transparent 2px),
+          radial-gradient(circle at 72% 77%, #ffc5e9 0 1px, transparent 2px),
+          radial-gradient(ellipse at 50% 53%, rgba(64, 107, 229, .23), transparent 67%);
+      }
+      body[data-view="welcome"] .hero-orbit-fallback { inset: -5px; }
+      body[data-view="welcome"] .fallback-orbit { width: 220px; height: 220px; border-color: rgba(108, 221, 255, .34); }
+      body[data-view="welcome"] .fallback-orbit.orbit-b { width: 285px; height: 285px; border-color: rgba(176, 126, 255, .3); }
+      body[data-view="welcome"] .fallback-planet { width: 102px; height: 102px; box-shadow: inset -12px -14px 24px rgba(15, 12, 68, .38), inset 8px 8px 16px rgba(255,255,255,.38), 0 0 58px rgba(77, 183, 255, .33); }
+      body[data-view="welcome"] .orbit-label {
+        right: 50%;
+        bottom: 0;
+        width: max-content;
+        max-width: min(90%, 330px);
+        padding: 8px 12px;
+        color: #b9eaf3;
+        border: 1px solid rgba(110, 205, 237, .23);
+        border-radius: 999px;
+        background: rgba(9, 16, 39, .83);
+        box-shadow: 0 8px 24px rgba(0,0,0,.24);
+        transform: translateX(50%);
+        font-size: 9px;
+      }
+      body[data-view="welcome"] .section-heading {
+        position: relative;
+        z-index: 2;
+        max-width: 800px;
+        margin: 18px auto -8px;
+        align-items: center;
+        justify-content: space-between;
+      }
+      body[data-view="welcome"] .section-heading h2 { color: #eff3ff; font-size: 15px; letter-spacing: .015em; }
+      body[data-view="welcome"] .section-heading p { color: #7888aa; font-size: 10px; letter-spacing: .05em; }
+      body[data-view="welcome"] .category-grid {
+        position: relative;
+        z-index: 1;
+        width: min(100%, 920px);
+        height: 370px;
+        margin: 0 auto;
+        display: block;
+        isolation: isolate;
+      }
+      body[data-view="welcome"] .category-grid::before,
+      body[data-view="welcome"] .category-grid::after {
+        content: "";
+        position: absolute;
+        z-index: -1;
+        left: 50%;
+        top: 50%;
+        border: 1px solid rgba(117, 156, 236, .2);
+        border-radius: 50%;
+        transform: translate(-50%, -50%) rotate(-16deg) scaleY(.38);
+        pointer-events: none;
+      }
+      body[data-view="welcome"] .category-grid::before { width: 68%; height: 430px; box-shadow: 0 0 40px rgba(52,119,245,.08), inset 0 0 30px rgba(72,151,235,.04); }
+      body[data-view="welcome"] .category-grid::after { width: 44%; height: 290px; border-style: dashed; border-color: rgba(185,116,243,.19); transform: translate(-50%, -50%) rotate(32deg) scaleY(.47); }
+      body[data-view="welcome"] .category {
+        position: absolute;
+        width: 224px;
+        min-height: 126px;
+        padding: 13px 14px;
+        align-items: flex-start;
+        gap: 11px;
+        border: 1px solid rgba(145, 166, 219, .19);
+        border-radius: 13px;
+        background: linear-gradient(145deg, rgba(18, 27, 56, .94), rgba(11, 18, 41, .88));
+        box-shadow: 0 12px 28px rgba(0,0,0,.22), inset 0 1px rgba(255,255,255,.055);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        transition: border-color .2s ease, background .2s ease, transform .2s ease, box-shadow .2s ease;
+      }
+      body[data-view="welcome"] .category:nth-child(1) { left: 2%; top: 38%; }
+      body[data-view="welcome"] .category:nth-child(2) { left: 27%; top: 0; }
+      body[data-view="welcome"] .category:nth-child(3) { right: 2%; top: 38%; }
+      body[data-view="welcome"] .category:nth-child(4) { right: 15%; bottom: 0; }
+      body[data-view="welcome"] .category:nth-child(5) { left: 15%; bottom: 0; }
+      body[data-view="welcome"] .category:hover,
+      body[data-view="welcome"] .category:focus-visible { transform: translateY(-4px); border-color: rgba(118, 226, 255, .55); background: linear-gradient(145deg, rgba(29, 44, 84, .98), rgba(17, 25, 56, .97)); box-shadow: 0 17px 34px rgba(0,0,0,.3), 0 0 24px rgba(70,174,255,.14); }
+      body[data-view="welcome"] .category.selected {
+        border-color: rgba(99, 237, 232, .8);
+        background: linear-gradient(145deg, rgba(24, 58, 79, .98), rgba(21, 31, 70, .97));
+        box-shadow: 0 0 0 1px rgba(102, 235, 239, .19), 0 0 30px rgba(61, 204, 232, .14), 0 17px 34px rgba(0,0,0,.26);
+      }
+      body[data-view="welcome"] .category-icon {
+        flex-basis: 36px;
+        height: 36px;
+        border-radius: 10px;
+        color: #8beef2;
+        background: rgba(86, 170, 217, .13);
+      }
+      body[data-view="welcome"] .category-icon svg { width: 19px; height: 19px; }
+      body[data-view="welcome"] .category-title { font-size: 12px; line-height: 1.35; }
+      body[data-view="welcome"] .category-detail { margin-top: 3px; color: #8f9cba; font-size: 9px; }
+      body[data-view="welcome"] .category-preview { gap: 4px; margin-top: 7px; }
+      body[data-view="welcome"] .category-progress-copy { font-size: 8px; }
+      body[data-view="welcome"] .category-difficulty { padding: 2px 5px; font-size: 7px; }
+      body[data-view="welcome"] .category-unlock-status { font-size: 8px; }
+      body[data-view="welcome"] .category-arrow { align-self: center; font-size: 14px; }
+      body[data-view="welcome"] .start-row { position: relative; z-index: 3; gap: 10px; margin-top: 7px; }
+      body[data-view="welcome"] .start-button {
+        min-width: 246px;
+        min-height: 58px;
+        padding: 0 27px;
+        border: 1px solid rgba(226, 255, 255, .7);
+        border-radius: 12px;
+        color: #06111e;
+        background: linear-gradient(105deg, #c4fbff, #67e4e2 48%, #a8a2ff);
+        box-shadow: 0 0 0 4px rgba(101, 219, 229, .08), 0 12px 34px rgba(72, 181, 221, .24), inset 0 1px rgba(255,255,255,.8);
+        animation: none;
+        font-size: 13px;
+        font-weight: 850;
+        letter-spacing: .045em;
+        text-transform: uppercase;
+      }
+      body[data-view="welcome"] .start-button:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 0 0 5px rgba(101,219,229,.1), 0 17px 38px rgba(72,181,221,.3), inset 0 1px rgba(255,255,255,.8); }
+      body[data-view="welcome"] .start-button::after { display: none; }
+      body[data-view="welcome"] .start-hint { color: #8291b0; font-size: 10px; }
+      body[data-view="welcome"] .continue-journey-button { min-height: 54px; padding: 8px 13px; border-radius: 12px; background: rgba(18, 26, 53, .9); }
+      body[data-view="welcome"] .continue-icon { color: #091523; border-radius: 9px; }
+      body[data-view="welcome"] .welcome-foot { color: #7382a2; font-size: 9px; }
+      body[data-view="welcome"] .portal-telemetry {
+        display: grid;
+        grid-template-columns: max-content minmax(0, 1fr);
+        align-items: center;
+        gap: 12px;
+        max-width: 1160px;
+        margin: 16px auto 4px;
+        padding: 9px 11px;
+        overflow: hidden;
+        border: 1px solid rgba(127, 159, 220, .17);
+        border-radius: 11px;
+        background: linear-gradient(100deg, rgba(13, 21, 44, .88), rgba(9, 15, 34, .7));
+        box-shadow: inset 0 1px rgba(255,255,255,.035);
+      }
+      body[data-view="welcome"] .portal-telemetry-heading {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        color: #8293b5;
+        font-size: 8px;
+        font-weight: 850;
+        letter-spacing: .13em;
+        white-space: nowrap;
+      }
+      body[data-view="welcome"] .portal-telemetry-stream {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 6px;
+      }
+      body[data-view="welcome"] .portal-telemetry-item {
+        display: flex;
+        min-width: 0;
+        min-height: 29px;
+        align-items: center;
+        justify-content: space-between;
+        gap: 7px;
+        padding: 5px 8px;
+        border: 1px solid rgba(137, 158, 211, .13);
+        border-radius: 7px;
+        color: #8794b1;
+        background: rgba(16, 25, 50, .65);
+        font-size: 8px;
+        line-height: 1.3;
+      }
+      body[data-view="welcome"] .portal-telemetry-item span { min-width: 0; overflow-wrap: anywhere; }
+      body[data-view="welcome"] .portal-telemetry-item strong {
+        flex: 0 0 auto;
+        color: #8cebd3;
+        font-size: 9px;
+        font-weight: 850;
+        white-space: nowrap;
+      }
+      body[data-view="welcome"] .portal-telemetry-item:last-child strong { color: #ffe18a; }
+      body[data-view="welcome"] .collection-panel { margin-top: 25px; border-color: rgba(145, 166, 219, .15); background: rgba(10, 16, 37, .65); }
+      body[data-view="welcome"] .collection-heading h2 { color: #edf3ff; }
+      body[data-view="welcome"] .collection-stat {
+        border: 1px solid rgba(145, 166, 219, .16);
+        background: rgba(18, 27, 55, .82);
+      }
+      body[data-view="welcome"] .collection-stat strong { color: #f3f6ff; }
+      body[data-view="welcome"] .collection-stat span,
+      body[data-view="welcome"] .collection-reward-group h3 { color: #a7b4d1; }
+      body[data-view="welcome"] .collection-reward-empty {
+        color: #a9b6d2;
+        border-color: rgba(145, 166, 219, .24);
+        background: rgba(18, 27, 55, .65);
+      }
+      @media (max-width: 820px) and (min-width: 651px) {
+        body[data-view="welcome"] .hero { grid-template-columns: minmax(0, 1fr) 290px; }
+        body[data-view="welcome"] .category-grid { height: 355px; }
+        body[data-view="welcome"] .category { width: 198px; }
+        body[data-view="welcome"] .category:nth-child(2) { left: 28%; }
+        body[data-view="welcome"] .category:nth-child(4) { right: 7%; }
+        body[data-view="welcome"] .category:nth-child(5) { left: 7%; }
+      }
+      @media (max-width: 650px) {
+        body[data-view="welcome"] .topbar { gap: 8px; }
+        body[data-view="welcome"] .top-note { display: none; }
+        body[data-view="welcome"] .brand { flex: 0 0 auto; min-width: max-content; }
+        body[data-view="welcome"] .brand-name { white-space: nowrap; }
+        body[data-view="welcome"] .topbar-actions { flex: 0 0 auto; gap: 4px; }
+        body[data-view="welcome"] .coin-balance-label { display: none; }
+        body[data-view="welcome"] .sound-toggle { width: 48px; min-width: 48px; min-height: 48px; padding: 0; }
+        body[data-view="welcome"] .sound-toggle span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+        body[data-view="welcome"] .app { padding: 10px 12px 24px; }
+        body[data-view="welcome"] .topbar { align-items: center; }
+        body[data-view="welcome"] .brand-name { font-size: 13px; }
+        body[data-view="welcome"] .coin-balance-chip { min-height: 36px; }
+        body[data-view="welcome"] .language-select,
+        body[data-view="welcome"] .sound-toggle { min-height: 40px; }
+        body[data-view="welcome"] .welcome { padding-top: 26px; }
+        body[data-view="welcome"] .hero { min-height: 0; grid-template-columns: 1fr; padding: 10px 4px 0; }
+        body[data-view="welcome"] #welcomeTitle { font-size: clamp(48px, 13vw, 70px); }
+        body[data-view="welcome"] #welcomeDescription { max-width: 370px; font-size: 12px; }
+        body[data-view="welcome"] .hero-live-stats { margin-top: 15px; }
+        body[data-view="welcome"] .hero-stat-tile { min-height: 48px; }
+        body[data-view="welcome"] .hero-aside { width: 100%; height: 180px; margin-top: -3px; }
+        body[data-view="welcome"] .hero-orbit-fallback { transform: scale(.7); }
+        body[data-view="welcome"] .orbit-label { bottom: -2px; font-size: 8px; }
+        body[data-view="welcome"] .section-heading { margin: 22px 2px 8px; }
+        body[data-view="welcome"] .section-heading h2 { font-size: 14px; }
+        body[data-view="welcome"] .section-heading p { max-width: 48%; text-align: right; font-size: 9px; }
+        body[data-view="welcome"] .category-grid {
+          width: 100%;
+          height: auto;
+          display: grid;
+          grid-template-columns: 1fr;
+          gap: 8px;
+          padding: 0;
+        }
+        body[data-view="welcome"] .category-grid::before,
+        body[data-view="welcome"] .category-grid::after { display: none; }
+        body[data-view="welcome"] .category {
+          position: relative;
+          inset: auto;
+          width: 100%;
+          min-height: 70px;
+          padding: 10px 11px;
+          align-items: center;
+          border-radius: 11px;
+        }
+        body[data-view="welcome"] .category-grid > .category:nth-child(n) {
+          left: auto;
+          right: auto;
+          top: auto;
+          bottom: auto;
+        }
+        body[data-view="welcome"] .category-preview { display: none; }
+        body[data-view="welcome"] .category-title { font-size: 12px; }
+        body[data-view="welcome"] .category-detail { font-size: 9px; }
+        body[data-view="welcome"] .category-arrow { margin-left: auto; }
+        body[data-view="welcome"] .start-row { margin-top: 14px; }
+        body[data-view="welcome"] .start-button { width: min(100%, 360px); }
+        body[data-view="welcome"] .continue-journey-button { width: min(100%, 360px); }
+        body[data-view="welcome"] .welcome-foot { gap: 8px 13px; margin-top: 7px; font-size: 8px; }
+        body[data-view="welcome"] .portal-telemetry { grid-template-columns: 1fr; gap: 7px; margin-top: 12px; padding: 8px; }
+        body[data-view="welcome"] .portal-telemetry-stream { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        body[data-view="welcome"] .portal-telemetry-item { min-height: 36px; font-size: 8px; }
+        body[data-view="welcome"] .collection-panel { margin-top: 22px; }
+      }
+      @media (max-width: 390px) {
+        body[data-view="welcome"] .top-note { display: none; }
+        body[data-view="welcome"] .topbar-actions { gap: 4px; }
+        body[data-view="welcome"] .brand { flex: 0 0 auto; min-width: max-content; }
+        body[data-view="welcome"] .brand-name { white-space: nowrap; }
+        body[data-view="welcome"] .language-select { width: 78px; min-width: 72px; min-height: 48px; padding-right: 18px; font-size: 9px; }
+        body[data-view="welcome"] .sound-toggle { width: 48px; min-height: 48px; padding: 0; }
+        body[data-view="welcome"] .sound-toggle span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        body[data-view="welcome"] .hero-aside::before { animation: none !important; }
+        body[data-view="welcome"] #welcomeTitle,
+        body[data-view="welcome"] #welcomeTitle::after { animation: none !important; }
+        body[data-view="welcome"] .category-grid::before,
+        body[data-view="welcome"] .category-grid::after { animation: none !important; }
+      }
+      @keyframes portalTitlePulse {
+        0%, 100% { filter: drop-shadow(0 0 3px rgba(97, 190, 255, .1)); }
+        50% { filter: drop-shadow(0 0 12px rgba(97, 190, 255, .26)); }
+      }
+      @keyframes portalScanSweep {
+        0%, 79%, 100% { background-position: 0 -12px; }
+        80% { background-position: 0 5px; }
+        81% { background-position: 0 -2px; }
+        82% { background-position: 0 2px; }
       }
     </style>
   </head>
@@ -1986,7 +2480,7 @@
         <div class="topbar-actions">
           <div class="top-note"><span class="live-dot"></span><span id="topNoteText">A small space for curiosity</span></div>
           <div class="coin-balance-chip" id="coinBalanceChip" aria-label="Coin balance">
-            <span class="coin-mark" aria-hidden="true">🪙</span>
+            <span class="coin-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8.4" stroke="currentColor" stroke-width="1.7"/><circle cx="12" cy="12" r="5.5" stroke="currentColor" stroke-width="1"/><path d="M13.8 9.3c-.4-.6-1-.9-1.9-.9-1 0-1.7.5-1.7 1.3 0 2 3.8.9 3.8 3 0 .9-.8 1.5-1.9 1.5-.9 0-1.7-.4-2.1-1.1m2-5.2v7.2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg></span>
             <strong id="coinBalance">0</strong>
             <span class="coin-balance-label" id="coinBalanceLabel">Coins</span>
           </div>
@@ -2011,7 +2505,7 @@
           <div class="hero">
             <div class="hero-copy">
               <p class="eyebrow" id="welcomeEyebrow">A quiz with a little perspective</p>
-              <h1 id="welcomeTitle">QuizVerse <span>3D</span></h1>
+              <h1 id="welcomeTitle" data-scanline="QuizVerse 3D">QuizVerse <span>3D</span></h1>
             <p id="welcomeDescription">Two ways to explore: discover the world, or race the clock with logic and patterns.</p>
             <div class="hero-live-stats" id="heroStatsTicker" role="group" aria-label="Live game statistics">
               <div class="hero-stats-heading"><span class="live-dot" aria-hidden="true"></span><span id="heroStatsTitle">LIVE GAME STATS</span></div>
@@ -2061,7 +2555,7 @@
               </span><span class="category-arrow" aria-hidden="true">→</span>
             </button>
             <button class="category" type="button" data-category="Science &amp; Technology" aria-pressed="false">
-              <span class="category-icon" aria-hidden="true">⚛</span>
+              <span class="category-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><ellipse cx="12" cy="12" rx="9" ry="3.7" stroke="currentColor" stroke-width="1.5"/><ellipse cx="12" cy="12" rx="9" ry="3.7" stroke="currentColor" stroke-width="1.5" transform="rotate(60 12 12)"/><ellipse cx="12" cy="12" rx="9" ry="3.7" stroke="currentColor" stroke-width="1.5" transform="rotate(120 12 12)"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/></svg></span>
               <span class="category-text">
                 <span class="category-title" data-category-title>Science &amp; Technology</span>
                 <span class="category-detail" data-category-detail>Experiments, space, and digital life</span>
@@ -2073,7 +2567,7 @@
               </span><span class="category-arrow" aria-hidden="true">→</span>
             </button>
             <button class="category" type="button" data-category="Pop Culture &amp; Movies" aria-pressed="false">
-              <span class="category-icon" aria-hidden="true">🎬</span>
+              <span class="category-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><rect x="4" y="5.5" width="16" height="13" rx="2" stroke="currentColor" stroke-width="1.6"/><path d="m10 9 5 3-5 3V9ZM7 5.5l2 3m3-3 2 3m3-3 2 3M7 15.5l2 3m3-3 2 3m3-3 2 3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
               <span class="category-text">
                 <span class="category-title" data-category-title>Pop Culture &amp; Movies</span>
                 <span class="category-detail" data-category-detail>Film, music, and games</span>
@@ -2085,7 +2579,7 @@
               </span><span class="category-arrow" aria-hidden="true">→</span>
             </button>
             <button class="category" type="button" data-category="History &amp; Geography" aria-pressed="false">
-              <span class="category-icon" aria-hidden="true">🧭</span>
+              <span class="category-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8.5" stroke="currentColor" stroke-width="1.6"/><path d="m15.8 8.2-2.3 5.3-5.3 2.3 2.3-5.3 5.3-2.3Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><circle cx="12" cy="12" r="1" fill="currentColor"/></svg></span>
               <span class="category-text">
                 <span class="category-title" data-category-title>History &amp; Geography</span>
                 <span class="category-detail" data-category-detail>Places, timelines, and journeys</span>
@@ -2119,6 +2613,15 @@
             </button>
           </div>
           <div class="welcome-foot"><span><b class="tiny-check">✓</b> <span id="totalQuestionsLabel">30 General Knowledge questions</span></span><span><b class="tiny-check">✓</b> <span id="instantAnswersLabel">Instant answers</span></span><span><b class="tiny-check">✓</b> <span id="justForFunLabel">Just for fun</span></span></div>
+          <div class="portal-telemetry" id="portalTelemetry" role="group" aria-label="Live portal telemetry">
+            <div class="portal-telemetry-heading"><span class="live-dot" aria-hidden="true"></span><span id="portalTelemetryTitle">LIVE NEURAL TELEMETRY</span></div>
+            <div class="portal-telemetry-stream">
+              <div class="portal-telemetry-item"><span id="portalNeuralLabel">Neural link</span><strong id="portalNeuralState">Secure</strong></div>
+              <div class="portal-telemetry-item"><span id="portalAntiCheatLabel">Anti-cheat</span><strong id="portalAntiCheatState">Active</strong></div>
+              <div class="portal-telemetry-item"><span id="portalUniverseLevelsLabel">Universe levels</span><strong id="portalUniverseLevelsValue">2,500+</strong></div>
+              <div class="portal-telemetry-item"><span id="portalCoinVaultLabel">Coin vault</span><strong id="portalVaultBalance">0</strong></div>
+            </div>
+          </div>
           <section class="collection-panel" aria-labelledby="collectionTitle">
             <div class="collection-heading">
               <h2 id="collectionTitle">Your collection</h2>
@@ -2160,7 +2663,14 @@
                   <select id="dashboardStatusFilter"></select>
                 </label>
               </div>
-              <div class="analytics-grid">
+              <nav class="collection-tablist" id="collectionTabList" role="tablist" aria-label="Collection views">
+                <button class="collection-tab" id="collectionTabAll" type="button" role="tab" data-collection-tab="all" aria-selected="true" aria-controls="collectionTabPanel" tabindex="0">All</button>
+                <button class="collection-tab" id="collectionTabTrophies" type="button" role="tab" data-collection-tab="trophies" aria-selected="false" aria-controls="collectionTabPanel" tabindex="-1">Trophies</button>
+                <button class="collection-tab" id="collectionTabBadges" type="button" role="tab" data-collection-tab="badges" aria-selected="false" aria-controls="collectionTabPanel" tabindex="-1">Badges</button>
+                <button class="collection-tab" id="collectionTabStats" type="button" role="tab" data-collection-tab="stats" aria-selected="false" aria-controls="collectionTabPanel" tabindex="-1">Category Stats</button>
+              </nav>
+              <div class="collection-tab-panel" id="collectionTabPanel" role="tabpanel" aria-labelledby="collectionTabAll" tabindex="0">
+              <div class="analytics-grid" data-dashboard-section="summary">
                 <section class="analytics-card" aria-labelledby="dashboardIQTitle">
                   <h3 id="dashboardIQTitle">IQ-style analytical estimate</h3>
                   <strong class="analytics-iq-score" id="dashboardIQScore">—</strong>
@@ -2177,19 +2687,20 @@
                   <strong class="analytics-iq-score coin-dashboard-value" id="dashboardCoinBalance">0</strong>
                   <p class="analytics-card-note" id="dashboardCoinsNote">Earn coins now; power-ups and themes can use them later.</p>
                 </section>
-                <section class="analytics-card category-progress-card" aria-labelledby="dashboardCategoryProgressTitle">
+                </div>
+                <section class="analytics-card category-progress-card" data-dashboard-section="stats" aria-labelledby="dashboardCategoryProgressTitle">
                   <h3 id="dashboardCategoryProgressTitle">Progress by category</h3>
                   <div class="category-progress-grid" id="dashboardCategoryProgressGrid"></div>
                 </section>
-              </div>
-              <section class="analytics-section" aria-labelledby="dashboardTrophyTitle">
+              <section class="analytics-section" data-dashboard-section="trophies" aria-labelledby="dashboardTrophyTitle">
                 <h3 id="dashboardTrophyTitle">Trophy showcase</h3>
                 <div class="trophy-gallery" id="trophyGallery" role="list"></div>
               </section>
-              <section class="analytics-section" aria-labelledby="dashboardBadgeTitle">
+              <section class="analytics-section" data-dashboard-section="badges" aria-labelledby="dashboardBadgeTitle">
                 <h3 id="dashboardBadgeTitle">Achievement badges</h3>
                 <div class="badge-gallery" id="badgeGallery" role="list"></div>
               </section>
+              </div>
             </div>
           </dialog>
         </section>
@@ -2262,6 +2773,32 @@
               </section>
               <p class="question-kicker" id="questionKicker">Take a moment</p>
               <h1 class="question" id="questionText" tabindex="-1">Question goes here</h1>
+              <section class="lifeline-panel" id="lifelinePanel" aria-label="Tactical lifelines">
+                <div class="lifeline-heading">
+                  <span class="lifeline-title" id="lifelineHeading">TACTICAL LIFELINES</span>
+                  <span class="lifeline-use-count" id="lifelineUseCount" aria-live="polite">0/2 used</span>
+                </div>
+                <p class="lifeline-rule" id="lifelineLimitRule">Choose up to 2 different lifelines per question.</p>
+                <div class="lifeline-grid" id="lifelineGrid" role="group" aria-labelledby="lifelineHeading">
+                  <button class="lifeline-button" type="button" data-lifeline="fifty">
+                    <span class="lifeline-symbol" aria-hidden="true">½</span>
+                    <span class="lifeline-copy"><span class="lifeline-name" id="lifelineFiftyLabel">50/50</span><span class="lifeline-cost" id="lifelineFiftyCost">20 🪙</span></span>
+                  </button>
+                  <button class="lifeline-button" type="button" data-lifeline="freeze">
+                    <span class="lifeline-symbol" aria-hidden="true">Ⅱ</span>
+                    <span class="lifeline-copy"><span class="lifeline-name" id="lifelineFreezeLabel">Time freeze</span><span class="lifeline-cost" id="lifelineFreezeCost">15 🪙</span></span>
+                  </button>
+                  <button class="lifeline-button" type="button" data-lifeline="clue">
+                    <span class="lifeline-symbol" aria-hidden="true">✦</span>
+                    <span class="lifeline-copy"><span class="lifeline-name" id="lifelineClueLabel">Smart clue</span><span class="lifeline-cost" id="lifelineClueCost">25 🪙</span></span>
+                  </button>
+                  <button class="lifeline-button" type="button" data-lifeline="skip">
+                    <span class="lifeline-symbol" aria-hidden="true">↪</span>
+                    <span class="lifeline-copy"><span class="lifeline-name" id="lifelineSkipLabel">Skip question</span><span class="lifeline-cost" id="lifelineSkipCost">40 🪙</span></span>
+                  </button>
+                </div>
+                <p class="lifeline-notice" id="lifelineNotice" role="status" aria-live="polite" hidden></p>
+              </section>
               <div class="options" id="options" role="group" aria-label="Answer options"></div>
               <div class="feedback" id="feedback" aria-live="polite">Choose the answer that feels right.</div>
               <div class="quiz-actions">
@@ -2466,6 +3003,11 @@
           dashboardBadgeGallery: "Achievement badges",
           dashboardPreviousReward: "Earned in an earlier round",
           dashboardFiltersTitle: "Collection filters",
+          dashboardTabLabel: "Collection views",
+          dashboardTabAll: "All",
+          dashboardTabTrophies: "Trophies",
+          dashboardTabBadges: "Badges",
+          dashboardTabStats: "Category Stats",
           dashboardCategoryFilter: "Category",
           dashboardCategoryAll: "All categories",
           dashboardStatusFilter: "Sort by status",
@@ -2488,6 +3030,8 @@
           badgeSpeedDemonHint: "Average answer under 6 seconds",
           badgeKnowledgeSeeker: "Knowledge Seeker",
           badgeKnowledgeSeekerHint: "60% accuracy or higher",
+          badgeStreakGod: "Streak God",
+          badgeStreakGodHint: "Get a streak of 5 correct answers in one round.",
           correct: "Correct",
           incorrectAnswers: "Incorrect",
           round: "Round",
@@ -2656,6 +3200,11 @@
           dashboardBadgeGallery: "অর্জনের ব্যাজ",
           dashboardPreviousReward: "আগের পর্বে অর্জিত",
           dashboardFiltersTitle: "সংগ্রহ ফিল্টার",
+          dashboardTabLabel: "সংগ্রহের বিভাগ",
+          dashboardTabAll: "সব",
+          dashboardTabTrophies: "ট্রফি",
+          dashboardTabBadges: "ব্যাজ",
+          dashboardTabStats: "বিভাগের পরিসংখ্যান",
           dashboardCategoryFilter: "বিভাগ",
           dashboardCategoryAll: "সব বিভাগ",
           dashboardStatusFilter: "অবস্থা অনুযায়ী সাজান",
@@ -2678,6 +3227,8 @@
           badgeSpeedDemonHint: "গড়ে ৬ সেকেন্ডের কমে উত্তর",
           badgeKnowledgeSeeker: "জ্ঞানসন্ধানী",
           badgeKnowledgeSeekerHint: "সঠিকতার হার ৬০% বা বেশি",
+          badgeStreakGod: "স্ট্রিক চ্যাম্পিয়ন",
+          badgeStreakGodHint: "এক পর্বে টানা ৫টি সঠিক উত্তর দিন।",
           correct: "সঠিক",
           incorrectAnswers: "ভুল",
           round: "পর্ব",
@@ -2846,6 +3397,11 @@
           dashboardBadgeGallery: "उपलब्धि बैज",
           dashboardPreviousReward: "पिछले राउंड में मिला",
           dashboardFiltersTitle: "संग्रह फ़िल्टर",
+          dashboardTabLabel: "संग्रह दृश्य",
+          dashboardTabAll: "सभी",
+          dashboardTabTrophies: "ट्रॉफियाँ",
+          dashboardTabBadges: "बैज",
+          dashboardTabStats: "श्रेणी के आँकड़े",
           dashboardCategoryFilter: "श्रेणी",
           dashboardCategoryAll: "सभी श्रेणियाँ",
           dashboardStatusFilter: "स्थिति के अनुसार क्रम",
@@ -2868,6 +3424,8 @@
           badgeSpeedDemonHint: "औसतन 6 सेकंड से कम में जवाब",
           badgeKnowledgeSeeker: "ज्ञान साधक",
           badgeKnowledgeSeekerHint: "60% या अधिक सटीकता",
+          badgeStreakGod: "स्ट्रीक मास्टर",
+          badgeStreakGodHint: "एक राउंड में लगातार 5 सही जवाब दें।",
           correct: "सही",
           incorrectAnswers: "गलत",
           round: "राउंड",
@@ -3036,6 +3594,11 @@
           dashboardBadgeGallery: "Insignias de logros",
           dashboardPreviousReward: "Obtenido en una ronda anterior",
           dashboardFiltersTitle: "Filtros de colección",
+          dashboardTabLabel: "Vistas de colección",
+          dashboardTabAll: "Todo",
+          dashboardTabTrophies: "Trofeos",
+          dashboardTabBadges: "Insignias",
+          dashboardTabStats: "Estadísticas por categoría",
           dashboardCategoryFilter: "Categoría",
           dashboardCategoryAll: "Todas las categorías",
           dashboardStatusFilter: "Ordenar por estado",
@@ -3058,6 +3621,8 @@
           badgeSpeedDemonHint: "Promedio de respuesta menor a 6 segundos",
           badgeKnowledgeSeeker: "Buscador de conocimiento",
           badgeKnowledgeSeekerHint: "60% de aciertos o más",
+          badgeStreakGod: "Racha imparable",
+          badgeStreakGodHint: "Consigue 5 respuestas correctas seguidas en una ronda.",
           correct: "Correctas",
           incorrectAnswers: "Incorrectas",
           round: "Ronda",
@@ -3226,6 +3791,11 @@
           dashboardBadgeGallery: "Badges de réussite",
           dashboardPreviousReward: "Obtenu lors d’une manche précédente",
           dashboardFiltersTitle: "Filtres de collection",
+          dashboardTabLabel: "Vues de la collection",
+          dashboardTabAll: "Tout",
+          dashboardTabTrophies: "Trophées",
+          dashboardTabBadges: "Badges",
+          dashboardTabStats: "Statistiques par catégorie",
           dashboardCategoryFilter: "Catégorie",
           dashboardCategoryAll: "Toutes les catégories",
           dashboardStatusFilter: "Trier par statut",
@@ -3248,6 +3818,8 @@
           badgeSpeedDemonHint: "Réponse moyenne en moins de 6 secondes",
           badgeKnowledgeSeeker: "Curieux de savoir",
           badgeKnowledgeSeekerHint: "Précision de 60 % ou plus",
+          badgeStreakGod: "Série de maître",
+          badgeStreakGodHint: "Donnez 5 bonnes réponses d’affilée dans une manche.",
           correct: "Bonnes réponses",
           incorrectAnswers: "Incorrectes",
           round: "Manche",
@@ -3284,6 +3856,65 @@
           badgeQuizSpeedster: "As du quiz",
           badgeQuizSpeedsterHint: "Moins de 6 secondes en moyenne par réponse",
           optionLetters: ["A", "B", "C", "D"]
+        }
+      };
+
+      // Portal-only HUD strings stay separate from quiz copy so the welcome telemetry can grow independently.
+      const portalTranslations = {
+        en: {
+          startAction: "Initiate sequence",
+          telemetryTitle: "LIVE NEURAL TELEMETRY",
+          neuralLabel: "Neural link",
+          secureValue: "Secure",
+          antiCheatLabel: "Anti-cheat",
+          activeValue: "Active",
+          universeLevelsLabel: "Universe levels",
+          coinVaultLabel: "Coin vault",
+          telemetryGroup: "Live portal telemetry"
+        },
+        bn: {
+          startAction: "মিশন শুরু করুন",
+          telemetryTitle: "লাইভ নিউরাল টেলিমেট্রি",
+          neuralLabel: "নিউরাল লিংক",
+          secureValue: "সুরক্ষিত",
+          antiCheatLabel: "অ্যান্টি-চিট",
+          activeValue: "সক্রিয়",
+          universeLevelsLabel: "মহাবিশ্বের লেভেল",
+          coinVaultLabel: "কয়েন ভাণ্ডার",
+          telemetryGroup: "পোর্টালের লাইভ তথ্য"
+        },
+        hi: {
+          startAction: "मिशन शुरू करें",
+          telemetryTitle: "लाइव न्यूरल टेलीमेट्री",
+          neuralLabel: "न्यूरल लिंक",
+          secureValue: "सुरक्षित",
+          antiCheatLabel: "एंटी-चीट",
+          activeValue: "सक्रिय",
+          universeLevelsLabel: "ब्रह्मांड के स्तर",
+          coinVaultLabel: "कॉइन वॉल्ट",
+          telemetryGroup: "पोर्टल की लाइव जानकारी"
+        },
+        es: {
+          startAction: "Iniciar secuencia",
+          telemetryTitle: "TELEMETRÍA NEURAL EN VIVO",
+          neuralLabel: "Enlace neural",
+          secureValue: "Seguro",
+          antiCheatLabel: "Antitrampas",
+          activeValue: "Activo",
+          universeLevelsLabel: "Niveles del universo",
+          coinVaultLabel: "Bóveda de monedas",
+          telemetryGroup: "Telemetría del portal en vivo"
+        },
+        fr: {
+          startAction: "Lancer la séquence",
+          telemetryTitle: "TÉLÉMÉTRIE NEURALE EN DIRECT",
+          neuralLabel: "Lien neuronal",
+          secureValue: "Sécurisé",
+          antiCheatLabel: "Anti-triche",
+          activeValue: "Actif",
+          universeLevelsLabel: "Niveaux de l’univers",
+          coinVaultLabel: "Coffre de pièces",
+          telemetryGroup: "Télémétrie du portail en direct"
         }
       };
 
@@ -3521,6 +4152,140 @@
       const SPEED_BONUS_POINTS = 5;
       const LEVEL_PASSING_ACCURACY = 0.6;
       const LEVELS_PER_CATEGORY = 500;
+      // Strategic lifeline copy is kept beside the main locale dictionary so every
+      // quiz control, rule, and contextual hint changes immediately with language.
+      const lifelineTranslations = {
+        en: {
+          panelTitle: "TACTICAL LIFELINES",
+          limitRule: "Choose up to 2 different lifelines per question.",
+          useCount: "{count}/2 used",
+          coinUnit: "coins",
+          labels: { fifty: "50/50", freeze: "Time freeze", clue: "Smart clue", skip: "Skip question" },
+          alreadyUsed: "Already used on this question.",
+          limitReached: "Limit reached: only 2 different lifelines per question.",
+          answerLocked: "Lifelines are unavailable after answering.",
+          insufficient: "Need {cost} coins; your vault has {balance}.",
+          ready: "Activate this lifeline.",
+          noticeFifty: "Two incorrect choices removed.",
+          noticeFreeze: "Timer paused for 10 seconds.",
+          noticeHint: "Clue: {hint}",
+          noticeSkip: "A fresh question replaced it. No points were deducted.",
+          noReplacement: "No unused replacement question is available.",
+          timerFrozen: "Time frozen",
+          hints: {
+            "General Knowledge": "Focus on the key fact or place named in the question.",
+            "Science & Technology": "Recall the underlying principle before comparing the options.",
+            "Pop Culture & Movies": "Think about the creator, era, or work linked to the clue.",
+            "History & Geography": "Use the timeline or location clue to narrow the choices.",
+            "IQ Check": "Look for a repeated change or relationship between the terms."
+          }
+        },
+        bn: {
+          panelTitle: "কৌশলগত লাইফলাইন",
+          limitRule: "প্রতি প্রশ্নে সর্বোচ্চ ২টি আলাদা লাইফলাইন ব্যবহার করুন।",
+          useCount: "{count}/২টি ব্যবহৃত",
+          coinUnit: "কয়েন",
+          labels: { fifty: "৫০/৫০", freeze: "সময় থামান", clue: "স্মার্ট ইঙ্গিত", skip: "প্রশ্ন বদলান" },
+          alreadyUsed: "এই প্রশ্নে এটি ইতিমধ্যে ব্যবহার হয়েছে।",
+          limitReached: "সীমা পূর্ণ: প্রতি প্রশ্নে ২টি আলাদা লাইফলাইন ব্যবহার করা যাবে।",
+          answerLocked: "উত্তর দেওয়ার পর লাইফলাইন ব্যবহার করা যাবে না।",
+          insufficient: "প্রয়োজন {cost} কয়েন; ভাণ্ডারে আছে {balance}।",
+          ready: "এই লাইফলাইনটি ব্যবহার করুন।",
+          noticeFifty: "দুটি ভুল বিকল্প সরানো হয়েছে।",
+          noticeFreeze: "১০ সেকেন্ডের জন্য সময় থেমেছে।",
+          noticeHint: "ইঙ্গিত: {hint}",
+          noticeSkip: "নতুন প্রশ্ন দিয়ে বদলানো হয়েছে। কোনো পয়েন্ট কাটা হয়নি।",
+          noReplacement: "বদলি হিসেবে দেওয়ার মতো নতুন প্রশ্ন নেই।",
+          timerFrozen: "সময় থেমে আছে",
+          hints: {
+            "General Knowledge": "প্রশ্নে উল্লেখ করা মূল তথ্য বা স্থানের দিকে মন দিন।",
+            "Science & Technology": "বিকল্প মিলিয়ে দেখার আগে মূল বৈজ্ঞানিক নীতিটি মনে করুন।",
+            "Pop Culture & Movies": "ইঙ্গিতটির সঙ্গে যুক্ত নির্মাতা, সময়কাল বা কাজটি ভাবুন।",
+            "History & Geography": "সময়রেখা বা স্থানের সূত্র দিয়ে বিকল্প কমিয়ে আনুন।",
+            "IQ Check": "শব্দ বা সংখ্যাগুলোর পুনরাবৃত্ত পরিবর্তন বা সম্পর্ক খুঁজুন।"
+          }
+        },
+        hi: {
+          panelTitle: "रणनीतिक लाइफलाइन",
+          limitRule: "हर प्रश्न में अधिकतम 2 अलग-अलग लाइफलाइन चुनें।",
+          useCount: "{count}/2 उपयोग",
+          coinUnit: "कॉइन",
+          labels: { fifty: "50/50", freeze: "समय रोकें", clue: "स्मार्ट संकेत", skip: "प्रश्न बदलें" },
+          alreadyUsed: "इस प्रश्न में यह पहले ही इस्तेमाल हो चुका है।",
+          limitReached: "सीमा पूरी: हर प्रश्न में केवल 2 अलग-अलग लाइफलाइन।",
+          answerLocked: "उत्तर देने के बाद लाइफलाइन उपलब्ध नहीं हैं।",
+          insufficient: "{cost} कॉइन चाहिए; वॉल्ट में {balance} हैं।",
+          ready: "इस लाइफलाइन का उपयोग करें।",
+          noticeFifty: "दो गलत विकल्प हटा दिए गए।",
+          noticeFreeze: "टाइमर 10 सेकंड के लिए रुका है।",
+          noticeHint: "संकेत: {hint}",
+          noticeSkip: "नया प्रश्न दिया गया है। कोई अंक नहीं काटे गए।",
+          noReplacement: "बदलने के लिए कोई नया प्रश्न उपलब्ध नहीं है।",
+          timerFrozen: "समय रुका है",
+          hints: {
+            "General Knowledge": "प्रश्न में दिए मुख्य तथ्य या स्थान पर ध्यान दें।",
+            "Science & Technology": "विकल्पों की तुलना से पहले मूल सिद्धांत याद करें।",
+            "Pop Culture & Movies": "इस संकेत से जुड़े रचनाकार, दौर या काम के बारे में सोचें।",
+            "History & Geography": "विकल्प सीमित करने के लिए समय या स्थान का संकेत देखें।",
+            "IQ Check": "शब्दों या संख्याओं में दोहराव और संबंध खोजें।"
+          }
+        },
+        es: {
+          panelTitle: "SALVAVIDAS TÁCTICOS",
+          limitRule: "Elige hasta 2 salvavidas distintos por pregunta.",
+          useCount: "{count}/2 usados",
+          coinUnit: "monedas",
+          labels: { fifty: "50/50", freeze: "Congelar tiempo", clue: "Pista inteligente", skip: "Cambiar pregunta" },
+          alreadyUsed: "Ya se usó en esta pregunta.",
+          limitReached: "Límite alcanzado: solo 2 salvavidas distintos por pregunta.",
+          answerLocked: "Los salvavidas no están disponibles después de responder.",
+          insufficient: "Necesitas {cost} monedas; tienes {balance}.",
+          ready: "Activa este salvavidas.",
+          noticeFifty: "Se eliminaron dos opciones incorrectas.",
+          noticeFreeze: "El temporizador se pausó durante 10 segundos.",
+          noticeHint: "Pista: {hint}",
+          noticeSkip: "Se reemplazó por una pregunta nueva. No se descontaron puntos.",
+          noReplacement: "No hay una pregunta nueva disponible para reemplazarla.",
+          timerFrozen: "Tiempo congelado",
+          hints: {
+            "General Knowledge": "Fíjate en el dato o lugar clave que menciona la pregunta.",
+            "Science & Technology": "Recuerda el principio básico antes de comparar las opciones.",
+            "Pop Culture & Movies": "Piensa en la obra, la época o su creador.",
+            "History & Geography": "Usa la fecha o la ubicación para descartar opciones.",
+            "IQ Check": "Busca un cambio o una relación que se repita."
+          }
+        },
+        fr: {
+          panelTitle: "JOKERS TACTIQUES",
+          limitRule: "Choisissez jusqu’à 2 jokers différents par question.",
+          useCount: "{count}/2 utilisés",
+          coinUnit: "pièces",
+          labels: { fifty: "50/50", freeze: "Pause du temps", clue: "Indice malin", skip: "Changer la question" },
+          alreadyUsed: "Déjà utilisé pour cette question.",
+          limitReached: "Limite atteinte : 2 jokers différents maximum par question.",
+          answerLocked: "Les jokers ne sont plus disponibles après une réponse.",
+          insufficient: "Il faut {cost} pièces ; votre coffre en contient {balance}.",
+          ready: "Utiliser ce joker.",
+          noticeFifty: "Deux mauvaises réponses ont été retirées.",
+          noticeFreeze: "Le chronomètre est en pause pendant 10 secondes.",
+          noticeHint: "Indice : {hint}",
+          noticeSkip: "Une nouvelle question l’a remplacée. Aucun point n’a été retiré.",
+          noReplacement: "Aucune nouvelle question n’est disponible pour la remplacer.",
+          timerFrozen: "Temps en pause",
+          hints: {
+            "General Knowledge": "Concentrez-vous sur le fait ou le lieu clé de la question.",
+            "Science & Technology": "Rappelez-vous le principe avant de comparer les réponses.",
+            "Pop Culture & Movies": "Pensez à l’œuvre, à son époque ou à son créateur.",
+            "History & Geography": "Utilisez l’indice de date ou de lieu pour éliminer des réponses.",
+            "IQ Check": "Cherchez une variation ou une relation qui se répète."
+          }
+        }
+      };
+
+      // Prices are centralized so the HUD, affordability checks, and coin debits cannot drift apart.
+      const LIFELINE_COSTS = Object.freeze({ fifty: 20, freeze: 15, clue: 25, skip: 40 });
+      const MAX_LIFELINES_PER_QUESTION = 2;
+      const TIME_FREEZE_DURATION_MS = 10_000;
       const PROGRESSION_CATEGORIES = [
         "General Knowledge",
         "Science & Technology",
@@ -3714,7 +4479,7 @@
       const REWARD_COLLECTION_STORAGE_KEY = "quiz-orbit-reward-collection";
       const REWARD_COLLECTION_VERSION = 4;
       const TROPHY_TIERS = ["gold", "silver", "bronze"];
-      const BADGE_IDS = ["quizMaster", "logicMaster", "speedDemon", "quizSpeedster", "knowledgeSeeker"];
+      const BADGE_IDS = ["quizMaster", "logicMaster", "speedDemon", "quizSpeedster", "knowledgeSeeker", "streakGod"];
       const REWARD_MODES = PROGRESSION_CATEGORIES;
       // Simple reward tuning constants; the persistent balance is ready for future hint, skip, or theme purchases.
       const COIN_REWARDS = {
@@ -3877,6 +4642,11 @@
       const scorePopupsElement = document.getElementById("scorePopups");
       const quizCardElement = document.getElementById("quizCard");
       const nextButton = document.getElementById("nextButton");
+      const lifelinePanel = document.getElementById("lifelinePanel");
+      const lifelineNoticeElement = document.getElementById("lifelineNotice");
+      const lifelineButtons = Object.fromEntries(
+        [...document.querySelectorAll(".lifeline-button")].map((button) => [button.dataset.lifeline, button])
+      );
       const progressFill = document.getElementById("progressFill");
       const progressBar = document.querySelector('[role="progressbar"]');
       const languageSelect = document.getElementById("languageSelect");
@@ -3892,6 +4662,7 @@
       let currentText = translations[currentLanguage];
       let currentCategory = "General Knowledge";
       let selectedCategory = "General Knowledge";
+      let portalSelectionIndex = 0;
       let currentLevel = 1;
       let levelJustUnlocked = false;
       let levelFailed = false;
@@ -3912,6 +4683,10 @@
       let questionDeadline = 0;
       let questionTimerInterval = null;
       let lastTimerTickSecond = null;
+      let timerFreezeUntil = 0;
+      let timerFreezeRemainingSeconds = 0;
+      let lifelinesUsedThisQuestion = new Set();
+      let lifelineFeedbackType = "";
       let lastAnswerTimedOut = false;
       let lastAnswerInterrupted = false;
       let focusLossGraceTimeout = null;
@@ -3927,6 +4702,7 @@
       let rewardCollection = readRewardCollection();
       let collectionCategoryFilter = "all";
       let collectionStatusFilter = "default";
+      let collectionActiveTab = "all";
       let environmentTarget = 0;
       let cyberEnvironmentTarget = 0;
       let scienceEnvironmentTarget = 0;
@@ -4031,6 +4807,7 @@
       function updateCoinBalanceDisplays() {
         const balance = formatNumber(rewardCollection.coins);
         document.getElementById("coinBalance").textContent = balance;
+        document.getElementById("portalVaultBalance").textContent = balance;
         document.getElementById("gameCoinBalance").textContent = balance;
         document.getElementById("collectionCoinBalance").textContent = balance;
         document.getElementById("dashboardCoinBalance").textContent = balance;
@@ -4040,9 +4817,10 @@
         const accessibleBalance = currentText.coinBalanceAria.replace("{count}", balance);
         document.getElementById("coinBalanceChip").setAttribute("aria-label", accessibleBalance);
         document.getElementById("gameCoinBalanceChip").setAttribute("aria-label", accessibleBalance);
+        updateLifelinePanel();
       }
 
-      function spawnCoinPopup(amount, target = null) {
+      function spawnCoinPopup(amount, target = null, direction = "earned") {
         if (!amount) return;
         // Anchor the transient coin animation to the HUD without shifting the question or result layout.
         const anchor = target ||
@@ -4051,8 +4829,8 @@
             : document.getElementById("coinBalanceChip"));
         const rect = anchor?.getBoundingClientRect();
         const popup = document.createElement("span");
-        popup.className = "coin-popup";
-        popup.textContent = `+${formatNumber(amount)} 🪙`;
+        popup.className = `coin-popup${direction === "spent" ? " spent" : ""}`;
+        popup.textContent = `${direction === "spent" ? "−" : "+"}${formatNumber(amount)} 🪙`;
         popup.style.left = `${Math.max(64, Math.min(window.innerWidth - 64, rect ? rect.left + rect.width / 2 : window.innerWidth / 2))}px`;
         popup.style.top = `${Math.max(48, rect ? rect.top + rect.height / 2 : window.innerHeight / 2)}px`;
         const layer = document.getElementById("coinPopupLayer");
@@ -4077,13 +4855,37 @@
         return safeAmount;
       }
 
+      // Coin spending validates the live balance before changing it, then writes the
+      // reward record to localStorage and synchronizes every visible wallet counter.
+      // This protects normal gameplay from accidental double-spends; browser storage
+      // remains user-editable and is not server-authoritative anti-cheat.
+      function spendCoins(amount, target = null) {
+        const safeAmount = Number.isSafeInteger(amount) && amount > 0 ? amount : 0;
+        const balance = Number.isFinite(rewardCollection.coins)
+          ? Math.min(Number.MAX_SAFE_INTEGER, Math.max(0, Math.floor(rewardCollection.coins)))
+          : 0;
+        if (!safeAmount || balance < safeAmount) {
+          return false;
+        }
+        rewardCollection = { ...rewardCollection, coins: balance - safeAmount };
+        saveRewardCollection(rewardCollection);
+        updateCoinBalanceDisplays();
+        spawnCoinPopup(safeAmount, target, "spent");
+        playCoinCue();
+        return true;
+      }
+
       function renderQuestionTimer() {
         const timer = document.getElementById("iqTimer");
         const enabled = PROGRESSION_CATEGORIES.includes(currentCategory);
         timer.hidden = !views.game.classList.contains("active") || !enabled;
         if (!enabled) return;
-        const secondsLeft = questionDeadline
-          ? Math.max(0, (questionDeadline - performance.now()) / 1000)
+        const now = performance.now();
+        const isFrozen = timerFreezeUntil > now;
+        const secondsLeft = isFrozen
+          ? timerFreezeRemainingSeconds
+          : questionDeadline
+          ? Math.max(0, (questionDeadline - now) / 1000)
           : QUESTION_TIME_LIMIT_SECONDS;
         const roundedSeconds = Math.ceil(secondsLeft);
         const value = document.getElementById("iqTimerValue");
@@ -4091,14 +4893,17 @@
         const bar = document.getElementById("iqTimerBar");
         const fill = document.getElementById("iqTimerFill");
         value.textContent = `${formatNumber(roundedSeconds)} ${currentText.secondsUnit}`;
-        label.textContent = roundedSeconds === 0 ? currentText.iqTimerExpired : currentText.iqTimerLabel;
+        label.textContent = isFrozen
+          ? lifelineTranslations[currentLanguage].timerFrozen
+          : roundedSeconds === 0 ? currentText.iqTimerExpired : currentText.iqTimerLabel;
         bar.setAttribute("aria-valuenow", String(Math.round(secondsLeft)));
-        bar.setAttribute("aria-valuetext", `${formatNumber(roundedSeconds)} ${currentText.secondsUnit}`);
+        bar.setAttribute("aria-valuetext", `${formatNumber(roundedSeconds)} ${currentText.secondsUnit}${isFrozen ? `, ${lifelineTranslations[currentLanguage].timerFrozen}` : ""}`);
         bar.setAttribute("aria-label", currentText.iqTimerLabel);
         fill.style.width = `${Math.max(0, Math.min(100, (secondsLeft / QUESTION_TIME_LIMIT_SECONDS) * 100))}%`;
-        timer.classList.toggle("warning", roundedSeconds <= 10 && roundedSeconds > 5);
-        timer.classList.toggle("urgent", roundedSeconds <= 5);
-        if (!answered && secondsLeft > 0 && roundedSeconds <= 5 && roundedSeconds !== lastTimerTickSecond) {
+        timer.classList.toggle("frozen", isFrozen);
+        timer.classList.toggle("warning", !isFrozen && roundedSeconds <= 10 && roundedSeconds > 5);
+        timer.classList.toggle("urgent", !isFrozen && roundedSeconds <= 5);
+        if (!isFrozen && !answered && secondsLeft > 0 && roundedSeconds <= 5 && roundedSeconds !== lastTimerTickSecond) {
           lastTimerTickSecond = roundedSeconds;
           playTimerCue();
         }
@@ -4114,9 +4919,15 @@
       function startQuestionTimer() {
         clearQuestionTimer();
         lastTimerTickSecond = null;
+        timerFreezeUntil = 0;
+        timerFreezeRemainingSeconds = 0;
         questionDeadline = performance.now() + QUESTION_TIME_LIMIT_SECONDS * 1000;
         renderQuestionTimer();
         questionTimerInterval = window.setInterval(() => {
+          if (timerFreezeUntil && performance.now() >= timerFreezeUntil) {
+            timerFreezeUntil = 0;
+            timerFreezeRemainingSeconds = 0;
+          }
           renderQuestionTimer();
           if (performance.now() >= questionDeadline && !answered) {
             clearQuestionTimer();
@@ -4128,7 +4939,175 @@
 
       function stopQuestionTimer() {
         clearQuestionTimer();
+        timerFreezeUntil = 0;
+        timerFreezeRemainingSeconds = 0;
         renderQuestionTimer();
+      }
+
+      function updateLifelinePanel() {
+        if (!lifelinePanel) return;
+        const copy = lifelineTranslations[currentLanguage] || lifelineTranslations.en;
+        const labels = {
+          fifty: document.getElementById("lifelineFiftyLabel"),
+          freeze: document.getElementById("lifelineFreezeLabel"),
+          clue: document.getElementById("lifelineClueLabel"),
+          skip: document.getElementById("lifelineSkipLabel")
+        };
+        const costs = {
+          fifty: document.getElementById("lifelineFiftyCost"),
+          freeze: document.getElementById("lifelineFreezeCost"),
+          clue: document.getElementById("lifelineClueCost"),
+          skip: document.getElementById("lifelineSkipCost")
+        };
+        document.getElementById("lifelineHeading").textContent = copy.panelTitle;
+        document.getElementById("lifelineLimitRule").textContent = copy.limitRule;
+        document.getElementById("lifelineUseCount").textContent =
+          copy.useCount.replace("{count}", formatNumber(lifelinesUsedThisQuestion.size));
+        lifelinePanel.setAttribute("aria-label", copy.panelTitle);
+
+        Object.entries(LIFELINE_COSTS).forEach(([id, cost]) => {
+          const button = lifelineButtons[id];
+          const used = lifelinesUsedThisQuestion.has(id);
+          const atLimit = lifelinesUsedThisQuestion.size >= MAX_LIFELINES_PER_QUESTION && !used;
+          const affordable = rewardCollection.coins >= cost;
+          const status = answered
+            ? copy.answerLocked
+            : used
+              ? copy.alreadyUsed
+              : atLimit
+                ? copy.limitReached
+                : !affordable
+                  ? copy.insufficient
+                    .replace("{cost}", formatNumber(cost))
+                    .replace("{balance}", formatNumber(rewardCollection.coins))
+                  : copy.ready;
+          labels[id].textContent = copy.labels[id];
+          costs[id].textContent = `${formatNumber(cost)} 🪙`;
+          button.disabled = answered || used || atLimit || !affordable;
+          button.classList.toggle("is-used", used);
+          button.classList.toggle("is-locked", atLimit);
+          button.title = status;
+          button.setAttribute(
+            "aria-label",
+            `${copy.labels[id]}, ${formatNumber(cost)} ${copy.coinUnit}. ${status}`
+          );
+        });
+
+        let message = "";
+        let messageKind = "";
+        if (lifelineFeedbackType === "fifty") {
+          message = copy.noticeFifty;
+        } else if (lifelineFeedbackType === "freeze") {
+          message = copy.noticeFreeze;
+        } else if (lifelineFeedbackType === "clue") {
+          const hint = copy.hints[currentCategory] || copy.hints["General Knowledge"];
+          message = copy.noticeHint.replace("{hint}", hint);
+          messageKind = "hint";
+        } else if (lifelineFeedbackType === "skip") {
+          message = copy.noticeSkip;
+        } else if (lifelineFeedbackType === "noReplacement") {
+          message = copy.noReplacement;
+        }
+        lifelineNoticeElement.textContent = message;
+        lifelineNoticeElement.dataset.kind = messageKind;
+        lifelineNoticeElement.hidden = !message;
+      }
+
+      function resetLifelineState() {
+        // A fresh or replacement question receives a clean allowance; language-only
+        // rerenders preserve this Set, so switching languages cannot reset the cap.
+        lifelinesUsedThisQuestion = new Set();
+        lifelineFeedbackType = "";
+        timerFreezeUntil = 0;
+        timerFreezeRemainingSeconds = 0;
+      }
+
+      function applyFiftyFiftyChoices() {
+        const correctIndex = readConcealedAnswer(roundQuestions()[currentQuestion]);
+        const wrongIndexes = [0, 1, 2, 3].filter((index) => index !== correctIndex);
+        for (let index = wrongIndexes.length - 1; index > 0; index -= 1) {
+          const swapIndex = randomIndex(index + 1);
+          [wrongIndexes[index], wrongIndexes[swapIndex]] = [wrongIndexes[swapIndex], wrongIndexes[index]];
+        }
+        const eliminated = new Set(wrongIndexes.slice(0, 2));
+        optionsElement.querySelectorAll(".option").forEach((button, index) => {
+          button.hidden = eliminated.has(index);
+          if (button.hidden) {
+            button.disabled = true;
+            button.setAttribute("aria-hidden", "true");
+            button.tabIndex = -1;
+          }
+        });
+      }
+
+      function findFreshQuestionReplacement() {
+        const currentRound = new Set(roundQuestionIndexes);
+        const currentTextValue =
+          activeQuestionPool[roundQuestionIndexes[currentQuestion]]?.question?.[currentLanguage];
+        const candidates = activeQuestionPool
+          .map((item, index) => ({ item, index }))
+          .filter(({ item, index }) =>
+            !currentRound.has(index) &&
+            !sessionUsedQuestionIds.has(item.id) &&
+            item.question?.[currentLanguage] !== currentTextValue
+          );
+        if (!candidates.length) return -1;
+        return candidates[randomIndex(candidates.length)].index;
+      }
+
+      function activateLifeline(id) {
+        const button = lifelineButtons[id];
+        const cost = LIFELINE_COSTS[id];
+        if (!button || !cost || answered || !views.game.classList.contains("active")) return;
+        if (lifelinesUsedThisQuestion.has(id) ||
+            lifelinesUsedThisQuestion.size >= MAX_LIFELINES_PER_QUESTION) {
+          updateLifelinePanel();
+          return;
+        }
+        if (questionDeadline && performance.now() >= questionDeadline) {
+          selectAnswer(-1, true);
+          return;
+        }
+        const replacementIndex = id === "skip" ? findFreshQuestionReplacement() : -1;
+        if (id === "skip" && replacementIndex < 0) {
+          lifelineFeedbackType = "noReplacement";
+          updateLifelinePanel();
+          return;
+        }
+        if (!spendCoins(cost, document.getElementById("gameCoinBalanceChip"))) {
+          updateLifelinePanel();
+          return;
+        }
+
+        // The Set stores distinct lifeline IDs for this exact question. The same
+        // button cannot be reused, and its size enforces the two-use strategic cap.
+        lifelinesUsedThisQuestion.add(id);
+        if (id === "fifty") {
+          // The correct index comes from the concealed-answer store; only two wrong
+          // options are hidden, leaving the correct option and one distractor.
+          applyFiftyFiftyChoices();
+          lifelineFeedbackType = "fifty";
+        } else if (id === "freeze") {
+          // Extend the real deadline by 10 seconds while holding the displayed
+          // remaining time constant; the countdown resumes from that same value.
+          const now = performance.now();
+          timerFreezeRemainingSeconds = Math.max(0, (questionDeadline - now) / 1000);
+          timerFreezeUntil = now + TIME_FREEZE_DURATION_MS;
+          questionDeadline += TIME_FREEZE_DURATION_MS;
+          lifelineFeedbackType = "freeze";
+          renderQuestionTimer();
+        } else if (id === "clue") {
+          // A localized, category-specific clue gives context without exposing an answer.
+          lifelineFeedbackType = "clue";
+        } else if (id === "skip") {
+          // Replace this round slot with an unused pool entry, keeping ten questions
+          // in the level and leaving score/correct-answer totals unchanged.
+          sessionUsedQuestionIds.add(activeQuestionPool[replacementIndex].id);
+          roundQuestionIndexes[currentQuestion] = replacementIndex;
+          renderQuestion();
+          lifelineFeedbackType = "skip";
+        }
+        updateLifelinePanel();
       }
 
       function calculateSpeedBonus(elapsedSeconds) {
@@ -5083,6 +6062,7 @@
         const keepAnswer = preserveAnswer && answered;
         const previousSelection = lastSelected;
         const item = roundQuestions()[currentQuestion];
+        if (!preserveAnswer) resetLifelineState();
         if (!keepAnswer) {
           answered = false;
           lastSelected = null;
@@ -5109,11 +6089,14 @@
           const button = document.createElement("button");
           button.type = "button";
           button.className = "option";
+          button.dataset.optionIndex = String(index);
           button.setAttribute("aria-label", `${currentText.option} ${formatNumber(index + 1)}: ${option}`);
           button.innerHTML = `<span class="option-key" aria-hidden="true">${currentText.optionLetters[index]}</span><span>${option}</span>`;
           button.addEventListener("click", () => selectAnswer(index));
           optionsElement.append(button);
         });
+        if (lifelinesUsedThisQuestion.has("fifty")) applyFiftyFiftyChoices();
+        updateLifelinePanel();
         feedback.className = "feedback";
         feedback.textContent = currentText.chooseAnswer;
         nextButton.disabled = !keepAnswer;
@@ -5168,6 +6151,7 @@
         progressBar.setAttribute("aria-valuenow", String(currentQuestion + 1));
         nextButton.disabled = false;
         setNextButtonLabel(currentQuestion === roundLength() - 1 ? currentText.seeScore : currentText.nextQuestion);
+        updateLifelinePanel();
       }
 
       function selectAnswer(index, timedOut = false, interrupted = false) {
@@ -5180,8 +6164,10 @@
         }
         const questionIndex = roundQuestionIndexes[currentQuestion];
         if (answeredQuestionIndexes.has(questionIndex)) return;
+        const optionButtons = optionsElement.querySelectorAll(".option");
+        const selectedOption = index >= 0 ? optionButtons[index] : null;
+        if (selectedOption?.hidden || selectedOption?.disabled) return;
         answeredQuestionIndexes.add(questionIndex);
-        const selectedOption = index >= 0 ? optionsElement.querySelectorAll(".option")[index] : null;
         lastSelected = index;
         const correctAnswer = readConcealedAnswer(roundQuestions()[currentQuestion]);
         const isCorrect = index === correctAnswer;
@@ -5278,6 +6264,13 @@
             icon: "◇",
             title: currentText.badgeKnowledgeSeeker,
             hint: currentText.badgeKnowledgeSeekerHint
+          },
+          {
+            id: "streakGod",
+            unlocked: bestStreak >= 5,
+            icon: "🔥",
+            title: currentText.badgeStreakGod,
+            hint: currentText.badgeStreakGodHint
           }
         ];
       }
@@ -5323,7 +6316,8 @@
           { id: "logicMaster", icon: "✦", title: currentText.badgeLogicMaster, hint: currentText.badgeLogicMasterHint, categories: ["IQ Check"] },
           { id: "speedDemon", icon: "⚡", title: currentText.badgeSpeedDemon, hint: currentText.badgeSpeedDemonHint, categories: standardCategories },
           { id: "quizSpeedster", icon: "⚡", title: currentText.badgeQuizSpeedster, hint: currentText.badgeQuizSpeedsterHint, categories: ["IQ Check"] },
-          { id: "knowledgeSeeker", icon: "◇", title: currentText.badgeKnowledgeSeeker, hint: currentText.badgeKnowledgeSeekerHint, categories: REWARD_MODES }
+          { id: "knowledgeSeeker", icon: "◇", title: currentText.badgeKnowledgeSeeker, hint: currentText.badgeKnowledgeSeekerHint, categories: REWARD_MODES },
+          { id: "streakGod", icon: "🔥", title: currentText.badgeStreakGod, hint: currentText.badgeStreakGodHint, categories: REWARD_MODES }
         ];
       }
 
@@ -5425,6 +6419,43 @@
         });
       }
 
+      function setCollectionTab(requestedTab, animate = true) {
+        const validTabs = ["all", "trophies", "badges", "stats"];
+        collectionActiveTab = validTabs.includes(requestedTab) ? requestedTab : "all";
+        const tabLabels = {
+          all: currentText.dashboardTabAll,
+          trophies: currentText.dashboardTabTrophies,
+          badges: currentText.dashboardTabBadges,
+          stats: currentText.dashboardTabStats
+        };
+        document.getElementById("collectionTabList").setAttribute("aria-label", currentText.dashboardTabLabel);
+        document.querySelectorAll(".collection-tab").forEach((button) => {
+          const selected = button.dataset.collectionTab === collectionActiveTab;
+          button.setAttribute("aria-selected", String(selected));
+          button.tabIndex = selected ? 0 : -1;
+          button.textContent = tabLabels[button.dataset.collectionTab];
+        });
+        const panel = document.getElementById("collectionTabPanel");
+        const selectedTab = document.querySelector(`.collection-tab[data-collection-tab="${collectionActiveTab}"]`);
+        panel.setAttribute("aria-labelledby", selectedTab.id);
+        const visibleSections = {
+          all: ["summary", "stats", "trophies", "badges"],
+          trophies: ["trophies"],
+          badges: ["badges"],
+          stats: ["summary", "stats"]
+        }[collectionActiveTab];
+        document.querySelectorAll("[data-dashboard-section]").forEach((section) => {
+          section.hidden = !visibleSections.includes(section.dataset.dashboardSection);
+        });
+        document.getElementById("dashboardStatusFilter").closest(".collection-filter-control").hidden =
+          collectionActiveTab === "stats";
+        if (animate) {
+          panel.classList.remove("is-switching");
+          void panel.offsetWidth;
+          panel.classList.add("is-switching");
+        }
+      }
+
       // The dashboard reads the normalized collection loaded from localStorage and redraws after each saved round or language change.
       function renderRewardsDashboard() {
         renderCollectionFilters();
@@ -5476,7 +6507,9 @@
           currentText.dashboardCategoryProgressTitle;
         const categoryProgressGrid = document.getElementById("dashboardCategoryProgressGrid");
         categoryProgressGrid.replaceChildren();
-        PROGRESSION_CATEGORIES.forEach((category) => {
+        PROGRESSION_CATEGORIES
+          .filter((category) => collectionCategoryFilter === "all" || category === collectionCategoryFilter)
+          .forEach((category) => {
           const stats = rewardCollection.categoryStats[category] || {
             runs: 0, correct: 0, incorrect: 0, completedLevels: 0
           };
@@ -5534,7 +6567,7 @@
         const trophyGallery = document.getElementById("trophyGallery");
         trophyGallery.replaceChildren();
         trophyGallery.setAttribute("aria-label", currentText.dashboardTrophyGallery);
-        // Each persisted trophy record maps a tier to the category that earned it; the CSS preview adds a lightweight 3D-style rotation without another WebGL renderer.
+        // Each saved record maps a trophy tier to its category; an inline SVG cup and CSS perspective rotation keep previews crisp without another WebGL renderer.
         const trophyItems = sortCollectionItems(TROPHY_TIERS.map((tier) => {
           const records = rewardCollection.trophyRecords.filter((record) =>
             record.tier === tier &&
@@ -5564,7 +6597,27 @@
           const artwork = document.createElement("span");
           artwork.className = "trophy-showcase-art";
           artwork.setAttribute("aria-hidden", "true");
-          artwork.textContent = isUnlocked ? "🏆" : "🔒";
+          if (isUnlocked) {
+            const svgNamespace = "http://www.w3.org/2000/svg";
+            const trophySvg = document.createElementNS(svgNamespace, "svg");
+            trophySvg.classList.add("trophy-vector");
+            trophySvg.setAttribute("viewBox", "0 0 64 64");
+            [
+              ["path", "trophy-handle", "M18 14H9v7c0 7 4 11 12 12M46 14h9v7c0 7-4 11-12 12"],
+              ["path", "trophy-cup", "M18 8h28v13c0 10-6 17-14 17S18 31 18 21V8z"],
+              ["path", "trophy-stem", "M28 38h8v10h-8z"],
+              ["path", "trophy-base", "M18 49h28v6H18z"],
+              ["path", "trophy-star", "M32 13l2.7 5.5 6.1.9-4.4 4.3 1 6.1-5.4-2.9-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"]
+            ].forEach(([tagName, className, pathData]) => {
+              const shape = document.createElementNS(svgNamespace, tagName);
+              shape.classList.add(className);
+              shape.setAttribute("d", pathData);
+              trophySvg.append(shape);
+            });
+            artwork.append(trophySvg);
+          } else {
+            artwork.textContent = "🔒";
+          }
           const title = document.createElement("span");
           title.className = "trophy-showcase-name";
           title.textContent = tierLabel;
@@ -5610,6 +6663,7 @@
           card.append(icon, copy);
           badgeGallery.append(card);
         });
+        setCollectionTab(collectionActiveTab, false);
       }
 
       function renderResults() {
@@ -5803,6 +6857,21 @@
       const orbitLabel = document.getElementById("orbitLabel");
       let heroTaglineIndex = 0;
       let heroTaglineSwapTimeout = null;
+      // The category controls remain authoritative; pointer, touch, and focus all drive this orbit state.
+      function selectPortalMode(button) {
+        if (!button) return;
+        selectedCategory = button.dataset.category;
+        portalSelectionIndex = categoryButtons.indexOf(button);
+        setGameModeTheme(selectedCategory);
+        categoryButtons.forEach((categoryButton) => {
+          const isSelected = categoryButton === button;
+          categoryButton.classList.toggle("selected", isSelected);
+          categoryButton.setAttribute("aria-pressed", String(isSelected));
+        });
+        startGameButton.disabled = false;
+        renderStartHint();
+        renderHomeHub();
+      }
       function renderStartHint() {
         const selectionMessage = selectedCategory
           ? currentText.selectedHint.replace("{category}", categoryName(selectedCategory))
@@ -5978,6 +7047,19 @@
             : currentText[key];
           document.getElementById(id).textContent = value;
         });
+        const portalCopy = portalTranslations[currentLanguage];
+        document.getElementById("startGameLabel").textContent = portalCopy.startAction;
+        document.getElementById("portalTelemetryTitle").textContent = portalCopy.telemetryTitle;
+        document.getElementById("portalNeuralLabel").textContent = portalCopy.neuralLabel;
+        document.getElementById("portalNeuralState").textContent = portalCopy.secureValue;
+        document.getElementById("portalAntiCheatLabel").textContent = portalCopy.antiCheatLabel;
+        document.getElementById("portalAntiCheatState").textContent = portalCopy.activeValue;
+        document.getElementById("portalUniverseLevelsLabel").textContent = portalCopy.universeLevelsLabel;
+        document.getElementById("portalUniverseLevelsValue").textContent =
+          `${formatNumber(LEVELS_PER_CATEGORY * PROGRESSION_CATEGORIES.length)}+`;
+        document.getElementById("portalCoinVaultLabel").textContent = portalCopy.coinVaultLabel;
+        document.getElementById("portalVaultBalance").textContent = formatNumber(rewardCollection.coins);
+        document.getElementById("portalTelemetry").setAttribute("aria-label", portalCopy.telemetryGroup);
         document.getElementById("heroStatCategoriesValue").textContent =
           formatNumber(PROGRESSION_CATEGORIES.length);
         document.getElementById("heroStatLevelsValue").textContent =
@@ -6031,6 +7113,26 @@
         renderRewardsDashboard();
         rewardsDialog.showModal();
       });
+      const collectionTabs = [...document.querySelectorAll(".collection-tab")];
+      collectionTabs.forEach((button, index) => {
+        button.addEventListener("click", () => setCollectionTab(button.dataset.collectionTab));
+        button.addEventListener("keydown", (event) => {
+          const lastIndex = collectionTabs.length - 1;
+          const nextIndex = event.key === "ArrowRight"
+            ? (index + 1) % collectionTabs.length
+            : event.key === "ArrowLeft"
+              ? (index - 1 + collectionTabs.length) % collectionTabs.length
+              : event.key === "Home"
+                ? 0
+                : event.key === "End"
+                  ? lastIndex
+                  : index;
+          if (nextIndex === index) return;
+          event.preventDefault();
+          collectionTabs[nextIndex].focus();
+          collectionTabs[nextIndex].click();
+        });
+      });
       document.getElementById("dashboardCategoryFilter").addEventListener("change", (event) => {
         collectionCategoryFilter = event.target.value === "all" || REWARD_MODES.includes(event.target.value)
           ? event.target.value
@@ -6061,18 +7163,8 @@
 
       languageSelect.addEventListener("change", (event) => setLanguage(event.target.value));
       categoryButtons.forEach((button) => {
-        button.addEventListener("click", () => {
-          selectedCategory = button.dataset.category;
-          setGameModeTheme(selectedCategory);
-          categoryButtons.forEach((categoryButton) => {
-            const isSelected = categoryButton === button;
-            categoryButton.classList.toggle("selected", isSelected);
-            categoryButton.setAttribute("aria-pressed", String(isSelected));
-          });
-          startGameButton.disabled = false;
-          renderStartHint();
-          renderHomeHub();
-        });
+        button.addEventListener("click", () => selectPortalMode(button));
+        button.addEventListener("focus", () => selectPortalMode(button));
       });
       continueJourneyButton.addEventListener("click", () => {
         const target = readLastPlayed();
@@ -6081,13 +7173,7 @@
           renderHomeHub();
           return;
         }
-        selectedCategory = target.category;
-        categoryButtons.forEach((button) => {
-          const isSelected = button.dataset.category === selectedCategory;
-          button.classList.toggle("selected", isSelected);
-          button.setAttribute("aria-pressed", String(isSelected));
-        });
-        renderStartHint();
+        selectPortalMode(categoryButtons.find((button) => button.dataset.category === target.category));
         startQuiz(target.category, target.level);
       });
       startGameButton.addEventListener("click", () => {
@@ -6107,6 +7193,9 @@
         }
         currentQuestion += 1;
         renderQuestion();
+      });
+      Object.entries(lifelineButtons).forEach(([id, button]) => {
+        button.addEventListener("click", () => activateLifeline(id));
       });
       document.getElementById("quitButton").addEventListener("click", () => {
         stopQuestionTimer();
@@ -6291,6 +7380,72 @@
         const ring2 = new THREE.Mesh(new THREE.TorusGeometry(2.18, .009, 8, 100), registerLobbyMaterial(new THREE.MeshBasicMaterial({ color: 0x58b99f, transparent: true, opacity: .28 })));
         ring2.rotation.set(1.18, -.4, .55);
         group.add(ring2);
+        // Five lightweight satellites mirror the accessible HTML mode controls and respond to their shared selection state.
+        const portalModeNodes = [];
+        const portalModePalette = [0x82efff, 0x68edc7, 0xff8fc9, 0xffce72, 0xb6a1ff];
+        portalModePalette.forEach((color, index) => {
+          const node = new THREE.Group();
+          const nodeMaterial = registerLobbyMaterial(new THREE.MeshStandardMaterial({
+            color,
+            emissive: color,
+            emissiveIntensity: index === portalSelectionIndex ? .72 : .16,
+            roughness: .25,
+            metalness: .24,
+            transparent: true,
+            opacity: .78
+          }));
+          const satellite = new THREE.Mesh(new THREE.IcosahedronGeometry(.13, 1), nodeMaterial);
+          node.add(satellite);
+          const haloMaterial = registerLobbyMaterial(new THREE.MeshBasicMaterial({
+            color,
+            transparent: true,
+            opacity: .46
+          }));
+          const halo = new THREE.Mesh(new THREE.TorusGeometry(.23, .009, 6, 32), haloMaterial);
+          halo.rotation.x = .45 + index * .13;
+          halo.rotation.y = .65;
+          node.add(halo);
+          node.userData = { phase: index * (Math.PI * 2 / 5), material: nodeMaterial };
+          group.add(node);
+          portalModeNodes.push(node);
+        });
+        // Raycast the actual Three.js orbit nodes so pointer hover and tap can select a mode;
+        // the matching HTML buttons remain available for keyboard, touch, and no-WebGL fallback.
+        const portalRaycaster = new THREE.Raycaster();
+        const portalPointer = new THREE.Vector2();
+        let hoveredPortalNodeIndex = -1;
+        function selectPortalNodeAtPointer(event, activate = false) {
+          if (document.body.dataset.view !== "welcome") return;
+          const hitSurface = document.elementFromPoint(event.clientX, event.clientY);
+          if (!hitSurface || !hitSurface.closest(".hero-aside, .category-grid")) {
+            hoveredPortalNodeIndex = -1;
+            return;
+          }
+          if (hitSurface.closest("button, a, select, input, textarea, [role='button']")) {
+            hoveredPortalNodeIndex = -1;
+            return;
+          }
+          portalPointer.set(
+            (event.clientX / window.innerWidth) * 2 - 1,
+            -(event.clientY / window.innerHeight) * 2 + 1
+          );
+          camera.updateMatrixWorld();
+          portalRaycaster.setFromCamera(portalPointer, camera);
+          const hit = portalRaycaster.intersectObjects(portalModeNodes, true)[0];
+          if (!hit) {
+            hoveredPortalNodeIndex = -1;
+            return;
+          }
+          let node = hit.object;
+          while (node && !portalModeNodes.includes(node)) node = node.parent;
+          const index = portalModeNodes.indexOf(node);
+          hoveredPortalNodeIndex = index;
+          if (activate && index >= 0) {
+            selectPortalMode(categoryButtons[index]);
+          }
+        }
+        window.addEventListener("pointermove", (event) => selectPortalNodeAtPointer(event), { passive: true });
+        window.addEventListener("pointerdown", (event) => selectPortalNodeAtPointer(event, true), { passive: true });
         const orbitDots = [];
         const dotSpecs = [
           [2.03, .22, .15, 0x55bda0, .13], [1.76, 2.5, .1, 0xe89083, .09],
@@ -6785,6 +7940,18 @@
           camera.lookAt(pointerX * .12, -pointerY * .08, 0);
           group.rotation.y = elapsed * .14;
           group.rotation.x = Math.sin(elapsed * .22) * .055;
+          portalModeNodes.forEach((node, index) => {
+            const phase = node.userData.phase + elapsed * .12;
+            node.position.set(Math.cos(phase) * 2.55, Math.sin(phase) * 1.42, Math.sin(phase * 1.4) * .32);
+            const isSelectedMode = index === portalSelectionIndex;
+            const isHoveredMode = index === hoveredPortalNodeIndex;
+            const targetScale = isSelectedMode ? 1.3 : isHoveredMode ? 1.12 : .78;
+            node.scale.setScalar(THREE.MathUtils.damp(node.scale.x, targetScale, 7, delta));
+            node.userData.material.emissiveIntensity = isSelectedMode
+              ? .72 + Math.sin(elapsed * 2.8) * .12
+              : isHoveredMode ? .48 : .16;
+            node.rotation.y = elapsed * (isSelectedMode ? .42 : .2);
+          });
           core.rotation.y = elapsed * .12;
           core.rotation.x = elapsed * .09;
           floaters.forEach((piece) => {
