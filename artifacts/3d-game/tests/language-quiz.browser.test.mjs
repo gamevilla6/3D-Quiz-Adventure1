@@ -252,10 +252,32 @@ try {
     assert.notEqual(await page.locator("#questionText").innerText(), "");
     assert.equal(await page.locator(".option").count(), 4);
     assert.equal(
-      await page.locator("#iqTimer").evaluate((node) => node.closest(".score-hud-card") !== null),
+      await page.locator("#iqTimer").evaluate((node) => node.closest("#quizUtilityRow") !== null),
       true,
-      "the timer shares the sticky score, level, streak, and coin HUD",
+      "the timer shares a utility row with the lifelines below the category header",
     );
+    assert.equal(await page.locator("#lifelinePanel").evaluate((node) => node.closest("#quizUtilityRow") !== null), true);
+    const quizControlOrder = await page.locator("#quizCard").evaluate((node) => {
+      const children = [...node.children];
+      return ["quiz-meta", "quiz-utility-row", "progress-track", "question"].map((selector) =>
+        children.findIndex((child) => child.matches(`.${selector}`))
+      );
+    });
+    assert.ok(quizControlOrder.every((index) => index >= 0) && quizControlOrder.every((index, i) => i === 0 || index > quizControlOrder[i - 1]),
+      "lifelines and timer appear after the category header and before the question");
+    assert.equal(await page.locator("#iqTimer").isVisible(), true);
+    assert.equal(await page.locator("#lifelinePanel").isVisible(), true);
+    const utilityRowLayout = await page.locator("#quizUtilityRow").evaluate((node) => ({
+      columns: getComputedStyle(node).gridTemplateColumns.split(" ").length,
+      timerTop: Math.round(node.querySelector("#iqTimer").getBoundingClientRect().top),
+      timerHeight: Math.round(node.querySelector("#iqTimer").getBoundingClientRect().height),
+      lifelinesTop: Math.round(node.querySelector("#lifelinePanel").getBoundingClientRect().top),
+      lifelinesHeight: Math.round(node.querySelector("#lifelinePanel").getBoundingClientRect().height),
+    }));
+    assert.equal(utilityRowLayout.columns, 2, "timer and lifelines share two columns on a phone");
+    assert.ok(Math.abs(utilityRowLayout.timerTop - utilityRowLayout.lifelinesTop) <= 1, "timer and lifelines align as one row");
+    assert.ok(utilityRowLayout.timerHeight < 100, "the mobile timer card stays compact beside the lifelines");
+    assert.ok(utilityRowLayout.lifelinesHeight <= 165, "the mobile lifeline grid stays compact and touch-sized");
     assert.equal(await page.locator(".topbar").evaluate((node) => getComputedStyle(node).position), "sticky");
     assert.equal(await page.locator(".game-sidebar").evaluate((node) => getComputedStyle(node).position), "sticky");
     const gameLayoutOrder = await page.locator(".game-layout").evaluate((node) =>

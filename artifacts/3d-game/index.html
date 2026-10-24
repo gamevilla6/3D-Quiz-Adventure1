@@ -1349,14 +1349,6 @@
       .score-level-chip { max-width: min(78%, 560px); padding: 7px 11px; color: #f3efff; border-color: rgba(194, 186, 255, .24); background: rgba(9, 11, 31, .58); font-size: 10px; }
       .score-live-tag { font-size: 9px; }
       .score-hud-bottom { display: grid; grid-template-columns: minmax(160px, .7fr) minmax(0, 1.7fr); align-items: center; gap: 18px; }
-      body[data-view="game"] .score-hud-card .iq-timer {
-        margin: 12px 0 0;
-        padding: 9px 12px 8px;
-        border-color: rgba(135, 137, 255, .25);
-        border-radius: 13px;
-        background: rgba(9, 12, 34, .62);
-      }
-      body[data-view="game"] .score-hud-card .iq-timer p { margin-top: 5px; font-size: 10px; }
       .score-total { display: grid; grid-template-columns: auto 1fr; align-items: end; column-gap: 10px; }
       .score-total .side-label { grid-column: 1 / -1; color: #c5c9e7; font-size: 9px; }
       .score-total .score-value { margin: 5px 0 0; min-width: 70px; padding: 7px 10px 8px; font-size: 32px; }
@@ -1489,6 +1481,30 @@
         border-color: rgba(135, 137, 255, .25);
         background: linear-gradient(110deg, rgba(47, 44, 104, .82), rgba(61, 39, 91, .7));
       }
+      .quiz-utility-row {
+        display: grid;
+        grid-template-columns: minmax(180px, .52fr) minmax(0, 1.48fr);
+        align-items: stretch;
+        gap: 11px;
+        margin: 0 0 16px;
+      }
+      .quiz-utility-row .iq-timer {
+        min-width: 0;
+        align-self: stretch;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        margin: 0;
+        padding: 11px 12px;
+        border-color: rgba(135, 137, 255, .25);
+        border-radius: 15px;
+        background: linear-gradient(110deg, rgba(47, 44, 104, .82), rgba(61, 39, 91, .7));
+      }
+      .quiz-utility-row .iq-timer p { margin-top: 7px; font-size: 10px; }
+      .quiz-utility-row .lifeline-panel { min-width: 0; margin: 0; padding: 10px; }
+      .quiz-utility-row .lifeline-grid { gap: 6px; }
+      .quiz-utility-row .lifeline-button { min-height: 54px; gap: 6px; padding: 7px; }
+      .quiz-utility-row + .progress-track { margin: 0 0 26px; }
       .iq-timer-heading strong { color: #a7a3ff; }
       .iq-timer-track { background: rgba(255, 255, 255, .12); }
       .iq-timer p { color: #d1cfea; }
@@ -1603,9 +1619,25 @@
         .option.is-eliminating { animation: none !important; }
       }
       @media (max-width: 650px) {
-        .lifeline-panel { margin-top: 15px; padding: 10px; }
+        .quiz-utility-row {
+          grid-template-columns: minmax(104px, .58fr) minmax(0, 1.42fr);
+          align-items: start;
+          gap: 7px;
+          margin-bottom: 12px;
+        }
+        .quiz-utility-row .iq-timer { align-self: start; padding: 9px 8px; border-radius: 13px; }
+        .quiz-utility-row .iq-timer-heading { gap: 5px; font-size: 10px; }
+        .quiz-utility-row .iq-timer-heading strong { font-size: 12px; }
+        .quiz-utility-row .iq-timer-track { margin-top: 8px; }
+        .quiz-utility-row #iqTimerNote { display: none; }
+        .quiz-utility-row .lifeline-panel { padding: 6px; border-radius: 13px; }
+        .quiz-utility-row .lifeline-heading { gap: 5px; margin-bottom: 5px; }
+        .quiz-utility-row .lifeline-title { font-size: 8px; letter-spacing: .06em; }
+        .quiz-utility-row .lifeline-use-count { padding: 4px 6px; font-size: 8px; }
+        .quiz-utility-row .lifeline-rule { margin-bottom: 6px; font-size: 8px; }
         .lifeline-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 7px; }
         .lifeline-button { min-height: 58px; gap: 7px; padding: 8px; }
+        .quiz-utility-row .lifeline-button { min-height: 50px; gap: 6px; padding: 6px; }
         .lifeline-symbol { width: 30px; height: 30px; flex-basis: 30px; }
       }
       body.theme-iq .iq-timer.warning,
@@ -1650,14 +1682,14 @@
         #quitButton { min-height: 33px; padding: 0 8px; font-size: 10px; }
         .category-tag { gap: 5px; padding: 7px 8px; font-size: 9px; letter-spacing: .04em; }
         .question-count { font-size: 10px; }
-        .progress-track { margin: 15px 0 24px; }
+        .progress-track { margin: 10px 0 20px; }
+        .quiz-utility-row + .progress-track { margin-top: 0; margin-bottom: 18px; }
         .question { font-size: clamp(25px, 7.1vw, 34px); }
         .options { grid-template-columns: 1fr; gap: 8px; margin-top: 21px; }
         .option { min-height: 56px; padding: 10px 42px 10px 11px; border-radius: 13px; font-size: 13px; }
         .option-key { flex-basis: 29px; height: 29px; }
         .feedback { min-height: 38px; padding-top: 12px; font-size: 12px; }
         .quiz-actions { margin-top: 4px; padding-top: 13px; }
-        body[data-view="game"] .score-hud-card .iq-timer { margin-top: 8px; padding: 8px 10px 7px; }
       }
       @media (max-height: 500px) and (orientation: landscape) {
         body[data-view="game"] .game-sidebar { top: calc(env(safe-area-inset-top) + 62px); }
@@ -1668,17 +1700,19 @@
         body[data-view="game"] .game-coin-balance,
         body[data-view="game"] #scoreCaption,
         body[data-view="game"] #streakHint,
+        body[data-view="game"] .quiz-utility-row { grid-template-columns: minmax(150px, .42fr) minmax(0, 1.58fr); gap: 8px; margin-bottom: 10px; }
+        body[data-view="game"] .quiz-utility-row .lifeline-panel { padding: 7px 9px; }
+        body[data-view="game"] .quiz-utility-row .lifeline-rule,
         body[data-view="game"] #iqTimerNote { display: none; }
-        body[data-view="game"] .score-hud-card .iq-timer {
+        body[data-view="game"] .quiz-utility-row .iq-timer {
           display: grid;
           grid-template-columns: max-content max-content minmax(0, 1fr);
           align-items: center;
           gap: 10px;
-          margin-top: 6px;
           padding: 7px 10px;
         }
-        body[data-view="game"] .score-hud-card .iq-timer-heading { display: contents; }
-        body[data-view="game"] .score-hud-card .iq-timer-track { margin-top: 0; }
+        body[data-view="game"] .quiz-utility-row .iq-timer-heading { display: contents; }
+        body[data-view="game"] .quiz-utility-row .iq-timer-track { margin-top: 0; }
       }
       @media (max-width: 390px) {
         body[data-view="game"] .brand-name { font-size: 12px; }
@@ -2897,11 +2931,6 @@
                   <span id="gameCoinLabel">Coins</span>
                   <strong id="gameCoinBalance">0</strong>
                 </div>
-                <section class="iq-timer" id="iqTimer" hidden aria-label="Question timer">
-                  <div class="iq-timer-heading"><span id="iqTimerLabel">Time left</span><strong id="iqTimerValue">15 s</strong></div>
-                  <div class="iq-timer-track" id="iqTimerBar" role="progressbar" aria-label="Time remaining" aria-valuemin="0" aria-valuemax="15" aria-valuenow="15"><span id="iqTimerFill"></span></div>
-                  <p id="iqTimerNote">Answer correctly in under 5 seconds to earn +5 bonus points.</p>
-                </section>
               </div>
               <div class="side-card">
                 <div class="orbit-mini" aria-hidden="true"><span class="mini-ring"></span><span class="mini-ring ring-two"></span><span class="mini-core"></span><span class="mini-orb"></span></div>
@@ -2915,35 +2944,42 @@
                 <div class="category-tag"><span class="tag-dot"></span><span id="gameCategory">Science</span></div>
                 <div class="question-count" id="questionCount">01 <span aria-hidden="true">/</span> 04</div>
               </div>
+              <div class="quiz-utility-row" id="quizUtilityRow">
+                <section class="iq-timer" id="iqTimer" hidden aria-label="Question timer">
+                  <div class="iq-timer-heading"><span id="iqTimerLabel">Time left</span><strong id="iqTimerValue">15 s</strong></div>
+                  <div class="iq-timer-track" id="iqTimerBar" role="progressbar" aria-label="Time remaining" aria-valuemin="0" aria-valuemax="15" aria-valuenow="15"><span id="iqTimerFill"></span></div>
+                  <p id="iqTimerNote">Answer correctly in under 5 seconds to earn +5 bonus points.</p>
+                </section>
+                <section class="lifeline-panel" id="lifelinePanel" aria-label="Tactical lifelines">
+                  <div class="lifeline-heading">
+                    <span class="lifeline-title" id="lifelineHeading">TACTICAL LIFELINES</span>
+                    <span class="lifeline-use-count" id="lifelineUseCount" aria-live="polite">0/2 used</span>
+                  </div>
+                  <p class="lifeline-rule" id="lifelineLimitRule">Choose up to 2 different lifelines per question.</p>
+                  <div class="lifeline-grid" id="lifelineGrid" role="group" aria-labelledby="lifelineHeading">
+                    <button class="lifeline-button" type="button" data-lifeline="fifty">
+                      <span class="lifeline-symbol" aria-hidden="true">½</span>
+                      <span class="lifeline-copy"><span class="lifeline-name" id="lifelineFiftyLabel">50/50</span><span class="lifeline-cost" id="lifelineFiftyCost">20 🪙</span></span>
+                    </button>
+                    <button class="lifeline-button" type="button" data-lifeline="freeze">
+                      <span class="lifeline-symbol" aria-hidden="true">Ⅱ</span>
+                      <span class="lifeline-copy"><span class="lifeline-name" id="lifelineFreezeLabel">Time freeze</span><span class="lifeline-cost" id="lifelineFreezeCost">15 🪙</span></span>
+                    </button>
+                    <button class="lifeline-button" type="button" data-lifeline="clue">
+                      <span class="lifeline-symbol" aria-hidden="true">✦</span>
+                      <span class="lifeline-copy"><span class="lifeline-name" id="lifelineClueLabel">Smart clue</span><span class="lifeline-cost" id="lifelineClueCost">25 🪙</span></span>
+                    </button>
+                    <button class="lifeline-button" type="button" data-lifeline="skip">
+                      <span class="lifeline-symbol" aria-hidden="true">↪</span>
+                      <span class="lifeline-copy"><span class="lifeline-name" id="lifelineSkipLabel">Skip question</span><span class="lifeline-cost" id="lifelineSkipCost">40 🪙</span></span>
+                    </button>
+                  </div>
+                  <p class="lifeline-notice" id="lifelineNotice" role="status" aria-live="polite" hidden></p>
+                </section>
+              </div>
               <div class="progress-track" id="progressTrack" role="progressbar" aria-label="Quiz progress" aria-valuemin="0" aria-valuemax="4" aria-valuenow="0"><div class="progress-fill" id="progressFill"></div></div>
               <p class="question-kicker" id="questionKicker">Take a moment</p>
               <h1 class="question" id="questionText" tabindex="-1">Question goes here</h1>
-              <section class="lifeline-panel" id="lifelinePanel" aria-label="Tactical lifelines">
-                <div class="lifeline-heading">
-                  <span class="lifeline-title" id="lifelineHeading">TACTICAL LIFELINES</span>
-                  <span class="lifeline-use-count" id="lifelineUseCount" aria-live="polite">0/2 used</span>
-                </div>
-                <p class="lifeline-rule" id="lifelineLimitRule">Choose up to 2 different lifelines per question.</p>
-                <div class="lifeline-grid" id="lifelineGrid" role="group" aria-labelledby="lifelineHeading">
-                  <button class="lifeline-button" type="button" data-lifeline="fifty">
-                    <span class="lifeline-symbol" aria-hidden="true">½</span>
-                    <span class="lifeline-copy"><span class="lifeline-name" id="lifelineFiftyLabel">50/50</span><span class="lifeline-cost" id="lifelineFiftyCost">20 🪙</span></span>
-                  </button>
-                  <button class="lifeline-button" type="button" data-lifeline="freeze">
-                    <span class="lifeline-symbol" aria-hidden="true">Ⅱ</span>
-                    <span class="lifeline-copy"><span class="lifeline-name" id="lifelineFreezeLabel">Time freeze</span><span class="lifeline-cost" id="lifelineFreezeCost">15 🪙</span></span>
-                  </button>
-                  <button class="lifeline-button" type="button" data-lifeline="clue">
-                    <span class="lifeline-symbol" aria-hidden="true">✦</span>
-                    <span class="lifeline-copy"><span class="lifeline-name" id="lifelineClueLabel">Smart clue</span><span class="lifeline-cost" id="lifelineClueCost">25 🪙</span></span>
-                  </button>
-                  <button class="lifeline-button" type="button" data-lifeline="skip">
-                    <span class="lifeline-symbol" aria-hidden="true">↪</span>
-                    <span class="lifeline-copy"><span class="lifeline-name" id="lifelineSkipLabel">Skip question</span><span class="lifeline-cost" id="lifelineSkipCost">40 🪙</span></span>
-                  </button>
-                </div>
-                <p class="lifeline-notice" id="lifelineNotice" role="status" aria-live="polite" hidden></p>
-              </section>
               <div class="options" id="options" role="group" aria-label="Answer options"></div>
               <div class="feedback" id="feedback" aria-live="polite">Choose the answer that feels right.</div>
               <div class="quiz-actions">
