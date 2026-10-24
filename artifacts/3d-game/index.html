@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
     <meta name="theme-color" content="#f1f4f8" />
     <title>QuizVerse 3D — a little room for big questions</title>
     <meta id="metaDescription" name="description" content="A thoughtful 3D quiz experience. Pick a subject, follow your curiosity, and see how far you get." />
@@ -1242,7 +1242,8 @@
       .level-card:focus-visible { outline: 3px solid #ffcf4d; outline-offset: 3px; }
       .level-card.unlocked { border-color: rgba(255,225,102,.9); box-shadow: 0 6px 0 rgba(67,50,157,.2), 0 14px 24px rgba(68,58,173,.2), 0 0 0 2px rgba(255,225,102,.16); }
       .level-card.completed { background: linear-gradient(145deg, #078b71, #16b894); box-shadow: 0 6px 0 rgba(6,103,82,.23), 0 14px 22px rgba(19,143,116,.13); }
-      .level-card.locked { color: #5e5b70; border-color: #e2dff0; background: linear-gradient(145deg, #f7f6fb, #e6e5ef); box-shadow: 0 5px 0 rgba(77,69,111,.1); cursor: not-allowed; }
+      .level-card.locked { color: #5e5b70; border-color: #e2dff0; background: linear-gradient(145deg, #f7f6fb, #e6e5ef); box-shadow: 0 5px 0 rgba(77,69,111,.1); cursor: pointer; }
+      .level-card.locked:hover { border-color: #ffd35a; box-shadow: 0 9px 0 rgba(77,69,111,.08), 0 0 0 2px rgba(255,211,90,.24); }
       .level-card-number { color: inherit; font-size: clamp(20px, 3.2vw, 25px); line-height: 1; font-weight: 900; letter-spacing: -.04em; }
       .level-card-rewardline {
         display: flex;
@@ -1267,6 +1268,17 @@
       .level-card.locked .level-card-indicator { background: #d8d6e1; filter: grayscale(1); }
       .result-level-label { margin: 6px 0 0; color: #ffe778; font-size: 13px; font-weight: 850; }
       .level-unlock-notice { width: fit-content; margin: 11px auto 0; padding: 7px 12px; color: #35215e; border: 1px solid #ffe481; border-radius: 99px; background: #ffdf67; font-size: 12px; font-weight: 850; }
+      .map-unlock-notice { width: fit-content; max-width: 100%; margin: 0 auto 10px; padding: 8px 13px; color: #30205f; border: 1px solid #ffe481; border-radius: 999px; background: #ffdf67; font-size: 12px; font-weight: 850; text-align: center; }
+      .level-unlock-dialog { width: min(440px, calc(100vw - 28px)); max-width: none; padding: clamp(20px, 5vw, 28px); color: #fff; border: 1px solid rgba(255,255,255,.24); border-radius: 24px; background: linear-gradient(145deg, rgba(28,24,66,.98), rgba(13,26,59,.98)); box-shadow: 0 28px 90px rgba(0,0,0,.48); }
+      .level-unlock-dialog::backdrop { background: rgba(5,7,22,.72); backdrop-filter: blur(8px); }
+      .level-unlock-dialog h2 { margin: 0 0 10px; font-size: clamp(20px, 5vw, 25px); line-height: 1.15; }
+      .level-unlock-dialog p { margin: 8px 0; color: #e7e9fa; font-size: 14px; line-height: 1.5; }
+      .level-unlock-dialog .level-unlock-balance { color: #ffe17b; font-weight: 850; font-variant-numeric: tabular-nums; }
+      .level-unlock-dialog .level-unlock-shortfall { color: #ff9fae; font-weight: 780; }
+      .level-unlock-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 10px; margin-top: 20px; }
+      .level-unlock-actions button { min-width: 48px; min-height: 48px; padding: 0 17px; color: #fff; border: 1px solid rgba(255,255,255,.25); border-radius: 14px; background: rgba(255,255,255,.08); font: inherit; font-weight: 800; cursor: pointer; }
+      .level-unlock-actions .level-unlock-confirm { color: #342354; border-color: #ffe17b; background: linear-gradient(115deg, #fff08c, #ffbd55); }
+      .level-unlock-actions .level-unlock-confirm:disabled { color: #645c76; border-color: #b9b5c5; background: #d7d4df; cursor: not-allowed; }
       .result-actions { flex-wrap: wrap; }
       html[lang="bn"] .achievement-copy strong,
       html[lang="bn"] .achievement-copy small,
@@ -1284,6 +1296,8 @@
         .game-sidebar .side-card:first-child .streak-hint { grid-column: 1 / -1; }
         .level-grid { max-height: min(62svh, 620px); }
         .level-category-tabs { margin-right: -2px; }
+        .level-unlock-actions { display: grid; grid-template-columns: 1fr 1fr; }
+        .level-unlock-actions button { padding: 0 9px; font-size: 12px; }
         .result-actions > button { flex: 1 1 auto; }
       }
       @media (max-width: 390px) {
@@ -2274,12 +2288,20 @@
         background: rgba(18, 25, 51, .82);
       }
       body[data-view="welcome"] .coin-balance-chip {
-        min-height: 40px;
-        color: #f6e7a5;
-        border-color: rgba(242, 207, 112, .26);
-        background: rgba(48, 40, 38, .58);
+        min-width: 112px;
+        min-height: 48px;
+        gap: 8px;
+        padding: 0 13px;
+        color: #ffe9aa;
+        border-color: rgba(255, 214, 97, .68);
+        background: linear-gradient(125deg, rgba(255, 222, 117, .18), rgba(106, 70, 25, .48) 52%, rgba(30, 27, 43, .86));
+        box-shadow: 0 0 0 1px rgba(255, 220, 120, .1), 0 0 24px rgba(255, 190, 61, .23), inset 0 1px rgba(255, 249, 210, .2);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
       }
-      body[data-view="welcome"] .coin-mark svg { width: 18px; height: 18px; display: block; }
+      body[data-view="welcome"] .coin-balance-chip strong { color: #fff7d6; font-size: 16px; }
+      body[data-view="welcome"] .coin-balance-label { color: #f1d58c; font-size: 10px; font-weight: 800; }
+      body[data-view="welcome"] .coin-mark svg { width: 20px; height: 20px; display: block; }
       body[data-view="welcome"] .welcome { max-width: 1160px; padding-top: clamp(32px, 5vh, 60px); }
       body[data-view="welcome"] .hero {
         min-height: 315px;
@@ -2683,24 +2705,24 @@
       .result-top .eyebrow { margin: 0 0 6px; color: #abb4d7; font-size: 10px; letter-spacing: .11em; }
       .result-level-label:not([hidden]) { margin: 0; color: #d4d8f2; font-size: 12px; font-weight: 700; }
       .result-top h1 { margin: 8px auto 0; color: #fff; font-size: clamp(26px, 4vw, 36px); letter-spacing: -.035em; }
+      .result-top #resultMessage { max-width: 440px; margin: 9px auto 0; color: #bfc8e8; font-size: clamp(11px, 2.5vw, 12px); line-height: 1.5; }
       .result-stars { display: flex; justify-content: center; gap: 7px; margin: 12px auto 0; color: #ffd96d; font-size: 27px; line-height: 1; letter-spacing: .08em; }
       .result-stars .star-unearned { color: rgba(177, 187, 219, .42); }
       .result-score { margin: 16px auto 0; color: #fff; font-size: clamp(54px, 8vw, 72px); line-height: .98; letter-spacing: -.07em; text-shadow: none; }
       .result-score small { display: block; margin-top: 7px; color: #aab2d2; font-size: 10px; font-weight: 760; letter-spacing: .12em; text-transform: uppercase; }
       .result-bottom { padding: 0 28px 27px; color: #fff; background: transparent; }
-      .result-stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0; margin: 0; border-top: 1px solid rgba(176, 186, 232, .16); border-bottom: 1px solid rgba(176, 186, 232, .16); }
-      .result-stat { min-width: 0; padding: 14px 8px; border-right: 1px solid rgba(176, 186, 232, .14); }
-      .result-stat:nth-child(3) { border-right: 0; }
+      .result-stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin: 0; }
+      .result-stat { min-width: 0; padding: 14px 8px; border: 1px solid rgba(176, 186, 232, .16); border-radius: 13px; background: rgba(255, 255, 255, .06); }
       .result-stat:nth-child(n+4) { display: none; }
       .result-stat strong { color: #fff; font-size: 20px; font-weight: 850; }
       .result-stat span { margin-top: 4px; color: #aab2d2; font-size: 9px; letter-spacing: .08em; }
       .result-coin-summary { width: 100%; max-width: 430px; justify-content: space-between; margin: 15px auto 19px; padding: 12px 15px; border-color: rgba(255, 214, 102, .2); border-radius: 14px; background: rgba(255, 214, 102, .07); color: #d1d6ee; font-size: 12px; }
       .result-coin-summary strong { color: #ffe17e; font-size: 19px; }
       .result-actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
-      .result-actions > button { min-width: 0; min-height: 50px; padding: 0 13px; border-radius: 13px; font-size: 12px; }
+      #resultsView .result-actions > button { min-width: 0; min-height: 56px; padding: 0 13px; border-radius: 13px; font-size: 12px; }
       .result-actions .secondary-button { color: #e1e4f7; border: 1px solid rgba(190, 197, 239, .24); background: rgba(255, 255, 255, .06); }
       .result-actions .secondary-button:hover { color: #fff; border-color: rgba(190, 197, 239, .48); background: rgba(255, 255, 255, .1); }
-      .result-trophy, .result-seal, #resultMessage, #levelUnlockNotice,
+      .result-trophy, .result-seal, #levelUnlockNotice,
       .trophy-tier, #iqSummary, .achievement-panel { display: none !important; }
       @media (max-width: 650px) {
         .results-wrap { margin-top: 20px; }
@@ -2713,6 +2735,14 @@
         .result-coin-summary { gap: 8px; margin: 13px auto 16px; padding: 10px 12px; font-size: 11px; }
         .result-coin-summary strong { font-size: 17px; }
         .result-actions { grid-template-columns: 1fr; gap: 8px; }
+        body[data-view="results"] .topbar { gap: 8px; }
+        body[data-view="results"] .topbar .top-note,
+        body[data-view="results"] .topbar #soundToggle { display: none !important; }
+        body[data-view="results"] .topbar .brand { min-width: 0; flex: 1 1 auto; }
+        body[data-view="results"] .topbar .brand-name { font-size: 13px; white-space: nowrap; }
+        body[data-view="results"] .topbar-actions { min-width: 0; flex: 0 0 auto; gap: 6px; }
+        body[data-view="results"] .topbar .coin-balance-chip { flex: 0 0 auto; }
+        body[data-view="results"] .topbar .language-select { min-width: 104px; width: 104px; padding-right: 20px; }
       }
       @media (prefers-reduced-motion: reduce) {
         .result-card { animation: none; }
@@ -2720,7 +2750,35 @@
       /* During a round, the global navigation disappears so the only visible regions
          are the sticky coin/timer/lifeline HUD and the question card with its answers. */
       body[data-view="game"] .topbar { display: none !important; }
-      body[data-view="game"] .coin-popup-layer { display: none !important; }
+      body[data-view="game"] .coin-popup-layer,
+      body[data-view="results"] .coin-popup-layer { display: none !important; }
+      @keyframes coinVaultPulse {
+        0%, 100% { filter: brightness(1); }
+        38% { filter: brightness(1.4); box-shadow: 0 0 0 4px rgba(255, 220, 113, .22), 0 0 26px rgba(255, 190, 61, .48), inset 0 1px rgba(255, 249, 210, .3); }
+      }
+      .coin-balance-pulse { animation: coinVaultPulse .62s cubic-bezier(.2,.75,.25,1); }
+      #portalVaultBalance.coin-balance-pulse,
+      #levelUnlockBalance.coin-balance-pulse { display: inline-block; padding: 0 4px; border-radius: 7px; }
+      @media (max-width: 650px) {
+        body[data-view="welcome"] .coin-balance-chip { min-width: 78px; min-height: 48px; gap: 6px; padding: 0 9px; }
+        body[data-view="welcome"] .coin-balance-chip strong { font-size: 14px; }
+        body[data-view="welcome"] .coin-mark svg { width: 20px; height: 20px; }
+        body[data-view="welcome"] .language-select { min-width: 94px; width: 94px; padding-right: 20px; }
+      }
+      @media (max-width: 390px) {
+        body[data-view="welcome"] .topbar { gap: 6px; }
+        body[data-view="welcome"] .topbar-actions { gap: 3px; }
+        body[data-view="welcome"] .coin-balance-chip { min-width: 70px; padding: 0 7px; }
+        body[data-view="welcome"] .language-select { min-width: 74px; width: 74px; padding-right: 17px; font-size: 9px; }
+      }
+      @media (max-width: 360px) {
+        body[data-view="welcome"] .brand { min-width: 40px; width: 40px; flex: 0 0 40px; gap: 0; }
+        body[data-view="welcome"] .brand-mark { width: 32px; height: 32px; }
+        body[data-view="welcome"] .brand-name { display: none; }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .coin-balance-pulse { animation: none; filter: brightness(1.2); }
+      }
       body[data-view="game"] .app { padding-top: max(8px, env(safe-area-inset-top)); }
       body[data-view="game"] .game-layout { margin-top: 0; }
       body[data-view="game"] .game-sidebar { top: calc(env(safe-area-inset-top) + 6px); }
@@ -2748,6 +2806,399 @@
         background: rgba(42, 48, 85, .8);
         font-size: 13px;
       }
+    /* The guide is a dedicated, localized view. Its cards use fluid columns,
+       while the start briefing stays within the viewport on phones. */
+    body[data-view="rules"] {
+      min-height: 100%;
+      color: #f5f7ff;
+      background:
+        radial-gradient(ellipse at 16% 8%, rgba(102, 57, 207, .25), transparent 35rem),
+        radial-gradient(ellipse at 88% 34%, rgba(24, 133, 207, .18), transparent 32rem),
+        #080d1d;
+    }
+
+    body[data-view="rules"] .app {
+      width: min(100%, 1320px);
+      min-height: 100svh;
+      margin-inline: auto;
+      padding: 18px clamp(14px, 3vw, 36px) 36px;
+    }
+
+    body[data-view="rules"] .topbar {
+      border: 1px solid rgba(186, 203, 255, .16);
+      background: rgba(10, 17, 38, .78);
+      backdrop-filter: blur(16px);
+    }
+
+    .rules-home-button,
+    .rules-back-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      min-height: 50px;
+      border: 1px solid rgba(165, 183, 255, .24);
+      border-radius: 15px;
+      color: #eaf0ff;
+      background: rgba(22, 31, 63, .72);
+      font: inherit;
+      font-weight: 750;
+      cursor: pointer;
+      transition: transform .18s ease, border-color .18s ease, background .18s ease;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+    }
+
+    .rules-home-button {
+      justify-self: center;
+      padding: 0 20px;
+    }
+
+    .rules-home-button > span:first-child { color: #84e4ff; font-size: 1.1em; }
+    .rules-home-button:hover,
+    .rules-back-button:hover {
+      transform: translateY(-1px);
+      border-color: rgba(129, 218, 255, .66);
+      background: rgba(31, 46, 88, .9);
+    }
+    .rules-home-button:active,
+    .rules-back-button:active { transform: scale(.98); }
+
+    .rules-page { width: 100%; margin: clamp(18px, 4vh, 44px) auto 0; }
+    .rules-page-shell { width: min(100%, 980px); margin: 0 auto; }
+
+    .rules-page-header {
+      display: grid;
+      grid-template-columns: 52px minmax(0, 1fr);
+      align-items: start;
+      gap: clamp(14px, 3vw, 28px);
+      margin-bottom: 28px;
+    }
+
+    .rules-back-button {
+      width: 52px;
+      min-width: 52px;
+      height: 52px;
+      font-size: 1.5rem;
+    }
+
+    .rules-page-heading { min-width: 0; }
+    .rules-page-kicker,
+    .rules-guide-step,
+    .rules-modal-eyebrow {
+      margin: 0;
+      color: #8bdcff;
+      font-size: .76rem;
+      font-weight: 850;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+    }
+
+    .rules-page-heading h1 {
+      margin: 8px 0 6px;
+      color: #fff;
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      line-height: 1.05;
+      letter-spacing: -.04em;
+    }
+
+    .rules-page-heading > p:last-child {
+      max-width: 62ch;
+      margin: 0;
+      color: #c5cce2;
+      font-size: clamp(.98rem, 1.7vw, 1.12rem);
+      line-height: 1.6;
+    }
+
+    .rules-guide-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 360px), 1fr));
+      gap: 14px;
+    }
+
+    .rules-guide-card {
+      display: grid;
+      grid-template-columns: 48px minmax(0, 1fr);
+      align-items: start;
+      gap: 15px;
+      min-width: 0;
+      padding: clamp(17px, 3vw, 24px);
+      border: 1px solid rgba(182, 199, 255, .16);
+      border-radius: 20px;
+      background: linear-gradient(145deg, rgba(29, 39, 75, .88), rgba(13, 20, 43, .9));
+      box-shadow: 0 14px 38px rgba(0, 0, 0, .2);
+      backdrop-filter: blur(12px);
+    }
+
+    .rules-guide-icon {
+      display: grid;
+      width: 48px;
+      height: 48px;
+      place-items: center;
+      border: 1px solid rgba(146, 177, 255, .22);
+      border-radius: 15px;
+      background: rgba(105, 111, 225, .16);
+      font-size: 1.3rem;
+    }
+
+    .rules-guide-step { margin: 0 0 7px; font-size: .68rem; }
+    .rules-guide-card h2 { margin: 0 0 7px; color: #fff; font-size: clamp(1rem, 2vw, 1.18rem); line-height: 1.35; }
+    .rules-guide-card div > p:last-child { margin: 0; color: #c4cce2; font-size: .94rem; line-height: 1.62; }
+
+    .rules-start-dialog {
+      width: min(570px, calc(100vw - 28px));
+      max-width: 570px;
+      max-height: min(90svh, 760px);
+      padding: 0;
+      overflow: auto;
+      border: 1px solid rgba(171, 196, 255, .26);
+      border-radius: 24px;
+      color: #f6f7ff;
+      background: linear-gradient(150deg, #171f42, #0d142b 74%);
+      box-shadow: 0 28px 90px rgba(0, 0, 0, .58), 0 0 40px rgba(99, 108, 255, .12);
+      overscroll-behavior: contain;
+    }
+
+    .rules-start-dialog::backdrop {
+      background: rgba(3, 6, 17, .76);
+      backdrop-filter: blur(16px);
+    }
+
+    .rules-start-dialog[open] { animation: rules-dialog-enter .2s ease-out both; }
+    @keyframes rules-dialog-enter {
+      from { opacity: 0; transform: translateY(10px) scale(.985); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .rules-start-shell { padding: clamp(20px, 5vw, 32px); }
+    .rules-modal-eyebrow { color: #ffd37d; }
+    .rules-start-shell h2 { margin: 9px 0 7px; color: #fff; font-size: clamp(1.45rem, 5vw, 2rem); line-height: 1.2; }
+    .rules-modal-description { margin: 0; color: #c7cee2; line-height: 1.5; }
+
+    .rules-modal-list {
+      display: grid;
+      gap: 10px;
+      margin: 22px 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .rules-modal-item {
+      display: grid;
+      grid-template-columns: 38px minmax(0, 1fr);
+      align-items: start;
+      gap: 12px;
+      padding: 12px;
+      border: 1px solid rgba(188, 203, 255, .12);
+      border-radius: 15px;
+      background: rgba(255, 255, 255, .045);
+    }
+
+    .rules-modal-icon { display: grid; min-height: 36px; place-items: center; font-size: 1.2rem; }
+    .rules-modal-item > span:last-child { display: grid; gap: 3px; min-width: 0; }
+    .rules-modal-item strong { color: #fff; font-size: .94rem; line-height: 1.35; }
+    .rules-modal-item > span:last-child > span { color: #c4cce1; font-size: .88rem; line-height: 1.48; }
+
+    .rules-modal-actions {
+      display: grid;
+      grid-template-columns: minmax(100px, .7fr) minmax(0, 1.3fr);
+      gap: 10px;
+    }
+
+    .rules-modal-actions button {
+      min-width: 0;
+      min-height: 52px;
+      padding: 10px 14px;
+      border-radius: 14px;
+      font: inherit;
+      font-weight: 800;
+      cursor: pointer;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .rules-modal-cancel {
+      border: 1px solid rgba(183, 198, 239, .2);
+      color: #d6dcef;
+      background: rgba(255, 255, 255, .055);
+    }
+
+    .rules-modal-confirm {
+      border: 1px solid rgba(255, 226, 156, .74);
+      color: #20152d;
+      background: linear-gradient(115deg, #ffe38a, #ffb45d);
+      box-shadow: 0 8px 25px rgba(255, 184, 80, .18);
+    }
+
+    .rules-modal-actions button:focus-visible,
+    .rules-home-button:focus-visible,
+    .rules-back-button:focus-visible {
+      outline: 3px solid #8ce8ff;
+      outline-offset: 3px;
+    }
+
+    @media (max-width: 560px) {
+      body[data-view="rules"] .app { padding: 12px 12px 28px; }
+      .rules-page { margin-top: 22px; }
+      .rules-page-header { grid-template-columns: 48px minmax(0, 1fr); gap: 12px; margin-bottom: 20px; }
+      .rules-back-button { width: 48px; min-width: 48px; height: 48px; }
+      .rules-guide-grid { grid-template-columns: minmax(0, 1fr); gap: 10px; }
+      .rules-guide-card { grid-template-columns: 42px minmax(0, 1fr); gap: 12px; padding: 16px; border-radius: 17px; }
+      .rules-guide-icon { width: 42px; height: 42px; border-radius: 13px; }
+      .rules-modal-actions { grid-template-columns: minmax(0, 1fr); }
+      .rules-modal-actions button { width: 100%; }
+    }
+
+    body[data-view="rules"] .brand { color: #fff; }
+    body[data-view="rules"] .brand-name { color: #f6f1ff; text-shadow: 0 0 12px rgba(126, 225, 255, .36); }
+    body[data-view="rules"] .brand-mark {
+      border-radius: 11px;
+      background: linear-gradient(145deg, #47e3e7, #6669ff 58%, #c163dc);
+      box-shadow: 0 0 24px rgba(93, 154, 255, .27);
+    }
+    body[data-view="rules"] .top-note { color: #aab7d8; }
+    body[data-view="rules"] .topbar-actions { gap: 8px; }
+    body[data-view="rules"] .language-select,
+    body[data-view="rules"] .sound-toggle {
+      min-height: 40px;
+      border-color: rgba(155, 172, 224, .2);
+      color: #dfe7ff;
+      background: rgba(18, 25, 51, .92);
+    }
+    body[data-view="rules"] .language-select option { color: #fff; background: #11152e; }
+    body[data-view="rules"] .sound-toggle:hover { background: rgba(43, 48, 92, .96); }
+    body[data-view="rules"] .coin-balance-chip {
+      min-width: 112px;
+      min-height: 48px;
+      flex: 0 0 auto;
+      gap: 8px;
+      padding: 0 13px;
+      color: #ffe9aa;
+      border-color: rgba(255, 214, 97, .68);
+      background: linear-gradient(125deg, rgba(255, 222, 117, .18), rgba(106, 70, 25, .48) 52%, rgba(30, 27, 43, .86));
+      box-shadow: 0 0 0 1px rgba(255, 220, 120, .1), 0 0 24px rgba(255, 190, 61, .23), inset 0 1px rgba(255, 249, 210, .2);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+    }
+    body[data-view="rules"] .coin-balance-chip strong { color: #fff7d6; font-size: 16px; }
+    body[data-view="rules"] .coin-balance-label { color: #f1d58c; font-size: 10px; font-weight: 800; }
+
+    @media (max-width: 650px) {
+      body[data-view="rules"] .topbar { gap: 7px; }
+      body[data-view="rules"] .brand { flex: 0 0 auto; min-width: 40px; width: 40px; gap: 0; }
+      body[data-view="rules"] .brand-name { display: none; }
+      body[data-view="rules"] .top-note { display: none; }
+      body[data-view="rules"] .topbar-actions { flex: 0 0 auto; gap: 4px; }
+      body[data-view="rules"] .coin-balance-chip { min-width: 70px; min-height: 48px; gap: 4px; padding: 0 7px; }
+      body[data-view="rules"] .coin-balance-chip strong { font-size: 14px; }
+      body[data-view="rules"] .coin-balance-label { display: none; }
+      body[data-view="rules"] .language-select { min-width: 74px; width: 78px; min-height: 48px; padding: 0 17px 0 7px; font-size: 9px; }
+      body[data-view="rules"] .sound-toggle { width: 48px; min-width: 48px; min-height: 48px; padding: 0; font-size: 0; }
+      body[data-view="rules"] .sound-toggle span {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip-path: inset(50%);
+      }
+    }
+
+    /* At foldable widths, give timer and lifelines their own rows so every control
+       keeps a real 48px touch target instead of squeezing four labels into 32px. */
+    @media (max-width: 365px) {
+      body[data-view="welcome"] .app,
+      body[data-view="rules"] .app {
+        padding-right: max(8px, env(safe-area-inset-right));
+        padding-left: max(8px, env(safe-area-inset-left));
+      }
+      body[data-view="welcome"] .topbar,
+      body[data-view="rules"] .topbar {
+        gap: 3px;
+        padding-right: 4px;
+        padding-left: 4px;
+      }
+      body[data-view="welcome"] .brand,
+      body[data-view="rules"] .brand {
+        width: 48px;
+        min-width: 48px;
+        flex: 0 0 48px;
+        gap: 0;
+      }
+      body[data-view="results"] .topbar .brand {
+        width: 48px;
+        min-width: 48px;
+        flex: 0 0 48px;
+        gap: 0;
+      }
+      body[data-view="welcome"] .brand-name,
+      body[data-view="rules"] .brand-name { display: none; }
+      body[data-view="results"] .topbar .brand-name { display: none; }
+      body[data-view="welcome"] .brand-mark,
+      body[data-view="rules"] .brand-mark { width: 32px; height: 32px; flex-basis: 32px; }
+      body[data-view="welcome"] .topbar-actions,
+      body[data-view="rules"] .topbar-actions { gap: 2px; }
+      body[data-view="results"] .topbar-actions { gap: 2px; }
+      body[data-view="welcome"] .coin-balance-chip,
+      body[data-view="rules"] .coin-balance-chip {
+        width: 64px;
+        min-width: 64px;
+        padding-right: 6px;
+        padding-left: 6px;
+      }
+      body[data-view="results"] .topbar .coin-balance-chip {
+        width: 64px;
+        min-width: 64px;
+        padding-right: 6px;
+        padding-left: 6px;
+      }
+      body[data-view="welcome"] .language-select,
+      body[data-view="rules"] .language-select {
+        width: 70px;
+        min-width: 70px;
+        padding-right: 13px;
+        padding-left: 5px;
+        font-size: 8px;
+      }
+      body[data-view="results"] .topbar .language-select {
+        width: 70px;
+        min-width: 70px;
+        padding-right: 13px;
+        padding-left: 5px;
+        font-size: 8px;
+      }
+      body[data-view="welcome"] .sound-toggle,
+      body[data-view="rules"] .sound-toggle {
+        width: 48px;
+        min-width: 48px;
+        min-height: 48px;
+        padding: 0;
+      }
+
+      body[data-view="game"] .quiz-utility-row { grid-template-columns: minmax(0, 1fr); gap: 6px; }
+      body[data-view="game"] .quiz-utility-row .iq-timer {
+        display: grid;
+        grid-template-columns: max-content max-content minmax(0, 1fr);
+        align-items: center;
+        gap: 8px;
+      }
+      body[data-view="game"] .quiz-utility-row .iq-timer-heading { display: contents; }
+      body[data-view="game"] .quiz-utility-row .iq-timer-track { margin-top: 0; }
+      body[data-view="game"] .quiz-utility-row .lifeline-title { display: block; font-size: 8px; }
+      body[data-view="game"] .quiz-utility-row .lifeline-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
+      body[data-view="game"] .quiz-utility-row .lifeline-button {
+        min-width: 48px;
+        min-height: 52px;
+        flex-direction: row;
+        justify-content: flex-start;
+        gap: 7px;
+        padding: 6px 8px;
+      }
+      body[data-view="game"] .quiz-utility-row .lifeline-symbol { width: 26px; height: 26px; flex-basis: 26px; }
+      body[data-view="game"] .quiz-utility-row .lifeline-copy { justify-items: start; gap: 2px; }
+      body[data-view="game"] .quiz-utility-row .lifeline-name { font-size: 9px; line-height: 1.1; text-align: left; }
+      body[data-view="game"] .quiz-utility-row .lifeline-cost { font-size: 8px; }
+    }
+
     </style>
   </head>
   <body data-view="welcome">
@@ -2906,6 +3357,10 @@
           </div>
           <div class="start-row">
             <button class="primary-button start-button" type="button" id="startGameButton"><span id="startGameLabel">Start game</span> <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M4.2 10h11.6m-4.5-4.5 4.5 4.5-4.5 4.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+            <button class="rules-home-button" type="button" id="openRulesPageButton">
+              <span aria-hidden="true">ⓘ</span>
+              <span id="rulesHomeButtonLabel">How to play</span>
+            </button>
             <div class="start-hint" id="startHint" aria-live="polite">Choose a subject to begin your orbit.</div>
             <button class="continue-journey-button" type="button" id="continueJourneyButton" hidden>
               <span class="continue-icon" aria-hidden="true">↗</span>
@@ -3006,6 +3461,43 @@
           </dialog>
         </section>
 
+        <section class="view rules-page" id="rulesView" aria-labelledby="rulesPageTitle">
+          <div class="rules-page-shell">
+            <header class="rules-page-header">
+              <button class="rules-back-button" type="button" id="rulesBackButton" aria-label="Back to Home">
+                <span aria-hidden="true">←</span>
+              </button>
+              <div class="rules-page-heading">
+                <p class="rules-page-kicker" id="rulesPageKicker">PLAYER GUIDE</p>
+                <h1 id="rulesPageTitle">How to play</h1>
+                <p id="rulesPageDescription">Make the most of your time, coins, and lifelines.</p>
+              </div>
+            </header>
+            <div class="rules-guide-grid">
+              <article class="rules-guide-card">
+                <span class="rules-guide-icon" aria-hidden="true">⏱️</span>
+                <div><p class="rules-guide-step">01</p><h2 id="rulesPageTimerTitle">Countdown timer</h2><p id="rulesPageTimerBody"></p></div>
+              </article>
+              <article class="rules-guide-card">
+                <span class="rules-guide-icon" aria-hidden="true">🪙</span>
+                <div><p class="rules-guide-step">02</p><h2 id="rulesPageCoinsTitle">Coins and rewards</h2><p id="rulesPageCoinsBody"></p></div>
+              </article>
+              <article class="rules-guide-card">
+                <span class="rules-guide-icon" aria-hidden="true">🛡️</span>
+                <div><p class="rules-guide-step">03</p><h2 id="rulesPageLifelinesTitle">Use lifelines strategically</h2><p id="rulesPageLifelinesBody"></p></div>
+              </article>
+              <article class="rules-guide-card">
+                <span class="rules-guide-icon" aria-hidden="true">⚠️</span>
+                <div><p class="rules-guide-step">04</p><h2 id="rulesPageFocusTitle">Keep the game in focus</h2><p id="rulesPageFocusBody"></p></div>
+              </article>
+              <article class="rules-guide-card">
+                <span class="rules-guide-icon" aria-hidden="true">⭐</span>
+                <div><p class="rules-guide-step">05</p><h2 id="rulesPageProgressTitle">Level progression</h2><p id="rulesPageProgressBody"></p></div>
+              </article>
+            </div>
+          </div>
+        </section>
+
         <section class="view level-selection" id="levelView" aria-labelledby="levelTitle">
           <div class="level-shell">
             <div class="level-toolbar">
@@ -3017,7 +3509,18 @@
               <span class="level-count" id="levelCountLabel" aria-live="polite"></span>
             </div>
             <div class="level-category-tabs" id="levelCategoryTabs" role="tablist" aria-label="Filter level map by category"></div>
+            <p class="map-unlock-notice" id="mapUnlockNotice" role="status" aria-live="polite" hidden></p>
             <div class="level-grid" id="levelGrid" role="group" aria-label="Choose a level"></div>
+            <dialog class="level-unlock-dialog" id="levelUnlockDialog" aria-labelledby="levelUnlockDialogTitle" aria-describedby="levelUnlockDialogBody">
+              <h2 id="levelUnlockDialogTitle">Unlock a level</h2>
+              <p id="levelUnlockDialogBody"></p>
+              <p class="level-unlock-balance" id="levelUnlockBalance"></p>
+              <p class="level-unlock-shortfall" id="levelUnlockShortfall" aria-live="polite" hidden></p>
+              <div class="level-unlock-actions">
+                <button type="button" id="cancelLevelUnlockButton">Not now</button>
+                <button class="level-unlock-confirm" type="button" id="confirmLevelUnlockButton">Unlock</button>
+              </div>
+            </dialog>
           </div>
         </section>
 
@@ -3156,6 +3659,35 @@
             </article>
           </div>
         </section>
+        <dialog class="rules-start-dialog" id="rulesStartDialog" aria-labelledby="rulesModalTitle" aria-describedby="rulesModalDescription">
+          <div class="rules-start-shell">
+            <p class="rules-modal-eyebrow" id="rulesModalEyebrow">MISSION BRIEFING</p>
+            <h2 id="rulesModalTitle">A few rules before you start</h2>
+            <p class="rules-modal-description" id="rulesModalDescription">Everything you need for your first level.</p>
+            <ul class="rules-modal-list">
+              <li class="rules-modal-item">
+                <span class="rules-modal-icon" aria-hidden="true">⏱️</span>
+                <span><strong id="rulesModalTimerTitle">Beat the clock</strong><span id="rulesModalTimerBody">Answer before the 15-second timer runs out.</span></span>
+              </li>
+              <li class="rules-modal-item">
+                <span class="rules-modal-icon" aria-hidden="true">🪙</span>
+                <span><strong id="rulesModalCoinsTitle">Build your coin vault</strong><span id="rulesModalCoinsBody">Correct answers and cleared levels earn coins.</span></span>
+              </li>
+              <li class="rules-modal-item">
+                <span class="rules-modal-icon" aria-hidden="true">🛡️</span>
+                <span><strong id="rulesModalLifelinesTitle">Four tactical lifelines</strong><span id="rulesModalLifelinesBody">50/50: 20 · Freeze: 15 · Hint: 25 · Skip: 40 coins.</span></span>
+              </li>
+              <li class="rules-modal-item">
+                <span class="rules-modal-icon" aria-hidden="true">⚠️</span>
+                <span><strong id="rulesModalLimitTitle">Two uses per question</strong><span id="rulesModalLimitBody">Use up to two different lifelines on each question.</span></span>
+              </li>
+            </ul>
+            <div class="rules-modal-actions">
+              <button class="rules-modal-cancel" type="button" id="cancelRulesStartButton">Not now</button>
+              <button class="rules-modal-confirm" type="button" id="confirmRulesStartButton">Got it — let’s play</button>
+            </div>
+          </div>
+        </dialog>
       </main>
     </div>
     <script type="module">
@@ -3261,6 +3793,12 @@
           levelCoins: "{count} coins earned",
           levelUnlockNotice: "Level {level} unlocked!",
           levelFailNotice: "Get {count} correct to unlock the next level. Retry for a new set.",
+          levelUnlockDialogTitle: "Unlock a level",
+          levelUnlockDialogBody: "Unlock Level {level} for {cost} coins? This skips {steps} level progression step(s).",
+          levelUnlockBalance: "Your balance: {balance} 🪙",
+          levelUnlockShortfall: "You need {missing} more coins.",
+          levelUnlockAction: "Unlock for {cost} 🪙",
+          levelUnlockCancel: "Not now",
           allLevelsComplete: "All 500 levels complete — incredible work!",
           nextLevel: "Next level",
           retryLevel: "Retry level",
@@ -3281,6 +3819,7 @@
           dashboardCoinsTitle: "Coin balance",
           dashboardCoinsNote: "Earn coins for future power-ups and themes.",
           resultCoinsEarned: "Coins earned",
+          resultScoreFormula: "Correct: 10 points × streak · under 5s: +5 · wrong: −5 (score stays at 0 or more)",
           collectionEmpty: "None yet",
           rewardsDashboardTitle: "Your Collection",
           rewardsDashboardDescription: "Your progress, coin balance, trophies, badges, and game-only IQ estimate.",
@@ -3459,6 +3998,12 @@
           levelCoins: "{count} কয়েন অর্জিত",
           levelUnlockNotice: "লেভেল {level} খুলেছে!",
           levelFailNotice: "পরের লেভেল খুলতে {count}টি সঠিক উত্তর দরকার। নতুন প্রশ্নে আবার খেলুন।",
+          levelUnlockDialogTitle: "কয়েন দিয়ে লেভেল খুলুন",
+          levelUnlockDialogBody: "{cost} কয়েনে লেভেল {level} খুলবেন? এতে {steps}টি লেভেল এগিয়ে যাবে।",
+          levelUnlockBalance: "আপনার ব্যালান্স: {balance} 🪙",
+          levelUnlockShortfall: "আরও {missing}টি কয়েন দরকার।",
+          levelUnlockAction: "{cost} 🪙 দিয়ে খুলুন",
+          levelUnlockCancel: "এখন নয়",
           allLevelsComplete: "সব ৫০০টি লেভেল সম্পন্ন — অসাধারণ!",
           nextLevel: "পরের লেভেল",
           retryLevel: "আবার খেলুন",
@@ -3479,6 +4024,7 @@
           dashboardCoinsTitle: "কয়েন ব্যালেন্স",
           dashboardCoinsNote: "ভবিষ্যতের পাওয়ার-আপ ও থিমের জন্য কয়েন জমা করুন।",
           resultCoinsEarned: "অর্জিত কয়েন",
+          resultScoreFormula: "সঠিক: স্ট্রিক অনুযায়ী ১০ পয়েন্ট · ৫ সেকেন্ডের কমে: +৫ · ভুল: −৫ (স্কোর ০-এর নিচে নয়)",
           collectionEmpty: "এখনো কিছু নেই",
           rewardsDashboardTitle: "আপনার সংগ্রহ",
           rewardsDashboardDescription: "আপনার অগ্রগতি, কয়েন, ট্রফি, ব্যাজ ও খেলার ভিত্তিতে IQ-ধাঁচের অনুমান একসঙ্গে দেখুন।",
@@ -3657,6 +4203,12 @@
           levelCoins: "{count} कॉइन अर्जित",
           levelUnlockNotice: "स्तर {level} खुल गया!",
           levelFailNotice: "अगला स्तर खोलने के लिए {count} सही जवाब दें। नए सवालों के साथ फिर खेलें।",
+          levelUnlockDialogTitle: "कॉइन से स्तर खोलें",
+          levelUnlockDialogBody: "{cost} कॉइन में स्तर {level} खोलें? इससे आप {steps} स्तर आगे बढ़ेंगे।",
+          levelUnlockBalance: "आपके कॉइन: {balance} 🪙",
+          levelUnlockShortfall: "आपको {missing} और कॉइन चाहिए।",
+          levelUnlockAction: "{cost} 🪙 में खोलें",
+          levelUnlockCancel: "अभी नहीं",
           allLevelsComplete: "सभी 500 स्तर पूरे — शानदार!",
           nextLevel: "अगला स्तर",
           retryLevel: "स्तर फिर से खेलें",
@@ -3677,6 +4229,7 @@
           dashboardCoinsTitle: "सिक्का बैलेंस",
           dashboardCoinsNote: "भविष्य के पावर-अप और थीम के लिए सिक्के कमाएँ।",
           resultCoinsEarned: "अर्जित सिक्के",
+          resultScoreFormula: "सही: स्ट्रीक के अनुसार 10 अंक · 5 सेकंड से कम: +5 · गलत: −5 (स्कोर 0 से कम नहीं)",
           collectionEmpty: "अभी कुछ नहीं",
           rewardsDashboardTitle: "आपका संग्रह",
           rewardsDashboardDescription: "अपनी प्रगति, सिक्के, ट्रॉफियाँ, बैज और गेम-आधारित IQ अनुमान एक जगह देखें।",
@@ -3855,6 +4408,12 @@
           levelCoins: "{count} monedas ganadas",
           levelUnlockNotice: "¡Nivel {level} desbloqueado!",
           levelFailNotice: "Necesitas {count} aciertos para desbloquear el siguiente nivel. Repite con preguntas nuevas.",
+          levelUnlockDialogTitle: "Desbloquear un nivel",
+          levelUnlockDialogBody: "¿Desbloquear el nivel {level} por {cost} monedas? Avanzarás {steps} pasos de nivel.",
+          levelUnlockBalance: "Tu saldo: {balance} 🪙",
+          levelUnlockShortfall: "Necesitas {missing} monedas más.",
+          levelUnlockAction: "Desbloquear por {cost} 🪙",
+          levelUnlockCancel: "Ahora no",
           allLevelsComplete: "¡Has completado los 500 niveles!",
           nextLevel: "Siguiente nivel",
           retryLevel: "Repetir nivel",
@@ -3875,6 +4434,7 @@
           dashboardCoinsTitle: "Saldo de monedas",
           dashboardCoinsNote: "Gana monedas para futuros potenciadores y temas.",
           resultCoinsEarned: "Monedas ganadas",
+          resultScoreFormula: "Acierto: 10 puntos × racha · menos de 5 s: +5 · error: −5 (mínimo 0)",
           collectionEmpty: "Todavía no hay nada",
           rewardsDashboardTitle: "Tu colección",
           rewardsDashboardDescription: "Consulta tu progreso, monedas, trofeos, insignias y estimación de IQ basada solo en el juego.",
@@ -4053,6 +4613,12 @@
           levelCoins: "{count} pièces gagnées",
           levelUnlockNotice: "Niveau {level} débloqué !",
           levelFailNotice: "Il faut {count} bonnes réponses pour débloquer le niveau suivant. Rejouez avec de nouvelles questions.",
+          levelUnlockDialogTitle: "Débloquer un niveau",
+          levelUnlockDialogBody: "Débloquer le niveau {level} pour {cost} pièces ? Vous avancerez de {steps} étape(s).",
+          levelUnlockBalance: "Votre solde : {balance} 🪙",
+          levelUnlockShortfall: "Il vous manque {missing} pièces.",
+          levelUnlockAction: "Débloquer pour {cost} 🪙",
+          levelUnlockCancel: "Pas maintenant",
           allLevelsComplete: "Vous avez terminé les 500 niveaux !",
           nextLevel: "Niveau suivant",
           retryLevel: "Rejouer le niveau",
@@ -4073,6 +4639,7 @@
           dashboardCoinsTitle: "Solde de pièces",
           dashboardCoinsNote: "Gagnez des pièces pour de futurs bonus et thèmes.",
           resultCoinsEarned: "Pièces gagnées",
+          resultScoreFormula: "Bonne réponse : 10 points × série · moins de 5 s : +5 · erreur : −5 (minimum 0)",
           collectionEmpty: "Pas encore de récompense",
           rewardsDashboardTitle: "Votre collection",
           rewardsDashboardDescription: "Retrouvez votre progression, vos pièces, vos trophées, vos badges et votre estimation de QI basée uniquement sur le jeu.",
@@ -4213,6 +4780,160 @@
           universeLevelsLabel: "Niveaux de l’univers",
           coinVaultLabel: "Coffre de pièces",
           telemetryGroup: "Télémétrie du portail en direct"
+        }
+      };
+
+      // Localized rule copy is shared by the first-level briefing and the full Home guide.
+      const rulesTranslations = {
+        en: {
+          homeButton: "How to play",
+          modalEyebrow: "MISSION BRIEFING",
+          modalTitle: "A few rules before you start",
+          modalDescription: "Everything you need for your first level.",
+          modalTimerTitle: "Beat the clock",
+          modalTimerBody: "Answer before the 15-second timer runs out.",
+          modalCoinsTitle: "Build your coin vault",
+          modalCoinsBody: "Correct answers, streaks, and cleared levels earn coins.",
+          modalLifelinesTitle: "Four tactical lifelines",
+          modalLifelinesBody: "50/50: 20 · Freeze: 15 · Hint: 25 · Skip: 40 coins.",
+          modalLimitTitle: "Two uses per question",
+          modalLimitBody: "Use up to two different lifelines on each question.",
+          modalCancel: "Not now",
+          modalConfirm: "Got it — let’s play",
+          pageKicker: "PLAYER GUIDE",
+          pageTitle: "How to play",
+          pageDescription: "Make the most of your time, coins, and lifelines.",
+          pageTimerTitle: "Countdown timer",
+          pageTimerBody: "Each question has 15 seconds. Answer quickly for the speed bonus; when time runs out, the question is submitted automatically.",
+          pageCoinsTitle: "Coins and rewards",
+          pageCoinsBody: "Earn coins for correct and fast answers, streaks, cleared levels, trophies, and badges. Spend them on lifelines or unlock ahead for 100 coins per level step.",
+          pageLifelinesTitle: "Use lifelines strategically",
+          pageLifelinesBody: "50/50 removes two wrong choices (20 coins). Time Freeze pauses the timer for 10 seconds (15). Hint reveals a clue (25). Skip replaces the question without a score penalty (40). Use no more than two different lifelines per question.",
+          pageFocusTitle: "Keep the game in focus",
+          pageFocusBody: "Switching tabs or leaving the game window triggers the focus check and auto-submits the active question.",
+          pageProgressTitle: "Level progression",
+          pageProgressBody: "Every level has 10 questions. Get at least 6 correct to clear it and unlock the next level. You can also spend 100 coins per level step to unlock ahead.",
+          backHome: "Back to Home"
+        },
+        bn: {
+          homeButton: "খেলার নিয়ম",
+          modalEyebrow: "শুরু করার আগে",
+          modalTitle: "শুরুর আগে কয়েকটি নিয়ম",
+          modalDescription: "আপনার প্রথম লেভেলের জন্য দরকারি তথ্য।",
+          modalTimerTitle: "সময়ের মধ্যে উত্তর দিন",
+          modalTimerBody: "১৫ সেকেন্ড শেষ হওয়ার আগে উত্তর দিন।",
+          modalCoinsTitle: "কয়েন জমিয়ে নিন",
+          modalCoinsBody: "সঠিক উত্তর, ধারাবাহিক সঠিক উত্তর ও লেভেল শেষ করলে কয়েন পাবেন।",
+          modalLifelinesTitle: "চারটি কৌশলগত লাইফলাইন",
+          modalLifelinesBody: "৫০/৫০: ২০ · টাইম ফ্রিজ: ১৫ · ইঙ্গিত: ২৫ · স্কিপ: ৪০ কয়েন।",
+          modalLimitTitle: "প্রতি প্রশ্নে সর্বোচ্চ দুটি",
+          modalLimitBody: "প্রতি প্রশ্নে সর্বোচ্চ দুটি আলাদা লাইফলাইন ব্যবহার করুন।",
+          modalCancel: "এখন নয়",
+          modalConfirm: "বুঝেছি, খেলি",
+          pageKicker: "খেলার নির্দেশিকা",
+          pageTitle: "কীভাবে খেলবেন",
+          pageDescription: "সময়, কয়েন ও লাইফলাইন বুদ্ধিমতো ব্যবহার করুন।",
+          pageTimerTitle: "কাউন্টডাউন টাইমার",
+          pageTimerBody: "প্রতিটি প্রশ্নের জন্য ১৫ সেকেন্ড। দ্রুত সঠিক উত্তর দিলে বোনাস পাবেন; সময় শেষ হলে প্রশ্নটি স্বয়ংক্রিয়ভাবে জমা হবে।",
+          pageCoinsTitle: "কয়েন ও পুরস্কার",
+          pageCoinsBody: "সঠিক ও দ্রুত উত্তর, ধারাবাহিক সঠিক উত্তর, লেভেল, ট্রফি ও ব্যাজের জন্য কয়েন পান। লাইফলাইনে খরচ করুন, অথবা প্রতি লেভেল ধাপে ১০০ কয়েনে আগের লেভেল খুলুন।",
+          pageLifelinesTitle: "কৌশলে লাইফলাইন ব্যবহার করুন",
+          pageLifelinesBody: "৫০/৫০ দুটি ভুল উত্তর সরায় (২০ কয়েন)। টাইম ফ্রিজ ১০ সেকেন্ডের জন্য টাইমার থামায় (১৫)। ইঙ্গিত সূত্র দেয় (২৫)। স্কিপ পয়েন্ট না কেটে নতুন প্রশ্ন দেয় (৪০)। প্রতি প্রশ্নে সর্বোচ্চ দুটি আলাদা লাইফলাইন ব্যবহার করুন।",
+          pageFocusTitle: "গেমে মনোযোগ দিন",
+          pageFocusBody: "ট্যাব বদলালে বা গেমের উইন্ডো ছেড়ে গেলে ফোকাস পরীক্ষা সক্রিয় প্রশ্নটি স্বয়ংক্রিয়ভাবে জমা দেয়।",
+          pageProgressTitle: "লেভেলে অগ্রগতি",
+          pageProgressBody: "প্রতি লেভেলে ১০টি প্রশ্ন। অন্তত ৬টি সঠিক হলে লেভেল শেষ হবে এবং পরেরটি খুলবে। চাইলে প্রতি লেভেল ধাপে ১০০ কয়েন দিয়ে আগেই খুলতে পারেন।",
+          backHome: "হোমে ফিরুন"
+        },
+        hi: {
+          homeButton: "कैसे खेलें",
+          modalEyebrow: "मिशन की जानकारी",
+          modalTitle: "शुरू करने से पहले कुछ नियम",
+          modalDescription: "आपके पहले स्तर के लिए ज़रूरी बातें।",
+          modalTimerTitle: "समय से पहले जवाब दें",
+          modalTimerBody: "15 सेकंड का टाइमर खत्म होने से पहले जवाब दें।",
+          modalCoinsTitle: "कॉइन जमा करें",
+          modalCoinsBody: "सही जवाब, लगातार सही जवाब और पूरे किए गए स्तरों से कॉइन मिलते हैं।",
+          modalLifelinesTitle: "चार रणनीतिक लाइफ़लाइन",
+          modalLifelinesBody: "50/50: 20 · टाइम फ़्रीज़: 15 · संकेत: 25 · स्किप: 40 कॉइन।",
+          modalLimitTitle: "हर सवाल में अधिकतम दो",
+          modalLimitBody: "हर सवाल पर अधिकतम दो अलग-अलग लाइफ़लाइन इस्तेमाल करें।",
+          modalCancel: "अभी नहीं",
+          modalConfirm: "समझ गया — खेलें",
+          pageKicker: "खिलाड़ी मार्गदर्शिका",
+          pageTitle: "कैसे खेलें",
+          pageDescription: "समय, कॉइन और लाइफ़लाइन का सही इस्तेमाल करें।",
+          pageTimerTitle: "काउंटडाउन टाइमर",
+          pageTimerBody: "हर सवाल के लिए 15 सेकंड हैं। जल्दी सही जवाब देने पर स्पीड बोनस मिलता है; समय खत्म होने पर सवाल अपने-आप सबमिट हो जाता है।",
+          pageCoinsTitle: "कॉइन और इनाम",
+          pageCoinsBody: "सही और तेज़ जवाब, लगातार सही जवाब, पूरे स्तर, ट्रॉफ़ी और बैज से कॉइन कमाएँ। लाइफ़लाइन पर खर्च करें या हर स्तर के लिए 100 कॉइन देकर आगे का स्तर खोलें।",
+          pageLifelinesTitle: "सोच-समझकर लाइफ़लाइन चुनें",
+          pageLifelinesBody: "50/50 दो गलत विकल्प हटाता है (20 कॉइन)। टाइम फ़्रीज़ 10 सेकंड के लिए टाइमर रोकता है (15)। संकेत एक clue देता है (25)। स्किप बिना स्कोर घटाए नया सवाल देता है (40)। हर सवाल पर अधिकतम दो अलग-अलग लाइफ़लाइन इस्तेमाल करें।",
+          pageFocusTitle: "गेम पर ध्यान बनाए रखें",
+          pageFocusBody: "टैब बदलने या गेम विंडो से बाहर जाने पर फ़ोकस जाँच सक्रिय सवाल को अपने-आप सबमिट करती है।",
+          pageProgressTitle: "स्तर में आगे बढ़ें",
+          pageProgressBody: "हर स्तर में 10 सवाल हैं। कम-से-कम 6 सही जवाब देकर स्तर पूरा करें और अगला खोलें। चाहें तो हर स्तर के लिए 100 कॉइन देकर आगे का स्तर खोल सकते हैं।",
+          backHome: "होम पर लौटें"
+        },
+        es: {
+          homeButton: "Cómo jugar",
+          modalEyebrow: "INSTRUCCIONES DE MISIÓN",
+          modalTitle: "Unas reglas antes de empezar",
+          modalDescription: "Lo esencial para tu primer nivel.",
+          modalTimerTitle: "Responde antes de que acabe el tiempo",
+          modalTimerBody: "Responde antes de que termine el temporizador de 15 segundos.",
+          modalCoinsTitle: "Llena tu bóveda de monedas",
+          modalCoinsBody: "Gana monedas con respuestas correctas, rachas y niveles completados.",
+          modalLifelinesTitle: "Cuatro ayudas tácticas",
+          modalLifelinesBody: "50/50: 20 · Congelar: 15 · Pista: 25 · Saltar: 40 monedas.",
+          modalLimitTitle: "Dos usos por pregunta",
+          modalLimitBody: "Usa como máximo dos ayudas distintas en cada pregunta.",
+          modalCancel: "Ahora no",
+          modalConfirm: "Entendido — jugar",
+          pageKicker: "GUÍA DEL JUGADOR",
+          pageTitle: "Cómo jugar",
+          pageDescription: "Aprovecha el tiempo, las monedas y las ayudas.",
+          pageTimerTitle: "Temporizador",
+          pageTimerBody: "Cada pregunta dura 15 segundos. Responde rápido para obtener la bonificación; si se acaba el tiempo, la pregunta se envía automáticamente.",
+          pageCoinsTitle: "Monedas y recompensas",
+          pageCoinsBody: "Gana monedas por respuestas correctas y rápidas, rachas, niveles completados, trofeos e insignias. Gástalas en ayudas o desbloquea niveles por adelantado por 100 monedas cada paso.",
+          pageLifelinesTitle: "Usa las ayudas con estrategia",
+          pageLifelinesBody: "50/50 elimina dos opciones incorrectas (20 monedas). Congelar pausa el reloj 10 segundos (15). Pista da una clave (25). Saltar cambia la pregunta sin penalización de puntos (40). Máximo dos ayudas distintas por pregunta.",
+          pageFocusTitle: "Mantén el juego en primer plano",
+          pageFocusBody: "Cambiar de pestaña o salir de la ventana activa el control de atención y envía la pregunta actual automáticamente.",
+          pageProgressTitle: "Progreso por niveles",
+          pageProgressBody: "Cada nivel tiene 10 preguntas. Acierta al menos 6 para completarlo y desbloquear el siguiente. También puedes pagar 100 monedas por cada nivel que avances.",
+          backHome: "Volver al inicio"
+        },
+        fr: {
+          homeButton: "Comment jouer",
+          modalEyebrow: "BRIEFING DE MISSION",
+          modalTitle: "Quelques règles avant de commencer",
+          modalDescription: "L’essentiel pour votre premier niveau.",
+          modalTimerTitle: "Répondez avant la fin du temps",
+          modalTimerBody: "Répondez avant la fin du compte à rebours de 15 secondes.",
+          modalCoinsTitle: "Remplissez votre coffre",
+          modalCoinsBody: "Les bonnes réponses, les séries et les niveaux terminés rapportent des pièces.",
+          modalLifelinesTitle: "Quatre jokers tactiques",
+          modalLifelinesBody: "50/50 : 20 · Pause : 15 · Indice : 25 · Passer : 40 pièces.",
+          modalLimitTitle: "Deux utilisations par question",
+          modalLimitBody: "Utilisez au maximum deux jokers différents par question.",
+          modalCancel: "Pas maintenant",
+          modalConfirm: "Compris — jouer",
+          pageKicker: "GUIDE DU JOUEUR",
+          pageTitle: "Comment jouer",
+          pageDescription: "Gérez votre temps, vos pièces et vos jokers.",
+          pageTimerTitle: "Compte à rebours",
+          pageTimerBody: "Chaque question dure 15 secondes. Répondez vite pour obtenir le bonus ; à la fin du temps, la question est envoyée automatiquement.",
+          pageCoinsTitle: "Pièces et récompenses",
+          pageCoinsBody: "Gagnez des pièces avec les bonnes réponses, la rapidité, les séries, les niveaux terminés, les trophées et les badges. Dépensez-les en jokers ou débloquez un niveau à l’avance pour 100 pièces par étape.",
+          pageLifelinesTitle: "Utilisez les jokers avec stratégie",
+          pageLifelinesBody: "50/50 retire deux mauvaises réponses (20 pièces). Pause arrête le compte à rebours pendant 10 secondes (15). Indice donne une piste (25). Passer remplace la question sans pénalité de score (40). Maximum deux jokers différents par question.",
+          pageFocusTitle: "Gardez le jeu au premier plan",
+          pageFocusBody: "Changer d’onglet ou quitter la fenêtre déclenche le contrôle d’attention et envoie automatiquement la question active.",
+          pageProgressTitle: "Progression des niveaux",
+          pageProgressBody: "Chaque niveau comporte 10 questions. Répondez correctement à au moins 6 pour le terminer et débloquer le suivant. Vous pouvez aussi payer 100 pièces par niveau d’avance.",
+          backHome: "Retour à l’accueil"
         }
       };
 
@@ -4449,8 +5170,13 @@
       const ANSWER_REVEAL_DURATION_MS = 720;
       const SPEED_BONUS_WINDOW_SECONDS = 5;
       const SPEED_BONUS_POINTS = 5;
-      const LEVEL_PASSING_ACCURACY = 0.6;
+      // Ten questions per level; six correct answers are enough to keep progression forgiving.
+      const LEVEL_PASSING_CORRECT = 6;
+      const COIN_LEVEL_UNLOCK_COST = 100;
       const LEVELS_PER_CATEGORY = 500;
+      function requiredLevelCorrect(questionCount = QUESTIONS_PER_LEVEL) {
+        return Math.min(questionCount, Math.ceil(questionCount * LEVEL_PASSING_CORRECT / QUESTIONS_PER_LEVEL));
+      }
       // Strategic lifeline copy is kept beside the main locale dictionary so every
       // quiz control, rule, and contextual hint changes immediately with language.
       const lifelineTranslations = {
@@ -4775,6 +5501,8 @@
       const INCORRECT_ANSWER_PENALTY = 5;
       const ANSWER_SOUND_STORAGE_KEY = "quiz-orbit-answer-sounds-muted";
       const REWARD_COLLECTION_STORAGE_KEY = "quiz-orbit-reward-collection";
+      const RULES_ACCEPTED_STORAGE_KEY = "quiz-orbit-rules-accepted";
+      const COIN_SKIPPED_LEVELS_STORAGE_KEY = "quiz-orbit-coin-skipped-levels-v1";
       const REWARD_COLLECTION_VERSION = 5;
       const TROPHY_TIERS = ["gold", "silver", "bronze"];
       const BADGE_IDS = ["quizMaster", "logicMaster", "speedDemon", "quizSpeedster", "knowledgeSeeker", "streakGod"];
@@ -4957,6 +5685,7 @@
 
       const views = {
         welcome: document.getElementById("welcomeView"),
+        rules: document.getElementById("rulesView"),
         levels: document.getElementById("levelView"),
         game: document.getElementById("gameView"),
         results: document.getElementById("resultsView")
@@ -4989,6 +5718,16 @@
       let selectedCategory = "General Knowledge";
       let portalSelectionIndex = 0;
       let currentLevel = 1;
+      let pendingLevelUnlock = null;
+      function readRulesAccepted() {
+        try {
+          return localStorage.getItem(RULES_ACCEPTED_STORAGE_KEY) === "true";
+        } catch {
+          return false;
+        }
+      }
+      let rulesAccepted = readRulesAccepted();
+      let pendingRulesStart = null;
       let levelJustUnlocked = false;
       let levelFailed = false;
       let allLevelsComplete = false;
@@ -5029,6 +5768,59 @@
       let audioContext = null;
       let answerSoundsMuted = readAnswerSoundsMuted();
       let rewardCollection = readRewardCollection();
+      let lastDisplayedCoinBalance = null;
+      let coinBalancePulsePending = false;
+      // Paid skips are saved separately so skipped stages remain playable, but are not mislabeled as cleared.
+      function readCoinSkippedLevels() {
+        try {
+          const saved = JSON.parse(localStorage.getItem(COIN_SKIPPED_LEVELS_STORAGE_KEY) || "[]");
+          if (!Array.isArray(saved)) return [];
+          return [...new Set(saved.filter((key) => {
+            if (typeof key !== "string") return false;
+            const separator = key.lastIndexOf(":");
+            if (separator < 1) return false;
+            const category = key.slice(0, separator);
+            const level = Number(key.slice(separator + 1));
+            return PROGRESSION_CATEGORIES.includes(category) &&
+              Number.isInteger(level) &&
+              level >= 1 &&
+              level <= categoryLevels[category].length;
+          }))];
+        } catch {
+          return [];
+        }
+      }
+      let coinSkippedLevelKeys = readCoinSkippedLevels();
+      function saveCoinSkippedLevels() {
+        try {
+          localStorage.setItem(COIN_SKIPPED_LEVELS_STORAGE_KEY, JSON.stringify(coinSkippedLevelKeys));
+          return true;
+        } catch {
+          // Skipped-level markers remain available for this visit if storage is blocked.
+          return false;
+        }
+      }
+      function completedLevelCountFor(
+        category,
+        results = rewardCollection.levelResults,
+        categoryStats = rewardCollection.categoryStats
+      ) {
+        if (!PROGRESSION_CATEGORIES.includes(category)) return 0;
+        const completedRecords = new Set(results
+          .filter((record) => record.category === category)
+          .map((record) => record.level));
+        const unlockedSteps = Math.max(0, unlockedLevelFor(category) - 1);
+        const skippedSteps = new Set(coinSkippedLevelKeys
+          .filter((key) => key.startsWith(`${category}:`))
+          .map((key) => Number(key.slice(key.lastIndexOf(":") + 1)))
+          .filter((level) => level <= unlockedSteps)).size;
+        const previouslySaved = Number(categoryStats?.[category]?.completedLevels || 0);
+        const impliedCompleted = Math.max(0, unlockedSteps - skippedSteps);
+        return Math.min(
+          categoryLevels[category].length,
+          Math.max(completedRecords.size, impliedCompleted, Number.isFinite(previouslySaved) ? previouslySaved : 0)
+        );
+      }
       let collectionCategoryFilter = "all";
       let collectionStatusFilter = "default";
       let collectionActiveTab = "all";
@@ -5134,6 +5926,11 @@
       }
 
       function updateCoinBalanceDisplays() {
+        const coinValue = rewardCollection.coins;
+        if (lastDisplayedCoinBalance !== null && coinValue !== lastDisplayedCoinBalance) {
+          coinBalancePulsePending = true;
+        }
+        lastDisplayedCoinBalance = coinValue;
         const balance = formatNumber(rewardCollection.coins);
         document.getElementById("coinBalance").textContent = balance;
         document.getElementById("portalVaultBalance").textContent = balance;
@@ -5146,7 +5943,42 @@
         const accessibleBalance = currentText.coinBalanceAria.replace("{count}", balance);
         document.getElementById("coinBalanceChip").setAttribute("aria-label", accessibleBalance);
         document.getElementById("gameCoinBalanceChip").setAttribute("aria-label", accessibleBalance);
+        if (coinBalancePulsePending) {
+          const visibleWallets = [
+            document.getElementById("coinBalanceChip"),
+            document.getElementById("gameCoinBalanceChip"),
+            document.getElementById("portalVaultBalance"),
+            document.getElementById("levelUnlockBalance")
+          ].filter((element) => element?.getClientRects().length);
+          visibleWallets.forEach((element) => {
+            element.classList.remove("coin-balance-pulse");
+            void element.offsetWidth;
+            element.classList.add("coin-balance-pulse");
+            window.setTimeout(() => element.classList.remove("coin-balance-pulse"), 720);
+          });
+          if (visibleWallets.length) coinBalancePulsePending = false;
+        }
         updateLifelinePanel();
+      }
+
+      // Same-tab awards/spends update directly; this refresh handles Home returns
+      // and balance changes made in another tab on the same device.
+      function syncRewardCollectionFromStorage({ allowEmpty = false } = {}) {
+        let serialized;
+        try {
+          serialized = localStorage.getItem(REWARD_COLLECTION_STORAGE_KEY);
+        } catch {
+          return false;
+        }
+        if (serialized === null && !allowEmpty) return false;
+        rewardCollection = serialized === null ? emptyRewardCollection() : readRewardCollection();
+        updateCoinBalanceDisplays();
+        renderHomeHub();
+        renderRewardCollection();
+        renderRewardsDashboard();
+        if (views.levels.classList.contains("active")) renderLevelMap(currentCategory);
+        if (views.results.classList.contains("active")) renderResults();
+        return true;
       }
 
       function spawnCoinPopup(amount, target = null, direction = "earned") {
@@ -6373,6 +7205,7 @@
         const unlockedLevel = unlockedLevelFor(category);
         const grid = document.getElementById("levelGrid");
         const categoryTabs = document.getElementById("levelCategoryTabs");
+        document.getElementById("mapUnlockNotice").hidden = true;
         categoryTabs.replaceChildren();
         categoryTabs.setAttribute("aria-label", currentText.levelCategoryFilter);
         PROGRESSION_CATEGORIES.forEach((mapCategory) => {
@@ -6424,34 +7257,38 @@
             record.category === category && record.level === level
           );
           const wasClaimed = rewardCollection.claimedLevelCoinRewards.includes(completionKey);
-          // Progress tokens remain the authority for access; result metadata only decorates already-unlocked nodes.
+          // Progress tokens remain the authority for access; paid skips do not masquerade as quiz clears.
           const isUnlocked = level <= unlockedLevel;
-          const isCompleted = level < unlockedLevel ||
-            (level === LEVELS_PER_CATEGORY && Boolean(savedResult || wasClaimed));
-          const earnedStars = isCompleted ? savedResult?.stars ?? 1 : 0;
-          const earnedCoins = isCompleted
+          const isCoinSkipped = coinSkippedLevelKeys.includes(completionKey);
+          const didClear = Boolean(savedResult || wasClaimed);
+          const completed = isUnlocked && (didClear || (level < unlockedLevel && !isCoinSkipped));
+          const earnedStars = completed ? savedResult?.stars ?? 1 : 0;
+          const earnedCoins = completed
             ? savedResult?.coins ?? (wasClaimed ? COIN_REWARDS.levelClear : 0)
             : 0;
-          const stateLabel = isCompleted
+          const stateLabel = completed
             ? currentText.levelComplete
             : isUnlocked
               ? currentText.levelUnlocked
               : currentText.levelLocked;
           const card = document.createElement("button");
           card.type = "button";
-          card.disabled = !isUnlocked;
-          card.className = `level-card${isCompleted ? " completed" : isUnlocked ? " unlocked" : " locked"}`;
+          card.className = `level-card${completed ? " completed" : isUnlocked ? " unlocked" : " locked"}`;
           card.dataset.level = String(level);
-          const rewardA11y = isCompleted
+          const rewardA11y = completed
             ? `, ${currentText.levelStars.replace("{count}", formatNumber(earnedStars))}, ${currentText.levelCoins.replace("{count}", formatNumber(earnedCoins))}`
             : "";
-          card.setAttribute("aria-label", `${currentText.levelNumber.replace("{level}", formatNumber(level))}, ${stateLabel}, ${currentText.levelQuestions.replace("{count}", formatNumber(QUESTIONS_PER_LEVEL))}${rewardA11y}`);
+          const unlockCost = isUnlocked ? 0 : Math.max(0, level - unlockedLevel) * COIN_LEVEL_UNLOCK_COST;
+          const unlockA11y = isUnlocked
+            ? ""
+            : `, ${currentText.levelUnlockAction.replace("{cost}", formatNumber(unlockCost))}`;
+          card.setAttribute("aria-label", `${currentText.levelNumber.replace("{level}", formatNumber(level))}, ${stateLabel}, ${currentText.levelQuestions.replace("{count}", formatNumber(QUESTIONS_PER_LEVEL))}${rewardA11y}${unlockA11y}`);
           const number = document.createElement("span");
           number.className = "level-card-number";
           number.textContent = formatNumber(level);
           const rewardLine = document.createElement("span");
           rewardLine.className = "level-card-rewardline";
-          if (isCompleted) {
+          if (completed) {
             const stars = document.createElement("span");
             stars.className = "level-card-stars";
             stars.textContent = `${"★".repeat(earnedStars)}${"☆".repeat(3 - earnedStars)}`;
@@ -6469,14 +7306,107 @@
           const indicator = document.createElement("span");
           indicator.className = "level-card-indicator";
           indicator.setAttribute("aria-hidden", "true");
-          indicator.textContent = isCompleted ? "🏆" : isUnlocked ? "⭐" : "🔒";
+          indicator.textContent = completed ? "🏆" : isUnlocked ? "⭐" : "🔒";
           const stateText = document.createElement("span");
           stateText.className = "level-card-state-label";
           stateText.textContent = stateLabel;
           status.append(indicator, stateText);
           card.append(number, rewardLine, status);
-          card.addEventListener("click", () => startQuiz(category, level));
+          card.addEventListener("click", () => {
+            if (isUnlocked) startQuiz(category, level);
+            else requestLevelUnlock(category, level);
+          });
           grid.append(card);
+        });
+      }
+
+      function updateLevelUnlockDialog() {
+        if (!pendingLevelUnlock) return;
+        const { category, level } = pendingLevelUnlock;
+        const unlockedLevel = unlockedLevelFor(category);
+        const steps = level - unlockedLevel;
+        if (steps <= 0) {
+          pendingLevelUnlock = null;
+          const dialog = document.getElementById("levelUnlockDialog");
+          if (dialog.open) dialog.close();
+          renderLevelMap(category);
+          return;
+        }
+        const cost = steps * COIN_LEVEL_UNLOCK_COST;
+        const balance = rewardCollection.coins;
+        const missing = Math.max(0, cost - balance);
+        document.getElementById("levelUnlockDialogTitle").textContent = currentText.levelUnlockDialogTitle;
+        document.getElementById("levelUnlockDialogBody").textContent = currentText.levelUnlockDialogBody
+          .replace("{level}", formatNumber(level))
+          .replace("{cost}", formatNumber(cost))
+          .replace("{steps}", formatNumber(steps));
+        document.getElementById("levelUnlockBalance").textContent = currentText.levelUnlockBalance
+          .replace("{balance}", formatNumber(balance));
+        const shortfall = document.getElementById("levelUnlockShortfall");
+        shortfall.hidden = missing === 0;
+        shortfall.textContent = missing
+          ? currentText.levelUnlockShortfall.replace("{missing}", formatNumber(missing))
+          : "";
+        const confirmButton = document.getElementById("confirmLevelUnlockButton");
+        confirmButton.textContent = currentText.levelUnlockAction.replace("{cost}", formatNumber(cost));
+        confirmButton.setAttribute("aria-label", confirmButton.textContent);
+        confirmButton.disabled = missing > 0;
+        document.getElementById("cancelLevelUnlockButton").textContent = currentText.levelUnlockCancel;
+      }
+
+      function requestLevelUnlock(category, level) {
+        if (
+          !PROGRESSION_CATEGORIES.includes(category) ||
+          !Number.isInteger(level) ||
+          level < 1 ||
+          level > categoryLevels[category].length
+        ) return;
+        if (level <= unlockedLevelFor(category)) {
+          startQuiz(category, level);
+          return;
+        }
+        pendingLevelUnlock = { category, level };
+        updateLevelUnlockDialog();
+        const dialog = document.getElementById("levelUnlockDialog");
+        if (!dialog.open) dialog.showModal();
+      }
+
+      function unlockLevelWithCoins() {
+        if (!pendingLevelUnlock) return;
+        const { category, level } = pendingLevelUnlock;
+        const unlockedLevel = unlockedLevelFor(category);
+        const steps = level - unlockedLevel;
+        if (steps <= 0) {
+          updateLevelUnlockDialog();
+          return;
+        }
+        const cost = steps * COIN_LEVEL_UNLOCK_COST;
+        if (!spendCoins(cost, document.getElementById("levelUnlockBalance"))) {
+          updateLevelUnlockDialog();
+          return;
+        }
+
+        // A paid skip advances the unlock token but keeps skipped nodes distinct from quiz clears.
+        const skippedLevels = new Set(coinSkippedLevelKeys);
+        for (let skippedLevel = unlockedLevel; skippedLevel < level; skippedLevel += 1) {
+          skippedLevels.add(`${category}:${skippedLevel}`);
+        }
+        coinSkippedLevelKeys = [...skippedLevels];
+        saveCoinSkippedLevels();
+        unlockedLevelsByCategory[category] = level;
+        saveUnlockedLevel(category, level);
+        saveLastPlayed(category, level);
+        pendingLevelUnlock = null;
+        const dialog = document.getElementById("levelUnlockDialog");
+        if (dialog.open) dialog.close();
+        currentCategory = category;
+        renderLevelMap(category);
+        const mapNotice = document.getElementById("mapUnlockNotice");
+        mapNotice.textContent = currentText.levelUnlockNotice.replace("{level}", formatNumber(level));
+        mapNotice.hidden = false;
+        scrollLevelMapTo(level, "auto");
+        requestAnimationFrame(() => {
+          document.querySelector(`.level-card[data-level="${level}"]`)?.focus();
         });
       }
 
@@ -6490,15 +7420,27 @@
         Object.values(views).forEach((view) => view.classList.remove("active"));
         views[name].classList.add("active");
         if (rewardGroup) rewardGroup.visible = name === "results";
-        if (name === "welcome") renderHomeHub();
+        if (name === "welcome" && !syncRewardCollectionFromStorage()) {
+          updateCoinBalanceDisplays();
+          renderHomeHub();
+        }
         window.scrollTo({ top: 0, behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
       }
 
-      function startQuiz(category, level = 1) {
+      function startQuiz(category, level = 1, bypassRulesBriefing = false) {
         if (!PROGRESSION_CATEGORIES.includes(category)) return;
         if (!Number.isInteger(level) || level < 1 || level > unlockedLevelFor(category)) {
           renderLevelMap(category);
           showView("levels");
+          return;
+        }
+        if (!rulesAccepted && !bypassRulesBriefing) {
+          pendingRulesStart = { category, level };
+          const rulesDialog = document.getElementById("rulesStartDialog");
+          if (!rulesDialog.open) {
+            rulesDialog.showModal();
+            requestAnimationFrame(() => document.getElementById("confirmRulesStartButton").focus());
+          }
           return;
         }
         stopQuestionTimer();
@@ -7029,10 +7971,7 @@
           const totalAnswers = stats.correct + stats.incorrect;
           const accuracy = totalAnswers ? Math.round((stats.correct / totalAnswers) * 100) : null;
           const totalLevels = categoryLevels[category].length;
-          const completedLevels = Math.min(
-            totalLevels,
-            Math.max(stats.completedLevels, unlockedLevelFor(category) - 1)
-          );
+          const completedLevels = Math.min(totalLevels, completedLevelCountFor(category));
           const card = document.createElement("section");
           card.className = "category-progress-item";
           const title = document.createElement("h4");
@@ -7180,7 +8119,7 @@
       }
 
       function getLevelStarRating(correctAnswers, averageAnswerSeconds) {
-        const passingScore = Math.ceil(QUESTIONS_PER_LEVEL * LEVEL_PASSING_ACCURACY);
+        const passingScore = requiredLevelCorrect(QUESTIONS_PER_LEVEL);
         return correctAnswers === QUESTIONS_PER_LEVEL && averageAnswerSeconds <= 7.5
           ? 3
           : correctAnswers >= 8 || (correctAnswers >= passingScore && averageAnswerSeconds <= 5)
@@ -7266,7 +8205,7 @@
             .replace("{level}", formatNumber(currentLevel + 1));
         } else if (levelFailed) {
           levelUnlockNotice.textContent = currentText.levelFailNotice
-            .replace("{count}", formatNumber(Math.ceil(QUESTIONS_PER_LEVEL * LEVEL_PASSING_ACCURACY)));
+            .replace("{count}", formatNumber(requiredLevelCorrect(roundLength())));
         } else if (allLevelsComplete) {
           levelUnlockNotice.textContent = currentText.allLevelsComplete;
         }
@@ -7275,20 +8214,16 @@
         const badges = getAchievementBadges(accuracy, averageAnswerSeconds);
         renderAchievementBadges(badges);
         let title = currentText.resultDefaultTitle;
-        let message = currentText.resultDefaultMessage;
         if (score === total) {
           title = currentText.resultPerfectTitle;
-          message = currentText.resultPerfectMessage;
         } else if (score / total >= .6) {
           title = currentText.resultStrongTitle;
-          message = currentText.resultStrongMessage;
         } else if (score / total <= .3) {
           title = currentText.resultLowTitle;
-          message = currentText.resultLowMessage;
         }
         if (isLevelRun) title = levelFailed ? currentText.retryLevel : currentText.levelComplete;
         document.getElementById("resultTitle").textContent = title;
-        document.getElementById("resultMessage").textContent = message;
+        document.getElementById("resultMessage").textContent = currentText.resultScoreFormula;
         return { tier, unlockedBadges: badges.filter((badge) => badge.unlocked), estimatedIQ };
       }
 
@@ -7299,7 +8234,7 @@
         levelFailed = false;
         allLevelsComplete = false;
         const currentUnlockedLevel = unlockedLevelFor(currentCategory);
-        const requiredCorrect = Math.ceil(roundLength() * LEVEL_PASSING_ACCURACY);
+        const requiredCorrect = requiredLevelCorrect(roundLength());
         const clearedFullLevel = roundLength() === QUESTIONS_PER_LEVEL && score >= requiredCorrect;
         levelFailed = roundLength() === QUESTIONS_PER_LEVEL && score < requiredCorrect;
         const levelRewardKey = `${currentCategory}:${currentLevel}`;
@@ -7356,11 +8291,7 @@
           runs: previousCategoryStats.runs + 1,
           correct: previousCategoryStats.correct + score,
           incorrect: previousCategoryStats.incorrect + roundLength() - score,
-          completedLevels: Math.max(
-            previousCategoryStats.completedLevels,
-            unlockedLevelFor(currentCategory) - 1,
-            levelJustUnlocked || allLevelsComplete ? currentLevel : 0
-          )
+          completedLevels: completedLevelCountFor(currentCategory, levelResults, categoryStats)
         };
         const trophyRecordIsNew = !rewardCollection.trophyRecords.some(
           (record) => record.tier === tier && record.mode === currentCategory
@@ -7486,10 +8417,7 @@
           const stats = rewardCollection.categoryStats[category] || {
             runs: 0, correct: 0, incorrect: 0, completedLevels: 0
           };
-          const completedLevels = Math.min(
-            totalLevels,
-            Math.max(stats.completedLevels || 0, unlockedLevelFor(category) - 1)
-          );
+          const completedLevels = Math.min(totalLevels, completedLevelCountFor(category));
           const progressPercent = Math.round((completedLevels / totalLevels) * 1000) / 10;
           const progressText = currentText.categoryProgress.replace(
             "{percent}",
@@ -7537,6 +8465,45 @@
         button.setAttribute("aria-pressed", String(isSelected));
       });
       startGameButton.disabled = !selectedCategory;
+      function updateRulesCopy() {
+        const copy = rulesTranslations[currentLanguage] || rulesTranslations.en;
+        const textById = {
+          rulesHomeButtonLabel: "homeButton",
+          rulesModalEyebrow: "modalEyebrow",
+          rulesModalTitle: "modalTitle",
+          rulesModalDescription: "modalDescription",
+          rulesModalTimerTitle: "modalTimerTitle",
+          rulesModalTimerBody: "modalTimerBody",
+          rulesModalCoinsTitle: "modalCoinsTitle",
+          rulesModalCoinsBody: "modalCoinsBody",
+          rulesModalLifelinesTitle: "modalLifelinesTitle",
+          rulesModalLifelinesBody: "modalLifelinesBody",
+          rulesModalLimitTitle: "modalLimitTitle",
+          rulesModalLimitBody: "modalLimitBody",
+          cancelRulesStartButton: "modalCancel",
+          confirmRulesStartButton: "modalConfirm",
+          rulesPageKicker: "pageKicker",
+          rulesPageTitle: "pageTitle",
+          rulesPageDescription: "pageDescription",
+          rulesPageTimerTitle: "pageTimerTitle",
+          rulesPageTimerBody: "pageTimerBody",
+          rulesPageCoinsTitle: "pageCoinsTitle",
+          rulesPageCoinsBody: "pageCoinsBody",
+          rulesPageLifelinesTitle: "pageLifelinesTitle",
+          rulesPageLifelinesBody: "pageLifelinesBody",
+          rulesPageFocusTitle: "pageFocusTitle",
+          rulesPageFocusBody: "pageFocusBody",
+          rulesPageProgressTitle: "pageProgressTitle",
+          rulesPageProgressBody: "pageProgressBody"
+        };
+        Object.entries(textById).forEach(([id, key]) => {
+          document.getElementById(id).textContent = copy[key];
+        });
+        document.getElementById("openRulesPageButton").setAttribute("aria-label", copy.homeButton);
+        document.getElementById("rulesBackButton").setAttribute("aria-label", copy.backHome);
+        document.getElementById("rulesView").setAttribute("aria-label", copy.pageTitle);
+      }
+
       function setLanguage(language) {
         currentLanguage = Object.hasOwn(translations, language) ? language : "en";
         currentText = translations[currentLanguage];
@@ -7544,6 +8511,7 @@
         languageSelect.value = currentLanguage;
         languageSelect.setAttribute("aria-label", currentText.language);
         document.getElementById("languageLabel").textContent = currentText.language;
+        updateRulesCopy();
         updateSoundToggle();
         document.title = currentText.pageTitle;
         document.getElementById("metaDescription").content = currentText.metaDescription;
@@ -7665,6 +8633,7 @@
         } else if (views.results.classList.contains("active")) {
           renderResults();
         }
+        updateLevelUnlockDialog();
       }
 
       function updateSoundToggle() {
@@ -7729,6 +8698,39 @@
         updateSoundToggle();
       });
 
+      const rulesStartDialog = document.getElementById("rulesStartDialog");
+      document.getElementById("openRulesPageButton").addEventListener("click", () => showView("rules"));
+      document.getElementById("rulesBackButton").addEventListener("click", () => showView("welcome"));
+      document.getElementById("cancelRulesStartButton").addEventListener("click", () => {
+        pendingRulesStart = null;
+        rulesStartDialog.close();
+      });
+      document.getElementById("confirmRulesStartButton").addEventListener("click", () => {
+        if (!pendingRulesStart) {
+          rulesStartDialog.close();
+          return;
+        }
+        const nextStart = pendingRulesStart;
+        pendingRulesStart = null;
+        rulesAccepted = true;
+        try {
+          localStorage.setItem(RULES_ACCEPTED_STORAGE_KEY, "true");
+        } catch {
+          // Acceptance lasts for this visit when browser storage is unavailable.
+        }
+        rulesStartDialog.close();
+        startQuiz(nextStart.category, nextStart.level, true);
+      });
+      rulesStartDialog.addEventListener("cancel", () => {
+        pendingRulesStart = null;
+      });
+      rulesStartDialog.addEventListener("close", () => {
+        pendingRulesStart = null;
+      });
+      rulesStartDialog.addEventListener("click", (event) => {
+        if (event.target === rulesStartDialog) rulesStartDialog.close();
+      });
+
       languageSelect.addEventListener("change", (event) => setLanguage(event.target.value));
       categoryButtons.forEach((button) => {
         button.addEventListener("click", () => selectPortalMode(button));
@@ -7767,6 +8769,19 @@
         scrollLevelMapTo(unlockedLevelFor(currentCategory));
       });
       document.getElementById("levelBackButton").addEventListener("click", () => showView("welcome"));
+      document.getElementById("cancelLevelUnlockButton").addEventListener("click", () => {
+        pendingLevelUnlock = null;
+        document.getElementById("levelUnlockDialog").close();
+      });
+      document.getElementById("confirmLevelUnlockButton").addEventListener("click", unlockLevelWithCoins);
+      document.getElementById("levelUnlockDialog").addEventListener("close", () => {
+        pendingLevelUnlock = null;
+      });
+      document.getElementById("levelUnlockDialog").addEventListener("click", (event) => {
+        if (event.target === document.getElementById("levelUnlockDialog")) {
+          document.getElementById("levelUnlockDialog").close();
+        }
+      });
       document.getElementById("playAgainButton").addEventListener("click", () => {
         const isLevelRun = PROGRESSION_CATEGORIES.includes(currentCategory);
         const hasNextLevel = isLevelRun &&
@@ -7778,6 +8793,18 @@
         event.preventDefault();
         stopQuestionTimer();
         showView("welcome");
+      });
+      window.addEventListener("storage", (event) => {
+        if (event.key !== null && event.key !== REWARD_COLLECTION_STORAGE_KEY) return;
+        syncRewardCollectionFromStorage({ allowEmpty: event.newValue === null });
+      });
+      window.addEventListener("pageshow", () => {
+        if (document.body.dataset.view === "welcome") syncRewardCollectionFromStorage();
+      });
+      document.addEventListener("visibilitychange", () => {
+        if (!document.hidden && document.body.dataset.view === "welcome") {
+          syncRewardCollectionFromStorage();
+        }
       });
       document.addEventListener("keydown", (event) => {
         if (!views.game.classList.contains("active") || answered) return;

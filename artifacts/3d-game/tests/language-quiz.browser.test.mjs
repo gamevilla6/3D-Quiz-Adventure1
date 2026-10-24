@@ -48,6 +48,11 @@ async function waitForQuestionAdvance(page, previousQuestion) {
   ), previousQuestion);
 }
 
+async function acceptRulesBriefingIfOpen(page) {
+  const dialogIsOpen = await page.locator("#rulesStartDialog").evaluate((dialog) => dialog.open);
+  if (dialogIsOpen) await page.locator("#confirmRulesStartButton").click();
+}
+
 const port = await findAvailablePort();
 const baseUrl = `http://127.0.0.1:${port}`;
 const server = spawn(
@@ -130,6 +135,40 @@ try {
     );
     assert.equal(await page.locator("#portalTelemetryTitle").innerText(), telemetryTitle);
   }
+  const rulesLocaleCopy = {
+    en: ["How to play", "Keep the game in focus"],
+    bn: ["কীভাবে খেলবেন", "গেমে মনোযোগ দিন"],
+    hi: ["कैसे खेलें", "गेम पर ध्यान बनाए रखें"],
+    es: ["Cómo jugar", "Mantén el juego en primer plano"],
+    fr: ["Comment jouer", "Gardez le jeu au premier plan"],
+  };
+  for (const [language, [title, focusTitle]] of Object.entries(rulesLocaleCopy)) {
+    await page.selectOption("#languageSelect", language);
+    await page.locator("#openRulesPageButton").click();
+    assert.equal(await page.locator("#rulesView").evaluate((node) => node.classList.contains("active")), true);
+    assert.equal(await page.locator("#rulesPageTitle").innerText(), title, `the rules guide title is localized in ${language}`);
+    assert.equal(await page.locator("#rulesPageFocusTitle").innerText(), focusTitle, `the focus rule is localized in ${language}`);
+    assert.equal(await page.locator(".rules-guide-card").count(), 5, "the guide explains all core rule groups");
+    assert.ok(
+      await page.locator("#rulesBackButton").evaluate((node) => node.getBoundingClientRect().height >= 48),
+      "the guide back button has a touch-sized target",
+    );
+    await page.locator("#rulesBackButton").click();
+  }
+  await page.setViewportSize({ width: 280, height: 653 });
+  await page.locator("#openRulesPageButton").tap();
+  const foldableRulesLayout = await page.evaluate(() => ({
+    pageWidth: document.documentElement.scrollWidth,
+    viewportWidth: window.innerWidth,
+    backWidth: document.querySelector("#rulesBackButton").getBoundingClientRect().width,
+    backHeight: document.querySelector("#rulesBackButton").getBoundingClientRect().height,
+    guideWidth: document.querySelector(".rules-page-shell").getBoundingClientRect().width,
+  }));
+  assert.ok(foldableRulesLayout.pageWidth <= foldableRulesLayout.viewportWidth, "the rules guide fits a 280px foldable viewport");
+  assert.ok(foldableRulesLayout.backWidth >= 48 && foldableRulesLayout.backHeight >= 48, "the compact rules navigation remains touch-sized");
+  assert.ok(foldableRulesLayout.guideWidth <= foldableRulesLayout.viewportWidth, "the guide cards stay inside the narrow viewport");
+  await page.locator("#rulesBackButton").tap();
+  await page.setViewportSize({ width: 390, height: 844 });
   await page.selectOption("#languageSelect", "en");
   assert.equal(await page.locator("html").getAttribute("lang"), "en");
   assert.equal(
@@ -151,6 +190,50 @@ try {
       })
   );
   assert.ok(mobileHomeTargets.every(({ width, height }) => width >= 48 && height >= 48), "home controls have touch-sized targets");
+  const mobileVaultStyle = await page.locator("#coinBalanceChip").evaluate((element) => {
+    const rect = element.getBoundingClientRect();
+    const style = getComputedStyle(element);
+    return {
+      width: rect.width,
+      height: rect.height,
+      background: style.backgroundImage,
+      border: style.borderColor,
+      glow: style.boxShadow,
+      blur: style.backdropFilter,
+    };
+  });
+  assert.ok(mobileVaultStyle.width >= 70 && mobileVaultStyle.height >= 48, "the home coin vault is prominent and touch-sized on mobile");
+  assert.match(mobileVaultStyle.glow, /255, 190, 61/, "the home coin vault has a visible gold glow");
+  assert.match(mobileVaultStyle.blur, /blur\(16px\)/, "the home coin vault uses a glass blur");
+  await page.setViewportSize({ width: 320, height: 720 });
+  const narrowHeader = await page.evaluate(() => {
+    const brand = document.querySelector("#brandHome").getBoundingClientRect();
+    const actions = document.querySelector(".topbar-actions").getBoundingClientRect();
+    return { scrollWidth: document.documentElement.scrollWidth, viewport: innerWidth, brandRight: brand.right, actionsLeft: actions.left };
+  });
+  assert.ok(narrowHeader.scrollWidth <= narrowHeader.viewport, "the home vault and controls do not overflow at 320px");
+  assert.ok(narrowHeader.brandRight <= narrowHeader.actionsLeft + 1, `the brand and home controls do not overlap: ${JSON.stringify(narrowHeader)}`);
+  await page.setViewportSize({ width: 280, height: 653 });
+  const foldableHomeTargets = await page.evaluate(() => {
+    const selectors = ["#brandHome", "#languageSelect", "#soundToggle", "#startGameButton", "#openRewardsButton", ".category"];
+    return {
+      pageWidth: document.documentElement.scrollWidth,
+      viewportWidth: innerWidth,
+      targets: selectors.map((selector) => {
+        const rect = document.querySelector(selector).getBoundingClientRect();
+        return { width: rect.width, height: rect.height };
+      }),
+      brandRight: document.querySelector("#brandHome").getBoundingClientRect().right,
+      actionsLeft: document.querySelector(".topbar-actions").getBoundingClientRect().left,
+    };
+  });
+  assert.ok(foldableHomeTargets.pageWidth <= foldableHomeTargets.viewportWidth, "the home screen has no overflow at 280px");
+  assert.ok(foldableHomeTargets.brandRight <= foldableHomeTargets.actionsLeft + 1, "the compact brand does not overlap home controls");
+  assert.ok(
+    foldableHomeTargets.targets.every(({ width, height }) => width >= 48 && height >= 48),
+    `all home controls remain touch-sized at 280px: ${JSON.stringify(foldableHomeTargets.targets)}`,
+  );
+  await page.setViewportSize({ width: 390, height: 844 });
   assert.ok(
     await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth),
     "the narrow mobile layout has no horizontal overflow",
@@ -288,6 +371,30 @@ try {
       assert.equal(localizedMapFit, true, `level-node labels fit without overlap in ${language} at 320px`);
     }
     await page.selectOption("#languageSelect", "en");
+    await page.setViewportSize({ width: 280, height: 653 });
+    const foldableMapLayout = await page.evaluate(() => {
+      const grid = document.querySelector("#levelGrid");
+      const tabs = document.querySelector(".level-category-tabs");
+      const cards = [...grid.querySelectorAll(".level-card")];
+      const bounds = cards.map((card) => card.getBoundingClientRect());
+      const overlap = bounds.some((a, index) => bounds.slice(index + 1).some((b) =>
+        a.left < b.right - 1 && a.right > b.left + 1 && a.top < b.bottom - 1 && a.bottom > b.top + 1
+      ));
+      return {
+        pageWidth: document.documentElement.scrollWidth,
+        viewportWidth: innerWidth,
+        cardMinWidth: Math.min(...bounds.map((card) => card.width)),
+        cardMinHeight: Math.min(...bounds.map((card) => card.height)),
+        tabMinHeight: Math.min(...[...tabs.children].map((tab) => tab.getBoundingClientRect().height)),
+        overlap,
+        scrollable: grid.scrollHeight > grid.clientHeight && getComputedStyle(grid).overflowY === "auto",
+      };
+    });
+    assert.ok(foldableMapLayout.pageWidth <= foldableMapLayout.viewportWidth, "the level map does not overflow at 280px");
+    assert.ok(foldableMapLayout.cardMinWidth >= 65 && foldableMapLayout.cardMinHeight >= 55, "foldable level nodes retain their touch target");
+    assert.ok(foldableMapLayout.tabMinHeight >= 48, "foldable category tabs remain touch-sized");
+    assert.equal(foldableMapLayout.overlap, false, "foldable level nodes never overlap");
+    assert.equal(foldableMapLayout.scrollable, true, "the 500-level map remains vertically touch-scrollable");
     await page.setViewportSize({ width: 390, height: 844 });
     const levelMapScroll = await page.locator("#levelGrid").evaluate((node) => ({
       overflowY: getComputedStyle(node).overflowY,
@@ -318,7 +425,33 @@ try {
     assert.equal(landscapeMap.overlap, false, "landscape level nodes remain separate");
     assert.ok(landscapeMap.documentWidth <= landscapeMap.viewportWidth, "landscape roadmap has no page-wide horizontal overflow");
     await page.setViewportSize({ width: 390, height: 844 });
+    const requiresRulesBriefing = await page.evaluate(() =>
+      localStorage.getItem("quiz-orbit-rules-accepted") !== "true"
+    );
     await page.locator(".level-card.unlocked").click();
+    if (requiresRulesBriefing) {
+      assert.equal(await page.locator("#rulesStartDialog").evaluate((dialog) => dialog.open), true);
+      assert.equal(await page.locator(".rules-modal-item").count(), 4);
+      assert.match(await page.locator("#rulesModalLimitBody").innerText(), /two different lifelines/i);
+      assert.equal(
+        await page.locator("#gameView").evaluate((node) => node.classList.contains("active")),
+        false,
+        "the first level waits for the rules briefing",
+      );
+      await page.locator("#cancelRulesStartButton").click();
+      assert.equal(await page.locator("#rulesStartDialog").evaluate((dialog) => dialog.open), false);
+      assert.equal(await page.locator("#gameView").evaluate((node) => node.classList.contains("active")), false);
+      await page.locator(".level-card.unlocked").click();
+      assert.equal(await page.locator("#rulesStartDialog").evaluate((dialog) => dialog.open), true);
+      await page.locator("#confirmRulesStartButton").click();
+      assert.equal(
+        await page.evaluate(() => localStorage.getItem("quiz-orbit-rules-accepted")),
+        "true",
+        "confirming the briefing is remembered for future level starts",
+      );
+    } else {
+      assert.equal(await page.locator("#rulesStartDialog").evaluate((dialog) => dialog.open), false);
+    }
     assert.equal(await page.locator("#gameView").evaluate((node) => node.classList.contains("active")), true);
     assert.notEqual(await page.locator("#questionText").innerText(), "");
     assert.equal(await page.locator(".option").count(), 4);
@@ -355,6 +488,26 @@ try {
     assert.ok(Math.abs(utilityRowLayout.timerTop - utilityRowLayout.lifelinesTop) <= 1, "timer and lifelines align as one row");
     assert.ok(utilityRowLayout.timerHeight < 100, "the mobile timer card stays compact beside the lifelines");
     assert.ok(utilityRowLayout.lifelinesHeight <= 165, "the mobile lifeline grid stays compact and touch-sized");
+    await page.setViewportSize({ width: 280, height: 653 });
+    const foldableHudLayout = await page.evaluate(() => {
+      const hud = document.querySelector(".game-sidebar").getBoundingClientRect();
+      const card = document.querySelector("#quizCard").getBoundingClientRect();
+      const lifelines = [...document.querySelectorAll(".lifeline-button")].map((button) => button.getBoundingClientRect());
+      return {
+        pageWidth: document.documentElement.scrollWidth,
+        viewportWidth: innerWidth,
+        hudBottom: hud.bottom,
+        cardTop: card.top,
+        targets: lifelines.map(({ width, height }) => ({ width, height })),
+      };
+    });
+    assert.ok(foldableHudLayout.pageWidth <= foldableHudLayout.viewportWidth, "the active quiz fits a 280px foldable viewport");
+    assert.ok(foldableHudLayout.cardTop >= foldableHudLayout.hudBottom, "the narrow HUD and question card do not overlap");
+    assert.ok(
+      foldableHudLayout.targets.every(({ width, height }) => width >= 48 && height >= 48),
+      `all foldable lifeline controls are at least 48px: ${JSON.stringify(foldableHudLayout.targets)}`,
+    );
+    await page.setViewportSize({ width: 390, height: 844 });
     assert.equal(await page.locator(".game-sidebar").evaluate((node) => getComputedStyle(node).position), "sticky");
     const hudFlow = await page.evaluate(() => {
       const hud = document.querySelector(".game-sidebar").getBoundingClientRect();
@@ -394,6 +547,136 @@ try {
   assert.match(await page.locator("#gameCategory").textContent(), /IQ CHECK/i);
   await page.reload({ waitUntil: "domcontentloaded" });
 
+  const progressionContext = await browser.newContext({
+    viewport: { width: 390, height: 844 },
+    isMobile: true,
+    hasTouch: true,
+    reducedMotion: "reduce",
+  });
+  await progressionContext.addInitScript(() => {
+    Object.defineProperty(Object.getPrototypeOf(window.crypto), "getRandomValues", {
+      configurable: true,
+      value(array) {
+        array.fill(0);
+        return array;
+      },
+    });
+    window.__coinCueOscillators = 0;
+    window.AudioContext = class {
+      state = "running";
+      currentTime = 0;
+      destination = {};
+      createOscillator() {
+        window.__coinCueOscillators += 1;
+        return {
+          type: "",
+          frequency: { setValueAtTime() {}, exponentialRampToValueAtTime() {} },
+          connect() {},
+          start() {},
+          stop() {},
+        };
+      }
+      createGain() {
+        return {
+          gain: { setValueAtTime() {}, exponentialRampToValueAtTime() {} },
+          connect() {},
+        };
+      }
+    };
+  });
+  const purchasePage = await progressionContext.newPage();
+  purchasePage.setDefaultTimeout(10_000);
+  await purchasePage.goto(baseUrl, { waitUntil: "domcontentloaded" });
+  await purchasePage.evaluate(() => localStorage.setItem("quiz-orbit-reward-collection", JSON.stringify({
+    version: 5,
+    coins: 700,
+  })));
+  await purchasePage.reload({ waitUntil: "domcontentloaded" });
+  await purchasePage.locator("#startGameButton").click();
+  await purchasePage.locator('.level-card[data-level="4"]').click();
+  assert.equal(await purchasePage.locator("#levelUnlockDialog").evaluate((node) => node.open), true);
+  assert.match(await purchasePage.locator("#levelUnlockDialogBody").innerText(), /300.*3/);
+  await purchasePage.locator("#confirmLevelUnlockButton").click();
+  assert.equal(await purchasePage.locator("#levelUnlockDialog").evaluate((node) => node.open), false);
+  assert.ok(
+    await purchasePage.evaluate(() => window.__coinCueOscillators > 0),
+    "spending coins to unlock a level plays the synthesized coin cue",
+  );
+  assert.equal(await purchasePage.locator("#coinBalance").innerText(), "400");
+  assert.equal(await purchasePage.locator("#levelGrid .level-card.unlocked").count(), 4);
+  assert.equal(await purchasePage.locator("#levelGrid .level-card.completed").count(), 0, "coin skips do not mark quiz clears as completed");
+  assert.equal(await purchasePage.locator("#levelGrid .level-card.locked").count(), 496);
+  assert.equal(
+    await purchasePage.locator('.level-card[data-level="1"]').evaluate((node) => node.classList.contains("unlocked")),
+    true,
+    "a skipped but playable stage stays distinct from a completed stage",
+  );
+  assert.match(await purchasePage.locator("#mapUnlockNotice").innerText(), /Level 4 unlocked/);
+  await purchasePage.reload({ waitUntil: "domcontentloaded" });
+  await purchasePage.locator("#startGameButton").click();
+  assert.equal(await purchasePage.locator("#levelGrid .level-card.unlocked").count(), 4, "coin-purchased access persists after reload");
+  assert.equal(await purchasePage.locator("#coinBalance").innerText(), "400", "the spent balance persists after reload");
+  await purchasePage.selectOption("#languageSelect", "fr");
+  await purchasePage.locator('.level-card[data-level="10"]').click();
+  assert.match(await purchasePage.locator("#levelUnlockDialogBody").innerText(), /niveau 10/i);
+  assert.equal(await purchasePage.locator("#confirmLevelUnlockButton").isDisabled(), true);
+  assert.match(await purchasePage.locator("#levelUnlockShortfall").innerText(), /200/);
+  await purchasePage.locator("#cancelLevelUnlockButton").click();
+  await progressionContext.close();
+
+  const thresholdContext = await browser.newContext({
+    viewport: { width: 390, height: 844 },
+    isMobile: true,
+    hasTouch: true,
+    reducedMotion: "reduce",
+  });
+  await thresholdContext.addInitScript(() => {
+    Object.defineProperty(Object.getPrototypeOf(window.crypto), "getRandomValues", {
+      configurable: true,
+      value(array) {
+        array.fill(0);
+        return array;
+      },
+    });
+  });
+  const thresholdPage = await thresholdContext.newPage();
+  thresholdPage.setDefaultTimeout(10_000);
+  await thresholdPage.goto(baseUrl, { waitUntil: "domcontentloaded" });
+  await thresholdPage.locator("#startGameButton").click();
+  await thresholdPage.locator(".level-card.unlocked").click();
+  await acceptRulesBriefingIfOpen(thresholdPage);
+  const knownCorrectIndexes = [1, 1, 2, 1, 3, 3, 3, 3, 3, 3];
+  for (const [questionIndex, correctIndex] of knownCorrectIndexes.entries()) {
+    const questionBeforeAnswer = await thresholdPage.locator("#questionText").innerText();
+    const answerIndex = questionIndex < 6 ? correctIndex : (correctIndex + 1) % 4;
+    await thresholdPage.locator(".option").nth(answerIndex).click();
+    await waitForQuestionAdvance(thresholdPage, questionBeforeAnswer);
+  }
+  assert.equal(await thresholdPage.locator("#finalCorrect").innerText(), "6");
+  assert.equal(
+    await thresholdPage.evaluate(() => {
+      const token = localStorage.getItem("quiz-orbit-gk-unlocked-level");
+      return token ? atob(token).split(":")[2] : null;
+    }),
+    "2",
+    "six correct answers out of ten unlock the next level",
+  );
+  await thresholdPage.evaluate(() => localStorage.clear());
+  await thresholdPage.reload({ waitUntil: "domcontentloaded" });
+  await thresholdPage.locator("#startGameButton").click();
+  await thresholdPage.locator(".level-card.unlocked").click();
+  await acceptRulesBriefingIfOpen(thresholdPage);
+  for (const [questionIndex, correctIndex] of knownCorrectIndexes.entries()) {
+    const questionBeforeAnswer = await thresholdPage.locator("#questionText").innerText();
+    const answerIndex = questionIndex < 5 ? correctIndex : (correctIndex + 1) % 4;
+    await thresholdPage.locator(".option").nth(answerIndex).click();
+    await waitForQuestionAdvance(thresholdPage, questionBeforeAnswer);
+  }
+  assert.match(await thresholdPage.locator("#levelUnlockNotice").innerText(), /6 correct/i);
+  await thresholdPage.locator("#returnLevelMapButton").click();
+  assert.equal(await thresholdPage.locator("#levelGrid .level-card.unlocked").count(), 1, "five correct answers do not unlock the next level");
+  await thresholdContext.close();
+
   const scienceProgressKey = "quiz-orbit-science-technology-unlocked-level";
   await page.evaluate(() => {
     const category = "Science & Technology";
@@ -416,9 +699,10 @@ try {
   assert.equal(await page.locator("#levelGrid .level-card.completed").count(), 1);
   assert.equal(await page.locator("#levelGrid .level-card.unlocked").count(), 1);
   assert.equal(await page.locator("#levelGrid .level-card.locked").count(), 498);
-  assert.notEqual(
+  assert.equal(
     await page.locator("#levelGrid .level-card.locked").first().getAttribute("disabled"),
     null,
+    "locked levels remain actionable so players can view their coin unlock price",
   );
   await page.locator("#levelBackButton").click();
   await page.locator('.category[data-category="General Knowledge"]').click();
@@ -436,11 +720,15 @@ try {
   await page.locator("#startGameButton").click();
   assert.equal(await page.locator("#levelGrid .level-card.unlocked").count(), 1);
   assert.equal(await page.locator("#levelGrid .level-card.locked").count(), 499);
-  assert.notEqual(
-    await page.locator('.level-card[data-level="2"]').getAttribute("disabled"),
-    null,
+  assert.equal(
+    await page.locator('.level-card[data-level="2"]').evaluate((node) => node.classList.contains("locked")),
+    true,
     "saved reward decorations cannot unlock a level without its progression token",
   );
+  await page.locator('.level-card[data-level="2"]').click();
+  assert.equal(await page.locator("#levelUnlockDialog").evaluate((node) => node.open), true);
+  assert.equal(await page.locator("#confirmLevelUnlockButton").isDisabled(), true);
+  await page.locator("#cancelLevelUnlockButton").click();
   await page.locator("#levelBackButton").click();
   await page.evaluate(() => localStorage.removeItem("quiz-orbit-reward-collection"));
   await page.reload({ waitUntil: "domcontentloaded" });
@@ -608,7 +896,14 @@ try {
   assert.equal(await page.locator("#resultsView").evaluate((node) => node.classList.contains("active")), true);
   assert.equal(await page.locator("#resultTitle").innerText(), "সম্পন্ন");
   assert.equal(await page.locator("#finalCorrect").innerText(), "১০");
+  assert.equal(await page.locator("#finalIncorrect").innerText(), "০");
   assert.equal(await page.locator("#finalAccuracy").innerText(), "১০০%");
+  assert.equal(await page.locator("#resultMessage").isVisible(), true);
+  assert.match(
+    await page.locator("#resultMessage").innerText(),
+    /১০ পয়েন্ট.*৫ সেকেন্ড.*−৫/,
+    "the result explains the correct-answer, speed-bonus, and penalty formula",
+  );
   assert.equal(await page.locator("#finalTotal").isVisible(), false, "the clean summary omits the redundant total-question metric");
   assert.equal(await page.locator("#finalDenominator").innerText(), "পয়েন্ট");
   assert.equal(await page.locator("#resultStars").evaluate((node) => node.textContent), "★★★");
@@ -629,6 +924,63 @@ try {
   assert.ok(savedCollection.badges.includes("quizMaster"), "the earned badge is persisted");
   assert.ok(savedCollection.badges.includes("streakGod"), "a five-answer streak unlocks the Streak God badge");
   assert.equal(savedCollection.bestStreak, 10, "the personal best streak is updated");
+  for (const [language, expectedCopy] of [
+    ["en", "Correct:"],
+    ["bn", "সঠিক:"],
+    ["hi", "सही:"],
+    ["es", "Acierto:"],
+    ["fr", "Bonne réponse"],
+  ]) {
+    await page.locator("#languageSelect").selectOption(language);
+    assert.match(
+      await page.locator("#resultMessage").innerText(),
+      new RegExp(expectedCopy),
+      `the scoring rule remains localized in ${language}`,
+    );
+  }
+  await page.locator("#languageSelect").selectOption("bn");
+  for (const width of [280, 320, 360, 390]) {
+    await page.setViewportSize({ width, height: 844 });
+    const resultBounds = await page.evaluate(() => {
+      const card = document.querySelector("#resultCard");
+      const buttons = [...document.querySelectorAll(".result-actions > button")];
+      const box = card.getBoundingClientRect();
+      const rect = (selector) => {
+        const element = document.querySelector(selector);
+        const { left, right } = element.getBoundingClientRect();
+        return { left, right };
+      };
+      return {
+        viewportWidth: window.innerWidth,
+        pageWidth: document.documentElement.scrollWidth,
+        cardWidth: box.width,
+        brand: rect("#brandHome"),
+        coin: rect("#coinBalanceChip"),
+        language: rect("#languageSelect"),
+        soundVisible: getComputedStyle(document.querySelector("#soundToggle")).display !== "none",
+        popupDisplay: getComputedStyle(document.querySelector("#coinPopupLayer")).display,
+        metricBackground: getComputedStyle(document.querySelector(".result-stat")).backgroundColor,
+        actions: buttons.map((button) => ({
+          height: button.getBoundingClientRect().height,
+          minHeight: getComputedStyle(button).minHeight,
+          transform: getComputedStyle(button).transform,
+          offsetHeight: button.offsetHeight,
+        })),
+      };
+    });
+    assert.ok(resultBounds.pageWidth <= resultBounds.viewportWidth, `no horizontal overflow at ${width}px`);
+    assert.ok(resultBounds.cardWidth <= resultBounds.viewportWidth, `result card fits at ${width}px`);
+    assert.ok(resultBounds.brand.right <= resultBounds.coin.left, `brand and coin counter do not overlap at ${width}px`);
+    assert.ok(resultBounds.coin.right <= resultBounds.language.left, `coin counter and language selector do not overlap at ${width}px`);
+    assert.equal(resultBounds.soundVisible, false, `the result header stays compact at ${width}px`);
+    assert.equal(resultBounds.popupDisplay, "none", `coin popups do not cover the result header at ${width}px`);
+    assert.equal(resultBounds.metricBackground, "rgba(255, 255, 255, 0.06)", "result metrics retain high contrast");
+    assert.ok(
+      resultBounds.actions.every(({ height }) => height >= 50),
+      `both actions are touch-sized at ${width}px: ${JSON.stringify(resultBounds)}`,
+    );
+  }
+  await page.setViewportSize({ width: 390, height: 844 });
   assert.equal(
     new Intl.NumberFormat("bn-BD").format(savedCollection.bestPoints),
     await page.locator("#finalScore").innerText(),
@@ -774,6 +1126,7 @@ try {
   await lifelinePage.locator('.category[data-category="General Knowledge"]').tap();
   await lifelinePage.locator("#startGameButton").tap();
   await lifelinePage.locator(".level-card.unlocked").tap();
+  await lifelinePage.setViewportSize({ width: 280, height: 653 });
   assert.deepEqual(
     await lifelinePage.locator(".lifeline-cost").allInnerTexts(),
     ["20 🪙", "15 🪙", "25 🪙", "40 🪙"],
@@ -842,10 +1195,34 @@ try {
     100,
   );
   assert.ok(await lifelinePage.evaluate(() => window.__answerCueOscillators > 0), "lifeline use plays a synthetic Web Audio cue");
+  const externalBalance = await lifelinePage.evaluate(() => {
+    const key = "quiz-orbit-reward-collection";
+    const collection = JSON.parse(localStorage.getItem(key));
+    collection.coins += 1;
+    localStorage.setItem(key, JSON.stringify(collection));
+    return collection.coins;
+  });
+  await page.waitForFunction((balance) => {
+    const formatted = new Intl.NumberFormat("bn-BD").format(balance);
+    return document.querySelector("#coinBalance").textContent === formatted &&
+      document.querySelector("#coinBalanceChip").classList.contains("coin-balance-pulse");
+  }, externalBalance);
+  const synchronizedVault = await page.evaluate(() => ({
+    coins: JSON.parse(localStorage.getItem("quiz-orbit-reward-collection")).coins,
+    header: document.querySelector("#coinBalance").textContent,
+    telemetry: document.querySelector("#portalVaultBalance").textContent,
+  }));
+  assert.equal(
+    synchronizedVault.header,
+    new Intl.NumberFormat("bn-BD").format(synchronizedVault.coins),
+    "the home coin vault refreshes from another tab's localStorage update",
+  );
+  assert.equal(synchronizedVault.telemetry, synchronizedVault.header, "the home telemetry and coin pill stay synchronized");
+  assert.equal(synchronizedVault.coins, externalBalance);
   await lifelinePage.close();
 
   assert.deepEqual(pageErrors, [], `The game page raised browser errors: ${pageErrors.join("; ")}`);
-  console.log("Browser check passed: mobile touch targets and scrolling, orientation layout, five live mode previews, localized rounds, independent level maps, timer and focus penalties, coin economy, four strategic lifelines, rewards, and storage recovery.");
+  console.log("Browser check passed: mobile touch targets and scrolling, orientation layout, five live mode previews, localized rounds, 6/10 level progression, coin unlock pricing and persistence, timer and focus penalties, four strategic lifelines, rewards, and storage recovery.");
 } finally {
   await browser?.close();
   server.kill("SIGTERM");
