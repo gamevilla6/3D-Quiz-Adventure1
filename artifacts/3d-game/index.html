@@ -1347,7 +1347,7 @@
       }
       .game-layout > #quizCard { grid-area: quiz; }
       .game-layout > .game-sidebar { grid-area: hud; }
-      /* The fixed quiz HUD is intentionally limited to the timer, lifelines, and coin vault. */
+      /* Sticky HUD controls stay in normal layout flow, keeping the question below them while scrolling. */
       .game-sidebar {
         position: sticky;
         top: calc(env(safe-area-inset-top) + 8px);
@@ -1423,7 +1423,7 @@
         text-shadow: 0 2px 18px rgba(8, 10, 25, .28);
         overflow-wrap: anywhere;
       }
-      .question:focus { outline: 2px solid rgba(155, 142, 255, .8); outline-offset: 7px; border-radius: 8px; }
+      .question:focus-visible { outline: 2px solid rgba(155, 142, 255, .8); outline-offset: 7px; border-radius: 8px; }
       .options { gap: 12px; margin-top: 29px; }
       .option {
         position: relative;
@@ -1623,6 +1623,7 @@
         .lifeline-notice.is-typing::after { animation: none !important; }
         .option.is-eliminating { animation: none !important; }
       }
+      /* On phones, coins stack above the compact timer/lifeline row and answers become full-width touch targets. */
       @media (max-width: 650px) {
         .quiz-utility-row {
           grid-template-columns: minmax(104px, .58fr) minmax(0, 1.42fr);
@@ -3082,6 +3083,7 @@
               <div class="options" id="options" role="group" aria-label="Answer options"></div>
               <div class="feedback" id="feedback" aria-live="polite">Choose the answer that feels right.</div>
               <div class="quiz-actions">
+                <!-- Hidden progression control lets the answer-reveal timer advance rounds without a visible extra button. -->
                 <button class="primary-button" type="button" id="nextButton" disabled hidden>Check answer</button>
               </div>
             </article>

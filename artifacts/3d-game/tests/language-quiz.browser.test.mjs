@@ -387,10 +387,10 @@ try {
     "the last played level is saved independently of the visible level map",
   );
   assert.equal(await page.locator("#continueJourneyButton").isVisible(), true);
-  assert.match(await page.locator("#continueJourneyTarget").innerText(), /IQ Check.*1/);
+  assert.match(await page.locator("#continueJourneyTarget").innerText(), /IQ Check.*1/i);
   await page.locator("#continueJourneyButton").click();
   assert.equal(await page.locator("#gameView").evaluate((node) => node.classList.contains("active")), true);
-  assert.match(await page.locator("#gameCategory").textContent(), /IQ CHECK/);
+  assert.match(await page.locator("#gameCategory").textContent(), /IQ CHECK/i);
   await page.reload({ waitUntil: "domcontentloaded" });
 
   const scienceProgressKey = "quiz-orbit-science-technology-unlocked-level";
@@ -484,6 +484,7 @@ try {
   const audioTestPage = await context.newPage();
   audioTestPage.on("pageerror", (error) => pageErrors.push(error.message));
   await audioTestPage.goto(baseUrl, { waitUntil: "domcontentloaded" });
+  await audioTestPage.locator("#soundToggle").tap();
   await audioTestPage.locator("#startGameButton").tap();
   await audioTestPage.locator(".level-card.unlocked").tap();
   const audioQuestion = await audioTestPage.locator("#questionText").innerText();
