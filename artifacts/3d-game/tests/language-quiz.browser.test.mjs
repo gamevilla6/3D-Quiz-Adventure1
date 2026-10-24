@@ -1246,7 +1246,7 @@ try {
     return collection.coins;
   });
   await page.waitForFunction((balance) => {
-    const formatted = new Intl.NumberFormat("bn-BD").format(balance);
+    const formatted = new Intl.NumberFormat(document.documentElement.lang).format(balance);
     return document.querySelector("#coinBalance").textContent === formatted &&
       document.querySelector("#coinBalanceChip").classList.contains("coin-balance-pulse");
   }, externalBalance);
@@ -1254,18 +1254,163 @@ try {
     coins: JSON.parse(localStorage.getItem("quiz-orbit-reward-collection")).coins,
     header: document.querySelector("#coinBalance").textContent,
     telemetry: document.querySelector("#portalVaultBalance").textContent,
+    language: document.documentElement.lang,
   }));
   assert.equal(
     synchronizedVault.header,
-    new Intl.NumberFormat("bn-BD").format(synchronizedVault.coins),
+    new Intl.NumberFormat(synchronizedVault.language).format(synchronizedVault.coins),
     "the home coin vault refreshes from another tab's localStorage update",
   );
   assert.equal(synchronizedVault.telemetry, synchronizedVault.header, "the home telemetry and coin pill stay synchronized");
   assert.equal(synchronizedVault.coins, externalBalance);
   await lifelinePage.close();
 
+  const stabilityPage = await context.newPage();
+  const stabilityErrors = [];
+  stabilityPage.on("pageerror", (error) => stabilityErrors.push(error.message));
+  await stabilityPage.addInitScript(() => {
+    const nativeSetInterval = window.setInterval.bind(window);
+    const nativeClearInterval = window.clearInterval.bind(window);
+    window.__questionIntervals = new Set();
+    window.setInterval = (callback, milliseconds, ...args) => {
+      const id = nativeSetInterval(callback, milliseconds, ...args);
+      if (milliseconds === 50) window.__questionIntervals.add(id);
+      return id;
+    };
+    window.clearInterval = (id) => {
+      window.__questionIntervals.delete(id);
+      return nativeClearInterval(id);
+    };
+    const realNow = performance.now.bind(performance);
+    window.__timingOffset = 0;
+    Object.defineProperty(performance, "now", { value: () => realNow() + window.__timingOffset });
+  });
+  await stabilityPage.route("**/cdn.jsdelivr.net/**", (route) => route.abort());
+  await stabilityPage.goto(baseUrl, { waitUntil: "domcontentloaded" });
+  await stabilityPage.setViewportSize({ width: 280, height: 653 });
+  assert.ok(await stabilityPage.evaluate(() => document.documentElement.scrollWidth <= innerWidth), "the settings entry fits a 280px home header");
+  await stabilityPage.locator("#openSettingsButton").click();
+  for (const [language, title] of Object.entries({ en: "Settings", bn: "সেটিংস", hi: "सेटिंग्स", es: "Ajustes", fr: "Paramètres" })) {
+    await stabilityPage.locator("#settingsLanguageSelect").selectOption(language);
+    assert.equal(await stabilityPage.locator("#settingsTitle").innerText(), title);
+  }
+  await stabilityPage.locator("#settingsLanguageSelect").selectOption("en");
+  await stabilityPage.locator("#settingsSoundEnabled").uncheck();
+  await stabilityPage.locator("#settingsParticlesEnabled").uncheck();
+  assert.equal(await stabilityPage.evaluate(() => document.body.classList.contains("vfx-disabled")), true);
+  await stabilityPage.locator("#settingsPrivacyButton").click();
+  assert.equal(await stabilityPage.locator("#settingsDialog").evaluate((node) => node.open), true, "privacy quick view preserves the underlying settings");
+  assert.equal(await stabilityPage.locator("#privacyModalContent section").count(), 6);
+  assert.equal(await stabilityPage.locator("#privacyModalContactLink").getAttribute("href"), "mailto:contact.gamevilla@gmail.com");
+  await stabilityPage.locator("#closePrivacyButton").click();
+  await stabilityPage.locator("#saveSettingsButton").click();
+  await stabilityPage.reload({ waitUntil: "domcontentloaded" });
+  await stabilityPage.locator("#openSettingsButton").click();
+  assert.equal(await stabilityPage.locator("#settingsSoundEnabled").isChecked(), false, "sound preference survives reload");
+  assert.equal(await stabilityPage.locator("#settingsParticlesEnabled").isChecked(), false, "VFX preference survives reload");
+  assert.ok(await stabilityPage.evaluate(() => {
+    const rect = document.getElementById("settingsDialog").getBoundingClientRect();
+    return rect.width <= innerWidth && rect.left >= 0 && rect.right <= innerWidth;
+  }), "the settings dialog stays within narrow screens");
+  assert.ok(await stabilityPage.locator("#settingsDialog .sp-row").evaluateAll((rows) => rows.every((row) => {
+    const card = row.getBoundingClientRect();
+    const children = [...row.children].map((child) => child.getBoundingClientRect());
+    return children.every((child) => child.top >= card.top && child.bottom <= card.bottom + 1 &&
+      child.left >= card.left && child.right <= card.right + 1) &&
+      (children.length < 2 || children[0].bottom <= children[1].top);
+  })), "mobile settings cards contain labels and controls without overlaps");
+  await stabilityPage.locator("#saveSettingsButton").click();
+  await stabilityPage.locator("#openPrivacyPageButton").click();
+  assert.equal(await stabilityPage.locator("#privacyView").evaluate((node) => node.classList.contains("active")), true);
+  assert.equal(new URL(stabilityPage.url()).hash, "#privacy");
+  assert.equal(await stabilityPage.locator("#privacyPageContent section").count(), 6);
+  assert.match(await stabilityPage.locator("#privacyPageContent").innerText(), /localStorage/);
+  await stabilityPage.locator("#privacyBackButton").click();
+  await stabilityPage.locator("#startGameButton").click();
+  await stabilityPage.locator(".level-card.unlocked").first().click();
+  await acceptRulesBriefingIfOpen(stabilityPage);
+  assert.equal(await stabilityPage.evaluate(() => window.__questionIntervals.size), 1, "one round owns one countdown interval");
+  for (let attempt = 0; attempt < 3; attempt += 1) {
+    await stabilityPage.evaluate(() => document.getElementById("settingsDialog").showModal());
+    await stabilityPage.waitForFunction(() => window.__questionIntervals.size === 0);
+    await stabilityPage.locator("#saveSettingsButton").click();
+    await stabilityPage.waitForFunction(() => window.__questionIntervals.size === 1);
+  }
+  await stabilityPage.locator('[data-lifeline="fifty"]').click();
+  const hiddenIndexes = await stabilityPage.locator(".option[hidden]").evaluateAll((nodes) => nodes.map((node) => node.dataset.optionIndex));
+  assert.equal(hiddenIndexes.length, 2);
+  for (const language of ["bn", "hi", "es", "fr", "en"]) {
+    await stabilityPage.locator("#gameLanguageSelect").selectOption(language);
+    assert.deepEqual(await stabilityPage.locator(".option[hidden]").evaluateAll((nodes) => nodes.map((node) => node.dataset.optionIndex)), hiddenIndexes, "locale changes preserve the exact eliminated options");
+    assert.equal(await stabilityPage.evaluate(() => window.__questionIntervals.size), 1);
+  }
+  await stabilityPage.locator('[data-lifeline="freeze"]').click();
+  assert.equal(await stabilityPage.locator('[data-lifeline="clue"]').isDisabled(), true);
+  const questionBeforeDoubleClick = await stabilityPage.locator("#questionText").innerText();
+  await stabilityPage.locator(".option:not([hidden])").first().evaluate((button) => { button.click(); button.click(); });
+  assert.equal(await stabilityPage.evaluate(() => window.__questionIntervals.size), 0, "answering clears the countdown immediately");
+  await waitForQuestionAdvance(stabilityPage, questionBeforeDoubleClick);
+  assert.equal(await stabilityPage.locator("#lifelineUseCount").innerText(), "0/2 used", "the next question starts with a fresh lifeline allowance");
+  assert.equal(await stabilityPage.evaluate(() => window.__questionIntervals.size), 1);
+  await stabilityPage.evaluate(() => document.getElementById("settingsDialog").showModal());
+  await stabilityPage.waitForFunction(() => window.__questionIntervals.size === 0);
+  await stabilityPage.evaluate(() => { window.__timingOffset += 20_000; });
+  await stabilityPage.locator("#saveSettingsButton").click();
+  await stabilityPage.waitForFunction(() => document.querySelectorAll(".option:disabled").length === 4);
+  assert.equal(await stabilityPage.evaluate(() => window.__questionIntervals.size), 0, "an expired modal-covered question submits once, without a new interval");
+  const expiredQuestion = await stabilityPage.locator("#questionText").innerText();
+  await waitForQuestionAdvance(stabilityPage, expiredQuestion);
+  await stabilityPage.evaluate(() => window.dispatchEvent(new PageTransitionEvent("pagehide")));
+  assert.equal(await stabilityPage.evaluate(() => window.__questionIntervals.size), 0);
+  await stabilityPage.evaluate(() => window.dispatchEvent(new PageTransitionEvent("pageshow")));
+  assert.equal(await stabilityPage.evaluate(() => window.__questionIntervals.size), 1, "a restored page owns only one countdown");
+  await stabilityPage.locator("#quitButton").evaluate((button) => button.click());
+  assert.equal(await stabilityPage.evaluate(() => window.__questionIntervals.size), 0, "leaving a level clears the countdown");
+  await stabilityPage.evaluate(() => localStorage.setItem("unrelated-app-data", "keep"));
+  const savedCoinsBeforeReset = await stabilityPage.locator("#coinBalance").innerText();
+  await stabilityPage.locator("#openSettingsButton").click();
+  await stabilityPage.locator("#resetProgressButton").click();
+  await stabilityPage.locator("#cancelResetProgressButton").click();
+  assert.equal(await stabilityPage.locator("#coinBalance").innerText(), savedCoinsBeforeReset, "canceling reset preserves the wallet");
+  await stabilityPage.locator("#resetProgressButton").click();
+  await Promise.all([
+    stabilityPage.waitForEvent("domcontentloaded"),
+    stabilityPage.locator("#confirmResetProgressButton").click(),
+  ]);
+  assert.equal(await stabilityPage.locator("#coinBalance").innerText(), "0");
+  assert.equal(await stabilityPage.evaluate(() => localStorage.getItem("unrelated-app-data")), "keep", "reset never clears unrelated storage");
+  assert.equal(await stabilityPage.evaluate(() => localStorage.getItem("quiz-orbit-particles-enabled")), "false", "reset preserves visual preferences");
+  assert.equal(await stabilityPage.evaluate(() => localStorage.getItem("quiz-orbit-answer-sounds-muted")), "true", "reset preserves sound preferences");
+  assert.deepEqual(stabilityErrors, []);
+  await stabilityPage.close();
+
+  const deniedContext = await browser.newContext({ viewport: { width: 320, height: 640 } });
+  const deniedPage = await deniedContext.newPage();
+  const deniedErrors = [];
+  deniedPage.on("pageerror", (error) => deniedErrors.push(error.message));
+  await deniedPage.addInitScript(() => {
+    for (const method of ["getItem", "setItem", "removeItem"]) {
+      Storage.prototype[method] = () => { throw new DOMException("Storage blocked", "SecurityError"); };
+    }
+  });
+  await deniedPage.goto(baseUrl, { waitUntil: "domcontentloaded" });
+  await deniedPage.locator("#openSettingsButton").click();
+  await deniedPage.locator("#settingsParticlesEnabled").uncheck();
+  assert.match(await deniedPage.locator("#settingsStatus").innerText(), /this visit/);
+  await deniedPage.locator("#resetProgressButton").click();
+  await deniedPage.locator("#confirmResetProgressButton").click();
+  assert.match(await deniedPage.locator("#settingsStatus").innerText(), /could not finish/);
+  assert.equal(await deniedPage.locator("#settingsDialog").evaluate((dialog) => dialog.open), true);
+  await deniedPage.locator("#saveSettingsButton").click();
+  await deniedPage.locator("#startGameButton").click();
+  await deniedPage.locator(".level-card.unlocked").first().click();
+  await acceptRulesBriefingIfOpen(deniedPage);
+  assert.equal(await deniedPage.locator(".option").count(), 4, "a storage-denied visitor can still play");
+  assert.deepEqual(deniedErrors, []);
+  await deniedContext.close();
+
   assert.deepEqual(pageErrors, [], `The game page raised browser errors: ${pageErrors.join("; ")}`);
-  console.log("Browser check passed: mobile touch targets and scrolling, orientation layout, five live mode previews, localized rounds, 6/10 level progression, coin unlock pricing and persistence, timer and focus penalties, four strategic lifelines, rewards, and storage recovery.");
+  console.log("Browser check passed: responsive layouts, localized rounds, progression and coins, timer/focus cleanup, four lifelines, Settings/Privacy, confirmed reset, rewards, and storage recovery.");
 } finally {
   await browser?.close();
   server.kill("SIGTERM");

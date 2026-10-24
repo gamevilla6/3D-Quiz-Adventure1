@@ -3229,6 +3229,98 @@
       body[data-view="game"] .quiz-utility-row .lifeline-cost { font-size: 8px; }
     }
 
+
+    /* ===== Settings & Privacy surfaces (glass, >=48px targets) ===== */
+    .sp-icon-button,.sp-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:0 16px;border:1px solid rgba(165,183,255,.28);border-radius:15px;color:#eaf0ff;background:rgba(22,31,63,.72);font:inherit;font-weight:750;cursor:pointer;text-decoration:none;touch-action:manipulation;-webkit-tap-highlight-color:transparent;transition:transform .18s ease,border-color .18s ease,background .18s ease}
+    .sp-icon-button{width:48px;min-width:48px;padding:0}
+    .sp-icon-button svg{width:22px;height:22px}
+    .sp-icon-button:hover,.sp-btn:hover{border-color:rgba(129,218,255,.66);background:rgba(31,46,88,.9);transform:translateY(-1px)}
+    .sp-icon-button:active,.sp-btn:active{transform:scale(.98)}
+    .sp-btn-primary{color:#20152d;border-color:rgba(255,226,156,.74);background:linear-gradient(115deg,#ffe38a,#ffb45d)}
+    .sp-btn-primary:hover{background:linear-gradient(115deg,#ffeaa6,#ffc27a)}
+    .sp-btn-danger{border-color:rgba(255,128,150,.5);color:#ffc9d3;background:rgba(90,22,44,.5)}
+    .sp-icon-button:focus-visible,.sp-btn:focus-visible,.sp-dialog :is(select,input):focus-visible,.sp-link:focus-visible{outline:3px solid #8ce8ff;outline-offset:3px}
+    .sp-link{color:#8bdcff;font-weight:700;overflow-wrap:anywhere;display:block;align-content:center;min-height:48px;font-size:clamp(.875rem,3.5vw,.95rem);line-height:1.5}
+    .topbar-actions{flex-wrap:wrap}
+    .welcome-links{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;padding:8px 0 24px}
+    .welcome-links .sp-btn{min-height:48px;font-size:.88rem;font-weight:650;background:rgba(18,25,51,.5)}
+    .sp-dialog{width:min(520px,calc(100vw - 24px));max-height:min(88dvh,780px);padding:0;overflow:hidden;border:1px solid rgba(171,196,255,.28);border-radius:24px;color:#f6f7ff;background:linear-gradient(150deg,rgba(28,36,78,.94),rgba(10,16,36,.96) 75%);box-shadow:0 28px 90px rgba(0,0,0,.58),inset 0 1px rgba(255,255,255,.1);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);overscroll-behavior:contain}
+    .sp-dialog[open]{display:flex;flex-direction:column;animation:rules-dialog-enter .2s ease-out both}
+    .sp-dialog::backdrop{background:rgba(3,6,17,.76);backdrop-filter:blur(14px)}
+    .sp-head{display:grid;grid-template-columns:minmax(0,1fr) 48px;gap:12px;align-items:start;padding:20px 20px 12px;border-bottom:1px solid rgba(188,203,255,.12)}
+    .sp-head h2{margin:0 0 6px;color:#fff;font-size:clamp(1.3rem,5vw,1.7rem);line-height:1.2;overflow-wrap:anywhere}
+    .sp-head p{margin:0;color:#c7cee2;line-height:1.5;font-size:.94rem}
+    /* The scroll body must not compress its cards to fit the viewport. Intrinsic
+       card heights belong inside the scroller; the header/footer never shrink. */
+    .sp-body{flex:1 1 auto;min-height:0;overflow-y:auto;padding:16px 20px;display:flex;flex-direction:column;gap:12px;overscroll-behavior:contain}
+    .sp-body > *{flex-shrink:0;min-width:0}
+    .sp-head,.sp-foot{flex-shrink:0}
+    .sp-foot{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,140px),1fr));gap:10px;padding:14px 20px 20px;border-top:1px solid rgba(188,203,255,.12)}
+    .sp-row{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:12px;min-height:56px;padding:12px 14px;border:1px solid rgba(188,203,255,.14);border-radius:16px;background:rgba(255,255,255,.05)}
+    .sp-row.stack{grid-template-columns:minmax(0,1fr)}
+    .sp-row label{color:#fff;font-weight:750;overflow-wrap:anywhere}
+    .sp-row p,.sp-note{margin:3px 0 0;color:#b9c2dc;font-size:.86rem;line-height:1.45}
+    .sp-switch{appearance:none;-webkit-appearance:none;position:relative;width:60px;height:48px;margin:0;cursor:pointer;border-radius:999px;background:transparent}
+    .sp-switch::before{content:"";position:absolute;left:0;top:10px;width:60px;height:28px;border-radius:999px;border:1px solid rgba(165,183,255,.35);background:rgba(18,25,51,.9);transition:background .2s ease}
+    .sp-switch::after{content:"";position:absolute;left:5px;top:15px;width:18px;height:18px;border-radius:50%;background:#c9d3f5;transition:transform .2s ease,background .2s ease}
+    .sp-switch:checked::before{background:linear-gradient(115deg,#47e3e7,#6669ff)}
+    .sp-switch:checked::after{transform:translateX(32px);background:#fff}
+    .sp-select{width:100%;min-height:48px;margin-top:8px;padding:0 12px;border:1px solid rgba(155,172,224,.3);border-radius:13px;color:#fff;background:rgba(18,25,51,.92);font:inherit}
+    .sp-select option{color:#fff;background:#11152e}
+    #resetProgressConfirmation{padding:14px;border:1px solid rgba(255,128,150,.45);border-radius:16px;background:rgba(90,22,44,.45)}
+    #resetProgressConfirmation[hidden]{display:none}
+    #resetProgressWarning{margin:0 0 12px;color:#ffd9e0;line-height:1.5}
+    .sp-pair{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,130px),1fr));gap:10px}
+    #settingsStatus{margin:0;min-height:1.4em;color:#9af0c8;font-size:.9rem}
+    .privacy-page{width:100%;margin:clamp(18px,4vh,44px) auto 0}
+    .privacy-shell{width:min(100%,860px);margin:0 auto}
+    #privacyPageContent{max-height:min(58dvh,640px);overflow-y:auto;margin-bottom:16px;padding:clamp(16px,3vw,24px);border:1px solid rgba(182,199,255,.16);border-radius:20px;background:linear-gradient(145deg,rgba(29,39,75,.88),rgba(13,20,43,.9));backdrop-filter:blur(12px);color:#d3d9ee;line-height:1.65;overflow-wrap:anywhere}
+    #privacyPageContent h2,#privacyModalContent h3{color:#fff}
+    #privacyModalContent{color:#d3d9ee;line-height:1.6;overflow-wrap:anywhere}
+    .privacy-actions{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+    @media (max-width:420px){.sp-head,.sp-body{padding-left:14px;padding-right:14px}.sp-foot{padding:12px 14px 16px}.sp-row{grid-template-columns:minmax(0,1fr)}.sp-switch{justify-self:start}}
+    @media (prefers-reduced-motion:reduce){.sp-icon-button,.sp-btn,.sp-switch::before,.sp-switch::after{transition:none}.sp-dialog[open]{animation:none}.sp-icon-button:hover,.sp-btn:hover{transform:none}}
+
+    /* Decorative VFX is optional; disabling it also freezes the CSS fallback. */
+    body[data-view="privacy"] {
+      color: #f0f3ff;
+      background: radial-gradient(ellipse at 5% 0%, rgba(58,119,164,.23), transparent 55%),
+        radial-gradient(ellipse at 95% 10%, rgba(102,52,162,.22), transparent 55%), #080d1e;
+    }
+    body[data-view="privacy"] .brand { color: #f0f3ff; }
+    body[data-view="privacy"] .top-note { color: #c2cce6; }
+    body[data-view="privacy"] .language-select,
+    body[data-view="privacy"] .sound-toggle { color: #f0f3ff; border-color: rgba(145,165,220,.3); background: #19213c; }
+    body[data-view="privacy"] .language-select option { color: #fff; background: #19213c; }
+    body[data-view="privacy"] .coin-balance-chip { color: #ffe7a0; border-color: rgba(255,214,113,.4); background: rgba(91,65,20,.38); }
+    body[data-view="privacy"] .coin-balance-chip strong,
+    body[data-view="privacy"] .coin-balance-label { color: #ffe7a0; }
+    body[data-view="privacy"] .rules-page-heading > p:last-child { color: #c9d2eb; }
+    #settingsStatus[data-message="resetFailed"] { color: #ffb7c5; }
+    body.vfx-disabled .hero-orbit-fallback *,
+    body.vfx-disabled .fallback-orbit,
+    body.vfx-disabled .fallback-planet,
+    body.vfx-disabled .fallback-moon { animation: none !important; }
+    .privacy-notice { padding: 14px; border: 1px solid rgba(255,204,109,.3); border-radius: 12px; background: rgba(93,64,20,.2); color: #ffe4aa; }
+    #privacyPageContent, #privacyModalContent { font-size: clamp(.9rem, 1.3vw, 1rem); }
+    #privacyPageContent h2, #privacyModalContent h3 { font-size: clamp(1.05rem, 2vw, 1.22rem); margin: 24px 0 8px; line-height: 1.4; }
+    #privacyPageContent section p, #privacyModalContent section p { margin: 0; }
+    body:not([data-view="welcome"]):not([data-view="rules"]):not([data-view="privacy"]) #openSettingsButton { display: none; }
+    @media (max-width:650px) {
+      body[data-view="welcome"] .topbar-actions, body[data-view="rules"] .topbar-actions, body[data-view="privacy"] .topbar-actions { flex: 1 1 auto; min-width: 0; justify-content: flex-end; }
+      body[data-view="privacy"] .top-note { display: none; }
+    }
+    @media (max-width:365px) {
+      body[data-view="welcome"] .topbar, body[data-view="rules"] .topbar, body[data-view="privacy"] .topbar { display: grid; grid-template-columns: 48px minmax(0,1fr); gap: 8px; align-items: start; }
+      body[data-view="welcome"] .brand, body[data-view="rules"] .brand, body[data-view="privacy"] .brand { width: 48px; min-width: 48px; min-height: 48px; gap: 0; }
+      body[data-view="welcome"] .brand-mark, body[data-view="rules"] .brand-mark, body[data-view="privacy"] .brand-mark { width: 32px; height: 32px; min-width: 32px; flex: 0 0 32px; }
+      body[data-view="privacy"] .brand-name { display: none; }
+      body[data-view="privacy"] .brand-mark { width: 32px; height: 32px; }
+      body[data-view="privacy"] .language-select { width: 70px; min-width: 70px; }
+      body[data-view="privacy"] .sound-toggle { width: 48px; min-width: 48px; padding: 0; font-size: 0; }
+      body[data-view="privacy"] .sound-toggle span { display: none; }
+      .topbar-actions { gap: 4px !important; }
+    }
     </style>
   </head>
   <body data-view="welcome">
@@ -3279,6 +3371,8 @@
             <svg class="sound-muted-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 10v4h4l5 4V6l-5 4H4Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="m17 9 5 6m0-6-5 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
             <span id="soundToggleLabel">Sound on</span>
           </button>
+          <!-- Settings trigger (Home) -->
+          <button class="sp-icon-button" type="button" id="openSettingsButton" aria-label="Settings" aria-haspopup="dialog"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="3.2" stroke="currentColor" stroke-width="1.8"/><path d="m9.5 3-.5 2-1.6.9-2-.6L3 9.7l1.5 1.5v1.6L3 14.3l2.4 4.4 2-.6L9 19l.5 2h5l.5-2 1.6-.9 2 .6 2.4-4.4-1.5-1.5v-1.6L21 9.7l-2.4-4.4-2 .6L15 5l-.5-2Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg></button>
         </div>
       </header>
 
@@ -3399,6 +3493,8 @@
             </button>
           </div>
           <div class="welcome-foot"><span><b class="tiny-check">✓</b> <span id="totalQuestionsLabel">30 General Knowledge questions</span></span><span><b class="tiny-check">✓</b> <span id="instantAnswersLabel">Instant answers</span></span><span><b class="tiny-check">✓</b> <span id="justForFunLabel">Just for fun</span></span></div>
+          <!-- Home footer: privacy entry points -->
+          <div class="welcome-links"><button class="sp-btn" type="button" id="openPrivacyPageButton">Privacy page</button><button class="sp-btn" type="button" id="openPrivacyModalButton">Privacy summary</button></div>
           <div class="portal-telemetry" id="portalTelemetry" role="group" aria-label="Live portal telemetry">
             <div class="portal-telemetry-heading"><span class="live-dot" aria-hidden="true"></span><span id="portalTelemetryTitle">LIVE NEURAL TELEMETRY</span></div>
             <div class="portal-telemetry-stream">
@@ -3726,12 +3822,124 @@
               <button class="rules-modal-cancel" type="button" id="cancelRulesStartButton">Not now</button>
               <button class="rules-modal-confirm" type="button" id="confirmRulesStartButton">Got it — let’s play</button>
             </div>
+            <!-- Quick privacy access from rules -->
+            <button class="sp-btn" type="button" id="rulesPrivacyButton" style="width:100%;margin-top:10px">Privacy</button>
           </div>
+        </dialog>
+        <!-- Privacy full page -->
+        <section class="view privacy-page" id="privacyView" aria-labelledby="privacyTitle">
+          <div class="privacy-shell">
+            <header class="rules-page-header">
+              <button class="rules-back-button" type="button" id="privacyBackButton" aria-label="Back to Home"><span aria-hidden="true">←</span></button>
+              <div class="rules-page-heading">
+                <p class="rules-page-kicker" id="privacyKicker">PRIVACY</p>
+                <h1 id="privacyTitle" tabindex="-1">Privacy</h1>
+                <p id="privacyDescription">How QuizVerse 3D handles your data.</p>
+              </div>
+            </header>
+            <div id="privacyPageContent" tabindex="0"></div>
+            <div class="privacy-actions">
+              <a class="sp-link" href="mailto:contact.gamevilla@gmail.com" id="privacyContactLink">contact.gamevilla<wbr>@gmail.com</a>
+              <button class="sp-btn sp-btn-primary" type="button" id="privacyPageSettingsButton">Settings</button>
+            </div>
+          </div>
+        </section>
+        <!-- Settings dialog (native, focus-contained) -->
+        <dialog class="sp-dialog" id="settingsDialog" aria-labelledby="settingsTitle" aria-describedby="settingsDescription">
+          <div class="sp-head">
+            <div><h2 id="settingsTitle">Settings</h2><p id="settingsDescription">Tune sound, effects and language.</p></div>
+            <button class="sp-icon-button" type="button" id="closeSettingsButton" aria-label="Close settings"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+          </div>
+          <div class="sp-body">
+            <div class="sp-row"><div><label id="settingsSoundLabel" for="settingsSoundEnabled">Sound effects</label><p id="settingsSoundDescription">Answer and result cues.</p></div><input class="sp-switch" type="checkbox" id="settingsSoundEnabled" role="switch" aria-labelledby="settingsSoundLabel" aria-describedby="settingsSoundDescription"></div>
+            <div class="sp-row"><div><label id="settingsParticlesLabel" for="settingsParticlesEnabled">Visual effects</label><p id="settingsParticlesDescription">Particles and celebration bursts.</p></div><input class="sp-switch" type="checkbox" id="settingsParticlesEnabled" role="switch" aria-labelledby="settingsParticlesLabel" aria-describedby="settingsParticlesDescription"></div>
+            <div class="sp-row stack"><label id="settingsLanguageLabel" for="settingsLanguageSelect">Language</label>
+              <select class="sp-select" id="settingsLanguageSelect" aria-labelledby="settingsLanguageLabel"><option value="en">English</option><option value="bn">বাংলা</option><option value="hi">हिन्दी</option><option value="es">Español</option><option value="fr">Français</option></select></div>
+            <button class="sp-btn sp-btn-danger" type="button" id="resetProgressButton">Reset progress</button>
+            <!-- Reset confirmation: toggle [hidden] from JS -->
+            <div id="resetProgressConfirmation" hidden>
+              <p id="resetProgressWarning" tabindex="-1">This clears saved progress on this device.</p>
+              <div class="sp-pair"><button class="sp-btn" type="button" id="cancelResetProgressButton">Cancel</button><button class="sp-btn sp-btn-danger" type="button" id="confirmResetProgressButton">Reset</button></div>
+            </div>
+            <p id="settingsStatus" role="status"></p>
+            <a class="sp-link" id="settingsContactLink" href="mailto:contact.gamevilla@gmail.com">contact.gamevilla<wbr>@gmail.com</a>
+          </div>
+          <div class="sp-foot">
+            <button class="sp-btn" type="button" id="settingsPrivacyButton">Privacy</button>
+            <button class="sp-btn sp-btn-primary" type="button" id="saveSettingsButton">Save &amp; Close</button>
+          </div>
+        </dialog>
+        <!-- Privacy quick dialog -->
+        <dialog class="sp-dialog" id="privacyDialog" aria-labelledby="privacyModalTitle" aria-describedby="privacyModalDescription">
+          <div class="sp-head">
+            <div><h2 id="privacyModalTitle">Privacy</h2><p id="privacyModalDescription">A short summary.</p></div>
+            <button class="sp-icon-button" type="button" id="closePrivacyButton" aria-label="Close privacy"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+          </div>
+          <div class="sp-body"><div id="privacyModalContent"></div><a class="sp-link" href="mailto:contact.gamevilla@gmail.com" id="privacyModalContactLink">contact.gamevilla<wbr>@gmail.com</a></div>
+          <div class="sp-foot"><button class="sp-btn sp-btn-primary" type="button" id="privacyFullPageButton">Full privacy page</button></div>
         </dialog>
       </main>
     </div>
     <script type="module">
-      import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js";
+      // Rendering is optional: a blocked/offline CDN must never prevent the quiz UI
+      // and local save system from starting. Three.js loads inside the guarded scene setup.
+      let THREE;
+
+      // Settings and the public privacy notice share one extensible locale module.
+      // Contact links are ordinary mailto links, not a form that uploads game data.
+      const settingsLocaleKeys = ["title", "description", "sound", "soundDescription", "particles", "particlesDescription", "reset", "warning", "cancel", "confirm", "save", "privacy", "summary", "fullPolicy", "back", "saved", "unsaved", "resetFailed", "privacyDescription", "notice"];
+      const settingsLocaleRows = {
+        en: ["Settings", "Make this universe work for your device.", "Sound effects", "Synthetic answer, timer, and coin sounds.", "Background visual effects", "Turn off animated 3D backgrounds to reduce GPU use.", "Reset game progress", "Permanently erase coins, levels, trophies, badges and game statistics on this browser. Language, sound and visual preferences stay. This cannot be undone.", "Cancel", "Erase game progress", "Save & close", "Privacy Policy", "Quick privacy view", "Read full policy", "Back to Home", "Preference saved on this browser.", "Applied for this visit. Browser storage is unavailable.", "Reset could not finish because browser storage is unavailable. Check browser site-data settings before trying again.", "How this browser game uses storage and protects fair play.", "This notice describes this browser build. It is informational, not legal advice or a certification of GDPR or store-policy compliance."],
+        bn: ["সেটিংস", "আপনার ডিভাইসের উপযোগী করে গেমটি সাজান।", "সাউন্ড ইফেক্ট", "কৃত্রিমভাবে তৈরি উত্তর, টাইমার ও কয়েনের শব্দ।", "পটভূমির ভিজ্যুয়াল ইফেক্ট", "GPU-এর ব্যবহার কমাতে অ্যানিমেটেড 3D পটভূমি বন্ধ করুন।", "গেমের অগ্রগতি মুছুন", "এই ব্রাউজারের কয়েন, লেভেল, ট্রফি, ব্যাজ ও গেমের পরিসংখ্যান স্থায়ীভাবে মুছে যাবে। ভাষা, শব্দ ও ভিজ্যুয়াল পছন্দ থাকবে। এটি ফেরানো যাবে না।", "বাতিল", "অগ্রগতি মুছে ফেলুন", "সংরক্ষণ করে বন্ধ করুন", "গোপনীয়তা নীতি", "গোপনীয়তার সংক্ষিপ্ত বিবরণ", "সম্পূর্ণ নীতি পড়ুন", "হোমে ফিরুন", "পছন্দ এই ব্রাউজারে সংরক্ষিত হয়েছে।", "এই ভিজিটের জন্য প্রযোজ্য। ব্রাউজার স্টোরেজ ব্যবহার করা যাচ্ছে না।", "ব্রাউজার স্টোরেজ ব্যবহার করা যাচ্ছে না বলে রিসেট সম্পূর্ণ হয়নি। আবার চেষ্টা করার আগে ব্রাউজারের সাইট ডেটা সেটিংস দেখুন।", "এই ব্রাউজার গেম কীভাবে ডেটা রাখে ও ন্যায্য খেলা নিশ্চিত করে।", "এই বিজ্ঞপ্তি বর্তমান ব্রাউজার সংস্করণের বিবরণ। এটি তথ্যের জন্য; আইনি পরামর্শ বা GDPR বা স্টোর নীতির সনদ নয়।"],
+        hi: ["सेटिंग्स", "अपने डिवाइस के अनुसार गेम सेट करें।", "ध्वनि प्रभाव", "कृत्रिम उत्तर, टाइमर और सिक्कों की आवाज़ें।", "पृष्ठभूमि दृश्य प्रभाव", "GPU का उपयोग घटाने के लिए एनिमेटेड 3D पृष्ठभूमि बंद करें।", "गेम प्रगति रीसेट करें", "इस ब्राउज़र के सिक्के, स्तर, ट्रॉफियाँ, बैज और आँकड़े स्थायी रूप से मिटेंगे। भाषा, ध्वनि और दृश्य प्राथमिकताएँ बनी रहेंगी। इसे वापस नहीं किया जा सकता।", "रद्द करें", "गेम प्रगति मिटाएँ", "सहेजें और बंद करें", "गोपनीयता नीति", "गोपनीयता का संक्षिप्त विवरण", "पूरी नीति पढ़ें", "होम पर लौटें", "प्राथमिकता इस ब्राउज़र में सहेजी गई।", "इस विज़िट के लिए लागू। ब्राउज़र स्टोरेज उपलब्ध नहीं है।", "ब्राउज़र स्टोरेज उपलब्ध न होने से रीसेट पूरा नहीं हुआ। दोबारा कोशिश से पहले साइट डेटा सेटिंग्स जाँचें।", "यह ब्राउज़र गेम स्टोरेज और निष्पक्ष खेल को कैसे संभालता है।", "यह सूचना वर्तमान ब्राउज़र संस्करण का वर्णन करती है। यह जानकारी है, कानूनी सलाह या GDPR अथवा स्टोर नीति अनुपालन का प्रमाण नहीं।"],
+        es: ["Ajustes", "Adapta este universo a tu dispositivo.", "Efectos de sonido", "Sonidos sintéticos de respuestas, reloj y monedas.", "Efectos visuales de fondo", "Desactiva los fondos 3D animados para reducir el uso de GPU.", "Restablecer progreso", "Borra permanentemente monedas, niveles, trofeos, insignias y estadísticas de este navegador. Se conservan idioma, sonido y efectos. No se puede deshacer.", "Cancelar", "Borrar progreso", "Guardar y cerrar", "Política de privacidad", "Vista rápida de privacidad", "Leer la política completa", "Volver al inicio", "Preferencia guardada en este navegador.", "Aplicado durante esta visita. El almacenamiento no está disponible.", "No se pudo completar el borrado porque el almacenamiento no está disponible. Revisa los datos del sitio en el navegador.", "Cómo este juego usa el almacenamiento y comprueba el juego limpio.", "Este aviso describe esta versión del navegador. Es informativo, no asesoramiento legal ni una certificación de cumplimiento del RGPD o de las políticas de las tiendas."],
+        fr: ["Paramètres", "Adaptez cet univers à votre appareil.", "Effets sonores", "Sons synthétiques de réponses, du minuteur et des pièces.", "Effets visuels en arrière-plan", "Désactivez les fonds 3D animés pour réduire l’utilisation du GPU.", "Réinitialiser la progression", "Efface définitivement les pièces, niveaux, trophées, badges et statistiques de ce navigateur. La langue, le son et les effets sont conservés. Cette action est irréversible.", "Annuler", "Effacer la progression", "Enregistrer et fermer", "Politique de confidentialité", "Aperçu de confidentialité", "Lire la politique complète", "Retour à l’accueil", "Préférence enregistrée dans ce navigateur.", "Appliqué pour cette visite. Le stockage est indisponible.", "La réinitialisation a échoué car le stockage est indisponible. Vérifiez les données du site dans votre navigateur.", "Comment ce jeu utilise le stockage et contrôle le jeu équitable.", "Cet avis décrit cette version pour navigateur. Il est informatif et ne constitue ni un conseil juridique ni une certification de conformité au RGPD ou aux politiques des boutiques."]
+      };
+      const settingsCopy = Object.fromEntries(Object.entries(settingsLocaleRows).map(([locale, row]) => [locale,
+        Object.fromEntries(settingsLocaleKeys.map((key, index) => [key, row[index]]))
+      ]));
+      const privacySections = {
+        en: [
+          ["Data stored on your device", "QuizVerse 3D stores game progress, unlocked and coin-skipped levels, coin balances, trophies, badges, scores, accuracy, last-played level and preferences in localStorage on this browser. The game does not ask for an account, location, contacts, camera, microphone, or sensitive personal information. The game code does not upload your saved game or use advertising or analytics trackers."],
+          ["Fair-play checks", "During an active round, the Page Visibility API and window focus events detect leaving the game. The current question may be submitted as incorrect. These checks do not read other tabs, browsing history, screen contents or other applications. Question order and timing are handled in memory. Client-side checks discourage casual cheating; they are not tamper-proof security."],
+          ["Cookies, retention and your control", "The game code does not set tracking cookies. Local saves remain until you reset progress in Settings or clear this site's browser data. Reset erases game progress and rewards but keeps language, sound and visual preferences. Clear site data to remove those too. Blocking storage allows temporary play, but changes may not survive closing the page. Local storage is not encrypted by the game and is not a cloud backup."],
+          ["External resources and hosting", "The optional Three.js library is delivered by jsDelivr. Loading it sends ordinary network information, such as your IP address and browser request details, to that CDN. The website host may process connection logs to serve and protect the site. Those providers have their own privacy practices. No game-data upload, ad SDK or payment SDK is implemented in this browser build."],
+          ["Privacy questions and rights", "For privacy inquiries, support, feedback, or applicable access, correction or deletion requests, contact contact.gamevilla@gmail.com. Local-only saves cannot be accessed remotely by the developer; use Settings or browser site-data controls to delete them. If you email us, your email address and message are provided voluntarily to the recipient and email provider. Where applicable, you may also complain to your data protection authority."],
+          ["Scope and updates", "This notice covers this browser version of QuizVerse 3D, updated 24 October 2026. Any future accounts, ads, payments or online analytics require a revised notice and any necessary choices before activation. The publishing operator's legal identity, target audience and jurisdiction must be confirmed before a store submission. Three.js is open-source software under the MIT license, not a claim that third-party software has no copyright."]
+        ],
+        bn: [
+          ["আপনার ডিভাইসে রাখা তথ্য", "QuizVerse 3D এই ব্রাউজারের localStorage-এ অগ্রগতি, আনলক ও কয়েনে এড়ানো লেভেল, কয়েন, ট্রফি, ব্যাজ, স্কোর, নির্ভুলতা, শেষ খেলা লেভেল ও পছন্দ রাখে। গেমটি অ্যাকাউন্ট, অবস্থান, পরিচিতি, ক্যামেরা, মাইক্রোফোন বা সংবেদনশীল ব্যক্তিগত তথ্য চায় না। গেমের কোড আপনার সেভ আপলোড করে না এবং বিজ্ঞাপন বা অ্যানালিটিক্স ট্র্যাকার ব্যবহার করে না।"],
+          ["ন্যায্য খেলার পরীক্ষা", "সক্রিয় রাউন্ডে Page Visibility API ও উইন্ডোর ফোকাস পরিবর্তনের মাধ্যমে গেম ছেড়ে যাওয়া শনাক্ত হয়। বর্তমান প্রশ্ন ভুল হিসেবে জমা হতে পারে। অন্য ট্যাব, ব্রাউজিং ইতিহাস, স্ক্রিন বা অন্য অ্যাপ পড়া হয় না। প্রশ্নের ক্রম ও সময় মেমরিতে পরিচালিত হয়। ব্রাউজারভিত্তিক পরীক্ষা সাধারণ প্রতারণা কমায়, সম্পূর্ণ সুরক্ষা নয়।"],
+          ["কুকি, সংরক্ষণ ও নিয়ন্ত্রণ", "গেমের কোড ট্র্যাকিং কুকি সেট করে না। সেটিংস থেকে রিসেট বা ব্রাউজারের সাইট ডেটা মুছলে সেভ মুছে যায়। রিসেটে অগ্রগতি ও পুরস্কার মুছে যায়, ভাষা, শব্দ ও ভিজ্যুয়াল পছন্দ থাকে। সেগুলিও মুছতে সাইট ডেটা মুছুন। স্টোরেজ বন্ধ থাকলে সাময়িকভাবে খেলা যায়, কিন্তু পরিবর্তন নাও থাকতে পারে। গেম localStorage এনক্রিপ্ট করে না; এটি ক্লাউড ব্যাকআপ নয়।"],
+          ["বাহ্যিক রিসোর্স ও হোস্টিং", "ঐচ্ছিক Three.js লাইব্রেরি jsDelivr থেকে আসে। এটি লোড করলে IP ঠিকানা ও ব্রাউজারের অনুরোধের মতো সাধারণ নেটওয়ার্ক তথ্য CDN পায়। সাইট পরিবেশন ও সুরক্ষার জন্য হোস্ট সংযোগের লগ রাখতে পারে। তাদের নিজস্ব গোপনীয়তা নীতি আছে। এই ব্রাউজার সংস্করণে গেম ডেটা আপলোড, বিজ্ঞাপন SDK বা পেমেন্ট SDK নেই।"],
+          ["গোপনীয়তা প্রশ্ন ও অধিকার", "গোপনীয়তা, সহায়তা, মতামত বা প্রযোজ্য তথ্য দেখা, সংশোধন ও মুছে ফেলার অনুরোধ পাঠান contact.gamevilla@gmail.com-এ। ডেভেলপার দূর থেকে স্থানীয় সেভ দেখতে পারেন না; সেটিংস বা ব্রাউজার দিয়ে মুছুন। ইমেইল পাঠালে আপনার ইমেইল ঠিকানা ও বার্তা স্বেচ্ছায় প্রাপক ও ইমেইল সেবাদাতাকে দেওয়া হয়। প্রযোজ্য ক্ষেত্রে তথ্য সুরক্ষা কর্তৃপক্ষের কাছে অভিযোগ করতে পারেন।"],
+          ["পরিসর ও পরিবর্তন", "এই নীতি QuizVerse 3D-এর ব্রাউজার সংস্করণের জন্য; হালনাগাদ ২৪ অক্টোবর ২০২৬। ভবিষ্যতে অ্যাকাউন্ট, বিজ্ঞাপন, পেমেন্ট বা অনলাইন বিশ্লেষণ যোগ করার আগে নীতি ও প্রয়োজনীয় পছন্দ হালনাগাদ করতে হবে। স্টোরে প্রকাশের আগে প্রকাশকের আইনি পরিচয়, লক্ষ্য বয়স ও এখতিয়ার নিশ্চিত করতে হবে। Three.js MIT লাইসেন্সের ওপেন-সোর্স সফটওয়্যার; এর অর্থ কপিরাইট নেই নয়।"]
+        ],
+        hi: [
+          ["डिवाइस पर सहेजा गया डेटा", "QuizVerse 3D प्रगति, खुले व सिक्कों से छोड़े स्तर, सिक्के, ट्रॉफियाँ, बैज, स्कोर, सटीकता, अंतिम स्तर और प्राथमिकताएँ इसी ब्राउज़र के localStorage में रखता है। गेम खाता, स्थान, संपर्क, कैमरा, माइक्रोफ़ोन या संवेदनशील जानकारी नहीं माँगता। गेम कोड सेव अपलोड नहीं करता और विज्ञापन या एनालिटिक्स ट्रैकर नहीं चलाता।"],
+          ["निष्पक्ष खेल जाँच", "सक्रिय राउंड में Page Visibility API और विंडो फ़ोकस घटनाएँ गेम छोड़ने का पता लगाती हैं। वर्तमान प्रश्न गलत के रूप में जमा हो सकता है। ये अन्य टैब, इतिहास, स्क्रीन या दूसरे ऐप नहीं पढ़ते। प्रश्न क्रम और समय मेमोरी में रहते हैं। क्लाइंट जाँच सामान्य धोखाधड़ी रोकने में मदद करती है, छेड़छाड़ से पूर्ण सुरक्षा नहीं देती।"],
+          ["कुकी, अवधि और नियंत्रण", "गेम कोड ट्रैकिंग कुकी नहीं बनाता। सेव तब तक रहते हैं जब तक सेटिंग्स में प्रगति रीसेट या साइट डेटा साफ नहीं होता। रीसेट प्रगति व पुरस्कार मिटाता है लेकिन भाषा, ध्वनि व दृश्य प्राथमिकताएँ रखता है। इन्हें मिटाने के लिए साइट डेटा साफ करें। स्टोरेज बंद होने पर अस्थायी खेल संभव है पर बदलाव नहीं टिक सकते। गेम स्थानीय स्टोरेज एन्क्रिप्ट नहीं करता; यह क्लाउड बैकअप नहीं है।"],
+          ["बाहरी संसाधन और होस्टिंग", "वैकल्पिक Three.js लाइब्रेरी jsDelivr से आती है। इसे लोड करते समय IP और ब्राउज़र अनुरोध जैसी सामान्य नेटवर्क जानकारी CDN को जाती है। साइट होस्ट सेवा और सुरक्षा हेतु कनेक्शन लॉग रख सकता है। इन प्रदाताओं की अपनी गोपनीयता प्रथाएँ हैं। इस संस्करण में गेम डेटा अपलोड, विज्ञापन SDK या भुगतान SDK नहीं है।"],
+          ["प्रश्न और अधिकार", "गोपनीयता, सहायता, सुझाव या लागू पहुँच, सुधार व मिटाने के अनुरोध के लिए contact.gamevilla@gmail.com पर लिखें। डेवलपर स्थानीय सेव दूर से नहीं देख सकता; सेटिंग्स या ब्राउज़र से हटाएँ। ईमेल भेजने पर पता और संदेश स्वेच्छा से प्राप्तकर्ता व ईमेल प्रदाता को दिए जाते हैं। लागू होने पर डेटा सुरक्षा प्राधिकरण से शिकायत भी कर सकते हैं।"],
+          ["दायरा और बदलाव", "यह सूचना QuizVerse 3D के ब्राउज़र संस्करण की है; अद्यतन 24 अक्टूबर 2026। भविष्य में खाते, विज्ञापन, भुगतान या ऑनलाइन विश्लेषण जोड़ने से पहले सूचना और आवश्यक विकल्प बदलने होंगे। स्टोर प्रकाशन से पहले प्रकाशक की कानूनी पहचान, लक्षित आयु व क्षेत्राधिकार निश्चित करना होगा। Three.js MIT लाइसेंस वाला ओपन-सोर्स सॉफ़्टवेयर है; इसका अर्थ कॉपीराइट का अभाव नहीं है।"]
+        ],
+        es: [
+          ["Datos guardados en tu dispositivo", "QuizVerse 3D guarda progreso, niveles abiertos u omitidos con monedas, saldo, trofeos, insignias, puntuaciones, precisión, último nivel y preferencias en localStorage de este navegador. No solicita cuenta, ubicación, contactos, cámara, micrófono ni datos sensibles. El código del juego no sube las partidas ni incluye rastreadores publicitarios o analíticos."],
+          ["Comprobaciones de juego limpio", "Durante una ronda, Page Visibility API y los eventos de foco detectan si abandonas el juego. La pregunta actual puede enviarse como incorrecta. No leen otras pestañas, historial, pantalla ni otras aplicaciones. El orden y los tiempos se gestionan en memoria. Las comprobaciones del cliente dificultan las trampas casuales, pero no son inviolables."],
+          ["Cookies, conservación y control", "El juego no establece cookies de rastreo. Los datos permanecen hasta restablecer el progreso en Ajustes o borrar los datos del sitio. El restablecimiento conserva idioma, sonido y efectos; borra los datos del sitio para eliminarlos también. Si bloqueas el almacenamiento, puedes jugar temporalmente sin garantía de conservar los cambios. El juego no cifra localStorage ni ofrece copia en la nube."],
+          ["Recursos externos y alojamiento", "La biblioteca opcional Three.js se obtiene de jsDelivr. Al cargarla, el CDN recibe datos de red habituales, como IP y detalles de la solicitud. El proveedor de alojamiento puede procesar registros de conexión para servir y proteger el sitio. Estos proveedores tienen sus propias prácticas. Esta versión no incluye subidas de datos del juego, SDK publicitario ni SDK de pagos."],
+          ["Consultas y derechos", "Para privacidad, soporte, comentarios o solicitudes de acceso, rectificación o supresión que correspondan, escribe a contact.gamevilla@gmail.com. El desarrollador no puede acceder remotamente a partidas locales: elimínalas en Ajustes o en el navegador. Al enviar un correo, facilitas voluntariamente tu dirección y mensaje al destinatario y proveedor de correo. Cuando proceda, puedes reclamar ante tu autoridad de protección de datos."],
+          ["Alcance y cambios", "Aviso para la versión de navegador de QuizVerse 3D, actualizado el 24 de octubre de 2026. Cuentas, anuncios, pagos o análisis en línea futuros requieren un aviso revisado y las opciones necesarias antes de activarse. Deben confirmarse la identidad legal del editor, público y jurisdicción antes de publicar en una tienda. Three.js es software de código abierto con licencia MIT, no software sin derechos de autor."]
+        ],
+        fr: [
+          ["Données conservées sur votre appareil", "QuizVerse 3D conserve progression, niveaux débloqués ou passés avec des pièces, solde, trophées, badges, scores, précision, dernier niveau et préférences dans le localStorage de ce navigateur. Le jeu ne demande ni compte, localisation, contacts, caméra, microphone ni données sensibles. Son code ne téléverse pas les sauvegardes et n’utilise pas de traceur publicitaire ou analytique."],
+          ["Contrôles de jeu équitable", "Pendant une manche, Page Visibility API et les événements de focus détectent que vous quittez le jeu. La question active peut être envoyée comme incorrecte. Ces contrôles ne lisent ni autres onglets, historique, écran ni autres applications. L’ordre et les délais sont gérés en mémoire. Les contrôles côté client découragent la triche occasionnelle mais ne sont pas inviolables."],
+          ["Cookies, conservation et contrôle", "Le jeu ne crée pas de cookies de suivi. Les sauvegardes restent jusqu’à une réinitialisation dans Paramètres ou l’effacement des données du site. La réinitialisation conserve langue, son et effets ; effacez les données du site pour les supprimer aussi. Si le stockage est bloqué, le jeu reste temporairement utilisable mais les changements peuvent être perdus. Le jeu ne chiffre pas localStorage et ne fournit pas de sauvegarde cloud."],
+          ["Ressources externes et hébergement", "La bibliothèque optionnelle Three.js est fournie par jsDelivr. Son chargement transmet au CDN des informations réseau ordinaires, telles que l’adresse IP et les détails de requête. L’hébergeur peut traiter des journaux de connexion pour servir et protéger le site. Ces fournisseurs ont leurs propres pratiques. Cette version ne comprend ni téléversement de partie, ni SDK publicitaire ou de paiement."],
+          ["Questions et droits", "Pour la confidentialité, l’assistance, des remarques ou les demandes applicables d’accès, de rectification ou d’effacement, écrivez à contact.gamevilla@gmail.com. Le développeur ne peut pas accéder à distance aux sauvegardes locales : supprimez-les via Paramètres ou le navigateur. Un courriel transmet volontairement votre adresse et message au destinataire et au fournisseur de messagerie. Le cas échéant, vous pouvez saisir votre autorité de protection des données."],
+          ["Portée et modifications", "Avis pour la version navigateur de QuizVerse 3D, mis à jour le 24 octobre 2026. De futurs comptes, publicités, paiements ou analyses en ligne nécessitent un avis révisé et les choix requis avant activation. L’identité juridique de l’éditeur, le public visé et la juridiction doivent être confirmés avant publication en boutique. Three.js est un logiciel libre sous licence MIT, ce qui ne signifie pas une absence de droits d’auteur."]
+        ]
+      };
 
       // Every piece of visible copy and every quiz option lives in this dictionary.
       // Question order, options, and answer indexes match between languages.
@@ -4995,7 +5203,7 @@
           { question: { en: "What is the largest mammal?", bn: "পৃথিবীর বৃহত্তম স্তন্যপায়ী প্রাণী কোনটি?", hi: "सबसे बड़ा स्तनधारी जीव कौन-सा है?", es: "¿Cuál es el mamífero más grande?", fr: "Quel est le plus grand mammifère ?" }, options: { en: ["Elephant", "Giraffe", "Great white shark", "Blue whale"], bn: ["হাতি", "জিরাফ", "বড় সাদা হাঙর", "নীল তিমি"], hi: ["हाथी", "जिराफ़", "महान सफ़ेद शार्क", "नीली व्हेल"], es: ["Elefante", "Jirafa", "Tiburón blanco", "Ballena azul"], fr: ["Éléphant", "Girafe", "Grand requin blanc", "Baleine bleue"] }, answer: 3 },
           { question: { en: "How many keys does a standard piano have?", bn: "একটি সাধারণ পিয়ানোতে কয়টি কী থাকে?", hi: "एक सामान्य पियानो में कितनी कुंजियाँ होती हैं?", es: "¿Cuántas teclas tiene un piano estándar?", fr: "Combien de touches possède un piano standard ?" }, options: { en: ["88", "76", "80", "92"], bn: ["৮৮", "৭৬", "৮০", "৯২"], hi: ["८८", "७६", "८०", "९२"], es: ["88", "76", "80", "92"], fr: ["88", "76", "80", "92"] }, answer: 0 },
           { question: { en: "Which country gifted the Statue of Liberty to the United States?", bn: "যুক্তরাষ্ট্রকে স্ট্যাচু অব লিবার্টি উপহার দিয়েছিল কোন দেশ?", hi: "संयुक्त राज्य को स्टैच्यू ऑफ़ लिबर्टी किस देश ने भेंट की थी?", es: "¿Qué país regaló la Estatua de la Libertad a Estados Unidos?", fr: "Quel pays a offert la Statue de la Liberté aux États-Unis ?" }, options: { en: ["Italy", "Spain", "France", "Canada"], bn: ["ইতালি", "স্পেন", "ফ্রান্স", "কানাডা"], hi: ["इटली", "स्पेन", "फ़्रांस", "कनाडा"], es: ["Italia", "España", "Francia", "Canadá"], fr: ["Italie", "Espagne", "France", "Canada"] }, answer: 2 },
-          { question: { en: "What is the name of the fairy in Peter Pan?", bn: "পিটার প্যানের পরীর নাম কী?", hi: "पीटर पैन की परी का नाम क्या है?", es: "¿Cómo se llama el hada de Peter Pan?", fr: "Comment s’appelle la fée de Peter Pan ?" }, options: { en: ["Wendy", "Tinker Bell", "Alice", "Cinderella"], bn: ["ওয়েন্ডি", "টিঙ্কার বেল", "অ্যালিস", "সিন্ডারেলা"], hi: ["वेंडी", "टिंकर बेल", "एलिस", "सिंड्रेला"], es: ["Wendy", "Campanilla", "Alicia", "Cenicienta"], fr: ["Wendy", "Clochette", "Alice", "Cendrillon"] }, answer: 1 },
+          { question: { en: "What color is a clear daytime sky usually?", bn: "পরিষ্কার দিনের আকাশ সাধারণত কী রঙের?", hi: "साफ़ दिन में आकाश आम तौर पर किस रंग का होता है?", es: "¿De qué color suele ser el cielo despejado de día?", fr: "De quelle couleur est généralement le ciel dégagé en journée ?" }, options: { en: ["Green", "Blue", "Red", "Brown"], bn: ["সবুজ", "নীল", "লাল", "বাদামি"], hi: ["हरा", "नीला", "लाल", "भूरा"], es: ["Verde", "Azul", "Rojo", "Marrón"], fr: ["Vert", "Bleu", "Rouge", "Marron"] }, answer: 1 },
           { question: { en: "How many minutes are in one hour?", bn: "এক ঘণ্টায় কত মিনিট?", hi: "एक घंटे में कितने मिनट होते हैं?", es: "¿Cuántos minutos tiene una hora?", fr: "Combien de minutes y a-t-il dans une heure ?" }, options: { en: ["30", "45", "60", "90"], bn: ["৩০", "৪৫", "৬০", "৯০"], hi: ["३०", "४५", "६०", "९०"], es: ["30", "45", "60", "90"], fr: ["30", "45", "60", "90"] }, answer: 2 },
           { question: { en: "In which direction does the sun rise?", bn: "সূর্য কোন দিক থেকে ওঠে?", hi: "सूरज किस दिशा से उगता है?", es: "¿Por qué dirección sale el sol?", fr: "Dans quelle direction le soleil se lève-t-il ?" }, options: { en: ["East", "West", "North", "South"], bn: ["পূর্ব", "পশ্চিম", "উত্তর", "দক্ষিণ"], hi: ["पूर्व", "पश्चिम", "उत्तर", "दक्षिण"], es: ["Este", "Oeste", "Norte", "Sur"], fr: ["Est", "Ouest", "Nord", "Sud"] }, answer: 0 },
           { question: { en: "What is the smallest prime number?", bn: "সবচেয়ে ছোট মৌলিক সংখ্যা কোনটি?", hi: "सबसे छोटी अभाज्य संख्या कौन-सी है?", es: "¿Cuál es el menor número primo?", fr: "Quel est le plus petit nombre premier ?" }, options: { en: ["1", "0", "2", "3"], bn: ["১", "০", "২", "৩"], hi: ["१", "०", "२", "३"], es: ["1", "0", "2", "3"], fr: ["1", "0", "2", "3"] }, answer: 2 },
@@ -5726,6 +5934,7 @@
       const views = {
         welcome: document.getElementById("welcomeView"),
         rules: document.getElementById("rulesView"),
+        privacy: document.getElementById("privacyView"),
         levels: document.getElementById("levelView"),
         game: document.getElementById("gameView"),
         results: document.getElementById("resultsView")
@@ -5790,6 +5999,8 @@
       let timerFreezeUntil = 0;
       let timerFreezeRemainingSeconds = 0;
       let lifelinesUsedThisQuestion = new Set();
+      let eliminatedOptionIndexes = new Set();
+      const lifelineEffectTimeouts = new Set();
       let lifelineFeedbackType = "";
       let lifelineHintAnimationPending = false;
       let lifelineTypingTimeout = null;
@@ -5808,6 +6019,18 @@
       let rewardMaterials = [];
       let audioContext = null;
       let answerSoundsMuted = readAnswerSoundsMuted();
+      const PARTICLES_STORAGE_KEY = "quiz-orbit-particles-enabled";
+      const RESET_SIGNAL_STORAGE_KEY = "quiz-orbit-reset-signal";
+      // Storage can throw even when the browser exposes localStorage (private mode,
+      // quota limits, or denied access). Preferences always have in-memory defaults.
+      function readPreference(key, fallback) {
+        try { return localStorage.getItem(key) ?? fallback; } catch { return fallback; }
+      }
+      function writePreference(key, value) {
+        try { localStorage.setItem(key, String(value)); return true; } catch { return false; }
+      }
+      let particlesEnabled = readPreference(PARTICLES_STORAGE_KEY, "true") !== "false";
+      let syncSceneAnimation = () => {};
       let rewardCollection = readRewardCollection();
       let lastDisplayedCoinBalance = null;
       let coinBalancePulsePending = false;
@@ -6133,7 +6356,27 @@
         questionStartedAt = performance.now();
         questionDeadline = questionStartedAt + QUESTION_TIME_LIMIT_SECONDS * 1000;
         renderQuestionTimer(questionStartedAt);
+        resumeQuestionTimer();
+      }
+
+      function isModalOpen() {
+        return Boolean(document.querySelector("dialog[open]"));
+      }
+
+      // Resume owns the only countdown interval. It never rewrites the monotonic
+      // deadline: opening/closing a modal cannot create free time or stacked timers.
+      function resumeQuestionTimer() {
+        clearQuestionTimer();
+        if (answered || !views.game.classList.contains("active") || document.hidden || isModalOpen()) return;
+        if (performance.now() >= questionDeadline) {
+          selectAnswer(-1, true);
+          return;
+        }
         questionTimerInterval = window.setInterval(() => {
+          if (!views.game.classList.contains("active") || answered || isModalOpen() || document.hidden) {
+            clearQuestionTimer();
+            return;
+          }
           const now = performance.now();
           if (timerFreezeUntil && now >= timerFreezeUntil) {
             timerFreezeUntil = 0;
@@ -6150,6 +6393,8 @@
 
       function stopQuestionTimer() {
         clearQuestionTimer();
+        window.clearTimeout(focusLossGraceTimeout);
+        focusLossGraceTimeout = null;
         timerFreezeUntil = 0;
         timerFreezeRemainingSeconds = 0;
         renderQuestionTimer();
@@ -6265,6 +6510,9 @@
         // A fresh or replacement question receives a clean allowance; language-only
         // rerenders preserve this Set, so switching languages cannot reset the cap.
         lifelinesUsedThisQuestion = new Set();
+        eliminatedOptionIndexes = new Set();
+        lifelineEffectTimeouts.forEach((timeout) => window.clearTimeout(timeout));
+        lifelineEffectTimeouts.clear();
         lifelineFeedbackType = "";
         lifelineHintAnimationPending = false;
         timerFreezeUntil = 0;
@@ -6272,13 +6520,21 @@
       }
 
       function applyFiftyFiftyChoices(animate = true) {
-        const correctIndex = readConcealedAnswer(roundQuestions()[currentQuestion]);
-        const wrongIndexes = [0, 1, 2, 3].filter((index) => index !== correctIndex);
-        for (let index = wrongIndexes.length - 1; index > 0; index -= 1) {
-          const swapIndex = randomIndex(index + 1);
-          [wrongIndexes[index], wrongIndexes[swapIndex]] = [wrongIndexes[swapIndex], wrongIndexes[index]];
+        const item = roundQuestions()[currentQuestion];
+        if (!item || !Array.isArray(item.options)) return;
+        const correctIndex = readConcealedAnswer(item);
+        if (!Number.isInteger(correctIndex) || correctIndex < 0 || correctIndex >= item.options.length) return;
+        // Keep the same distractor after a locale-only rerender. Randomizing again
+        // would let players infer the answer by repeatedly changing languages.
+        if (!eliminatedOptionIndexes.size) {
+          const wrongIndexes = item.options.map((_, index) => index).filter((index) => index !== correctIndex);
+          for (let index = wrongIndexes.length - 1; index > 0; index -= 1) {
+            const swapIndex = randomIndex(index + 1);
+            [wrongIndexes[index], wrongIndexes[swapIndex]] = [wrongIndexes[swapIndex], wrongIndexes[index]];
+          }
+          eliminatedOptionIndexes = new Set(wrongIndexes.slice(0, Math.min(2, wrongIndexes.length)));
         }
-        const eliminated = new Set(wrongIndexes.slice(0, 2));
+        const eliminated = eliminatedOptionIndexes;
         const reducedMotion = !animate || window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
         optionsElement.querySelectorAll(".option").forEach((button, index) => {
           if (eliminated.has(index)) {
@@ -6289,11 +6545,13 @@
               button.hidden = true;
             } else {
               button.classList.add("is-eliminating");
-              window.setTimeout(() => {
+              const timeout = window.setTimeout(() => {
+                lifelineEffectTimeouts.delete(timeout);
                 if (!button.isConnected) return;
                 button.hidden = true;
                 button.classList.remove("is-eliminating");
               }, 360);
+              lifelineEffectTimeouts.add(timeout);
             }
           } else {
             button.hidden = false;
@@ -6323,7 +6581,10 @@
       function activateLifeline(id) {
         const button = lifelineButtons[id];
         const cost = LIFELINE_COSTS[id];
-        if (!button || !cost || answered || !views.game.classList.contains("active")) return;
+        if (!button || !cost || answered || isModalOpen() || !views.game.classList.contains("active")) return;
+        const activeItem = roundQuestions()[currentQuestion];
+        const activeAnswer = activeItem ? readConcealedAnswer(activeItem) : -1;
+        if (!activeItem || !Number.isInteger(activeAnswer) || activeAnswer < 0 || activeAnswer >= activeItem.options.length) return;
         if (lifelinesUsedThisQuestion.has(id) ||
             lifelinesUsedThisQuestion.size >= MAX_LIFELINES_PER_QUESTION) {
           updateLifelinePanel();
@@ -7452,14 +7713,26 @@
       }
 
       function showView(name) {
+        if (!Object.hasOwn(views, name)) return;
         if (name !== "game") {
           stopQuestionTimer();
           clearAnswerAdvanceTimeout();
+          window.clearTimeout(lifelineTypingTimeout);
+          lifelineTypingToken += 1;
+          lifelineEffectTimeouts.forEach((timeout) => window.clearTimeout(timeout));
+          lifelineEffectTimeouts.clear();
         }
         document.getElementById("iqTimer").hidden = name !== "game";
         document.body.dataset.view = name;
         Object.values(views).forEach((view) => view.classList.remove("active"));
         views[name].classList.add("active");
+        if (name === "privacy") {
+          history.replaceState(null, "", `${location.pathname}${location.search}#privacy`);
+          document.title = `${settingsCopy[currentLanguage].privacy} — QuizVerse 3D`;
+        } else if (location.hash === "#privacy") {
+          history.replaceState(null, "", `${location.pathname}${location.search}`);
+          document.title = currentText.pageTitle;
+        }
         if (rewardGroup) rewardGroup.visible = name === "results";
         if (name === "welcome" && !syncRewardCollectionFromStorage()) {
           updateCoinBalanceDisplays();
@@ -7647,13 +7920,17 @@
       }
 
       function resumePendingAnswerAdvance() {
-        if (!pendingAnswerAdvance || document.visibilityState === "hidden" || !document.hasFocus()) return;
+        if (!pendingAnswerAdvance || isModalOpen() || !views.game.classList.contains("active") ||
+            document.visibilityState === "hidden" || !document.hasFocus()) return;
+        if (answerAdvanceTimeout !== null) window.clearTimeout(answerAdvanceTimeout);
         pendingAnswerAdvance = false;
         answerAdvanceTimeout = window.setTimeout(advanceAnsweredQuestion, 120);
       }
 
       function selectAnswer(index, timedOut = false, interrupted = false) {
-        if (answered) return;
+        if (answered || !views.game.classList.contains("active")) return;
+        if (!timedOut && !interrupted &&
+            (isModalOpen() || !Number.isInteger(index) || index < 0 || index >= roundQuestions()[currentQuestion]?.options.length)) return;
         if (!timedOut && !interrupted && questionDeadline && performance.now() >= questionDeadline) {
           clearQuestionTimer();
           playTimerCue(true);
@@ -7717,10 +7994,13 @@
 
       document.addEventListener("visibilitychange", () => {
         if (document.visibilityState === "hidden") submitQuestionOnFocusLoss();
-        else resumePendingAnswerAdvance();
+        else {
+          resumePendingAnswerAdvance();
+          resumeQuestionTimer();
+        }
       });
       window.addEventListener("blur", () => {
-        if (!views.game.classList.contains("active") || answered) return;
+        if (!views.game.classList.contains("active") || answered || document.activeElement?.tagName === "SELECT") return;
         window.clearTimeout(focusLossGraceTimeout);
         focusLossGraceTimeout = window.setTimeout(() => {
           focusLossGraceTimeout = null;
@@ -8545,6 +8825,97 @@
         document.getElementById("rulesView").setAttribute("aria-label", copy.pageTitle);
       }
 
+      function renderPrivacyContent(target, headingTag) {
+        const copy = settingsCopy[currentLanguage];
+        const disclaimer = document.createElement("p");
+        disclaimer.className = "privacy-notice";
+        disclaimer.textContent = copy.notice;
+        const sections = privacySections[currentLanguage].map(([title, body]) => {
+          const section = document.createElement("section");
+          const heading = document.createElement(headingTag);
+          heading.textContent = title;
+          const paragraph = document.createElement("p");
+          paragraph.textContent = body;
+          section.append(heading, paragraph);
+          return section;
+        });
+        target.replaceChildren(disclaimer, ...sections);
+      }
+
+      function updateSettingsCopy() {
+        const copy = settingsCopy[currentLanguage];
+        const textById = {
+          settingsTitle: "title", settingsDescription: "description",
+          settingsSoundLabel: "sound", settingsSoundDescription: "soundDescription",
+          settingsParticlesLabel: "particles", settingsParticlesDescription: "particlesDescription",
+          resetProgressButton: "reset", resetProgressWarning: "warning",
+          cancelResetProgressButton: "cancel", confirmResetProgressButton: "confirm",
+          saveSettingsButton: "save", settingsPrivacyButton: "privacy",
+          privacyTitle: "privacy", privacyModalTitle: "privacy", privacyKicker: "privacy",
+          privacyDescription: "privacyDescription", privacyModalDescription: "privacyDescription",
+          openPrivacyPageButton: "privacy", openPrivacyModalButton: "summary",
+          rulesPrivacyButton: "privacy", privacyFullPageButton: "fullPolicy",
+          privacyPageSettingsButton: "title"
+        };
+        Object.entries(textById).forEach(([id, key]) => { document.getElementById(id).textContent = copy[key]; });
+        document.getElementById("openSettingsButton").setAttribute("aria-label", copy.title);
+        document.getElementById("closeSettingsButton").setAttribute("aria-label", copy.save);
+        document.getElementById("closePrivacyButton").setAttribute("aria-label", copy.back);
+        document.getElementById("privacyBackButton").setAttribute("aria-label", copy.back);
+        document.getElementById("settingsLanguageLabel").textContent = currentText.language;
+        document.getElementById("settingsLanguageSelect").value = currentLanguage;
+        document.getElementById("settingsSoundEnabled").checked = !answerSoundsMuted;
+        document.getElementById("settingsParticlesEnabled").checked = particlesEnabled;
+        const status = document.getElementById("settingsStatus");
+        status.textContent = copy[status.dataset.message] || "";
+        renderPrivacyContent(document.getElementById("privacyPageContent"), "h2");
+        renderPrivacyContent(document.getElementById("privacyModalContent"), "h3");
+      }
+
+      function settingsStatus(message) {
+        const status = document.getElementById("settingsStatus");
+        status.dataset.message = message;
+        status.textContent = settingsCopy[currentLanguage][message] || "";
+      }
+
+      function applyParticlePreference() {
+        document.body.classList.toggle("vfx-disabled", !particlesEnabled);
+        document.getElementById("settingsParticlesEnabled").checked = particlesEnabled;
+        syncSceneAnimation();
+      }
+
+      function setSoundEnabled(enabled) {
+        answerSoundsMuted = !enabled;
+        const saved = writePreference(ANSWER_SOUND_STORAGE_KEY, answerSoundsMuted);
+        updateSoundToggle();
+        settingsStatus(saved ? "saved" : "unsaved");
+      }
+
+      // Only named QuizVerse save keys are removed. Never clear unrelated
+      // origin storage. Confirmation is mandatory; failures never report success.
+      function resetGameProgress() {
+        const keys = [...new Set([
+          ...PROGRESSION_CATEGORIES.map(categoryProgressStorageKey),
+          LAST_PLAYED_STORAGE_KEY, REWARD_COLLECTION_STORAGE_KEY,
+          RULES_ACCEPTED_STORAGE_KEY, COIN_SKIPPED_LEVELS_STORAGE_KEY
+        ])];
+        let backup = [];
+        try {
+          backup = keys.map((key) => [key, localStorage.getItem(key)]);
+          keys.forEach((key) => localStorage.removeItem(key));
+          localStorage.setItem(RESET_SIGNAL_STORAGE_KEY, `${Date.now()}-${Math.random()}`);
+        } catch {
+          for (const [key, value] of backup) {
+            try { if (value !== null) localStorage.setItem(key, value); } catch { /* Browser controls may require manual removal. */ }
+          }
+          settingsStatus("resetFailed");
+          return;
+        }
+        stopQuestionTimer();
+        clearAnswerAdvanceTimeout();
+        location.reload();
+      }
+
       function setLanguage(language) {
         currentLanguage = Object.hasOwn(translations, language) ? language : "en";
         currentText = translations[currentLanguage];
@@ -8557,6 +8928,7 @@
         document.getElementById("gameLanguageLabel").textContent = currentText.language;
         updateRulesCopy();
         updateSoundToggle();
+        updateSettingsCopy();
         document.title = currentText.pageTitle;
         document.getElementById("metaDescription").content = currentText.metaDescription;
         const loadingScreen = document.getElementById("loadingScreen");
@@ -8678,6 +9050,7 @@
           renderResults();
         }
         updateLevelUnlockDialog();
+        if (views.privacy.classList.contains("active")) document.title = `${settingsCopy[currentLanguage].privacy} — QuizVerse 3D`;
       }
 
       function updateSoundToggle() {
@@ -8686,6 +9059,7 @@
         soundToggle.setAttribute("aria-pressed", String(!answerSoundsMuted));
         soundToggle.setAttribute("aria-label", label);
         document.getElementById("soundToggleLabel").textContent = label;
+        document.getElementById("settingsSoundEnabled").checked = !answerSoundsMuted;
       }
 
       const rewardsDialog = document.getElementById("rewardsDialog");
@@ -8733,13 +9107,93 @@
       });
 
       document.getElementById("soundToggle").addEventListener("click", () => {
-        answerSoundsMuted = !answerSoundsMuted;
-        try {
-          localStorage.setItem(ANSWER_SOUND_STORAGE_KEY, String(answerSoundsMuted));
-        } catch {
-          // The setting still applies for this visit if browser storage is unavailable.
+        setSoundEnabled(answerSoundsMuted);
+      });
+
+      const settingsDialog = document.getElementById("settingsDialog");
+      const privacyDialog = document.getElementById("privacyDialog");
+      function openSettings() {
+        updateSettingsCopy();
+        settingsStatus("");
+        document.getElementById("resetProgressConfirmation").hidden = true;
+        if (!settingsDialog.open) settingsDialog.showModal();
+      }
+      function openPrivacyModal() {
+        updateSettingsCopy();
+        if (!privacyDialog.open) privacyDialog.showModal();
+      }
+      function openPrivacyPage() {
+        // A full-page navigation is deliberate; the quick modal never switches
+        // views, so closing it returns to the exact underlying rules/settings UI.
+        document.querySelectorAll("dialog[open]").forEach((dialog) => dialog.close());
+        showView("privacy");
+        document.getElementById("privacyTitle").focus({ preventScroll: true });
+      }
+      ["openSettingsButton", "privacyPageSettingsButton"].forEach((id) =>
+        document.getElementById(id).addEventListener("click", openSettings));
+      ["openPrivacyModalButton", "rulesPrivacyButton", "settingsPrivacyButton"].forEach((id) =>
+        document.getElementById(id).addEventListener("click", openPrivacyModal));
+      ["openPrivacyPageButton", "privacyFullPageButton"].forEach((id) =>
+        document.getElementById(id).addEventListener("click", openPrivacyPage));
+      ["closeSettingsButton", "saveSettingsButton"].forEach((id) =>
+        document.getElementById(id).addEventListener("click", () => settingsDialog.close()));
+      document.getElementById("closePrivacyButton").addEventListener("click", () => privacyDialog.close());
+      document.getElementById("privacyBackButton").addEventListener("click", () => showView("welcome"));
+      document.getElementById("settingsLanguageSelect").addEventListener("change", (event) => {
+        setLanguage(event.target.value);
+        settingsStatus(readPreference("quiz-orbit-language", "") === currentLanguage ? "saved" : "unsaved");
+      });
+      document.getElementById("settingsSoundEnabled").addEventListener("change", (event) => setSoundEnabled(event.target.checked));
+      document.getElementById("settingsParticlesEnabled").addEventListener("change", (event) => {
+        particlesEnabled = event.target.checked;
+        applyParticlePreference();
+        settingsStatus(writePreference(PARTICLES_STORAGE_KEY, particlesEnabled) ? "saved" : "unsaved");
+      });
+      document.getElementById("resetProgressButton").addEventListener("click", () => {
+        document.getElementById("resetProgressConfirmation").hidden = false;
+        const warning = document.getElementById("resetProgressWarning");
+        warning.focus({ preventScroll: true });
+        warning.scrollIntoView({ block: "start", behavior: "instant" });
+      });
+      document.getElementById("cancelResetProgressButton").addEventListener("click", () => {
+        document.getElementById("resetProgressConfirmation").hidden = true;
+        document.getElementById("resetProgressButton").focus();
+      });
+      document.getElementById("confirmResetProgressButton").addEventListener("click", resetGameProgress);
+      settingsDialog.addEventListener("close", () => { document.getElementById("resetProgressConfirmation").hidden = true; });
+
+      // Observe native dialog state, including Escape and programmatic close().
+      // Suspend callbacks while covered, but preserve the real deadline. If a
+      // question expires inside a modal, submit it exactly once when uncovered.
+      const modalObserver = new MutationObserver(() => {
+        if (!views.game.classList.contains("active")) return;
+        if (isModalOpen()) {
+          clearQuestionTimer();
+          if (answerAdvanceTimeout !== null) {
+            window.clearTimeout(answerAdvanceTimeout);
+            answerAdvanceTimeout = null;
+            pendingAnswerAdvance = answered;
+          }
+        } else if (answered) {
+          pendingAnswerAdvance = true;
+          resumePendingAnswerAdvance();
+        } else resumeQuestionTimer();
+      });
+      document.querySelectorAll("dialog").forEach((dialog) => modalObserver.observe(dialog, { attributes: true, attributeFilter: ["open"] }));
+      window.addEventListener("storage", (event) => {
+        if (event.key === RESET_SIGNAL_STORAGE_KEY && event.newValue) {
+          stopQuestionTimer();
+          clearAnswerAdvanceTimeout();
+          location.reload();
+        } else if (event.key === PARTICLES_STORAGE_KEY) {
+          particlesEnabled = readPreference(PARTICLES_STORAGE_KEY, "true") !== "false";
+          applyParticlePreference();
+        } else if (event.key === ANSWER_SOUND_STORAGE_KEY) {
+          answerSoundsMuted = readAnswerSoundsMuted();
+          updateSoundToggle();
+        } else if (event.key === "quiz-orbit-language") {
+          setLanguage(readSavedLanguage());
         }
-        updateSoundToggle();
       });
 
       const rulesStartDialog = document.getElementById("rulesStartDialog");
@@ -8852,14 +9306,51 @@
         }
       });
       document.addEventListener("keydown", (event) => {
-        if (!views.game.classList.contains("active") || answered) return;
+        // A single click listener per option handles mouse and touch. Keyboard
+        // shortcuts ignore repeats, form controls and modal focus to avoid double submits.
+        if (!views.game.classList.contains("active") || answered || event.repeat || isModalOpen() ||
+            event.ctrlKey || event.metaKey || event.altKey ||
+            event.target?.closest?.("input, select, textarea, [contenteditable=true]")) return;
         if (event.key >= "1" && event.key <= "4") selectAnswer(Number(event.key) - 1);
         else if (event.key.toLowerCase() >= "a" && event.key.toLowerCase() <= "d") {
           selectAnswer(event.key.toLowerCase().charCodeAt(0) - 97);
         }
       });
       setLanguage(currentLanguage);
-      window.setInterval(rotateHeroTagline, 4600);
+      applyParticlePreference();
+      if (location.hash === "#privacy") showView("privacy");
+      window.addEventListener("hashchange", () => {
+        if (location.hash === "#privacy") openPrivacyPage();
+        else if (views.privacy.classList.contains("active")) showView("welcome");
+      });
+      let heroTaglineInterval = window.setInterval(rotateHeroTagline, 4600);
+      // The quiz is already usable. Never keep its loading overlay waiting for a CDN.
+      const loadingScreen = document.getElementById("loadingScreen");
+      if (loadingScreen) {
+        window.clearTimeout(window.__quizVerseLoadingFailsafe);
+        loadingScreen.setAttribute("aria-hidden", "true");
+        window.requestAnimationFrame(() => loadingScreen.classList.add("is-hidden"));
+        window.setTimeout(() => loadingScreen.remove(), 520);
+      }
+      window.addEventListener("pagehide", () => {
+        clearQuestionTimer();
+        window.clearTimeout(focusLossGraceTimeout);
+        window.clearTimeout(lifelineTypingTimeout);
+        window.clearTimeout(heroTaglineSwapTimeout);
+        lifelineTypingToken += 1;
+        if (answerAdvanceTimeout !== null) window.clearTimeout(answerAdvanceTimeout);
+        answerAdvanceTimeout = null;
+        pendingAnswerAdvance = answered;
+        lifelineEffectTimeouts.forEach((timeout) => window.clearTimeout(timeout));
+        lifelineEffectTimeouts.clear();
+        window.clearInterval(heroTaglineInterval);
+        heroTaglineInterval = null;
+      });
+      window.addEventListener("pageshow", () => {
+        if (heroTaglineInterval === null) heroTaglineInterval = window.setInterval(rotateHeroTagline, 4600);
+        resumeQuestionTimer();
+        resumePendingAnswerAdvance();
+      });
 
       // A small, low-cost procedural orbit scene; the quiz remains usable if WebGL is unavailable.
       const sceneRoot = document.getElementById("scene");
@@ -8879,6 +9370,8 @@
           powerPreference: "low-power"
         });
         if (!webglContext) throw new Error("WebGL2 is unavailable");
+        // Network failure affects decoration only, not game initialization.
+        THREE = await import("https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js");
         renderer = new THREE.WebGLRenderer({
           canvas: rendererCanvas,
           context: webglContext,
@@ -9466,7 +9959,7 @@
         let animationFrameId = 0;
         function animate() {
           animationFrameId = 0;
-          if (document.hidden) return;
+          if (document.hidden || !particlesEnabled) return;
           animationFrameId = window.requestAnimationFrame(animate);
           const delta = Math.min(clock.getDelta(), .05);
           const elapsed = clock.elapsedTime;
@@ -9617,16 +10110,37 @@
           renderer.render(scene, camera);
         }
         // Stop the decorative renderer in background tabs to save mobile GPU and battery.
-        document.addEventListener("visibilitychange", () => {
-          if (document.hidden) {
+        let sceneAvailable = true;
+        syncSceneAnimation = () => {
+          if (document.hidden || !particlesEnabled || !sceneAvailable) {
             if (animationFrameId) window.cancelAnimationFrame(animationFrameId);
             animationFrameId = 0;
           } else if (!animationFrameId) {
             clock.getDelta();
             animate();
           }
+        };
+        document.addEventListener("visibilitychange", syncSceneAnimation);
+        window.addEventListener("pagehide", () => {
+          if (animationFrameId) window.cancelAnimationFrame(animationFrameId);
+          animationFrameId = 0;
         });
-        animate();
+        window.addEventListener("pageshow", syncSceneAnimation);
+        renderer.domElement.addEventListener("webglcontextlost", (event) => {
+          event.preventDefault();
+          sceneAvailable = false;
+          syncSceneAnimation();
+          sceneRoot.hidden = true;
+          document.body.classList.remove("webgl-ready");
+        });
+        renderer.domElement.addEventListener("webglcontextrestored", () => {
+          sceneAvailable = true;
+          sceneRoot.hidden = false;
+          document.body.classList.add("webgl-ready");
+          syncSceneAnimation();
+        });
+        if (!particlesEnabled) renderer.render(scene, camera);
+        syncSceneAnimation();
         // Resize on viewport changes and orientation rotations; visualViewport also
         // catches mobile browser chrome expanding or collapsing the usable canvas.
         const resizeScene = () => {
@@ -9649,13 +10163,6 @@
         console.warn("3D scene initialization failed; using the CSS fallback.", error);
         document.body.classList.remove("webgl-ready");
         sceneRoot.hidden = true;
-      }
-      const loadingScreen = document.getElementById("loadingScreen");
-      if (loadingScreen) {
-        window.clearTimeout(window.__quizVerseLoadingFailsafe);
-        loadingScreen.setAttribute("aria-hidden", "true");
-        window.requestAnimationFrame(() => loadingScreen.classList.add("is-hidden"));
-        window.setTimeout(() => loadingScreen.remove(), 520);
       }
     </script>
   </body>
