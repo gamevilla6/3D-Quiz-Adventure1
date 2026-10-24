@@ -252,19 +252,20 @@ try {
     assert.notEqual(await page.locator("#questionText").innerText(), "");
     assert.equal(await page.locator(".option").count(), 4);
     assert.equal(
-      await page.locator("#iqTimer").evaluate((node) => node.closest("#quizUtilityRow") !== null),
+      await page.locator("#quizUtilityRow").evaluate((node) => node.closest(".game-sidebar") !== null),
       true,
-      "the timer shares a utility row with the lifelines below the category header",
+      "timer and lifelines are grouped with the live score and coin balance in the sticky HUD",
     );
+    assert.equal(await page.locator("#iqTimer").evaluate((node) => node.closest("#quizUtilityRow") !== null), true);
     assert.equal(await page.locator("#lifelinePanel").evaluate((node) => node.closest("#quizUtilityRow") !== null), true);
     const quizControlOrder = await page.locator("#quizCard").evaluate((node) => {
       const children = [...node.children];
-      return ["quiz-meta", "quiz-utility-row", "progress-track", "question"].map((selector) =>
+      return ["quiz-meta", "progress-track", "question"].map((selector) =>
         children.findIndex((child) => child.matches(`.${selector}`))
       );
     });
     assert.ok(quizControlOrder.every((index) => index >= 0) && quizControlOrder.every((index, i) => i === 0 || index > quizControlOrder[i - 1]),
-      "lifelines and timer appear after the category header and before the question");
+      "the question remains in normal document flow below its category and progress header");
     assert.equal(await page.locator("#iqTimer").isVisible(), true);
     assert.equal(await page.locator("#lifelinePanel").isVisible(), true);
     const utilityRowLayout = await page.locator("#quizUtilityRow").evaluate((node) => ({
@@ -280,6 +281,33 @@ try {
     assert.ok(utilityRowLayout.lifelinesHeight <= 165, "the mobile lifeline grid stays compact and touch-sized");
     assert.equal(await page.locator(".topbar").evaluate((node) => getComputedStyle(node).position), "sticky");
     assert.equal(await page.locator(".game-sidebar").evaluate((node) => getComputedStyle(node).position), "sticky");
+    const hudFlow = await page.evaluate(() => {
+      const hud = document.querySelector(".game-sidebar").getBoundingClientRect();
+      const topbar = document.querySelector(".topbar").getBoundingClientRect();
+      const card = document.querySelector("#quizCard").getBoundingClientRect();
+      return { hudTop: Math.round(hud.top), hudBottom: Math.round(hud.bottom), topbarBottom: Math.round(topbar.bottom), cardTop: Math.round(card.top) };
+    });
+    assert.ok(hudFlow.hudTop >= hudFlow.topbarBottom, "the sticky game HUD starts below the global sticky controls");
+    assert.ok(hudFlow.cardTop >= hudFlow.hudBottom, "the quiz card starts below the sticky HUD without overlap");
+    await page.evaluate(() => window.scrollTo(0, 600));
+    await page.waitForTimeout(100);
+    const stickyAfterScroll = await page.evaluate(() => {
+      const hud = document.querySelector(".game-sidebar").getBoundingClientRect();
+      const topbar = document.querySelector(".topbar").getBoundingClientRect();
+      const utility = document.querySelector("#quizUtilityRow").getBoundingClientRect();
+      return {
+        hudTop: Math.round(hud.top),
+        topbarBottom: Math.round(topbar.bottom),
+        utilityTop: Math.round(utility.top),
+        utilityBottom: Math.round(utility.bottom),
+        viewportHeight: window.innerHeight,
+      };
+    });
+    assert.ok(Math.abs(stickyAfterScroll.hudTop - 76) <= 2, "the full HUD stays pinned below the top bar while the quiz scrolls");
+    assert.ok(stickyAfterScroll.utilityTop >= stickyAfterScroll.hudTop);
+    assert.ok(stickyAfterScroll.utilityBottom <= stickyAfterScroll.viewportHeight, "all lifelines remain visible in the mobile sticky HUD");
+    assert.ok(stickyAfterScroll.hudTop >= stickyAfterScroll.topbarBottom - 2, "the sticky header and HUD do not cover one another");
+    await page.evaluate(() => window.scrollTo(0, 0));
     const gameLayoutOrder = await page.locator(".game-layout").evaluate((node) =>
       [...node.children].map((child) => child.classList.contains("game-sidebar") ? "hud" : "quiz")
     );
@@ -438,6 +466,18 @@ try {
     "the landscape quiz layout has no horizontal overflow",
   );
   assert.equal(await penaltyPage.locator(".game-sidebar").evaluate((node) => getComputedStyle(node).position), "sticky");
+  await penaltyPage.evaluate(() => window.scrollTo(0, 300));
+  await penaltyPage.waitForTimeout(100);
+  const landscapeHud = await penaltyPage.evaluate(() => {
+    const bounds = (selector) => {
+      const rect = document.querySelector(selector).getBoundingClientRect();
+      return { top: Math.round(rect.top), bottom: Math.round(rect.bottom) };
+    };
+    return { topbar: bounds(".topbar"), hud: bounds(".game-sidebar"), utility: bounds("#quizUtilityRow"), height: window.innerHeight };
+  });
+  assert.ok(landscapeHud.hud.top >= landscapeHud.topbar.bottom - 2, "landscape HUD remains below the sticky app controls");
+  assert.ok(landscapeHud.utility.bottom <= landscapeHud.height, "landscape timer and lifelines stay fully on-screen while scrolling");
+  await penaltyPage.evaluate(() => window.scrollTo(0, 0));
   await penaltyPage.setViewportSize({ width: 390, height: 844 });
   const initialTimerSeconds = Number((await penaltyPage.locator("#iqTimerValue").innerText()).match(/\d+/)?.[0]);
   await penaltyPage.waitForTimeout(1200);
@@ -550,11 +590,15 @@ try {
   await page.locator("#nextButton").tap();
 
   assert.equal(await page.locator("#resultsView").evaluate((node) => node.classList.contains("active")), true);
-  assert.equal(await page.locator("#resultTitle").innerText(), "অসাধারণ করেছেন।");
+  assert.equal(await page.locator("#resultTitle").innerText(), "সম্পন্ন");
   assert.equal(await page.locator("#finalCorrect").innerText(), "১০");
   assert.equal(await page.locator("#finalAccuracy").innerText(), "১০০%");
-  assert.equal(await page.locator("#finalTotal").innerText(), "১০");
-  assert.equal(await page.locator("#finalDenominator").innerText(), "নেট পয়েন্ট");
+  assert.equal(await page.locator("#finalTotal").isVisible(), false, "the clean summary omits the redundant total-question metric");
+  assert.equal(await page.locator("#finalDenominator").innerText(), "পয়েন্ট");
+  assert.equal(await page.locator("#resultStars").evaluate((node) => node.textContent), "★★★");
+  assert.equal(await page.locator("#resultStars").getAttribute("aria-label"), "৩টি তারকা");
+  assert.equal(await page.locator(".result-actions button").count(), 2, "results expose only the next-level and map actions");
+  assert.equal(await page.locator("#returnLevelMapLabel").innerText(), "লেভেল ম্যাপে ফিরুন");
   assert.match(await page.locator("#finalScore").innerText(), /[১-৯]/);
   const savedCollection = await page.evaluate(() => JSON.parse(localStorage.getItem("quiz-orbit-reward-collection")));
   assert.notEqual(await page.evaluate(() => localStorage.getItem("quiz-orbit-gk-unlocked-level")), "1");
@@ -575,6 +619,7 @@ try {
     "the personal best points match the round",
   );
 
+  assert.equal(await page.locator("#playAgainLabel").innerText(), "পরের লেভেল খেলুন");
   await page.locator("#playAgainButton").tap();
   assert.equal(await page.locator("#gameView").evaluate((node) => node.classList.contains("active")), true);
   assert.notEqual(await page.locator("#questionText").innerText(), firstQuestion);
@@ -595,7 +640,9 @@ try {
   const resultCoinSummary = await page.locator("#resultCoinAmount").innerText();
   assert.ok(resultCoinSummary.startsWith("+"), "the results screen summarizes coins earned in the round");
 
-  await page.locator("#homeButton").tap();
+  await page.locator("#returnLevelMapButton").tap();
+  assert.equal(await page.locator("#levelView").evaluate((node) => node.classList.contains("active")), true);
+  await page.locator("#levelBackButton").tap();
   assert.equal(await page.locator("#welcomeView").evaluate((node) => node.classList.contains("active")), true);
   assert.equal(
     await page.locator('.category[data-category="General Knowledge"]').getAttribute("data-progress-percent"),

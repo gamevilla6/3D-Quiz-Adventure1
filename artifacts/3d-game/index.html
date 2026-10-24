@@ -1332,7 +1332,22 @@
       }
       .game-layout > #quizCard { grid-area: quiz; }
       .game-layout > .game-sidebar { grid-area: hud; }
-      .game-sidebar { position: sticky; top: calc(env(safe-area-inset-top) + 68px); z-index: 70; align-self: start; display: block; }
+      /* Keep score, coins, timer, and lifelines together in one sticky glass HUD; the quiz card stays in normal flow below it. */
+      .game-sidebar {
+        position: sticky;
+        top: calc(env(safe-area-inset-top) + 76px);
+        z-index: 70;
+        align-self: start;
+        display: grid;
+        gap: 8px;
+        padding: 8px;
+        border: 1px solid rgba(171, 184, 255, .22);
+        border-radius: 22px;
+        background: rgba(8, 11, 31, .92);
+        box-shadow: 0 18px 45px rgba(0, 0, 0, .28), inset 0 1px rgba(255, 255, 255, .08);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+      }
       .game-sidebar .side-card:first-child.score-hud-card {
         display: block;
         padding: 15px 19px;
@@ -1486,7 +1501,7 @@
         grid-template-columns: minmax(180px, .52fr) minmax(0, 1.48fr);
         align-items: stretch;
         gap: 11px;
-        margin: 0 0 16px;
+        margin: 0;
       }
       .quiz-utility-row .iq-timer {
         min-width: 0;
@@ -1504,7 +1519,6 @@
       .quiz-utility-row .lifeline-panel { min-width: 0; margin: 0; padding: 10px; }
       .quiz-utility-row .lifeline-grid { gap: 6px; }
       .quiz-utility-row .lifeline-button { min-height: 54px; gap: 6px; padding: 7px; }
-      .quiz-utility-row + .progress-track { margin: 0 0 26px; }
       .iq-timer-heading strong { color: #a7a3ff; }
       .iq-timer-track { background: rgba(255, 255, 255, .12); }
       .iq-timer p { color: #d1cfea; }
@@ -1623,7 +1637,7 @@
           grid-template-columns: minmax(104px, .58fr) minmax(0, 1.42fr);
           align-items: start;
           gap: 7px;
-          margin-bottom: 12px;
+          margin: 0;
         }
         .quiz-utility-row .iq-timer { align-self: start; padding: 9px 8px; border-radius: 13px; }
         .quiz-utility-row .iq-timer-heading { gap: 5px; font-size: 10px; }
@@ -1634,10 +1648,10 @@
         .quiz-utility-row .lifeline-heading { gap: 5px; margin-bottom: 5px; }
         .quiz-utility-row .lifeline-title { font-size: 8px; letter-spacing: .06em; }
         .quiz-utility-row .lifeline-use-count { padding: 4px 6px; font-size: 8px; }
-        .quiz-utility-row .lifeline-rule { margin-bottom: 6px; font-size: 8px; }
+        .quiz-utility-row .lifeline-rule { display: none; }
         .lifeline-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 7px; }
         .lifeline-button { min-height: 58px; gap: 7px; padding: 8px; }
-        .quiz-utility-row .lifeline-button { min-height: 50px; gap: 6px; padding: 6px; }
+        .quiz-utility-row .lifeline-button { min-height: 48px; gap: 6px; padding: 6px; }
         .lifeline-symbol { width: 30px; height: 30px; flex-basis: 30px; }
       }
       body.theme-iq .iq-timer.warning,
@@ -1655,7 +1669,7 @@
       .iq-timer.urgent .iq-timer-heading strong { color: #ff9aaa; }
       body.theme-cosmic .iq-timer.urgent .iq-timer-heading strong { color: #ff9aaa; }
       @media (max-width: 650px) {
-        body[data-view="game"] .game-sidebar { top: calc(env(safe-area-inset-top) + 60px); }
+        body[data-view="game"] .game-sidebar { top: calc(env(safe-area-inset-top) + 76px); }
         body[data-view="game"] .app { padding: 12px 12px 22px; }
         body[data-view="game"] .topbar { min-height: 48px; padding: 6px 8px; border-radius: 14px; }
         body[data-view="game"] .brand { gap: 7px; }
@@ -1666,24 +1680,24 @@
         body[data-view="game"] .sound-toggle { width: 48px; min-width: 48px; min-height: 48px; padding: 0; gap: 0; font-size: 0; }
         body[data-view="game"] .sound-toggle span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
         .game-layout { margin-top: 12px; gap: 10px; }
-        .game-sidebar .side-card:first-child.score-hud-card { padding: 11px 12px; border-radius: 15px; }
-        .score-hud-top { margin-bottom: 8px; }
+        .game-sidebar .side-card:first-child.score-hud-card { padding: 8px 10px; border-radius: 15px; }
+        .score-hud-top { margin-bottom: 5px; }
         .score-hud-bottom { grid-template-columns: minmax(100px, .7fr) minmax(0, 1.3fr); gap: 8px; }
         .score-total { display: grid; grid-template-columns: auto 1fr; align-items: end; column-gap: 5px; }
-        .score-total .side-label { grid-column: 1 / -1; }
+        .score-total .side-label, .score-total .score-caption { display: none; }
         .score-total .score-value { grid-column: 1; min-width: 48px; margin: 0; padding: 4px 6px; font-size: 23px; }
-        .score-total .score-caption { grid-column: 2; align-self: end; margin: 0 0 4px; font-size: 8px; }
-        .score-metrics { gap: 3px; }
-        .score-metrics .side-detail { min-width: 0; min-height: 38px; gap: 3px; padding: 0 4px; font-size: 8px; }
+        .score-metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 3px; }
+        .score-metrics .side-detail { min-width: 0; min-height: 30px; gap: 3px; padding: 0 4px; font-size: 8px; }
+        .score-metrics .side-detail:nth-child(3), .score-metrics .streak-hint { display: none; }
         .score-metrics .side-detail strong { font-size: 10px; overflow-wrap: anywhere; }
-        .score-metrics .streak-hint { font-size: 8px; }
+        .game-coin-balance { min-height: 34px; margin-top: 6px; padding: 4px 9px; }
         .quiz-card { padding: 19px 16px 16px; border-radius: 19px; }
         .quiz-meta { grid-template-columns: auto 1fr auto; gap: 7px; }
         #quitButton { min-height: 33px; padding: 0 8px; font-size: 10px; }
         .category-tag { gap: 5px; padding: 7px 8px; font-size: 9px; letter-spacing: .04em; }
         .question-count { font-size: 10px; }
         .progress-track { margin: 10px 0 20px; }
-        .quiz-utility-row + .progress-track { margin-top: 0; margin-bottom: 18px; }
+        .progress-track { margin-top: 10px; margin-bottom: 18px; }
         .question { font-size: clamp(25px, 7.1vw, 34px); }
         .options { grid-template-columns: 1fr; gap: 8px; margin-top: 21px; }
         .option { min-height: 56px; padding: 10px 42px 10px 11px; border-radius: 13px; font-size: 13px; }
@@ -1692,15 +1706,15 @@
         .quiz-actions { margin-top: 4px; padding-top: 13px; }
       }
       @media (max-height: 500px) and (orientation: landscape) {
-        body[data-view="game"] .game-sidebar { top: calc(env(safe-area-inset-top) + 62px); }
+        body[data-view="game"] .game-sidebar { top: calc(env(safe-area-inset-top) + 76px); }
         body[data-view="game"] .score-hud-card { padding: 7px 11px; }
         body[data-view="game"] .score-hud-top { margin-bottom: 5px; }
         body[data-view="game"] .score-hud-bottom { grid-template-columns: minmax(105px, .55fr) minmax(0, 1.45fr); gap: 6px; }
         body[data-view="game"] .score-total .score-value { min-width: 52px; margin-top: 2px; padding: 4px 7px; font-size: 23px; }
         body[data-view="game"] .game-coin-balance,
         body[data-view="game"] #scoreCaption,
-        body[data-view="game"] #streakHint,
-        body[data-view="game"] .quiz-utility-row { grid-template-columns: minmax(150px, .42fr) minmax(0, 1.58fr); gap: 8px; margin-bottom: 10px; }
+        body[data-view="game"] #streakHint { display: none; }
+        body[data-view="game"] .quiz-utility-row { grid-template-columns: minmax(150px, .42fr) minmax(0, 1.58fr); gap: 8px; }
         body[data-view="game"] .quiz-utility-row .lifeline-panel { padding: 7px 9px; }
         body[data-view="game"] .quiz-utility-row .lifeline-rule,
         body[data-view="game"] #iqTimerNote { display: none; }
@@ -2625,6 +2639,60 @@
         81% { background-position: 0 -2px; }
         82% { background-position: 0 2px; }
       }
+      /* Level results use one calm glass panel: only performance, stars, payout, and two actions remain visible. */
+      .results-wrap { width: min(100%, 660px); margin: clamp(22px, 5vh, 48px) auto 0; }
+      .result-card {
+        overflow: hidden;
+        border: 1px solid rgba(170, 183, 255, .22);
+        border-radius: 24px;
+        background: linear-gradient(145deg, rgba(13, 17, 43, .94), rgba(20, 22, 56, .9));
+        box-shadow: 0 22px 58px rgba(4, 8, 28, .28), inset 0 1px rgba(255,255,255,.08);
+        backdrop-filter: blur(22px);
+        -webkit-backdrop-filter: blur(22px);
+        animation: resultCardIn .42s ease-out both;
+      }
+      @keyframes resultCardIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      .result-top { padding: 31px 28px 17px; color: #fff; background: transparent; }
+      .result-top .eyebrow { margin: 0 0 6px; color: #abb4d7; font-size: 10px; letter-spacing: .11em; }
+      .result-level-label:not([hidden]) { margin: 0; color: #d4d8f2; font-size: 12px; font-weight: 700; }
+      .result-top h1 { margin: 8px auto 0; color: #fff; font-size: clamp(26px, 4vw, 36px); letter-spacing: -.035em; }
+      .result-stars { display: flex; justify-content: center; gap: 7px; margin: 12px auto 0; color: #ffd96d; font-size: 27px; line-height: 1; letter-spacing: .08em; }
+      .result-stars .star-unearned { color: rgba(177, 187, 219, .42); }
+      .result-score { margin: 16px auto 0; color: #fff; font-size: clamp(54px, 8vw, 72px); line-height: .98; letter-spacing: -.07em; text-shadow: none; }
+      .result-score small { display: block; margin-top: 7px; color: #aab2d2; font-size: 10px; font-weight: 760; letter-spacing: .12em; text-transform: uppercase; }
+      .result-bottom { padding: 0 28px 27px; color: #fff; background: transparent; }
+      .result-stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0; margin: 0; border-top: 1px solid rgba(176, 186, 232, .16); border-bottom: 1px solid rgba(176, 186, 232, .16); }
+      .result-stat { min-width: 0; padding: 14px 8px; border-right: 1px solid rgba(176, 186, 232, .14); }
+      .result-stat:nth-child(3) { border-right: 0; }
+      .result-stat:nth-child(n+4) { display: none; }
+      .result-stat strong { color: #fff; font-size: 20px; font-weight: 850; }
+      .result-stat span { margin-top: 4px; color: #aab2d2; font-size: 9px; letter-spacing: .08em; }
+      .result-coin-summary { width: 100%; max-width: 430px; justify-content: space-between; margin: 15px auto 19px; padding: 12px 15px; border-color: rgba(255, 214, 102, .2); border-radius: 14px; background: rgba(255, 214, 102, .07); color: #d1d6ee; font-size: 12px; }
+      .result-coin-summary strong { color: #ffe17e; font-size: 19px; }
+      .result-actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+      .result-actions > button { min-width: 0; min-height: 50px; padding: 0 13px; border-radius: 13px; font-size: 12px; }
+      .result-actions .secondary-button { color: #e1e4f7; border: 1px solid rgba(190, 197, 239, .24); background: rgba(255, 255, 255, .06); }
+      .result-actions .secondary-button:hover { color: #fff; border-color: rgba(190, 197, 239, .48); background: rgba(255, 255, 255, .1); }
+      .result-trophy, .result-seal, #resultMessage, #levelUnlockNotice,
+      .trophy-tier, #iqSummary, .achievement-panel { display: none !important; }
+      @media (max-width: 650px) {
+        .results-wrap { margin-top: 20px; }
+        .result-top { padding: 24px 17px 14px; }
+        .result-bottom { padding: 0 17px 19px; }
+        .result-stats { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+        .result-stat { padding: 12px 4px; }
+        .result-stat strong { font-size: 18px; }
+        .result-stat span { font-size: 8px; letter-spacing: .04em; }
+        .result-coin-summary { gap: 8px; margin: 13px auto 16px; padding: 10px 12px; font-size: 11px; }
+        .result-coin-summary strong { font-size: 17px; }
+        .result-actions { grid-template-columns: 1fr; gap: 8px; }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .result-card { animation: none; }
+      }
     </style>
   </head>
   <body data-view="welcome">
@@ -2906,6 +2974,7 @@
 
         <section class="view" id="gameView" aria-label="Quiz round">
           <div class="game-layout">
+            <!-- Sticky HUD groups the live score/coin card and the timer/lifelines in one glass panel. -->
             <aside class="game-sidebar" aria-label="Round details">
               <div class="side-card score-hud-card">
                 <div class="score-hud-top">
@@ -2932,6 +3001,39 @@
                   <strong id="gameCoinBalance">0</strong>
                 </div>
               </div>
+            <div class="quiz-utility-row" id="quizUtilityRow">
+              <section class="iq-timer" id="iqTimer" hidden aria-label="Question timer">
+                <div class="iq-timer-heading"><span id="iqTimerLabel">Time left</span><strong id="iqTimerValue">15 s</strong></div>
+                <div class="iq-timer-track" id="iqTimerBar" role="progressbar" aria-label="Time remaining" aria-valuemin="0" aria-valuemax="15" aria-valuenow="15"><span id="iqTimerFill"></span></div>
+                <p id="iqTimerNote">Answer correctly in under 5 seconds to earn +5 bonus points.</p>
+              </section>
+              <section class="lifeline-panel" id="lifelinePanel" aria-label="Tactical lifelines">
+                <div class="lifeline-heading">
+                  <span class="lifeline-title" id="lifelineHeading">TACTICAL LIFELINES</span>
+                  <span class="lifeline-use-count" id="lifelineUseCount" aria-live="polite">0/2 used</span>
+                </div>
+                <p class="lifeline-rule" id="lifelineLimitRule">Choose up to 2 different lifelines per question.</p>
+                <div class="lifeline-grid" id="lifelineGrid" role="group" aria-labelledby="lifelineHeading">
+                  <button class="lifeline-button" type="button" data-lifeline="fifty">
+                    <span class="lifeline-symbol" aria-hidden="true">½</span>
+                    <span class="lifeline-copy"><span class="lifeline-name" id="lifelineFiftyLabel">50/50</span><span class="lifeline-cost" id="lifelineFiftyCost">20 🪙</span></span>
+                  </button>
+                  <button class="lifeline-button" type="button" data-lifeline="freeze">
+                    <span class="lifeline-symbol" aria-hidden="true">Ⅱ</span>
+                    <span class="lifeline-copy"><span class="lifeline-name" id="lifelineFreezeLabel">Time freeze</span><span class="lifeline-cost" id="lifelineFreezeCost">15 🪙</span></span>
+                  </button>
+                  <button class="lifeline-button" type="button" data-lifeline="clue">
+                    <span class="lifeline-symbol" aria-hidden="true">✦</span>
+                    <span class="lifeline-copy"><span class="lifeline-name" id="lifelineClueLabel">Smart clue</span><span class="lifeline-cost" id="lifelineClueCost">25 🪙</span></span>
+                  </button>
+                  <button class="lifeline-button" type="button" data-lifeline="skip">
+                    <span class="lifeline-symbol" aria-hidden="true">↪</span>
+                    <span class="lifeline-copy"><span class="lifeline-name" id="lifelineSkipLabel">Skip question</span><span class="lifeline-cost" id="lifelineSkipCost">40 🪙</span></span>
+                  </button>
+                </div>
+                <p class="lifeline-notice" id="lifelineNotice" role="status" aria-live="polite" hidden></p>
+              </section>
+            </div>
               <div class="side-card">
                 <div class="orbit-mini" aria-hidden="true"><span class="mini-ring"></span><span class="mini-ring ring-two"></span><span class="mini-core"></span><span class="mini-orb"></span></div>
                 <div class="side-note"><strong id="sideNoteTitle">Stay curious.</strong><br><span id="sideNoteBody">Every answer is a new little fact to keep.</span></div>
@@ -2943,39 +3045,6 @@
                 <button class="text-button" type="button" id="quitButton">← <span id="quitButtonLabel">Choose another subject</span></button>
                 <div class="category-tag"><span class="tag-dot"></span><span id="gameCategory">Science</span></div>
                 <div class="question-count" id="questionCount">01 <span aria-hidden="true">/</span> 04</div>
-              </div>
-              <div class="quiz-utility-row" id="quizUtilityRow">
-                <section class="iq-timer" id="iqTimer" hidden aria-label="Question timer">
-                  <div class="iq-timer-heading"><span id="iqTimerLabel">Time left</span><strong id="iqTimerValue">15 s</strong></div>
-                  <div class="iq-timer-track" id="iqTimerBar" role="progressbar" aria-label="Time remaining" aria-valuemin="0" aria-valuemax="15" aria-valuenow="15"><span id="iqTimerFill"></span></div>
-                  <p id="iqTimerNote">Answer correctly in under 5 seconds to earn +5 bonus points.</p>
-                </section>
-                <section class="lifeline-panel" id="lifelinePanel" aria-label="Tactical lifelines">
-                  <div class="lifeline-heading">
-                    <span class="lifeline-title" id="lifelineHeading">TACTICAL LIFELINES</span>
-                    <span class="lifeline-use-count" id="lifelineUseCount" aria-live="polite">0/2 used</span>
-                  </div>
-                  <p class="lifeline-rule" id="lifelineLimitRule">Choose up to 2 different lifelines per question.</p>
-                  <div class="lifeline-grid" id="lifelineGrid" role="group" aria-labelledby="lifelineHeading">
-                    <button class="lifeline-button" type="button" data-lifeline="fifty">
-                      <span class="lifeline-symbol" aria-hidden="true">½</span>
-                      <span class="lifeline-copy"><span class="lifeline-name" id="lifelineFiftyLabel">50/50</span><span class="lifeline-cost" id="lifelineFiftyCost">20 🪙</span></span>
-                    </button>
-                    <button class="lifeline-button" type="button" data-lifeline="freeze">
-                      <span class="lifeline-symbol" aria-hidden="true">Ⅱ</span>
-                      <span class="lifeline-copy"><span class="lifeline-name" id="lifelineFreezeLabel">Time freeze</span><span class="lifeline-cost" id="lifelineFreezeCost">15 🪙</span></span>
-                    </button>
-                    <button class="lifeline-button" type="button" data-lifeline="clue">
-                      <span class="lifeline-symbol" aria-hidden="true">✦</span>
-                      <span class="lifeline-copy"><span class="lifeline-name" id="lifelineClueLabel">Smart clue</span><span class="lifeline-cost" id="lifelineClueCost">25 🪙</span></span>
-                    </button>
-                    <button class="lifeline-button" type="button" data-lifeline="skip">
-                      <span class="lifeline-symbol" aria-hidden="true">↪</span>
-                      <span class="lifeline-copy"><span class="lifeline-name" id="lifelineSkipLabel">Skip question</span><span class="lifeline-cost" id="lifelineSkipCost">40 🪙</span></span>
-                    </button>
-                  </div>
-                  <p class="lifeline-notice" id="lifelineNotice" role="status" aria-live="polite" hidden></p>
-                </section>
               </div>
               <div class="progress-track" id="progressTrack" role="progressbar" aria-label="Quiz progress" aria-valuemin="0" aria-valuemax="4" aria-valuenow="0"><div class="progress-fill" id="progressFill"></div></div>
               <p class="question-kicker" id="questionKicker">Take a moment</p>
@@ -2991,6 +3060,7 @@
 
         <section class="view" id="resultsView" aria-labelledby="resultTitle">
           <div class="results-wrap">
+            <!-- A compact summary of the stars and coins persisted by finishQuiz(). -->
             <article class="result-card" id="resultCard" data-tier="bronze">
               <div class="result-top">
                 <svg class="result-trophy" id="resultTrophySvg" viewBox="0 0 100 100" role="img" aria-label="Bronze trophy">
@@ -3002,6 +3072,7 @@
                 <div class="result-seal" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="m12 3 2.2 5.1 5.5.5-4.2 3.6 1.3 5.4-4.8-2.9-4.8 2.9 1.3-5.4-4.2-3.6 5.5-.5L12 3Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><circle cx="12" cy="12" r="9.5" stroke="currentColor" stroke-width="1.2" opacity=".35"/></svg></div>
                 <p class="eyebrow" id="resultCategory">Your orbit is complete</p>
                 <p class="result-level-label" id="resultLevel" hidden></p>
+                <div class="result-stars" id="resultStars" role="img" aria-label="0 stars"></div>
                 <h1 id="resultTitle">A lovely little round.</h1>
                 <p id="resultMessage">You followed your curiosity all the way through.</p>
                 <p class="level-unlock-notice" id="levelUnlockNotice" hidden aria-live="polite"></p>
@@ -3025,7 +3096,7 @@
                   <div class="result-stat"><strong id="finalTotal">4</strong><span id="finalTotalLabel">Questions</span></div>
                 </div>
                 <div class="result-coin-summary" aria-live="polite">
-                  <span id="resultCoinLabel">Coins earned this round</span>
+                  <span id="resultCoinLabel">Coins earned</span>
                   <strong id="resultCoinAmount">+0 🪙</strong>
                 </div>
                 <section class="achievement-panel" aria-labelledby="achievementHeading">
@@ -3036,9 +3107,8 @@
                   <div class="achievement-list" id="achievementList" role="list" aria-live="polite"></div>
                 </section>
                 <div class="result-actions">
-                  <button class="secondary-button" type="button" id="homeButton"><span id="homeButtonLabel">Choose a subject</span></button>
-                  <button class="primary-button next-level-button" type="button" id="nextLevelButton" hidden><span id="nextLevelLabel">Next level</span> <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M4.2 10h11.6m-4.5-4.5 4.5 4.5-4.5 4.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
-                  <button class="primary-button" type="button" id="playAgainButton">Play again <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M4.2 10h11.6m-4.5-4.5 4.5 4.5-4.5 4.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+                  <button class="primary-button" type="button" id="playAgainButton"><span id="playAgainLabel">Play next level</span> <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M4.2 10h11.6m-4.5-4.5 4.5 4.5-4.5 4.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+                  <button class="secondary-button" type="button" id="returnLevelMapButton"><span id="returnLevelMapLabel">Return to level map</span></button>
                 </div>
               </div>
             </article>
@@ -3156,6 +3226,8 @@
           allLevelsComplete: "All 500 levels complete — incredible work!",
           nextLevel: "Next level",
           retryLevel: "Retry level",
+          playNextLevel: "Play next level",
+          returnLevelMap: "Return to level map",
           streak: "Streak",
           streakHint: "3 in a row: 2× · 5: 3×",
           streakCombo: "🔥 {streak} streak · {multiplier}× combo",
@@ -3170,7 +3242,7 @@
           coinBalanceAria: "Coin balance: {count}",
           dashboardCoinsTitle: "Coin balance",
           dashboardCoinsNote: "Earn coins for future power-ups and themes.",
-          resultCoinsEarned: "Coins earned this round",
+          resultCoinsEarned: "Coins earned",
           collectionEmpty: "None yet",
           rewardsDashboardTitle: "Your Collection",
           rewardsDashboardDescription: "Your progress, coin balance, trophies, badges, and game-only IQ estimate.",
@@ -3356,6 +3428,8 @@
           allLevelsComplete: "সব ৫০০টি লেভেল সম্পন্ন — অসাধারণ!",
           nextLevel: "পরের লেভেল",
           retryLevel: "আবার খেলুন",
+          playNextLevel: "পরের লেভেল খেলুন",
+          returnLevelMap: "লেভেল ম্যাপে ফিরুন",
           streak: "ধারাবাহিক সঠিক উত্তর",
           streakHint: "টানা ৩টি: ২× · ৫টি: ৩×",
           streakCombo: "🔥 টানা {streak}টি · {multiplier}× কম্বো",
@@ -3370,7 +3444,7 @@
           coinBalanceAria: "কয়েন ব্যালেন্স: {count}",
           dashboardCoinsTitle: "কয়েন ব্যালেন্স",
           dashboardCoinsNote: "ভবিষ্যতের পাওয়ার-আপ ও থিমের জন্য কয়েন জমা করুন।",
-          resultCoinsEarned: "এই পর্বে অর্জিত কয়েন",
+          resultCoinsEarned: "অর্জিত কয়েন",
           collectionEmpty: "এখনো কিছু নেই",
           rewardsDashboardTitle: "আপনার সংগ্রহ",
           rewardsDashboardDescription: "আপনার অগ্রগতি, কয়েন, ট্রফি, ব্যাজ ও খেলার ভিত্তিতে IQ-ধাঁচের অনুমান একসঙ্গে দেখুন।",
@@ -3556,6 +3630,8 @@
           allLevelsComplete: "सभी 500 स्तर पूरे — शानदार!",
           nextLevel: "अगला स्तर",
           retryLevel: "स्तर फिर से खेलें",
+          playNextLevel: "अगला स्तर खेलें",
+          returnLevelMap: "स्तर मानचित्र पर लौटें",
           streak: "लगातार सही जवाब",
           streakHint: "लगातार 3: 2× · 5: 3×",
           streakCombo: "🔥 लगातार {streak} · {multiplier}× कॉम्बो",
@@ -3570,7 +3646,7 @@
           coinBalanceAria: "सिक्का बैलेंस: {count}",
           dashboardCoinsTitle: "सिक्का बैलेंस",
           dashboardCoinsNote: "भविष्य के पावर-अप और थीम के लिए सिक्के कमाएँ।",
-          resultCoinsEarned: "इस राउंड में मिले सिक्के",
+          resultCoinsEarned: "अर्जित सिक्के",
           collectionEmpty: "अभी कुछ नहीं",
           rewardsDashboardTitle: "आपका संग्रह",
           rewardsDashboardDescription: "अपनी प्रगति, सिक्के, ट्रॉफियाँ, बैज और गेम-आधारित IQ अनुमान एक जगह देखें।",
@@ -3756,6 +3832,8 @@
           allLevelsComplete: "¡Has completado los 500 niveles!",
           nextLevel: "Siguiente nivel",
           retryLevel: "Repetir nivel",
+          playNextLevel: "Jugar al siguiente nivel",
+          returnLevelMap: "Volver al mapa de niveles",
           streak: "Racha",
           streakHint: "3 seguidas: 2× · 5: 3×",
           streakCombo: "🔥 Racha de {streak} · combo ×{multiplier}",
@@ -3770,7 +3848,7 @@
           coinBalanceAria: "Saldo de monedas: {count}",
           dashboardCoinsTitle: "Saldo de monedas",
           dashboardCoinsNote: "Gana monedas para futuros potenciadores y temas.",
-          resultCoinsEarned: "Monedas ganadas en esta ronda",
+          resultCoinsEarned: "Monedas ganadas",
           collectionEmpty: "Todavía no hay nada",
           rewardsDashboardTitle: "Tu colección",
           rewardsDashboardDescription: "Consulta tu progreso, monedas, trofeos, insignias y estimación de IQ basada solo en el juego.",
@@ -3956,6 +4034,8 @@
           allLevelsComplete: "Vous avez terminé les 500 niveaux !",
           nextLevel: "Niveau suivant",
           retryLevel: "Rejouer le niveau",
+          playNextLevel: "Jouer au niveau suivant",
+          returnLevelMap: "Retour à la carte des niveaux",
           streak: "Série",
           streakHint: "3 de suite : ×2 · 5 : ×3",
           streakCombo: "🔥 Série de {streak} · combo ×{multiplier}",
@@ -3970,7 +4050,7 @@
           coinBalanceAria: "Solde de pièces : {count}",
           dashboardCoinsTitle: "Solde de pièces",
           dashboardCoinsNote: "Gagnez des pièces pour de futurs bonus et thèmes.",
-          resultCoinsEarned: "Pièces gagnées cette manche",
+          resultCoinsEarned: "Pièces gagnées",
           collectionEmpty: "Pas encore de récompense",
           rewardsDashboardTitle: "Votre collection",
           rewardsDashboardDescription: "Retrouvez votre progression, vos pièces, vos trophées, vos badges et votre estimation de QI basée uniquement sur le jeu.",
@@ -7038,17 +7118,58 @@
         setCollectionTab(collectionActiveTab, false);
       }
 
+      function getLevelStarRating(correctAnswers, averageAnswerSeconds) {
+        const passingScore = Math.ceil(QUESTIONS_PER_LEVEL * LEVEL_PASSING_ACCURACY);
+        return correctAnswers === QUESTIONS_PER_LEVEL && averageAnswerSeconds <= 7.5
+          ? 3
+          : correctAnswers >= 8 || (correctAnswers >= passingScore && averageAnswerSeconds <= 5)
+            ? 2
+            : 1;
+      }
+
+      function updateResultActionLabels() {
+        const isLevelRun = PROGRESSION_CATEGORIES.includes(currentCategory);
+        const hasNextLevel = isLevelRun &&
+          !levelFailed &&
+          currentLevel < unlockedLevelFor(currentCategory);
+        const label = !isLevelRun
+          ? currentText.playAgain
+          : hasNextLevel
+            ? currentText.playNextLevel
+            : currentText.retryLevel;
+        document.getElementById("playAgainLabel").textContent = label;
+        document.getElementById("returnLevelMapLabel").textContent = currentText.returnLevelMap;
+      }
+
       function renderResults() {
         const total = roundLength();
         const accuracy = total ? Math.round((score / total) * 100) : 0;
         const averageAnswerSeconds = answerTimes.length
           ? answerTimes.reduce((sum, seconds) => sum + seconds, 0) / answerTimes.length
           : Number.POSITIVE_INFINITY;
+        const isLevelRun = PROGRESSION_CATEGORIES.includes(currentCategory);
+        const earnedStars = isLevelRun && !levelFailed
+          ? getLevelStarRating(score, averageAnswerSeconds)
+          : 0;
+        // finishQuiz persists level stars and the updated coin balance before showing this localized summary.
+        const resultStars = document.getElementById("resultStars");
+        resultStars.replaceChildren(...Array.from({ length: 3 }, (_, index) => {
+          const star = document.createElement("span");
+          const earned = index < earnedStars;
+          star.className = earned ? "star-earned" : "star-unearned";
+          star.textContent = earned ? "★" : "☆";
+          return star;
+        }));
+        resultStars.hidden = !isLevelRun;
+        resultStars.setAttribute("aria-label", currentText.levelStars.replace(
+          "{count}",
+          formatNumber(earnedStars)
+        ));
         const maximumPoints = maximumPossiblePoints(total);
         const scoreRatio = maximumPoints ? points / maximumPoints : 0;
         const tier = scoreRatio >= .8 ? "gold" : scoreRatio >= .5 ? "silver" : "bronze";
         document.getElementById("finalScore").textContent = formatNumber(points);
-        document.getElementById("finalDenominator").textContent = currentText.netPoints;
+        document.getElementById("finalDenominator").textContent = currentText.pointsUnit;
         document.getElementById("finalCorrect").textContent = formatNumber(score);
         document.getElementById("finalIncorrect").textContent = formatNumber(total - score);
         document.getElementById("finalAccuracy").textContent = `${formatNumber(accuracy)}%`;
@@ -7056,7 +7177,7 @@
         document.getElementById("finalTotal").textContent = formatNumber(total);
         document.getElementById("resultCoinLabel").textContent = currentText.resultCoinsEarned;
         document.getElementById("resultCoinAmount").textContent = `+${formatNumber(roundCoinsEarned)} 🪙`;
-        document.getElementById("resultCategory").textContent = `${categoryName(currentCategory)} · ${currentText.categoryComplete}`;
+        document.getElementById("resultCategory").textContent = categoryName(currentCategory);
         const isIQRun = currentCategory === "IQ Check";
         let estimatedIQ = null;
         const iqSummary = document.getElementById("iqSummary");
@@ -7072,14 +7193,13 @@
               ? currentText.iqRatingSolver
               : currentText.iqRatingStarter;
         }
-        const isLevelRun = PROGRESSION_CATEGORIES.includes(currentCategory);
         const resultLevel = document.getElementById("resultLevel");
         resultLevel.hidden = !isLevelRun;
         if (isLevelRun) {
           resultLevel.textContent = currentText.levelNumber.replace("{level}", formatNumber(currentLevel));
         }
         const levelUnlockNotice = document.getElementById("levelUnlockNotice");
-        levelUnlockNotice.hidden = !levelJustUnlocked && !levelFailed && !allLevelsComplete;
+        levelUnlockNotice.hidden = true;
         if (levelJustUnlocked) {
           levelUnlockNotice.textContent = currentText.levelUnlockNotice
             .replace("{level}", formatNumber(currentLevel + 1));
@@ -7089,11 +7209,7 @@
         } else if (allLevelsComplete) {
           levelUnlockNotice.textContent = currentText.allLevelsComplete;
         }
-        const nextLevelButton = document.getElementById("nextLevelButton");
-        nextLevelButton.hidden = !isLevelRun || currentLevel >= unlockedLevelFor(currentCategory);
-        document.getElementById("nextLevelLabel").textContent = currentText.nextLevel;
-        const replayLabel = isLevelRun ? currentText.retryLevel : currentText.playAgain;
-        document.getElementById("playAgainButton").firstChild.nodeValue = `${replayLabel} `;
+        updateResultActionLabels();
         applyRewardTier(tier);
         const badges = getAchievementBadges(accuracy, averageAnswerSeconds);
         renderAchievementBadges(badges);
@@ -7109,6 +7225,7 @@
           title = currentText.resultLowTitle;
           message = currentText.resultLowMessage;
         }
+        if (isLevelRun) title = levelFailed ? currentText.retryLevel : currentText.levelComplete;
         document.getElementById("resultTitle").textContent = title;
         document.getElementById("resultMessage").textContent = message;
         return { tier, unlockedBadges: badges.filter((badge) => badge.unlocked), estimatedIQ };
@@ -7122,6 +7239,7 @@
         const currentUnlockedLevel = unlockedLevelFor(currentCategory);
         const requiredCorrect = Math.ceil(roundLength() * LEVEL_PASSING_ACCURACY);
         const clearedFullLevel = roundLength() === QUESTIONS_PER_LEVEL && score >= requiredCorrect;
+        levelFailed = roundLength() === QUESTIONS_PER_LEVEL && score < requiredCorrect;
         const levelRewardKey = `${currentCategory}:${currentLevel}`;
         // Persist each category-level claim once so retrying a cleared level cannot farm its completion payout.
         let claimedLevelCoinRewards = [...rewardCollection.claimedLevelCoinRewards];
@@ -7135,11 +7253,7 @@
           const averageSeconds = answerTimes.length
             ? answerTimes.reduce((sum, seconds) => sum + seconds, 0) / answerTimes.length
             : QUESTION_TIME_LIMIT_SECONDS;
-          const earnedStars = score === QUESTIONS_PER_LEVEL && averageSeconds <= 7.5
-            ? 3
-            : score >= 8 || (score >= Math.ceil(QUESTIONS_PER_LEVEL * LEVEL_PASSING_ACCURACY) && averageSeconds <= 5)
-              ? 2
-              : 1;
+          const earnedStars = getLevelStarRating(score, averageSeconds);
           const priorResultIndex = levelResults.findIndex((record) =>
             record.category === currentCategory && record.level === currentLevel
           );
@@ -7435,7 +7549,7 @@
           finalBestStreakLabel: "bestStreak",
           finalTotalLabel: "resultQuestions",
           achievementHeading: "achievements",
-          homeButtonLabel: "chooseSubject"
+          returnLevelMapLabel: "returnLevelMap"
         };
         Object.entries(textById).forEach(([id, key]) => {
           const value = id === "totalQuestionsLabel"
@@ -7473,8 +7587,7 @@
         document.getElementById("levelCategoryTabs").setAttribute("aria-label", currentText.levelCategoryFilter);
         document.getElementById("closeRewardsButton").setAttribute("aria-label", currentText.closeRewards);
         optionsElement.setAttribute("aria-label", currentText.answerOptions);
-        const replayLabel = currentText.retryLevel;
-        document.getElementById("playAgainButton").firstChild.nodeValue = `${replayLabel} `;
+        updateResultActionLabels();
         categoryButtons.forEach((button) => {
           const category = button.dataset.category;
           button.querySelector("[data-category-title]").textContent = categoryName(category);
@@ -7600,7 +7713,11 @@
         stopQuestionTimer();
         showView("welcome");
       });
-      document.getElementById("homeButton").addEventListener("click", () => showView("welcome"));
+      document.getElementById("returnLevelMapButton").addEventListener("click", () => {
+        currentLevelPage = Math.floor((currentLevel - 1) / LEVELS_PER_PAGE);
+        renderLevelMap();
+        showView("levels");
+      });
       document.getElementById("levelBackButton").addEventListener("click", () => showView("welcome"));
       document.getElementById("levelPreviousButton").addEventListener("click", () => {
         if (currentLevelPage > 0) {
@@ -7615,12 +7732,13 @@
           renderLevelMap();
         }
       });
-      document.getElementById("nextLevelButton").addEventListener("click", () => {
-        if (currentLevel < unlockedLevelFor(currentCategory)) {
-          startQuiz(currentCategory, currentLevel + 1);
-        }
+      document.getElementById("playAgainButton").addEventListener("click", () => {
+        const isLevelRun = PROGRESSION_CATEGORIES.includes(currentCategory);
+        const hasNextLevel = isLevelRun &&
+          !levelFailed &&
+          currentLevel < unlockedLevelFor(currentCategory);
+        startQuiz(currentCategory, hasNextLevel ? currentLevel + 1 : currentLevel || 1);
       });
-      document.getElementById("playAgainButton").addEventListener("click", () => startQuiz(currentCategory, currentLevel || 1));
       document.getElementById("brandHome").addEventListener("click", (event) => {
         event.preventDefault();
         stopQuestionTimer();
