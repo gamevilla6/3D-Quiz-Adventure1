@@ -41,6 +41,13 @@ async function waitForServer(server, url) {
   throw new Error(`Timed out waiting for Vite at ${url}.\n${server.output}`);
 }
 
+async function waitForQuestionAdvance(page, previousQuestion) {
+  await page.waitForFunction((previous) => (
+    document.querySelector("#questionText")?.textContent !== previous ||
+    document.querySelector("#resultsView")?.classList.contains("active")
+  ), previousQuestion);
+}
+
 const port = await findAvailablePort();
 const baseUrl = `http://127.0.0.1:${port}`;
 const server = spawn(
@@ -250,6 +257,7 @@ try {
       ));
       return {
         columns: getComputedStyle(grid).gridTemplateColumns.split(" ").length,
+        columnGap: getComputedStyle(grid).columnGap,
         tabsOverflowX: getComputedStyle(tabs).overflowX,
         tabsScrolls: tabs.scrollWidth > tabs.clientWidth,
         tabMinHeight: Math.min(...[...tabs.children].map((tab) => tab.getBoundingClientRect().height)),
@@ -265,7 +273,8 @@ try {
     assert.equal(narrowMapLayout.tabsOverflowX, "auto");
     assert.equal(narrowMapLayout.tabsScrolls, true, "long category labels remain available in a horizontally swipeable row");
     assert.ok(narrowMapLayout.tabMinHeight >= 48, "category filter tabs remain touch-sized");
-    assert.ok(narrowMapLayout.cardMinWidth >= 70 && narrowMapLayout.cardMinHeight >= 50, "level nodes keep comfortable touch targets");
+    assert.equal(narrowMapLayout.columnGap, "12px", "level nodes keep a consistent separation across viewport sizes");
+    assert.ok(narrowMapLayout.cardMinWidth >= 65 && narrowMapLayout.cardMinHeight >= 55, "level nodes exceed the minimum touch target");
     assert.equal(narrowMapLayout.cardTextOverflow, false, "localized level-node content wraps within each tile");
     assert.equal(narrowMapLayout.overlaps, false, "level cards have clear grid gaps with no overlap");
     assert.ok(narrowMapLayout.documentWidth <= narrowMapLayout.viewportWidth, "the narrow roadmap does not create horizontal page overflow");
@@ -289,6 +298,25 @@ try {
     await page.locator("#levelGrid").evaluate((node) => { node.scrollTop = 120; });
     assert.ok(await page.locator("#levelGrid").evaluate((node) => node.scrollTop > 0), "level cards scroll vertically on touch screens");
     await page.locator("#levelGrid").evaluate((node) => { node.scrollTop = 0; });
+    await page.setViewportSize({ width: 740, height: 360 });
+    const landscapeMap = await page.evaluate(() => {
+      const grid = document.querySelector("#levelGrid");
+      const cards = [...grid.querySelectorAll(".level-card")];
+      const bounds = cards.map((card) => card.getBoundingClientRect());
+      const overlap = bounds.some((a, index) => bounds.slice(index + 1).some((b) =>
+        a.left < b.right - 1 && a.right > b.left + 1 && a.top < b.bottom - 1 && a.bottom > b.top + 1
+      ));
+      return {
+        columns: getComputedStyle(grid).gridTemplateColumns.split(" ").length,
+        overlap,
+        documentWidth: document.documentElement.scrollWidth,
+        viewportWidth: window.innerWidth,
+      };
+    });
+    assert.ok(landscapeMap.columns >= 5, "the roadmap expands cleanly in landscape");
+    assert.equal(landscapeMap.overlap, false, "landscape level nodes remain separate");
+    assert.ok(landscapeMap.documentWidth <= landscapeMap.viewportWidth, "landscape roadmap has no page-wide horizontal overflow");
+    await page.setViewportSize({ width: 390, height: 844 });
     await page.locator(".level-card.unlocked").click();
     assert.equal(await page.locator("#gameView").evaluate((node) => node.classList.contains("active")), true);
     assert.notEqual(await page.locator("#questionText").innerText(), "");
@@ -303,14 +331,16 @@ try {
     assert.equal(await page.locator(".game-score-state").count(), 1, "score tracking remains available to assistive technology and game logic");
     assert.equal(await page.locator("#iqTimer").evaluate((node) => node.closest("#quizUtilityRow") !== null), true);
     assert.equal(await page.locator("#lifelinePanel").evaluate((node) => node.closest("#quizUtilityRow") !== null), true);
-    const quizControlOrder = await page.locator("#quizCard").evaluate((node) => {
-      const children = [...node.children];
-      return ["quiz-meta", "progress-track", "question"].map((selector) =>
-        children.findIndex((child) => child.matches(`.${selector}`))
-      );
-    });
-    assert.ok(quizControlOrder.every((index) => index >= 0) && quizControlOrder.every((index, i) => i === 0 || index > quizControlOrder[i - 1]),
-      "the question remains in normal document flow below its category and progress header");
+    assert.equal(await page.locator(".topbar").isVisible(), false, "global navigation is hidden during a round");
+    for (const selector of [".quiz-meta", "#progressTrack", ".question-kicker", ".quiz-actions", "#coinPopupLayer", "#scorePopups"]) {
+      assert.equal(await page.locator(selector).isVisible(), false, `${selector} adds no visible quiz-screen clutter`);
+    }
+    assert.ok(
+      await page.locator(".feedback").evaluate((node) => node.getBoundingClientRect().width <= 1),
+      "answer feedback remains available to screen readers without visible text",
+    );
+    assert.equal(await page.locator("#questionText").isVisible(), true);
+    assert.equal(await page.locator("#options").isVisible(), true);
     assert.equal(await page.locator("#iqTimer").isVisible(), true);
     assert.equal(await page.locator("#lifelinePanel").isVisible(), true);
     const utilityRowLayout = await page.locator("#quizUtilityRow").evaluate((node) => ({
@@ -324,7 +354,6 @@ try {
     assert.ok(Math.abs(utilityRowLayout.timerTop - utilityRowLayout.lifelinesTop) <= 1, "timer and lifelines align as one row");
     assert.ok(utilityRowLayout.timerHeight < 100, "the mobile timer card stays compact beside the lifelines");
     assert.ok(utilityRowLayout.lifelinesHeight <= 165, "the mobile lifeline grid stays compact and touch-sized");
-    assert.notEqual(await page.locator(".topbar").evaluate((node) => getComputedStyle(node).position), "sticky");
     assert.equal(await page.locator(".game-sidebar").evaluate((node) => getComputedStyle(node).position), "sticky");
     const hudFlow = await page.evaluate(() => {
       const hud = document.querySelector(".game-sidebar").getBoundingClientRect();
@@ -332,7 +361,7 @@ try {
       const card = document.querySelector("#quizCard").getBoundingClientRect();
       return { hudTop: Math.round(hud.top), hudBottom: Math.round(hud.bottom), topbarBottom: Math.round(topbar.bottom), cardTop: Math.round(card.top) };
     });
-    assert.ok(hudFlow.hudTop >= hudFlow.topbarBottom, "the sticky game HUD starts below the global sticky controls");
+    assert.ok(hudFlow.hudTop >= 0, "the sticky game HUD stays at the viewport top");
     assert.ok(hudFlow.cardTop >= hudFlow.hudBottom, "the quiz card starts below the sticky HUD without overlap");
     assert.ok(
       parseFloat(await page.locator(".game-sidebar").evaluate((node) => getComputedStyle(node).top)) >= 0,
@@ -342,30 +371,14 @@ try {
       [...node.children].map((child) => child.classList.contains("game-sidebar") ? "hud" : "quiz")
     );
     assert.deepEqual(gameLayoutOrder, ["hud", "quiz"], "the compact controls HUD precedes the question on mobile");
-    for (const selector of ["#quitButton", "#languageSelect", "#soundToggle"]) {
-      assert.ok(
-        await page.locator(selector).evaluate((node) => node.getBoundingClientRect().height >= 48),
-        `${selector} remains a touch-sized game control`,
-      );
-    }
+    assert.equal(await page.locator("#languageSelect").isVisible(), false, "language selection stays on the welcome screen");
     assert.ok(
       await page.locator(".option").first().evaluate((node) => node.getBoundingClientRect().height >= 50),
       "answer options are at least 50px high touch targets",
     );
     assert.equal(await page.locator("#iqTimer").isVisible(), true, "the countdown is active in every category");
     assert.equal(await page.locator(".option").first().getAttribute("data-answer"), null);
-    for (const language of ["bn", "hi", "es", "fr"]) {
-      await page.selectOption("#languageSelect", language);
-      const localizedQuestion = await page.locator("#questionText").innerText();
-      assert.ok(localizedQuestion && localizedQuestion !== "undefined");
-      assert.equal(await page.locator(".option").count(), 4);
-      assert.ok(await page.locator("#continueJourneyLabel").innerText());
-      assert.ok(await page.locator("#heroStatCategoriesLabel").innerText());
-      assert.ok(await page.locator("#heroStatLevelsLabel").innerText());
-      assert.ok(await page.locator("#heroStatFocusLabel").innerText());
-    }
-    await page.selectOption("#languageSelect", "en");
-    await page.locator("#quitButton").click();
+    await page.reload({ waitUntil: "domcontentloaded" });
   }
   const lastPlayed = await page.evaluate(() => JSON.parse(localStorage.getItem("quiz-orbit-last-played-v1")));
   assert.deepEqual(
@@ -377,8 +390,8 @@ try {
   assert.match(await page.locator("#continueJourneyTarget").innerText(), /IQ Check.*1/);
   await page.locator("#continueJourneyButton").click();
   assert.equal(await page.locator("#gameView").evaluate((node) => node.classList.contains("active")), true);
-  assert.match(await page.locator("#gameCategory").innerText(), /IQ CHECK/);
-  await page.locator("#quitButton").click();
+  assert.match(await page.locator("#gameCategory").textContent(), /IQ CHECK/);
+  await page.reload({ waitUntil: "domcontentloaded" });
 
   const scienceProgressKey = "quiz-orbit-science-technology-unlocked-level";
   await page.evaluate(() => {
@@ -448,7 +461,7 @@ try {
 
   await page.keyboard.press("2");
   assert.equal(await page.evaluate(() => window.__answerCueOscillators), 0, "muted answers do not create sound cues");
-  assert.match(await page.locator("#feedback").innerText(), /Correct!/);
+  assert.match(await page.locator("#feedback").textContent(), /Correct!/);
   assert.ok(Number(await page.locator("#scoreValue").innerText()) >= 10);
   assert.ok(Number(await page.locator("#coinBalance").innerText()) >= 10, "a correct answer immediately awards coins");
   assert.equal(
@@ -468,8 +481,6 @@ try {
   assert.equal(await page.locator("#correctCount").innerText(), "1");
   assert.equal(await page.locator(".option").nth(1).getAttribute("disabled"), "");
   assert.equal(await page.locator(".option").nth(1).getAttribute("class").then((value) => value.includes("correct")), true);
-  await page.locator("#soundToggle").tap();
-  assert.equal(await page.locator("#soundToggle").innerText(), "Game sounds on");
   const audioTestPage = await context.newPage();
   audioTestPage.on("pageerror", (error) => pageErrors.push(error.message));
   await audioTestPage.goto(baseUrl, { waitUntil: "domcontentloaded" });
@@ -503,79 +514,52 @@ try {
       const rect = document.querySelector(selector).getBoundingClientRect();
       return { top: Math.round(rect.top), bottom: Math.round(rect.bottom) };
     };
-    return { topbar: bounds(".topbar"), hud: bounds(".game-sidebar"), utility: bounds("#quizUtilityRow"), height: window.innerHeight };
+    return { topbar: bounds(".topbar"), hud: bounds(".game-sidebar"), utility: bounds("#quizUtilityRow"), height: window.innerHeight, scrollY: window.scrollY };
   });
-  assert.ok(landscapeHud.hud.top >= landscapeHud.topbar.bottom - 2, "landscape HUD remains below the sticky app controls");
+  assert.equal(await penaltyPage.locator(".topbar").isVisible(), false, "the landscape quiz has no global header above the HUD");
+  assert.ok(landscapeHud.hud.top >= 0 && landscapeHud.hud.top <= 8, "landscape HUD remains pinned to the viewport top");
   assert.ok(landscapeHud.utility.bottom <= landscapeHud.height, "landscape timer and lifelines stay fully on-screen while scrolling");
+  if (landscapeHud.scrollY > 0) {
+    assert.ok(landscapeHud.hud.top <= 8, "the sticky HUD remains visible after actual page scrolling");
+  }
   await penaltyPage.evaluate(() => window.scrollTo(0, 0));
   await penaltyPage.setViewportSize({ width: 390, height: 844 });
   const initialTimerSeconds = Number((await penaltyPage.locator("#iqTimerValue").innerText()).match(/\d+/)?.[0]);
   await penaltyPage.waitForTimeout(1200);
   const elapsedTimerSeconds = Number((await penaltyPage.locator("#iqTimerValue").innerText()).match(/\d+/)?.[0]);
   assert.ok(elapsedTimerSeconds < initialTimerSeconds, "the visible timer decreases from the active question's start");
+  const initialPenaltyQuestion = await penaltyPage.locator("#questionText").innerText();
   await penaltyPage.locator(".option").nth(1).tap();
   const timerAtAnswer = await penaltyPage.locator("#iqTimerValue").innerText();
   await penaltyPage.waitForTimeout(250);
   assert.equal(await penaltyPage.locator("#iqTimerValue").innerText(), timerAtAnswer, "answer submission stops the timer immediately");
   const scoreBeforePenalty = Number(await penaltyPage.locator("#scoreValue").innerText());
-  await penaltyPage.locator("#nextButton").tap();
+  await waitForQuestionAdvance(penaltyPage, initialPenaltyQuestion);
   assert.equal(
     Number((await penaltyPage.locator("#iqTimerValue").innerText()).match(/\d+/)?.[0]),
     15,
     "each new question starts a fresh 15-second deadline",
   );
   assert.equal(await penaltyPage.locator("#questionText").innerText(), "How many sides does a hexagon have?");
+  const questionBeforePenalty = await penaltyPage.locator("#questionText").innerText();
   await penaltyPage.locator(".option").first().tap();
   const scoreAfterPenalty = Number(await penaltyPage.locator("#scoreValue").innerText());
   assert.equal(scoreAfterPenalty, Math.max(0, scoreBeforePenalty - 5));
   assert.equal(await penaltyPage.locator("#feedback").evaluate((node) => node.classList.contains("penalty-warning")), true);
   assert.equal(await penaltyPage.locator("#quizCard").evaluate((node) => node.classList.contains("penalty-screen")), true);
   const scoreBeforeFocusLoss = Number(await penaltyPage.locator("#scoreValue").innerText());
-  await penaltyPage.locator("#nextButton").tap();
+  await waitForQuestionAdvance(penaltyPage, questionBeforePenalty);
   await penaltyPage.evaluate(() => {
     Object.defineProperty(document, "visibilityState", { configurable: true, value: "hidden" });
     document.dispatchEvent(new Event("visibilitychange"));
   });
-  assert.match(await penaltyPage.locator("#feedback").innerText(), /focus/i);
+  assert.match(await penaltyPage.locator("#feedback").textContent(), /focus/i);
   assert.equal(
     Number(await penaltyPage.locator("#scoreValue").innerText()),
     Math.max(0, scoreBeforeFocusLoss - 5),
   );
   await penaltyPage.close();
 
-  for (const language of ["hi", "es", "fr"]) {
-    await page.selectOption("#languageSelect", language);
-    const localizedQuestion = await page.locator("#questionText").innerText();
-    assert.ok(localizedQuestion && localizedQuestion !== "undefined");
-    assert.equal(await page.locator(".option").count(), 4);
-  }
-  await page.selectOption("#languageSelect", "en");
-  await page.selectOption("#languageSelect", "bn");
-  assert.equal(await page.locator("#questionText").innerText(), "আইফেল টাওয়ার কোন শহরে অবস্থিত?");
-  assert.equal(await page.locator("#soundToggle").innerText(), "গেমের শব্দ চালু");
-  assert.deepEqual(await page.locator(".option span:nth-child(2)").allInnerTexts(), [
-    "রোম",
-    "প্যারিস",
-    "মাদ্রিদ",
-    "ভিয়েনা",
-  ]);
-  assert.match(await page.locator("#feedback").innerText(), /সঠিক!/);
-  assert.ok(await page.locator("#scoreValue").innerText());
-  assert.equal(
-    await page.evaluate(() => localStorage.getItem("quiz-orbit-language")),
-    "bn",
-    "Bengali selection is saved",
-  );
-
-  await page.selectOption("#languageSelect", "en");
-  assert.equal(await page.locator("#questionText").innerText(), "The Eiffel Tower is in which city?");
-  assert.match(await page.locator("#feedback").innerText(), /Correct!/);
-  assert.ok(Number(await page.locator("#scoreValue").innerText()) >= 10);
-  assert.equal(
-    await page.evaluate(() => localStorage.getItem("quiz-orbit-language")),
-    "en",
-    "switching back to English is saved",
-  );
   await page.reload({ waitUntil: "domcontentloaded" });
   assert.equal(await page.locator("html").getAttribute("lang"), "en");
   assert.equal(await page.locator("#welcomeTitle").innerText(), "QuizVerse 3D");
@@ -605,7 +589,7 @@ try {
   const correctOptionIndexes = [1, 1, 2, 1, 3, 3, 3, 3, 3, 3];
   const firstQuestion = await page.locator("#questionText").innerText();
   for (const [questionIndex, optionIndex] of correctOptionIndexes.entries()) {
-    if (questionIndex > 0) await page.locator("#nextButton").tap();
+    const questionBeforeAnswer = await page.locator("#questionText").innerText();
     await page.locator(".option").nth(optionIndex).tap();
     assert.equal(
       await page.locator(".option").nth(optionIndex).getAttribute("class").then((value) => value.includes("correct")),
@@ -616,8 +600,8 @@ try {
       await page.locator("#correctCount").innerText(),
       new Intl.NumberFormat("bn-BD").format(questionIndex + 1),
     );
+    await waitForQuestionAdvance(page, questionBeforeAnswer);
   }
-  await page.locator("#nextButton").tap();
 
   assert.equal(await page.locator("#resultsView").evaluate((node) => node.classList.contains("active")), true);
   assert.equal(await page.locator("#resultTitle").innerText(), "সম্পন্ন");
@@ -657,10 +641,10 @@ try {
   assert.equal(await page.locator("#correctCount").innerText(), "০");
   assert.equal(await page.locator(".option").count(), 4);
   for (let questionIndex = 0; questionIndex < 10; questionIndex += 1) {
+    const questionBeforeAnswer = await page.locator("#questionText").innerText();
     await page.locator(".option").first().tap();
-    if (questionIndex < 9) await page.locator("#nextButton").tap();
+    await waitForQuestionAdvance(page, questionBeforeAnswer);
   }
-  await page.locator("#nextButton").tap();
   const mergedCollection = await page.evaluate(() => JSON.parse(localStorage.getItem("quiz-orbit-reward-collection")));
   assert.ok(mergedCollection.trophies.includes("gold"), "a later round keeps the previously earned gold trophy");
   assert.ok(mergedCollection.badges.includes("quizMaster"), "a later round keeps previously earned badges");
@@ -772,6 +756,18 @@ try {
     localStorage.setItem("quiz-orbit-answer-sounds-muted", "false");
   });
   await lifelinePage.reload({ waitUntil: "domcontentloaded" });
+  const lifelineLocaleCopy = {
+    en: ["TACTICAL LIFELINES", "Skip question"],
+    bn: ["কৌশলগত লাইফলাইন", "প্রশ্ন বদলান"],
+    hi: ["रणनीतिक लाइफलाइन", "प्रश्न बदलें"],
+    es: ["SALVAVIDAS TÁCTICOS", "Cambiar pregunta"],
+    fr: ["JOKERS TACTIQUES", "Changer la question"],
+  };
+  for (const [language, [heading, skipLabel]] of Object.entries(lifelineLocaleCopy)) {
+    await lifelinePage.selectOption("#languageSelect", language);
+    assert.equal(await lifelinePage.locator("#lifelineHeading").textContent(), heading);
+    assert.equal(await lifelinePage.locator("#lifelineSkipLabel").textContent(), skipLabel);
+  }
   await lifelinePage.selectOption("#languageSelect", "en");
   await lifelinePage.locator('.category[data-category="General Knowledge"]').tap();
   await lifelinePage.locator("#startGameButton").tap();
@@ -794,10 +790,7 @@ try {
   assert.equal(await lifelinePage.locator(".option:not([hidden])").count(), 2, "50/50 keeps the correct choice and one distractor");
   assert.equal(await lifelinePage.locator("#coinBalance").innerText(), "180");
   assert.equal(await lifelinePage.locator("#gameCoinBalance").innerText(), "180");
-  assert.equal(await lifelinePage.locator(".coin-popup.spent").last().innerText(), "−20 🪙", "lifeline spending shows a floating deduction");
-  const spentPopupBounds = await lifelinePage.locator(".coin-popup.spent").last().boundingBox();
-  const gameCoinBounds = await lifelinePage.locator("#gameCoinBalanceChip").boundingBox();
-  assert.ok(spentPopupBounds.x >= gameCoinBounds.x + gameCoinBounds.width - 1, "coin deductions float beside, not over, the balance");
+  assert.equal(await lifelinePage.locator(".coin-popup").count(), 0, "the streamlined round shows no floating coin popups");
   assert.equal(
     await lifelinePage.evaluate(() => JSON.parse(localStorage.getItem("quiz-orbit-reward-collection")).coins),
     180,
@@ -820,29 +813,17 @@ try {
   assert.equal(await lifelinePage.locator('[data-lifeline="skip"]').isDisabled(), true, "the two-use limit locks remaining lifelines");
   assert.equal(await lifelinePage.locator('[data-lifeline="fifty"]').isDisabled(), true, "a lifeline cannot be reused on one question");
 
-  const lifelineLocaleCopy = {
-    en: ["TACTICAL LIFELINES", "Skip question"],
-    bn: ["কৌশলগত লাইফলাইন", "প্রশ্ন বদলান"],
-    hi: ["रणनीतिक लाइफलाइन", "प्रश्न बदलें"],
-    es: ["SALVAVIDAS TÁCTICOS", "Cambiar pregunta"],
-    fr: ["JOKERS TACTIQUES", "Changer la question"],
-  };
-  for (const [language, [heading, skipLabel]] of Object.entries(lifelineLocaleCopy)) {
-    await lifelinePage.selectOption("#languageSelect", language);
-    assert.equal(await lifelinePage.locator("#lifelineHeading").innerText(), heading);
-    assert.equal(await lifelinePage.locator("#lifelineSkipLabel").innerText(), skipLabel);
-    assert.equal(await lifelinePage.locator(".option:not([hidden])").count(), 2, "language changes preserve the active 50/50 effect");
-  }
-  await lifelinePage.selectOption("#languageSelect", "en");
+  assert.equal(await lifelinePage.locator(".topbar").isVisible(), false, "language and sound controls are not part of active play");
   await lifelinePage.locator(".option:not([hidden])").first().tap();
-  await lifelinePage.locator("#nextButton").tap();
+  const answeredQuestionBeforeSkip = await lifelinePage.locator("#questionText").innerText();
+  await waitForQuestionAdvance(lifelinePage, answeredQuestionBeforeSkip);
   const scoreBeforeSkip = Number(await lifelinePage.locator("#scoreValue").innerText());
   const questionBeforeSkip = await lifelinePage.locator("#questionText").innerText();
   await lifelinePage.locator('[data-lifeline="skip"]').tap();
   assert.notEqual(await lifelinePage.locator("#questionText").innerText(), questionBeforeSkip, "skip draws a fresh question from the unused pool");
   assert.equal(Number(await lifelinePage.locator("#scoreValue").innerText()), scoreBeforeSkip, "skip does not add or deduct score points");
   assert.equal(await lifelinePage.locator("#coinBalance").innerText(), "125");
-  assert.match(await lifelinePage.locator("#lifelineNotice").innerText(), /fresh question/i);
+  assert.equal(await lifelinePage.locator("#lifelineNotice").isVisible(), false, "non-hint lifeline feedback does not add a banner");
   assert.equal(await lifelinePage.locator("#lifelineUseCount").innerText(), "0/2 used", "the replacement question gets its own two-use allowance");
   await lifelinePage.locator('[data-lifeline="clue"]').tap();
   assert.equal(await lifelinePage.locator("#lifelineNotice").evaluate((node) => node.classList.contains("is-typing")), true);

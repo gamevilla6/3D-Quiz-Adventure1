@@ -1141,6 +1141,7 @@
       .level-intro p:last-child { max-width: 540px; margin: 0 auto; color: #f0edff; font-size: 14px; line-height: 1.6; }
       .level-toolbar { display: flex; justify-content: space-between; align-items: center; gap: 14px; margin: 22px 0 13px; }
       .level-count { padding: 8px 12px; color: #453188; border: 1px solid #dbd2ff; border-radius: 99px; background: #fff; font-size: 11px; font-weight: 800; }
+      /* Filter tabs keep their intrinsic labels and swipe horizontally instead of compressing on phones. */
       .level-category-tabs {
         width: 100%;
         max-width: 100%;
@@ -1179,16 +1180,18 @@
         background: linear-gradient(120deg, #fff08c, #ffbd55);
         box-shadow: 0 5px 18px rgba(255,205,87,.24);
       }
+      /* The roadmap auto-fills 65px-minimum columns; global border-box sizing keeps gaps and padding inside the viewport. */
       .level-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(min(100%, 70px), 1fr));
+        grid-template-columns: repeat(auto-fill, minmax(min(100%, 65px), 1fr));
         grid-auto-rows: minmax(112px, auto);
-        gap: clamp(8px, 1.5vw, 12px);
+        gap: 12px;
         width: 100%;
         min-width: 0;
         max-height: min(65vh, 700px);
         overflow-y: auto;
         overscroll-behavior: contain;
+        /* Native momentum scrolling keeps the 500-level roadmap swipeable on iOS and Android. */
         -webkit-overflow-scrolling: touch;
         scroll-behavior: smooth;
         touch-action: pan-y;
@@ -1214,6 +1217,7 @@
         transition: transform .18s ease, box-shadow .18s ease;
       }
       .level-card:not(:disabled):hover { transform: translateY(-3px); box-shadow: 0 9px 0 rgba(67,50,157,.18), 0 18px 25px rgba(68,58,173,.18); }
+      .level-card:not(:disabled):active { transform: scale(.97); }
       .level-card:focus-visible { outline: 3px solid #ffcf4d; outline-offset: 3px; }
       .level-card.unlocked { border-color: rgba(255,225,102,.9); box-shadow: 0 6px 0 rgba(67,50,157,.2), 0 14px 24px rgba(68,58,173,.2), 0 0 0 2px rgba(255,225,102,.16); }
       .level-card.completed { background: linear-gradient(145deg, #078b71, #16b894); box-shadow: 0 6px 0 rgba(6,103,82,.23), 0 14px 22px rgba(19,143,116,.13); }
@@ -1253,6 +1257,7 @@
       html[lang="bn"] .trophy-tier,
       html[lang="bn"] .level-card,
       html[lang="bn"] .streak-hint { letter-spacing: 0; }
+      /* On compact screens the roadmap is capped to the viewport height so its own touch-scrolling area stays available. */
       @media (max-width: 650px) {
         .result-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
         .result-stat { padding: 10px 7px; }
@@ -2695,6 +2700,37 @@
       @media (prefers-reduced-motion: reduce) {
         .result-card { animation: none; }
       }
+      /* During a round, the global navigation disappears so the only visible regions
+         are the sticky coin/timer/lifeline HUD and the question card with its answers. */
+      body[data-view="game"] .topbar { display: none !important; }
+      body[data-view="game"] .coin-popup-layer { display: none !important; }
+      body[data-view="game"] .app { padding-top: max(8px, env(safe-area-inset-top)); }
+      body[data-view="game"] .game-layout { margin-top: 0; }
+      body[data-view="game"] .game-sidebar { top: calc(env(safe-area-inset-top) + 6px); }
+      body[data-view="game"] .quiz-meta,
+      body[data-view="game"] #progressTrack,
+      body[data-view="game"] .question-kicker,
+      body[data-view="game"] .quiz-actions { display: none !important; }
+      /* Keep answer feedback available to assistive technology without adding visible chrome. */
+      body[data-view="game"] .feedback {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        margin: -1px;
+        padding: 0;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+      }
+      body[data-view="game"] #quizCard.penalty-screen { animation: none !important; transform: none !important; }
+      body[data-view="game"] #quizCard .lifeline-notice:not([hidden]) {
+        margin: 16px 0 0;
+        padding: 9px 11px;
+        border-radius: 12px;
+        background: rgba(42, 48, 85, .8);
+        font-size: 13px;
+      }
     </style>
   </head>
   <body data-view="welcome">
@@ -3013,7 +3049,6 @@
                     <span class="lifeline-copy"><span class="lifeline-name" id="lifelineSkipLabel">Skip question</span><span class="lifeline-cost" id="lifelineSkipCost">40 🪙</span></span>
                   </button>
                 </div>
-                <p class="lifeline-notice" id="lifelineNotice" role="status" aria-live="polite" hidden></p>
               </section>
             </div>
               <div class="game-score-state" aria-label="Score tracking">
@@ -3042,10 +3077,12 @@
               <div class="progress-track" id="progressTrack" role="progressbar" aria-label="Quiz progress" aria-valuemin="0" aria-valuemax="4" aria-valuenow="0"><div class="progress-fill" id="progressFill"></div></div>
               <p class="question-kicker" id="questionKicker">Take a moment</p>
               <h1 class="question" id="questionText" tabindex="-1">Question goes here</h1>
+              <!-- Contextual clues stay inside the question card; other lifeline actions use visual state only. -->
+              <p class="lifeline-notice" id="lifelineNotice" role="status" aria-live="polite" hidden></p>
               <div class="options" id="options" role="group" aria-label="Answer options"></div>
               <div class="feedback" id="feedback" aria-live="polite">Choose the answer that feels right.</div>
               <div class="quiz-actions">
-                <button class="primary-button" type="button" id="nextButton" disabled>Check answer</button>
+                <button class="primary-button" type="button" id="nextButton" disabled hidden>Check answer</button>
               </div>
             </article>
           </div>
@@ -4417,6 +4454,7 @@
 
       const QUESTIONS_PER_LEVEL = 10;
       const QUESTION_TIME_LIMIT_SECONDS = 15;
+      const ANSWER_REVEAL_DURATION_MS = 720;
       const SPEED_BONUS_WINDOW_SECONDS = 5;
       const SPEED_BONUS_POINTS = 5;
       const LEVEL_PASSING_ACCURACY = 0.6;
@@ -4989,6 +5027,8 @@
       let lastAnswerTimedOut = false;
       let lastAnswerInterrupted = false;
       let focusLossGraceTimeout = null;
+      let answerAdvanceTimeout = null;
+      let pendingAnswerAdvance = false;
       let lastSpeedBonus = 0;
       let rewardCelebrationAt = 0;
       let roundCoinsEarned = 0;
@@ -5121,6 +5161,7 @@
 
       function spawnCoinPopup(amount, target = null, direction = "earned") {
         if (!amount) return;
+        if (views.game.classList.contains("active")) return;
         // Anchor the transient coin animation to the HUD without shifting the question or result layout.
         const gameAnchor = document.getElementById("gameCoinBalanceChip");
         const homeAnchor = document.getElementById("coinBalanceChip");
@@ -5345,16 +5386,10 @@
 
         let message = "";
         let messageKind = "";
-        if (lifelineFeedbackType === "fifty") {
-          message = copy.noticeFifty;
-        } else if (lifelineFeedbackType === "freeze") {
-          message = copy.noticeFreeze;
-        } else if (lifelineFeedbackType === "clue") {
+        if (lifelineFeedbackType === "clue") {
           const hint = copy.hints[currentCategory] || copy.hints["General Knowledge"];
           message = copy.noticeHint.replace("{hint}", hint);
           messageKind = "hint";
-        } else if (lifelineFeedbackType === "skip") {
-          message = copy.noticeSkip;
         } else if (lifelineFeedbackType === "noReplacement") {
           message = copy.noReplacement;
         }
@@ -6454,7 +6489,10 @@
       }
 
       function showView(name) {
-        if (name !== "game") stopQuestionTimer();
+        if (name !== "game") {
+          stopQuestionTimer();
+          clearAnswerAdvanceTimeout();
+        }
         document.getElementById("iqTimer").hidden = name !== "game";
         document.body.dataset.view = name;
         Object.values(views).forEach((view) => view.classList.remove("active"));
@@ -6472,6 +6510,7 @@
           return;
         }
         stopQuestionTimer();
+        clearAnswerAdvanceTimeout();
         setGameModeTheme(category);
         currentCategory = category;
         currentLevel = level;
@@ -6505,6 +6544,7 @@
       }
 
       function renderQuestion(preserveAnswer = false, moveFocus = true) {
+        if (!preserveAnswer) clearAnswerAdvanceTimeout();
         const keepAnswer = preserveAnswer && answered;
         const previousSelection = lastSelected;
         const item = roundQuestions()[currentQuestion];
@@ -6599,6 +6639,44 @@
         updateLifelinePanel();
       }
 
+      function clearAnswerAdvanceTimeout() {
+        if (answerAdvanceTimeout !== null) {
+          window.clearTimeout(answerAdvanceTimeout);
+          answerAdvanceTimeout = null;
+        }
+        pendingAnswerAdvance = false;
+      }
+
+      function advanceAnsweredQuestion() {
+        if (!answered || !views.game.classList.contains("active")) return;
+        clearAnswerAdvanceTimeout();
+        if (currentQuestion === roundLength() - 1) {
+          finishQuiz();
+          return;
+        }
+        currentQuestion += 1;
+        renderQuestion();
+      }
+
+      function scheduleAnswerAdvance() {
+        clearAnswerAdvanceTimeout();
+        answerAdvanceTimeout = window.setTimeout(() => {
+          answerAdvanceTimeout = null;
+          if (!answered || !views.game.classList.contains("active")) return;
+          if (document.visibilityState === "hidden" || !document.hasFocus()) {
+            pendingAnswerAdvance = true;
+            return;
+          }
+          advanceAnsweredQuestion();
+        }, ANSWER_REVEAL_DURATION_MS);
+      }
+
+      function resumePendingAnswerAdvance() {
+        if (!pendingAnswerAdvance || document.visibilityState === "hidden" || !document.hasFocus()) return;
+        pendingAnswerAdvance = false;
+        answerAdvanceTimeout = window.setTimeout(advanceAnsweredQuestion, 120);
+      }
+
       function selectAnswer(index, timedOut = false, interrupted = false) {
         if (answered) return;
         if (!timedOut && !interrupted && questionDeadline && performance.now() >= questionDeadline) {
@@ -6648,17 +6726,13 @@
         }
         if (!timedOut) playAnswerCue(isCorrect);
         renderAnswerState();
-        spawnScorePopup(lastPointsAwarded, isCorrect, selectedOption);
         if (!isCorrect && lastPointsAwarded < 0) {
-          const scoreValue = document.getElementById("scoreValue");
-          scoreValue.classList.remove("penalty-hit");
-          void scoreValue.offsetWidth;
-          scoreValue.classList.add("penalty-hit");
           feedback.classList.add("penalty-warning");
           quizCardElement.classList.remove("penalty-screen");
           void quizCardElement.offsetWidth;
           quizCardElement.classList.add("penalty-screen");
         }
+        scheduleAnswerAdvance();
       }
 
       function submitQuestionOnFocusLoss() {
@@ -6668,6 +6742,7 @@
 
       document.addEventListener("visibilitychange", () => {
         if (document.visibilityState === "hidden") submitQuestionOnFocusLoss();
+        else resumePendingAnswerAdvance();
       });
       window.addEventListener("blur", () => {
         if (!views.game.classList.contains("active") || answered) return;
@@ -6684,6 +6759,7 @@
           window.clearTimeout(focusLossGraceTimeout);
           focusLossGraceTimeout = null;
         }
+        resumePendingAnswerAdvance();
       });
 
       function getAchievementBadges(accuracy, averageAnswerSeconds) {
@@ -7226,6 +7302,7 @@
 
       function finishQuiz() {
         stopQuestionTimer();
+        clearAnswerAdvanceTimeout();
         levelJustUnlocked = false;
         levelFailed = false;
         allLevelsComplete = false;
@@ -7688,15 +7765,7 @@
           showView("levels");
         }
       });
-      nextButton.addEventListener("click", () => {
-        if (!answered) return;
-        if (currentQuestion === roundLength() - 1) {
-          finishQuiz();
-          return;
-        }
-        currentQuestion += 1;
-        renderQuestion();
-      });
+      nextButton.addEventListener("click", advanceAnsweredQuestion);
       Object.entries(lifelineButtons).forEach(([id, button]) => {
         button.addEventListener("click", () => activateLifeline(id));
       });
