@@ -1142,6 +1142,8 @@
       .level-toolbar { display: flex; justify-content: space-between; align-items: center; gap: 14px; margin: 22px 0 13px; }
       .level-count { padding: 8px 12px; color: #453188; border: 1px solid #dbd2ff; border-radius: 99px; background: #fff; font-size: 11px; font-weight: 800; }
       .level-category-tabs {
+        width: 100%;
+        max-width: 100%;
         display: flex;
         gap: 9px;
         margin: 0 0 14px;
@@ -1150,6 +1152,7 @@
         overscroll-behavior-x: contain;
         -webkit-overflow-scrolling: touch;
         scrollbar-width: thin;
+        scroll-snap-type: x proximity;
         touch-action: pan-x;
       }
       .level-category-tab {
@@ -1164,6 +1167,8 @@
         font: inherit;
         font-size: 12px;
         font-weight: 760;
+        white-space: nowrap;
+        scroll-snap-align: start;
         cursor: pointer;
         transition: transform .18s ease, background .18s ease, border-color .18s ease, box-shadow .18s ease;
       }
@@ -1176,8 +1181,11 @@
       }
       .level-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(min(100%, 158px), 1fr));
-        gap: 11px;
+        grid-template-columns: repeat(auto-fill, minmax(min(100%, 70px), 1fr));
+        grid-auto-rows: minmax(112px, auto);
+        gap: clamp(8px, 1.5vw, 12px);
+        width: 100%;
+        min-width: 0;
         max-height: min(65vh, 700px);
         overflow-y: auto;
         overscroll-behavior: contain;
@@ -1188,12 +1196,12 @@
       }
       .level-card {
         min-width: 0;
-        min-height: 132px;
-        padding: 15px;
+        min-height: 112px;
+        padding: clamp(8px, 1.6vw, 13px);
         display: flex;
         align-items: flex-start;
         flex-direction: column;
-        gap: 9px;
+        gap: clamp(4px, .9vw, 8px);
         color: #fff;
         border: 1px solid rgba(255,255,255,.48);
         border-radius: 20px;
@@ -1202,6 +1210,7 @@
         text-align: left;
         font: inherit;
         cursor: pointer;
+        overflow-wrap: anywhere;
         transition: transform .18s ease, box-shadow .18s ease;
       }
       .level-card:not(:disabled):hover { transform: translateY(-3px); box-shadow: 0 9px 0 rgba(67,50,157,.18), 0 18px 25px rgba(68,58,173,.18); }
@@ -1209,24 +1218,27 @@
       .level-card.unlocked { border-color: rgba(255,225,102,.9); box-shadow: 0 6px 0 rgba(67,50,157,.2), 0 14px 24px rgba(68,58,173,.2), 0 0 0 2px rgba(255,225,102,.16); }
       .level-card.completed { background: linear-gradient(145deg, #078b71, #16b894); box-shadow: 0 6px 0 rgba(6,103,82,.23), 0 14px 22px rgba(19,143,116,.13); }
       .level-card.locked { color: #5e5b70; border-color: #e2dff0; background: linear-gradient(145deg, #f7f6fb, #e6e5ef); box-shadow: 0 5px 0 rgba(77,69,111,.1); cursor: not-allowed; }
-      .level-card-number { color: inherit; font-size: 24px; line-height: 1; font-weight: 900; letter-spacing: -.04em; }
-      .level-card-name { color: inherit; font-size: 15px; font-weight: 850; }
-      .level-card-detail { color: inherit; font-size: 11px; font-weight: 650; opacity: .86; }
+      .level-card-number { color: inherit; font-size: clamp(17px, 3.2vw, 23px); line-height: 1; font-weight: 900; letter-spacing: -.04em; }
+      .level-card-name { max-width: 100%; color: inherit; font-size: clamp(9px, 1.45vw, 12px); line-height: 1.15; font-weight: 850; overflow-wrap: anywhere; }
+      .level-card-detail { max-width: 100%; color: inherit; font-size: clamp(8px, 1.2vw, 10px); line-height: 1.2; font-weight: 650; opacity: .86; overflow-wrap: anywhere; }
       .level-card-rewardline {
         display: flex;
+        flex-wrap: wrap;
         align-items: center;
-        justify-content: space-between;
-        gap: 6px;
+        justify-content: flex-start;
+        gap: 4px 7px;
         width: 100%;
+        min-width: 0;
         color: inherit;
-        font-size: 10px;
+        font-size: clamp(8px, 1.15vw, 10px);
+        line-height: 1.15;
         font-weight: 800;
         font-variant-numeric: tabular-nums;
       }
       .level-card-stars { color: #fff0a3; letter-spacing: .06em; white-space: nowrap; }
       .level-card-coins { color: #fff5bb; white-space: nowrap; }
-      .level-card-status { display: inline-flex; align-items: center; gap: 6px; margin-top: auto; align-self: flex-end; padding: 5px 9px; border-radius: 99px; background: rgba(21,15,61,.24); font-size: 10px; font-weight: 850; }
-      .level-card-indicator { display: grid; width: 20px; height: 20px; place-items: center; border-radius: 50%; background: rgba(255,255,255,.2); font-size: 13px; line-height: 1; }
+      .level-card-status { display: inline-flex; min-width: 0; min-height: 28px; align-items: center; gap: 5px; margin-top: auto; align-self: stretch; padding: 4px 6px; border-radius: 10px; background: rgba(21,15,61,.24); font-size: clamp(8px, 1.15vw, 10px); line-height: 1.1; font-weight: 850; overflow-wrap: anywhere; }
+      .level-card-indicator { display: grid; width: 18px; height: 18px; flex: 0 0 18px; place-items: center; border-radius: 50%; background: rgba(255,255,255,.2); font-size: 12px; line-height: 1; }
       .level-pagination { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 12px; margin-top: 18px; padding: 12px; border: 1px solid rgba(255,255,255,.15); border-radius: 16px; background: rgba(18,12,57,.28); }
       .level-pagination .secondary-button { min-height: 38px; padding: 0 13px; font-size: 12px; }
       .level-pagination .secondary-button:disabled { opacity: .45; cursor: not-allowed; }
@@ -1249,13 +1261,11 @@
         .collection-panel { margin-top: 20px; padding: 15px; }
         .collection-stat { padding: 9px; }
         .game-sidebar .side-card:first-child .streak-hint { grid-column: 1 / -1; }
-        .level-grid { grid-template-columns: repeat(auto-fit, minmax(min(100%, 142px), 1fr)); gap: 10px; max-height: min(62svh, 620px); }
+        .level-grid { max-height: min(62svh, 620px); }
         .level-category-tabs { margin-right: -2px; }
-        .level-card { min-height: 132px; padding: 14px; }
         .result-actions > button { flex: 1 1 auto; }
       }
       @media (max-width: 390px) {
-        .level-grid { grid-template-columns: repeat(auto-fit, minmax(min(100%, 126px), 1fr)); }
         .level-toolbar { align-items: flex-start; flex-direction: column; }
       }
       /* Focused quiz HUD: cinematic glass panels, with the existing game controls
@@ -1292,9 +1302,9 @@
       }
       body[data-view="game"] .app { padding-top: 15px; }
       body[data-view="game"] .topbar {
-        position: sticky;
-        top: max(6px, env(safe-area-inset-top));
-        z-index: 80;
+        position: relative;
+        top: auto;
+        z-index: 1;
         max-width: 1060px;
         min-height: 54px;
         padding: 8px 12px;
@@ -1332,57 +1342,30 @@
       }
       .game-layout > #quizCard { grid-area: quiz; }
       .game-layout > .game-sidebar { grid-area: hud; }
-      /* Keep score, coins, timer, and lifelines together in one sticky glass HUD; the quiz card stays in normal flow below it. */
+      /* The fixed quiz HUD is intentionally limited to the timer, lifelines, and coin vault. */
       .game-sidebar {
         position: sticky;
-        top: calc(env(safe-area-inset-top) + 76px);
+        top: calc(env(safe-area-inset-top) + 8px);
         z-index: 70;
         align-self: start;
         display: grid;
-        gap: 8px;
-        padding: 8px;
+        grid-template-columns: auto minmax(0, 1fr);
+        grid-template-areas: "coins utility";
+        align-items: center;
+        gap: 10px;
+        padding: 8px 10px;
         border: 1px solid rgba(171, 184, 255, .22);
-        border-radius: 22px;
+        border-radius: 18px;
         background: rgba(8, 11, 31, .92);
-        box-shadow: 0 18px 45px rgba(0, 0, 0, .28), inset 0 1px rgba(255, 255, 255, .08);
+        box-shadow: 0 14px 34px rgba(0, 0, 0, .26), inset 0 1px rgba(255, 255, 255, .08);
         backdrop-filter: blur(16px);
         -webkit-backdrop-filter: blur(16px);
       }
-      .game-sidebar .side-card:first-child.score-hud-card {
-        display: block;
-        padding: 15px 19px;
-        color: #fff;
-        border: 1px solid rgba(174, 183, 255, .25);
-        border-radius: 18px;
-        background: linear-gradient(115deg, rgba(12, 16, 42, .94), rgba(25, 24, 65, .86));
-        box-shadow: 0 16px 40px rgba(0, 0, 0, .25), inset 0 1px rgba(255, 255, 255, .1);
-        backdrop-filter: blur(24px);
-        -webkit-backdrop-filter: blur(24px);
-      }
-      .game-sidebar .side-card:last-child { display: none; }
-      .score-hud-top { margin: 0 0 11px; }
-      .score-level-chip { max-width: min(78%, 560px); padding: 7px 11px; color: #f3efff; border-color: rgba(194, 186, 255, .24); background: rgba(9, 11, 31, .58); font-size: 10px; }
-      .score-live-tag { font-size: 9px; }
-      .score-hud-bottom { display: grid; grid-template-columns: minmax(160px, .7fr) minmax(0, 1.7fr); align-items: center; gap: 18px; }
-      .score-total { display: grid; grid-template-columns: auto 1fr; align-items: end; column-gap: 10px; }
-      .score-total .side-label { grid-column: 1 / -1; color: #c5c9e7; font-size: 9px; }
-      .score-total .score-value { margin: 5px 0 0; min-width: 70px; padding: 7px 10px 8px; font-size: 32px; }
-      .score-total .score-caption { align-self: end; margin: 0 0 5px; font-size: 10px; }
-      .score-metrics { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); align-items: center; gap: 8px; }
-      .score-metrics .side-detail {
-        min-height: 41px;
-        flex-direction: column;
-        justify-content: center;
-        gap: 4px;
-        padding: 0 12px;
-        border-left: 1px solid rgba(221, 224, 255, .18);
-        color: #c9cce5;
-        font-size: 10px;
-      }
-      .score-metrics .side-detail strong { color: #fff; font-size: 13px; }
-      .score-metrics .streak-detail strong { color: #ffe77b; }
-      .score-metrics .streak-hint { grid-column: 1 / -1; margin-top: 0; color: #c9cce5; font-size: 9px; }
-      .score-hud-bottom .combo-banner { grid-column: 1 / -1; margin: 0; padding: 7px 10px; }
+      .game-coin-balance { grid-area: coins; min-height: 48px; margin: 0; padding: 7px 12px; }
+      .quiz-utility-row { grid-area: utility; }
+      /* Keep the internal live score available to assistive technology and existing game logic, not in the visual HUD. */
+      .game-score-state { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; }
+      #scorePopups { display: none !important; }
       .quiz-card {
         min-height: 0;
         padding: clamp(23px, 4vw, 42px);
@@ -1498,9 +1481,9 @@
       }
       .quiz-utility-row {
         display: grid;
-        grid-template-columns: minmax(180px, .52fr) minmax(0, 1.48fr);
+        grid-template-columns: minmax(145px, .36fr) minmax(0, 1.64fr);
         align-items: stretch;
-        gap: 11px;
+        gap: 8px;
         margin: 0;
       }
       .quiz-utility-row .iq-timer {
@@ -1515,10 +1498,13 @@
         border-radius: 15px;
         background: linear-gradient(110deg, rgba(47, 44, 104, .82), rgba(61, 39, 91, .7));
       }
-      .quiz-utility-row .iq-timer p { margin-top: 7px; font-size: 10px; }
-      .quiz-utility-row .lifeline-panel { min-width: 0; margin: 0; padding: 10px; }
+      .quiz-utility-row .iq-timer p { display: none; }
+      .quiz-utility-row .lifeline-panel { min-width: 0; margin: 0; padding: 8px; }
       .quiz-utility-row .lifeline-grid { gap: 6px; }
-      .quiz-utility-row .lifeline-button { min-height: 54px; gap: 6px; padding: 7px; }
+      .quiz-utility-row .lifeline-button { min-width: 0; min-height: 48px; gap: 6px; padding: 6px; }
+      .quiz-utility-row .lifeline-rule { display: none; }
+      .quiz-utility-row .lifeline-heading { margin-bottom: 5px; }
+      .quiz-utility-row .lifeline-title { font-size: 8px; }
       .iq-timer-heading strong { color: #a7a3ff; }
       .iq-timer-track { background: rgba(255, 255, 255, .12); }
       .iq-timer p { color: #d1cfea; }
@@ -1669,7 +1655,14 @@
       .iq-timer.urgent .iq-timer-heading strong { color: #ff9aaa; }
       body.theme-cosmic .iq-timer.urgent .iq-timer-heading strong { color: #ff9aaa; }
       @media (max-width: 650px) {
-        body[data-view="game"] .game-sidebar { top: calc(env(safe-area-inset-top) + 76px); }
+        body[data-view="game"] .game-sidebar {
+          top: calc(env(safe-area-inset-top) + 8px);
+          grid-template-columns: minmax(0, 1fr);
+          grid-template-areas: "coins" "utility";
+          gap: 7px;
+          padding: 7px;
+          border-radius: 15px;
+        }
         body[data-view="game"] .app { padding: 12px 12px 22px; }
         body[data-view="game"] .topbar { min-height: 48px; padding: 6px 8px; border-radius: 14px; }
         body[data-view="game"] .brand { gap: 7px; }
@@ -1680,17 +1673,22 @@
         body[data-view="game"] .sound-toggle { width: 48px; min-width: 48px; min-height: 48px; padding: 0; gap: 0; font-size: 0; }
         body[data-view="game"] .sound-toggle span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
         .game-layout { margin-top: 12px; gap: 10px; }
-        .game-sidebar .side-card:first-child.score-hud-card { padding: 8px 10px; border-radius: 15px; }
-        .score-hud-top { margin-bottom: 5px; }
-        .score-hud-bottom { grid-template-columns: minmax(100px, .7fr) minmax(0, 1.3fr); gap: 8px; }
-        .score-total { display: grid; grid-template-columns: auto 1fr; align-items: end; column-gap: 5px; }
-        .score-total .side-label, .score-total .score-caption { display: none; }
-        .score-total .score-value { grid-column: 1; min-width: 48px; margin: 0; padding: 4px 6px; font-size: 23px; }
-        .score-metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 3px; }
-        .score-metrics .side-detail { min-width: 0; min-height: 30px; gap: 3px; padding: 0 4px; font-size: 8px; }
-        .score-metrics .side-detail:nth-child(3), .score-metrics .streak-hint { display: none; }
-        .score-metrics .side-detail strong { font-size: 10px; overflow-wrap: anywhere; }
-        .game-coin-balance { min-height: 34px; margin-top: 6px; padding: 4px 9px; }
+        .game-coin-balance { justify-self: start; min-height: 40px; padding: 5px 12px; }
+        .quiz-utility-row { grid-template-columns: minmax(94px, .32fr) minmax(0, 1.68fr); gap: 7px; }
+        .quiz-utility-row .iq-timer { padding: 8px 9px; border-radius: 12px; }
+        .quiz-utility-row .iq-timer-heading { gap: 5px; font-size: 10px; }
+        .quiz-utility-row .iq-timer-heading strong { font-size: 12px; }
+        .quiz-utility-row .iq-timer-track { margin-top: 7px; }
+        .quiz-utility-row .lifeline-panel { padding: 5px; border-radius: 12px; }
+        .quiz-utility-row .lifeline-heading { gap: 4px; margin-bottom: 4px; }
+        .quiz-utility-row .lifeline-title { display: none; }
+        .quiz-utility-row .lifeline-use-count { padding: 3px 6px; font-size: 8px; }
+        .quiz-utility-row .lifeline-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 4px; }
+        .quiz-utility-row .lifeline-button { min-height: 52px; flex-direction: column; justify-content: center; gap: 2px; padding: 4px 2px; }
+        .quiz-utility-row .lifeline-symbol { width: 20px; height: 20px; flex-basis: 20px; border-radius: 6px; font-size: 12px; }
+        .quiz-utility-row .lifeline-copy { gap: 1px; justify-items: center; }
+        .quiz-utility-row .lifeline-name { font-size: 7px; line-height: 1.05; text-align: center; }
+        .quiz-utility-row .lifeline-cost { font-size: 7px; }
         .quiz-card { padding: 19px 16px 16px; border-radius: 19px; }
         .quiz-meta { grid-template-columns: auto 1fr auto; gap: 7px; }
         #quitButton { min-height: 33px; padding: 0 8px; font-size: 10px; }
@@ -1706,15 +1704,15 @@
         .quiz-actions { margin-top: 4px; padding-top: 13px; }
       }
       @media (max-height: 500px) and (orientation: landscape) {
-        body[data-view="game"] .game-sidebar { top: calc(env(safe-area-inset-top) + 76px); }
-        body[data-view="game"] .score-hud-card { padding: 7px 11px; }
-        body[data-view="game"] .score-hud-top { margin-bottom: 5px; }
-        body[data-view="game"] .score-hud-bottom { grid-template-columns: minmax(105px, .55fr) minmax(0, 1.45fr); gap: 6px; }
-        body[data-view="game"] .score-total .score-value { min-width: 52px; margin-top: 2px; padding: 4px 7px; font-size: 23px; }
-        body[data-view="game"] .game-coin-balance,
-        body[data-view="game"] #scoreCaption,
-        body[data-view="game"] #streakHint { display: none; }
-        body[data-view="game"] .quiz-utility-row { grid-template-columns: minmax(150px, .42fr) minmax(0, 1.58fr); gap: 8px; }
+        body[data-view="game"] .game-sidebar { top: calc(env(safe-area-inset-top) + 8px); }
+        body[data-view="game"] .game-sidebar {
+          grid-template-columns: auto minmax(0, 1fr);
+          grid-template-areas: "coins utility";
+          gap: 7px;
+          padding: 5px 7px;
+        }
+        body[data-view="game"] .game-coin-balance { min-height: 36px; padding: 4px 8px; }
+        body[data-view="game"] .quiz-utility-row { grid-template-columns: minmax(96px, .3fr) minmax(0, 1.7fr); gap: 6px; }
         body[data-view="game"] .quiz-utility-row .lifeline-panel { padding: 7px 9px; }
         body[data-view="game"] .quiz-utility-row .lifeline-rule,
         body[data-view="game"] #iqTimerNote { display: none; }
@@ -1733,8 +1731,6 @@
         body[data-view="game"] .language-select { min-width: 76px; width: 80px; }
         body[data-view="game"] .sound-toggle { font-size: 0; gap: 0; }
         body[data-view="game"] .sound-toggle svg { width: 17px; height: 17px; }
-        .score-live-tag { font-size: 8px; }
-        .score-level-chip { max-width: 72%; font-size: 9px; }
         #quitButton { gap: 4px; font-size: 9px; }
       }
       /* Cinematic welcome hub */
@@ -2629,6 +2625,12 @@
         body[data-view="welcome"] .category-grid::before,
         body[data-view="welcome"] .category-grid::after { animation: none !important; }
       }
+      @media (max-width: 365px) {
+        .quiz-utility-row { grid-template-columns: minmax(82px, .3fr) minmax(0, 1.7fr); gap: 5px; }
+        .quiz-utility-row .lifeline-button { min-height: 50px; }
+        .quiz-utility-row .lifeline-name { font-size: 6px; }
+        .quiz-utility-row .lifeline-cost { font-size: 6px; }
+      }
       @keyframes portalTitlePulse {
         0%, 100% { filter: drop-shadow(0 0 3px rgba(97, 190, 255, .1)); }
         50% { filter: drop-shadow(0 0 12px rgba(97, 190, 255, .26)); }
@@ -2974,32 +2976,12 @@
 
         <section class="view" id="gameView" aria-label="Quiz round">
           <div class="game-layout">
-            <!-- Sticky HUD groups the live score/coin card and the timer/lifelines in one glass panel. -->
-            <aside class="game-sidebar" aria-label="Round details">
-              <div class="side-card score-hud-card">
-                <div class="score-hud-top">
-                  <span class="score-level-chip" id="hudLevel">Level 1 · Question 1 of 10</span>
-                  <span class="score-live-tag"><span class="score-live-dot" aria-hidden="true"></span><span id="liveScoreLabel">LIVE</span></span>
-                </div>
-                <div class="score-hud-bottom">
-                  <div class="score-total">
-                    <div class="side-label" id="scoreLabel">Your score</div>
-                    <div class="score-value" id="scoreValue" aria-live="polite" aria-atomic="true">0</div>
-                    <div class="score-caption" id="scoreCaption">points so far</div>
-                  </div>
-                  <div class="score-metrics">
-                    <div class="side-detail"><span id="correctLabel">Correct</span><strong id="correctCount">0</strong></div>
-                    <div class="side-detail streak-detail"><span id="streakLabel">Streak</span><strong id="streakValue">0 · 1×</strong></div>
-                    <div class="side-detail"><span id="roundLabel">Round</span><strong id="roundLength">4 questions</strong></div>
-                    <div class="streak-hint" id="streakHint">3 in a row: 2× · 5: 3×</div>
-                  </div>
-                  <div class="combo-banner" id="comboBanner" hidden></div>
-                </div>
-                <div class="game-coin-balance" id="gameCoinBalanceChip" aria-label="Coin balance">
-                  <span aria-hidden="true">🪙</span>
-                  <span id="gameCoinLabel">Coins</span>
-                  <strong id="gameCoinBalance">0</strong>
-                </div>
+            <!-- Sticky game controls contain only the live coin vault, countdown, and tactical lifelines. -->
+            <aside class="game-sidebar" aria-label="Quiz controls">
+              <div class="game-coin-balance" id="gameCoinBalanceChip" aria-label="Coin balance">
+                <span aria-hidden="true">🪙</span>
+                <span id="gameCoinLabel">Coins</span>
+                <strong id="gameCoinBalance">0</strong>
               </div>
             <div class="quiz-utility-row" id="quizUtilityRow">
               <section class="iq-timer" id="iqTimer" hidden aria-label="Question timer">
@@ -3034,9 +3016,20 @@
                 <p class="lifeline-notice" id="lifelineNotice" role="status" aria-live="polite" hidden></p>
               </section>
             </div>
-              <div class="side-card">
-                <div class="orbit-mini" aria-hidden="true"><span class="mini-ring"></span><span class="mini-ring ring-two"></span><span class="mini-core"></span><span class="mini-orb"></span></div>
-                <div class="side-note"><strong id="sideNoteTitle">Stay curious.</strong><br><span id="sideNoteBody">Every answer is a new little fact to keep.</span></div>
+              <div class="game-score-state" aria-label="Score tracking">
+                <span id="hudLevel">Level 1 · Question 1 of 10</span>
+                <span id="liveScoreLabel">LIVE</span>
+                <span id="scoreLabel">Your score</span>
+                <span id="scoreValue" aria-live="polite" aria-atomic="true">0</span>
+                <span id="scoreCaption">points so far</span>
+                <span id="correctLabel">Correct</span>
+                <span id="correctCount">0</span>
+                <span id="streakLabel">Streak</span>
+                <span id="streakValue">0 · 1×</span>
+                <span id="roundLabel">Round</span>
+                <span id="roundLength">4 questions</span>
+                <span id="streakHint">3 in a row: 2× · 5: 3×</span>
+                <span id="comboBanner" hidden></span>
               </div>
             </aside>
             <article class="quiz-card" id="quizCard">
@@ -7542,8 +7535,6 @@
           streakLabel: "streak",
           streakHint: "streakHint",
           roundLabel: "round",
-          sideNoteTitle: "stayCurious",
-          sideNoteBody: "sideNote",
           finalCorrectLabel: "correct",
           finalAccuracyLabel: "accuracy",
           finalBestStreakLabel: "bestStreak",

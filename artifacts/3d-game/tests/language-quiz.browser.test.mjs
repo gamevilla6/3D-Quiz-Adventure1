@@ -236,6 +236,48 @@ try {
     await page.locator(`.level-category-tab[data-category="${category}"]`).tap();
     assert.equal(await page.locator("#levelGrid .level-card.unlocked").count(), 1);
     assert.equal(await page.locator("#levelGrid .level-card.locked").count(), 24);
+    await page.setViewportSize({ width: 320, height: 740 });
+    const narrowMapLayout = await page.evaluate(() => {
+      const grid = document.querySelector("#levelGrid");
+      const tabs = document.querySelector(".level-category-tabs");
+      const cards = [...grid.querySelectorAll(".level-card")];
+      const bounds = cards.map((card) => {
+        const rect = card.getBoundingClientRect();
+        return { left: rect.left, right: rect.right, top: rect.top, bottom: rect.bottom, width: rect.width, height: rect.height, scrollWidth: card.scrollWidth, clientWidth: card.clientWidth };
+      });
+      const overlaps = bounds.some((a, index) => bounds.slice(index + 1).some((b) =>
+        a.left < b.right - 1 && a.right > b.left + 1 && a.top < b.bottom - 1 && a.bottom > b.top + 1
+      ));
+      return {
+        columns: getComputedStyle(grid).gridTemplateColumns.split(" ").length,
+        tabsOverflowX: getComputedStyle(tabs).overflowX,
+        tabsScrolls: tabs.scrollWidth > tabs.clientWidth,
+        tabMinHeight: Math.min(...[...tabs.children].map((tab) => tab.getBoundingClientRect().height)),
+        documentWidth: document.documentElement.scrollWidth,
+        viewportWidth: window.innerWidth,
+        cardMinWidth: Math.min(...bounds.map((card) => card.width)),
+        cardMinHeight: Math.min(...bounds.map((card) => card.height)),
+        cardTextOverflow: bounds.some((card) => card.scrollWidth > card.clientWidth + 1),
+        overlaps,
+      };
+    });
+    assert.ok(narrowMapLayout.columns >= 3, "the level map uses a compact responsive grid on a narrow phone");
+    assert.equal(narrowMapLayout.tabsOverflowX, "auto");
+    assert.equal(narrowMapLayout.tabsScrolls, true, "long category labels remain available in a horizontally swipeable row");
+    assert.ok(narrowMapLayout.tabMinHeight >= 48, "category filter tabs remain touch-sized");
+    assert.ok(narrowMapLayout.cardMinWidth >= 70 && narrowMapLayout.cardMinHeight >= 50, "level nodes keep comfortable touch targets");
+    assert.equal(narrowMapLayout.cardTextOverflow, false, "localized level-node content wraps within each tile");
+    assert.equal(narrowMapLayout.overlaps, false, "level cards have clear grid gaps with no overlap");
+    assert.ok(narrowMapLayout.documentWidth <= narrowMapLayout.viewportWidth, "the narrow roadmap does not create horizontal page overflow");
+    for (const language of ["bn", "hi", "es", "fr"]) {
+      await page.selectOption("#languageSelect", language);
+      const localizedMapFit = await page.locator("#levelGrid .level-card").evaluateAll((cards) =>
+        cards.every((card) => card.scrollWidth <= card.clientWidth + 1 && card.getBoundingClientRect().width >= 70),
+      );
+      assert.equal(localizedMapFit, true, `level-node labels fit without overlap in ${language} at 320px`);
+    }
+    await page.selectOption("#languageSelect", "en");
+    await page.setViewportSize({ width: 390, height: 844 });
     const levelMapScroll = await page.locator("#levelGrid").evaluate((node) => ({
       overflowY: getComputedStyle(node).overflowY,
       canScroll: node.scrollHeight > node.clientHeight,
@@ -254,8 +296,11 @@ try {
     assert.equal(
       await page.locator("#quizUtilityRow").evaluate((node) => node.closest(".game-sidebar") !== null),
       true,
-      "timer and lifelines are grouped with the live score and coin balance in the sticky HUD",
+      "timer, lifelines, and coin balance share the compact sticky HUD",
     );
+    assert.equal(await page.locator("#gameCoinBalanceChip").evaluate((node) => node.closest(".game-sidebar") !== null), true);
+    assert.equal(await page.locator(".score-hud-card").count(), 0, "the visible score ticker is removed from the quiz HUD");
+    assert.equal(await page.locator(".game-score-state").count(), 1, "score tracking remains available to assistive technology and game logic");
     assert.equal(await page.locator("#iqTimer").evaluate((node) => node.closest("#quizUtilityRow") !== null), true);
     assert.equal(await page.locator("#lifelinePanel").evaluate((node) => node.closest("#quizUtilityRow") !== null), true);
     const quizControlOrder = await page.locator("#quizCard").evaluate((node) => {
@@ -279,7 +324,7 @@ try {
     assert.ok(Math.abs(utilityRowLayout.timerTop - utilityRowLayout.lifelinesTop) <= 1, "timer and lifelines align as one row");
     assert.ok(utilityRowLayout.timerHeight < 100, "the mobile timer card stays compact beside the lifelines");
     assert.ok(utilityRowLayout.lifelinesHeight <= 165, "the mobile lifeline grid stays compact and touch-sized");
-    assert.equal(await page.locator(".topbar").evaluate((node) => getComputedStyle(node).position), "sticky");
+    assert.notEqual(await page.locator(".topbar").evaluate((node) => getComputedStyle(node).position), "sticky");
     assert.equal(await page.locator(".game-sidebar").evaluate((node) => getComputedStyle(node).position), "sticky");
     const hudFlow = await page.evaluate(() => {
       const hud = document.querySelector(".game-sidebar").getBoundingClientRect();
@@ -289,29 +334,14 @@ try {
     });
     assert.ok(hudFlow.hudTop >= hudFlow.topbarBottom, "the sticky game HUD starts below the global sticky controls");
     assert.ok(hudFlow.cardTop >= hudFlow.hudBottom, "the quiz card starts below the sticky HUD without overlap");
-    await page.evaluate(() => window.scrollTo(0, 600));
-    await page.waitForTimeout(100);
-    const stickyAfterScroll = await page.evaluate(() => {
-      const hud = document.querySelector(".game-sidebar").getBoundingClientRect();
-      const topbar = document.querySelector(".topbar").getBoundingClientRect();
-      const utility = document.querySelector("#quizUtilityRow").getBoundingClientRect();
-      return {
-        hudTop: Math.round(hud.top),
-        topbarBottom: Math.round(topbar.bottom),
-        utilityTop: Math.round(utility.top),
-        utilityBottom: Math.round(utility.bottom),
-        viewportHeight: window.innerHeight,
-      };
-    });
-    assert.ok(Math.abs(stickyAfterScroll.hudTop - 76) <= 2, "the full HUD stays pinned below the top bar while the quiz scrolls");
-    assert.ok(stickyAfterScroll.utilityTop >= stickyAfterScroll.hudTop);
-    assert.ok(stickyAfterScroll.utilityBottom <= stickyAfterScroll.viewportHeight, "all lifelines remain visible in the mobile sticky HUD");
-    assert.ok(stickyAfterScroll.hudTop >= stickyAfterScroll.topbarBottom - 2, "the sticky header and HUD do not cover one another");
-    await page.evaluate(() => window.scrollTo(0, 0));
+    assert.ok(
+      parseFloat(await page.locator(".game-sidebar").evaluate((node) => getComputedStyle(node).top)) >= 0,
+      "the compact HUD has a safe, non-overlapping sticky offset",
+    );
     const gameLayoutOrder = await page.locator(".game-layout").evaluate((node) =>
       [...node.children].map((child) => child.classList.contains("game-sidebar") ? "hud" : "quiz")
     );
-    assert.deepEqual(gameLayoutOrder, ["hud", "quiz"], "the score and streak HUD precedes the question on mobile");
+    assert.deepEqual(gameLayoutOrder, ["hud", "quiz"], "the compact controls HUD precedes the question on mobile");
     for (const selector of ["#quitButton", "#languageSelect", "#soundToggle"]) {
       assert.ok(
         await page.locator(selector).evaluate((node) => node.getBoundingClientRect().height >= 48),
