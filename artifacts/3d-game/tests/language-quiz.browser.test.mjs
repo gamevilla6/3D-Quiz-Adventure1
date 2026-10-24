@@ -688,10 +688,17 @@ try {
     "all four lifelines are touch-sized",
   );
 
+  await lifelinePage.emulateMedia({ reducedMotion: "no-preference" });
   await lifelinePage.locator('[data-lifeline="fifty"]').tap();
+  assert.equal(await lifelinePage.locator(".option.is-eliminating").count(), 2, "50/50 animates the eliminated options away");
+  await lifelinePage.waitForFunction(() => document.querySelectorAll(".option[hidden]").length === 2);
   assert.equal(await lifelinePage.locator(".option:not([hidden])").count(), 2, "50/50 keeps the correct choice and one distractor");
   assert.equal(await lifelinePage.locator("#coinBalance").innerText(), "180");
   assert.equal(await lifelinePage.locator("#gameCoinBalance").innerText(), "180");
+  assert.equal(await lifelinePage.locator(".coin-popup.spent").last().innerText(), "−20 🪙", "lifeline spending shows a floating deduction");
+  const spentPopupBounds = await lifelinePage.locator(".coin-popup.spent").last().boundingBox();
+  const gameCoinBounds = await lifelinePage.locator("#gameCoinBalanceChip").boundingBox();
+  assert.ok(spentPopupBounds.x >= gameCoinBounds.x + gameCoinBounds.width - 1, "coin deductions float beside, not over, the balance");
   assert.equal(
     await lifelinePage.evaluate(() => JSON.parse(localStorage.getItem("quiz-orbit-reward-collection")).coins),
     180,
@@ -702,6 +709,11 @@ try {
   await lifelinePage.locator('[data-lifeline="freeze"]').tap();
   const frozenTimerValue = await lifelinePage.locator("#iqTimerValue").innerText();
   assert.equal(await lifelinePage.locator("#iqTimer").evaluate((node) => node.classList.contains("frozen")), true);
+  assert.notEqual(
+    await lifelinePage.locator("#iqTimerBar").evaluate((node) => getComputedStyle(node, "::after").backgroundImage),
+    "none",
+    "time freeze adds an animated matrix overlay to the timer track",
+  );
   await lifelinePage.waitForTimeout(1200);
   assert.equal(await lifelinePage.locator("#iqTimerValue").innerText(), frozenTimerValue, "time freeze pauses the visible countdown");
   assert.match(await lifelinePage.locator("#lifelineUseCount").innerText(), /2/);
@@ -734,6 +746,8 @@ try {
   assert.match(await lifelinePage.locator("#lifelineNotice").innerText(), /fresh question/i);
   assert.equal(await lifelinePage.locator("#lifelineUseCount").innerText(), "0/2 used", "the replacement question gets its own two-use allowance");
   await lifelinePage.locator('[data-lifeline="clue"]').tap();
+  assert.equal(await lifelinePage.locator("#lifelineNotice").evaluate((node) => node.classList.contains("is-typing")), true);
+  await lifelinePage.waitForFunction(() => !document.getElementById("lifelineNotice").classList.contains("is-typing"));
   const smartClue = await lifelinePage.locator("#lifelineNotice").innerText();
   assert.match(smartClue, /^Clue:/);
   assert.ok(

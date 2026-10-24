@@ -1498,19 +1498,58 @@
       }
       .iq-timer.frozen .iq-timer-heading span,
       .iq-timer.frozen .iq-timer-heading strong { color: #72f3e5; }
+      .iq-timer-track { position: relative; isolation: isolate; }
+      .iq-timer.frozen .iq-timer-track span {
+        background: linear-gradient(90deg, #67f5f0, #56bfff 58%, #9b83ff);
+        box-shadow: 0 0 14px rgba(71, 219, 255, .66);
+      }
+      .iq-timer.frozen .iq-timer-track::after {
+        position: absolute;
+        z-index: 1;
+        inset: 0;
+        background: repeating-linear-gradient(115deg, transparent 0 8px, rgba(165, 247, 255, .32) 8px 11px, transparent 11px 18px);
+        content: "";
+        pointer-events: none;
+        animation: freezeMatrixSweep 1.15s linear infinite;
+      }
+      @keyframes freezeMatrixSweep { to { background-position: 36px 0; } }
       .lifeline-panel {
+        position: relative;
+        isolation: isolate;
+        overflow: hidden;
         margin: 20px 0 2px;
         padding: 13px;
-        border: 1px solid rgba(149, 163, 239, .2);
+        border: 1px solid rgba(134, 186, 255, .28);
         border-radius: 17px;
-        background: linear-gradient(130deg, rgba(24, 30, 67, .72), rgba(22, 26, 56, .68));
+        background: linear-gradient(130deg, rgba(28, 42, 83, .78), rgba(25, 26, 65, .72));
+        box-shadow: 0 12px 32px rgba(4, 8, 28, .2), inset 0 1px rgba(255, 255, 255, .08);
+        backdrop-filter: blur(18px);
+        -webkit-backdrop-filter: blur(18px);
+        animation: lifelinePanelFloat 5s ease-in-out infinite;
       }
+      .lifeline-panel::before {
+        position: absolute;
+        z-index: -1;
+        inset: -40% 18% 20%;
+        background: radial-gradient(ellipse, rgba(83, 191, 255, .16), transparent 68%);
+        content: "";
+        pointer-events: none;
+        animation: lifelineAura 5s ease-in-out infinite alternate;
+      }
+      .lifeline-panel > * { position: relative; z-index: 1; }
+      @keyframes lifelinePanelFloat {
+        0%, 100% { box-shadow: 0 12px 32px rgba(4, 8, 28, .2), inset 0 1px rgba(255, 255, 255, .08); }
+        50% { box-shadow: 0 14px 36px rgba(4, 8, 28, .28), 0 0 18px rgba(85, 188, 255, .13), inset 0 1px rgba(255, 255, 255, .1); }
+      }
+      @keyframes lifelineAura { from { opacity: .45; transform: translateX(-5%); } to { opacity: .95; transform: translateX(5%); } }
       .lifeline-heading { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 8px; }
       .lifeline-title { color: #c4c1ff; font-size: 10px; font-weight: 850; letter-spacing: .1em; }
       .lifeline-use-count { padding: 5px 8px; border: 1px solid rgba(143, 154, 219, .22); border-radius: 999px; color: #dfe4ff; background: rgba(7, 12, 34, .55); font-size: 9px; font-weight: 750; white-space: nowrap; }
       .lifeline-rule { margin: 0 0 10px; color: #aab3d3; font-size: 10px; line-height: 1.4; }
       .lifeline-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
       .lifeline-button {
+        position: relative;
+        overflow: hidden;
         display: flex;
         min-width: 0;
         min-height: 60px;
@@ -1522,8 +1561,14 @@
         border-radius: 13px;
         background: linear-gradient(145deg, rgba(35, 43, 83, .9), rgba(19, 25, 55, .94));
         text-align: left;
-        transition: transform .16s ease, border-color .16s ease, opacity .16s ease, filter .16s ease;
+        transition: transform .18s ease, border-color .18s ease, opacity .22s ease, filter .22s ease, box-shadow .18s ease, background .18s ease;
       }
+      .lifeline-button:not(:disabled):not(.is-used) .lifeline-symbol { animation: lifelineReadyPulse 2.6s ease-in-out infinite; }
+      .lifeline-button[data-lifeline="fifty"]:hover:not(:disabled) { background: linear-gradient(145deg, rgba(44, 76, 113, .98), rgba(22, 34, 74, .98)); }
+      .lifeline-button[data-lifeline="freeze"]:hover:not(:disabled) { border-color: rgba(90, 212, 255, .84); box-shadow: 0 0 22px rgba(66, 174, 255, .2); }
+      .lifeline-button[data-lifeline="clue"]:hover:not(:disabled) { border-color: rgba(255, 218, 113, .78); box-shadow: 0 0 22px rgba(255, 198, 80, .16); }
+      .lifeline-button[data-lifeline="skip"]:hover:not(:disabled) { border-color: rgba(255, 129, 171, .78); box-shadow: 0 0 22px rgba(255, 97, 151, .16); }
+      @keyframes lifelineReadyPulse { 0%, 100% { box-shadow: 0 0 0 rgba(96, 221, 255, 0); } 50% { box-shadow: 0 0 12px rgba(96, 221, 255, .26); } }
       .lifeline-symbol { display: grid; width: 32px; height: 32px; flex: 0 0 32px; place-items: center; border-radius: 10px; color: #fff; background: rgba(91, 218, 222, .19); font-size: 16px; font-weight: 850; }
       .lifeline-copy { display: grid; min-width: 0; gap: 3px; }
       .lifeline-name { color: #f3f4ff; font-size: 10px; font-weight: 780; line-height: 1.2; }
@@ -1540,6 +1585,23 @@
       .lifeline-notice { margin: 9px 0 0; padding: 8px 10px; border-left: 3px solid #79e6dd; border-radius: 0 9px 9px 0; color: #e5ecff; background: rgba(45, 64, 108, .42); font-size: 11px; line-height: 1.45; }
       .lifeline-notice[hidden] { display: none; }
       .lifeline-notice[data-kind="hint"] { border-left-color: #ffd36e; color: #fff2c2; }
+      .lifeline-notice.is-typing { border-left-color: #6ce7ff; color: #ddfbff; text-shadow: 0 0 12px rgba(82, 218, 255, .26); }
+      .lifeline-notice.is-typing::after { display: inline-block; margin-left: 4px; color: #73efff; content: "▌"; animation: lifelineCaret .72s steps(2, jump-none) infinite; }
+      @keyframes lifelineCaret { 50% { opacity: 0; } }
+      .option.is-eliminating { pointer-events: none; animation: optionDissolve .34s cubic-bezier(.35, 0, .8, .35) forwards; }
+      @keyframes optionDissolve {
+        0% { opacity: 1; filter: blur(0) saturate(1); transform: translateX(0) scale(1); }
+        45% { opacity: .8; filter: blur(1px) saturate(1.7); transform: translateX(4px) scale(.99); }
+        100% { opacity: 0; filter: blur(7px) saturate(2); transform: translateX(18px) scale(.94); }
+      }
+      .coin-popup.spent { color: #ffdc67; text-shadow: 0 2px 2px rgba(55, 30, 0, .8), 0 0 24px rgba(255, 212, 73, .88); }
+      @media (prefers-reduced-motion: reduce) {
+        .lifeline-panel, .lifeline-panel::before,
+        .lifeline-button:not(:disabled):not(.is-used) .lifeline-symbol,
+        .iq-timer.frozen .iq-timer-track::after,
+        .lifeline-notice.is-typing::after { animation: none !important; }
+        .option.is-eliminating { animation: none !important; }
+      }
       @media (max-width: 650px) {
         .lifeline-panel { margin-top: 15px; padding: 10px; }
         .lifeline-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 7px; }
@@ -4812,6 +4874,9 @@
       let timerFreezeRemainingSeconds = 0;
       let lifelinesUsedThisQuestion = new Set();
       let lifelineFeedbackType = "";
+      let lifelineHintAnimationPending = false;
+      let lifelineTypingTimeout = null;
+      let lifelineTypingToken = 0;
       let lastAnswerTimedOut = false;
       let lastAnswerInterrupted = false;
       let focusLossGraceTimeout = null;
@@ -4948,18 +5013,24 @@
       function spawnCoinPopup(amount, target = null, direction = "earned") {
         if (!amount) return;
         // Anchor the transient coin animation to the HUD without shifting the question or result layout.
-        const anchor = target ||
-          (views.game.classList.contains("active")
-            ? document.getElementById("gameCoinBalanceChip")
-            : document.getElementById("coinBalanceChip"));
+        const gameAnchor = document.getElementById("gameCoinBalanceChip");
+        const homeAnchor = document.getElementById("coinBalanceChip");
+        const fallbackAnchor = views.game.classList.contains("active")
+          ? (gameAnchor?.getClientRects().length ? gameAnchor : homeAnchor)
+          : homeAnchor;
+        const anchor = target?.getClientRects().length ? target : fallbackAnchor;
         const rect = anchor?.getBoundingClientRect();
         const popup = document.createElement("span");
         popup.className = `coin-popup${direction === "spent" ? " spent" : ""}`;
         popup.textContent = `${direction === "spent" ? "−" : "+"}${formatNumber(amount)} 🪙`;
-        popup.style.left = `${Math.max(64, Math.min(window.innerWidth - 64, rect ? rect.left + rect.width / 2 : window.innerWidth / 2))}px`;
-        popup.style.top = `${Math.max(48, rect ? rect.top + rect.height / 2 : window.innerHeight / 2)}px`;
         const layer = document.getElementById("coinPopupLayer");
         layer.append(popup);
+        const popupWidth = popup.getBoundingClientRect().width;
+        const desiredCenter = direction === "spent" && rect
+          ? rect.right + popupWidth / 2 + 10
+          : rect ? rect.left + rect.width / 2 : window.innerWidth / 2;
+        popup.style.left = `${Math.max(popupWidth / 2 + 8, Math.min(window.innerWidth - popupWidth / 2 - 8, desiredCenter))}px`;
+        popup.style.top = `${Math.max(48, rect ? rect.top + rect.height / 2 : window.innerHeight / 2)}px`;
         popup.addEventListener("animationend", () => popup.remove(), { once: true });
         window.setTimeout(() => popup.remove(), 1300);
       }
@@ -5071,6 +5142,49 @@
         renderQuestionTimer();
       }
 
+      function renderLifelineNotice(message, messageKind = "", typewriter = false) {
+        if (lifelineTypingTimeout) {
+          window.clearTimeout(lifelineTypingTimeout);
+          lifelineTypingTimeout = null;
+        }
+        const token = ++lifelineTypingToken;
+        lifelineNoticeElement.dataset.kind = messageKind;
+        lifelineNoticeElement.hidden = !message;
+        lifelineNoticeElement.classList.remove("is-typing");
+        lifelineNoticeElement.setAttribute("aria-busy", "false");
+        if (!message) {
+          lifelineNoticeElement.textContent = "";
+          return;
+        }
+
+        const reducedMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+        if (!typewriter || reducedMotion) {
+          lifelineNoticeElement.textContent = message;
+          return;
+        }
+
+        // Hint text uses a short terminal-style reveal; reduced-motion users see the
+        // complete clue immediately, and locale changes cancel the current animation.
+        const glyphs = Array.from(message);
+        let visibleGlyphs = 0;
+        lifelineNoticeElement.textContent = "";
+        lifelineNoticeElement.classList.add("is-typing");
+        lifelineNoticeElement.setAttribute("aria-busy", "true");
+        const revealNextChunk = () => {
+          if (token !== lifelineTypingToken || !lifelineNoticeElement.isConnected) return;
+          visibleGlyphs = Math.min(glyphs.length, visibleGlyphs + 2);
+          lifelineNoticeElement.textContent = glyphs.slice(0, visibleGlyphs).join("");
+          if (visibleGlyphs < glyphs.length) {
+            lifelineTypingTimeout = window.setTimeout(revealNextChunk, 18);
+          } else {
+            lifelineTypingTimeout = null;
+            lifelineNoticeElement.classList.remove("is-typing");
+            lifelineNoticeElement.setAttribute("aria-busy", "false");
+          }
+        };
+        revealNextChunk();
+      }
+
       function updateLifelinePanel() {
         if (!lifelinePanel) return;
         const copy = lifelineTranslations[currentLanguage] || lifelineTranslations.en;
@@ -5135,9 +5249,9 @@
         } else if (lifelineFeedbackType === "noReplacement") {
           message = copy.noReplacement;
         }
-        lifelineNoticeElement.textContent = message;
-        lifelineNoticeElement.dataset.kind = messageKind;
-        lifelineNoticeElement.hidden = !message;
+        const shouldTypeHint = messageKind === "hint" && lifelineHintAnimationPending;
+        lifelineHintAnimationPending = false;
+        renderLifelineNotice(message, messageKind, shouldTypeHint);
       }
 
       function resetLifelineState() {
@@ -5145,11 +5259,12 @@
         // rerenders preserve this Set, so switching languages cannot reset the cap.
         lifelinesUsedThisQuestion = new Set();
         lifelineFeedbackType = "";
+        lifelineHintAnimationPending = false;
         timerFreezeUntil = 0;
         timerFreezeRemainingSeconds = 0;
       }
 
-      function applyFiftyFiftyChoices() {
+      function applyFiftyFiftyChoices(animate = true) {
         const correctIndex = readConcealedAnswer(roundQuestions()[currentQuestion]);
         const wrongIndexes = [0, 1, 2, 3].filter((index) => index !== correctIndex);
         for (let index = wrongIndexes.length - 1; index > 0; index -= 1) {
@@ -5157,12 +5272,28 @@
           [wrongIndexes[index], wrongIndexes[swapIndex]] = [wrongIndexes[swapIndex], wrongIndexes[index]];
         }
         const eliminated = new Set(wrongIndexes.slice(0, 2));
+        const reducedMotion = !animate || window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
         optionsElement.querySelectorAll(".option").forEach((button, index) => {
-          button.hidden = eliminated.has(index);
-          if (button.hidden) {
+          if (eliminated.has(index)) {
             button.disabled = true;
             button.setAttribute("aria-hidden", "true");
             button.tabIndex = -1;
+            if (reducedMotion) {
+              button.hidden = true;
+            } else {
+              button.classList.add("is-eliminating");
+              window.setTimeout(() => {
+                if (!button.isConnected) return;
+                button.hidden = true;
+                button.classList.remove("is-eliminating");
+              }, 360);
+            }
+          } else {
+            button.hidden = false;
+            button.classList.remove("is-eliminating");
+            button.disabled = answered;
+            button.removeAttribute("aria-hidden");
+            button.tabIndex = 0;
           }
         });
       }
@@ -5226,6 +5357,7 @@
         } else if (id === "clue") {
           // A localized, category-specific clue gives context without exposing an answer.
           lifelineFeedbackType = "clue";
+          lifelineHintAnimationPending = true;
         } else if (id === "skip") {
           // Replace this round slot with an unused pool entry, keeping ten questions
           // in the level and leaving score/correct-answer totals unchanged.
@@ -6299,7 +6431,7 @@
           button.addEventListener("click", () => selectAnswer(index));
           optionsElement.append(button);
         });
-        if (lifelinesUsedThisQuestion.has("fifty")) applyFiftyFiftyChoices();
+        if (lifelinesUsedThisQuestion.has("fifty")) applyFiftyFiftyChoices(false);
         updateLifelinePanel();
         feedback.className = "feedback";
         feedback.textContent = currentText.chooseAnswer;
