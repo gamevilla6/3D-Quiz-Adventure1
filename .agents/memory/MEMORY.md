@@ -3,3 +3,4 @@
 - [Lifeline motion stability](lifeline-animation-stability.md) — Keep idle animation off interactive hitboxes; replay persistent effects immediately after locale rerenders.
 - [Mobile scroll assertions](mobile-scroll-test-quirk.md) — In mobile browser tests, measure actual scrolling before asserting sticky HUD positions; requested offsets may not be reached.
 - [Minimal active quiz screen](minimal-quiz-screen.md) — Keep live play limited to timer/lifelines/coins, question, and choices; advance automatically after a brief answer reveal.
+- [Full-scroll level roadmap](level-map-design.md) — Show all 500 levels in one touch-scrollable grid with compact category tabs and unambiguous state markers.

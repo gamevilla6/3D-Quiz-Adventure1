@@ -229,6 +229,8 @@ try {
       "true",
       "the current mode is selected in the roadmap filters",
     );
+    assert.equal(await page.locator("#levelGrid .level-card").count(), 500, "all 500 levels are rendered in the scrollable roadmap");
+    assert.equal(await page.locator(".level-pagination").count(), 0, "the map has no extra page-navigation controls");
     assert.ok(
       await page.locator(".level-category-tabs").evaluate((node) => getComputedStyle(node).overflowX === "auto"),
       "category filters remain horizontally swipeable on mobile",
@@ -242,7 +244,7 @@ try {
     );
     await page.locator(`.level-category-tab[data-category="${category}"]`).tap();
     assert.equal(await page.locator("#levelGrid .level-card.unlocked").count(), 1);
-    assert.equal(await page.locator("#levelGrid .level-card.locked").count(), 24);
+    assert.equal(await page.locator("#levelGrid .level-card.locked").count(), 499);
     await page.setViewportSize({ width: 320, height: 740 });
     const narrowMapLayout = await page.evaluate(() => {
       const grid = document.querySelector("#levelGrid");
@@ -273,7 +275,7 @@ try {
     assert.equal(narrowMapLayout.tabsOverflowX, "auto");
     assert.equal(narrowMapLayout.tabsScrolls, true, "long category labels remain available in a horizontally swipeable row");
     assert.ok(narrowMapLayout.tabMinHeight >= 48, "category filter tabs remain touch-sized");
-    assert.equal(narrowMapLayout.columnGap, "12px", "level nodes keep a consistent separation across viewport sizes");
+    assert.equal(narrowMapLayout.columnGap, "14px", "level nodes keep a consistent separation across viewport sizes");
     assert.ok(narrowMapLayout.cardMinWidth >= 65 && narrowMapLayout.cardMinHeight >= 55, "level nodes exceed the minimum touch target");
     assert.equal(narrowMapLayout.cardTextOverflow, false, "localized level-node content wraps within each tile");
     assert.equal(narrowMapLayout.overlaps, false, "level cards have clear grid gaps with no overlap");
@@ -293,8 +295,7 @@ try {
     }));
     assert.equal(levelMapScroll.overflowY, "auto");
     assert.equal(levelMapScroll.canScroll, true, "the touch level map has its own scrollable area");
-    const pageButtonHeight = await page.locator("#levelNextButton").evaluate((node) => node.getBoundingClientRect().height);
-    assert.ok(pageButtonHeight >= 48, "level map navigation uses a touch-sized target");
+    assert.equal(await page.locator(".level-intro").count(), 0, "the roadmap has no oversized intro banner");
     await page.locator("#levelGrid").evaluate((node) => { node.scrollTop = 120; });
     assert.ok(await page.locator("#levelGrid").evaluate((node) => node.scrollTop > 0), "level cards scroll vertically on touch screens");
     await page.locator("#levelGrid").evaluate((node) => { node.scrollTop = 0; });
@@ -414,7 +415,7 @@ try {
   await page.locator("#startGameButton").click();
   assert.equal(await page.locator("#levelGrid .level-card.completed").count(), 1);
   assert.equal(await page.locator("#levelGrid .level-card.unlocked").count(), 1);
-  assert.equal(await page.locator("#levelGrid .level-card.locked").count(), 23);
+  assert.equal(await page.locator("#levelGrid .level-card.locked").count(), 498);
   assert.notEqual(
     await page.locator("#levelGrid .level-card.locked").first().getAttribute("disabled"),
     null,
@@ -423,7 +424,7 @@ try {
   await page.locator('.category[data-category="General Knowledge"]').click();
   await page.locator("#startGameButton").click();
   assert.equal(await page.locator("#levelGrid .level-card.unlocked").count(), 1, "science progress does not unlock General Knowledge levels");
-  assert.equal(await page.locator("#levelGrid .level-card.locked").count(), 24);
+  assert.equal(await page.locator("#levelGrid .level-card.locked").count(), 499);
   await page.evaluate((key) => localStorage.removeItem(key), scienceProgressKey);
   await page.reload({ waitUntil: "domcontentloaded" });
   await page.evaluate(() => localStorage.setItem("quiz-orbit-reward-collection", JSON.stringify({
@@ -434,7 +435,7 @@ try {
   await page.locator('.category[data-category="Science & Technology"]').click();
   await page.locator("#startGameButton").click();
   assert.equal(await page.locator("#levelGrid .level-card.unlocked").count(), 1);
-  assert.equal(await page.locator("#levelGrid .level-card.locked").count(), 24);
+  assert.equal(await page.locator("#levelGrid .level-card.locked").count(), 499);
   assert.notEqual(
     await page.locator('.level-card[data-level="2"]').getAttribute("disabled"),
     null,
@@ -683,7 +684,7 @@ try {
   await page.locator("#startGameButton").tap();
   assert.equal(await page.locator("#levelGrid .level-card.completed").count(), 1);
   assert.equal(await page.locator("#levelGrid .level-card.unlocked").count(), 1);
-  assert.equal(await page.locator("#levelGrid .level-card.locked").count(), 23);
+  assert.equal(await page.locator("#levelGrid .level-card.locked").count(), 498);
   assert.equal(await page.locator('.level-card.completed[data-level="1"] .level-card-stars').innerText(), "★★★");
   assert.equal(await page.locator('.level-card.completed[data-level="1"] .level-card-coins').innerText(), "+৫০ 🪙");
   assert.equal(await page.locator('.level-card.completed[data-level="1"] .level-card-indicator').innerText(), "🏆");

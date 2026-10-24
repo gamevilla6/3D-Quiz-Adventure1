@@ -1125,29 +1125,44 @@
       }
       .streak-hint { margin-top: 5px; color: #dfd8f9; font-size: 9px; font-weight: 650; letter-spacing: .01em; }
       [hidden] { display: none !important; }
-      .level-selection { padding: clamp(26px, 5vh, 54px) 0 48px; }
-      .level-shell { max-width: 920px; margin: 0 auto; }
-      .level-intro {
-        padding: clamp(24px, 4vw, 38px);
-        color: #fff;
-        border: 1px solid rgba(255,255,255,.28);
-        border-radius: 25px;
-        background: linear-gradient(125deg, #38217c, #6542df 55%, #315dff);
-        box-shadow: 0 18px 40px rgba(68,49,170,.23);
-        text-align: center;
+      /* Keep the roadmap header small so the map and category controls dominate this screen. */
+      .level-selection { padding: clamp(10px, 2vh, 20px) 0 28px; }
+      .level-shell { max-width: 1120px; margin: 0 auto; }
+      .level-toolbar {
+        display: grid;
+        grid-template-columns: 48px minmax(0, 1fr) auto;
+        align-items: center;
+        gap: 10px;
+        margin: 0 0 12px;
       }
-      .level-intro .eyebrow { color: #ffe476; }
-      .level-intro h1 { margin: 10px 0 8px; font-size: clamp(29px, 5vw, 42px); line-height: 1.08; font-weight: 900; letter-spacing: -.045em; }
-      .level-intro p:last-child { max-width: 540px; margin: 0 auto; color: #f0edff; font-size: 14px; line-height: 1.6; }
-      .level-toolbar { display: flex; justify-content: space-between; align-items: center; gap: 14px; margin: 22px 0 13px; }
-      .level-count { padding: 8px 12px; color: #453188; border: 1px solid #dbd2ff; border-radius: 99px; background: #fff; font-size: 11px; font-weight: 800; }
+      .level-back-button {
+        display: grid;
+        width: 48px;
+        height: 48px;
+        place-items: center;
+        color: #fff;
+        border: 1px solid rgba(255,255,255,.3);
+        border-radius: 15px;
+        background: rgba(20,14,58,.45);
+        font: inherit;
+        font-size: 24px;
+        font-weight: 800;
+        cursor: pointer;
+      }
+      .level-back-button:hover { background: rgba(80,58,173,.68); }
+      .level-title { min-width: 0; margin: 0; color: #fff; font-size: clamp(22px, 4vw, 30px); line-height: 1.08; font-weight: 900; letter-spacing: -.035em; }
+      .level-count { justify-self: end; max-width: 100%; padding: 8px 11px; color: #33245e; border: 1px solid rgba(255,255,255,.64); border-radius: 99px; background: rgba(255,255,255,.94); font-size: 11px; line-height: 1.15; font-weight: 850; text-align: center; font-variant-numeric: tabular-nums; }
+      body[data-view="levels"] .top-note,
+      body[data-view="levels"] #coinBalanceChip,
+      body[data-view="levels"] #soundToggle { display: none !important; }
+      body[data-view="levels"] .topbar-actions { gap: 0; }
       /* Filter tabs keep their intrinsic labels and swipe horizontally instead of compressing on phones. */
       .level-category-tabs {
         width: 100%;
         max-width: 100%;
         display: flex;
-        gap: 9px;
-        margin: 0 0 14px;
+        gap: 8px;
+        margin: 0 0 10px;
         padding: 3px 2px 9px;
         overflow-x: auto;
         overscroll-behavior-x: contain;
@@ -1180,15 +1195,20 @@
         background: linear-gradient(120deg, #fff08c, #ffbd55);
         box-shadow: 0 5px 18px rgba(255,205,87,.24);
       }
-      /* The roadmap auto-fills 65px-minimum columns; global border-box sizing keeps gaps and padding inside the viewport. */
+      /* The roadmap uses readable 78px-minimum columns; border-box sizing keeps gaps and padding inside the viewport. */
+      /* Every level is present in one touch-scrollable roadmap; 14px gaps separate all node states. */
       .level-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(min(100%, 65px), 1fr));
-        grid-auto-rows: minmax(112px, auto);
-        gap: 12px;
+        grid-template-columns: repeat(auto-fill, minmax(min(100%, 78px), 1fr));
+        grid-auto-rows: minmax(96px, auto);
+        gap: 14px;
         width: 100%;
         min-width: 0;
-        max-height: min(65vh, 700px);
+        max-height: min(68svh, 720px);
+        padding: clamp(8px, 1.6vw, 14px);
+        border: 1px solid rgba(255,255,255,.18);
+        border-radius: 20px;
+        background: rgba(12,9,38,.28);
         overflow-y: auto;
         overscroll-behavior: contain;
         /* Native momentum scrolling keeps the 500-level roadmap swipeable on iOS and Android. */
@@ -1199,18 +1219,19 @@
       }
       .level-card {
         min-width: 0;
-        min-height: 112px;
+        min-height: 96px;
         padding: clamp(8px, 1.6vw, 13px);
         display: flex;
-        align-items: flex-start;
+        align-items: center;
         flex-direction: column;
-        gap: clamp(4px, .9vw, 8px);
+        justify-content: space-between;
+        gap: 4px;
         color: #fff;
         border: 1px solid rgba(255,255,255,.48);
         border-radius: 20px;
         background: linear-gradient(145deg, #7350e8, #3e5dff);
         box-shadow: 0 6px 0 rgba(67,50,157,.2), 0 14px 22px rgba(68,58,173,.12);
-        text-align: left;
+        text-align: center;
         font: inherit;
         cursor: pointer;
         overflow-wrap: anywhere;
@@ -1222,14 +1243,12 @@
       .level-card.unlocked { border-color: rgba(255,225,102,.9); box-shadow: 0 6px 0 rgba(67,50,157,.2), 0 14px 24px rgba(68,58,173,.2), 0 0 0 2px rgba(255,225,102,.16); }
       .level-card.completed { background: linear-gradient(145deg, #078b71, #16b894); box-shadow: 0 6px 0 rgba(6,103,82,.23), 0 14px 22px rgba(19,143,116,.13); }
       .level-card.locked { color: #5e5b70; border-color: #e2dff0; background: linear-gradient(145deg, #f7f6fb, #e6e5ef); box-shadow: 0 5px 0 rgba(77,69,111,.1); cursor: not-allowed; }
-      .level-card-number { color: inherit; font-size: clamp(17px, 3.2vw, 23px); line-height: 1; font-weight: 900; letter-spacing: -.04em; }
-      .level-card-name { max-width: 100%; color: inherit; font-size: clamp(9px, 1.45vw, 12px); line-height: 1.15; font-weight: 850; overflow-wrap: anywhere; }
-      .level-card-detail { max-width: 100%; color: inherit; font-size: clamp(8px, 1.2vw, 10px); line-height: 1.2; font-weight: 650; opacity: .86; overflow-wrap: anywhere; }
+      .level-card-number { color: inherit; font-size: clamp(20px, 3.2vw, 25px); line-height: 1; font-weight: 900; letter-spacing: -.04em; }
       .level-card-rewardline {
         display: flex;
         flex-wrap: wrap;
         align-items: center;
-        justify-content: flex-start;
+        justify-content: center;
         gap: 4px 7px;
         width: 100%;
         min-width: 0;
@@ -1241,12 +1260,9 @@
       }
       .level-card-stars { color: #fff0a3; letter-spacing: .06em; white-space: nowrap; }
       .level-card-coins { color: #fff5bb; white-space: nowrap; }
-      .level-card-status { display: inline-flex; min-width: 0; min-height: 28px; align-items: center; gap: 5px; margin-top: auto; align-self: stretch; padding: 4px 6px; border-radius: 10px; background: rgba(21,15,61,.24); font-size: clamp(8px, 1.15vw, 10px); line-height: 1.1; font-weight: 850; overflow-wrap: anywhere; }
-      .level-card-indicator { display: grid; width: 18px; height: 18px; flex: 0 0 18px; place-items: center; border-radius: 50%; background: rgba(255,255,255,.2); font-size: 12px; line-height: 1; }
-      .level-pagination { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 12px; margin-top: 18px; padding: 12px; border: 1px solid rgba(255,255,255,.15); border-radius: 16px; background: rgba(18,12,57,.28); }
-      .level-pagination .secondary-button { min-height: 38px; padding: 0 13px; font-size: 12px; }
-      .level-pagination .secondary-button:disabled { opacity: .45; cursor: not-allowed; }
-      .level-page-label { min-width: 120px; color: #fff; text-align: center; font-size: 12px; font-weight: 850; font-variant-numeric: tabular-nums; }
+      .level-card-status { display: flex; min-width: 0; min-height: 38px; align-items: center; justify-content: center; flex-direction: column; gap: 2px; align-self: stretch; padding: 4px; border-radius: 11px; background: rgba(21,15,61,.24); font-size: clamp(8px, 1.15vw, 10px); line-height: 1.1; font-weight: 850; text-align: center; overflow-wrap: normal; }
+      .level-card-state-label { display: block; max-width: 100%; word-break: normal; overflow-wrap: normal; }
+      .level-card-indicator { display: grid; width: 20px; height: 20px; flex: 0 0 20px; place-items: center; border-radius: 50%; background: rgba(255,255,255,.2); font-size: 13px; line-height: 1; }
       .level-card.locked .level-card-status { background: rgba(59,55,83,.1); }
       .level-card.locked .level-card-indicator { background: #d8d6e1; filter: grayscale(1); }
       .result-level-label { margin: 6px 0 0; color: #ffe778; font-size: 13px; font-weight: 850; }
@@ -1271,7 +1287,8 @@
         .result-actions > button { flex: 1 1 auto; }
       }
       @media (max-width: 390px) {
-        .level-toolbar { align-items: flex-start; flex-direction: column; }
+        .level-toolbar { grid-template-columns: 48px minmax(0, 1fr); }
+        .level-count { grid-column: 2; justify-self: start; margin-top: -4px; }
       }
       /* Focused quiz HUD: cinematic glass panels, with the existing game controls
          kept in place so scoring, localization, and answer handlers stay unchanged. */
@@ -2127,7 +2144,6 @@
         .language-select, .sound-toggle, .secondary-button, .primary-button,
         .start-button, .text-button, .collection-open-button,
         .rewards-close-button { min-height: 48px; }
-        .level-pagination .secondary-button { min-height: 48px; }
         body[data-view="welcome"] .language-select,
         body[data-view="welcome"] .sound-toggle { min-height: 48px; }
         body[data-view="game"] .language-select,
@@ -2992,22 +3008,16 @@
 
         <section class="view level-selection" id="levelView" aria-labelledby="levelTitle">
           <div class="level-shell">
-            <div class="level-intro">
-              <p class="eyebrow" id="levelEyebrow">General Knowledge · progression</p>
-              <h1 id="levelTitle">Choose a level</h1>
-              <p id="levelDescription">Answer at least 6 of 10 correctly to unlock the next level.</p>
-            </div>
             <div class="level-toolbar">
-              <button class="secondary-button" type="button" id="levelBackButton"><span id="levelBackLabel">Back to subjects</span></button>
+              <button class="level-back-button" type="button" id="levelBackButton" aria-labelledby="levelBackLabel">
+                <span aria-hidden="true">←</span>
+                <span class="visually-hidden" id="levelBackLabel">Back to subjects</span>
+              </button>
+              <h1 class="level-title" id="levelTitle">Choose a level</h1>
               <span class="level-count" id="levelCountLabel" aria-live="polite"></span>
             </div>
             <div class="level-category-tabs" id="levelCategoryTabs" role="tablist" aria-label="Filter level map by category"></div>
             <div class="level-grid" id="levelGrid" role="group" aria-label="Choose a level"></div>
-            <nav class="level-pagination" aria-label="Level map pages">
-              <button class="secondary-button" type="button" id="levelPreviousButton"><span aria-hidden="true">← </span><span id="levelPreviousLabel">Previous page</span></button>
-              <span class="level-page-label" id="levelPageLabel" aria-live="polite">Page 1 of 20</span>
-              <button class="secondary-button" type="button" id="levelNextButton"><span id="levelNextLabel">Next page</span><span aria-hidden="true"> →</span></button>
-            </nav>
           </div>
         </section>
 
@@ -3239,12 +3249,8 @@
           netPoints: "net points",
           liveScore: "LIVE",
           levelSelectTitle: "Choose a level",
-          levelSelectDescription: "Answer at least 6 of 10 correctly to unlock the next level.",
           levelCategoryFilter: "Filter levels by category",
           levelProgress: "{unlocked} of {total} levels unlocked",
-          levelPreviousPage: "Previous page",
-          levelNextPage: "Next page",
-          levelPageStatus: "Page {page} of {pages}",
           levelBack: "Back to modes",
           levelNumber: "Level {level}",
           levelUnlocked: "Unlocked",
@@ -3441,12 +3447,8 @@
           netPoints: "নেট পয়েন্ট",
           liveScore: "লাইভ",
           levelSelectTitle: "একটি লেভেল বেছে নিন",
-          levelSelectDescription: "পরের লেভেল খুলতে ১০টির মধ্যে অন্তত ৬টি সঠিক উত্তর দিন।",
           levelCategoryFilter: "বিভাগ অনুযায়ী লেভেল দেখুন",
           levelProgress: "{total}টির মধ্যে {unlocked}টি লেভেল খোলা",
-          levelPreviousPage: "আগের পৃষ্ঠা",
-          levelNextPage: "পরের পৃষ্ঠা",
-          levelPageStatus: "{pages}টির মধ্যে {page} পৃষ্ঠা",
           levelBack: "মোড বাছাইয়ে ফিরুন",
           levelNumber: "লেভেল {level}",
           levelUnlocked: "খোলা",
@@ -3643,12 +3645,8 @@
           netPoints: "शुद्ध अंक",
           liveScore: "लाइव",
           levelSelectTitle: "एक स्तर चुनें",
-          levelSelectDescription: "अगला स्तर खोलने के लिए 10 में से कम से कम 6 सही जवाब दें।",
           levelCategoryFilter: "श्रेणी के अनुसार स्तर फ़िल्टर करें",
           levelProgress: "{total} में से {unlocked} स्तर खुले",
-          levelPreviousPage: "पिछला पृष्ठ",
-          levelNextPage: "अगला पृष्ठ",
-          levelPageStatus: "{pages} में से पृष्ठ {page}",
           levelBack: "मोड चुनने पर लौटें",
           levelNumber: "स्तर {level}",
           levelUnlocked: "खुला",
@@ -3845,12 +3843,8 @@
           netPoints: "puntos netos",
           liveScore: "EN VIVO",
           levelSelectTitle: "Elige un nivel",
-          levelSelectDescription: "Acierta al menos 6 de 10 para desbloquear el siguiente nivel.",
           levelCategoryFilter: "Filtrar niveles por categoría",
           levelProgress: "{unlocked} de {total} niveles desbloqueados",
-          levelPreviousPage: "Página anterior",
-          levelNextPage: "Página siguiente",
-          levelPageStatus: "Página {page} de {pages}",
           levelBack: "Volver a los modos",
           levelNumber: "Nivel {level}",
           levelUnlocked: "Desbloqueado",
@@ -4047,12 +4041,8 @@
           netPoints: "points nets",
           liveScore: "EN DIRECT",
           levelSelectTitle: "Choisissez un niveau",
-          levelSelectDescription: "Répondez correctement à au moins 6 questions sur 10 pour débloquer le niveau suivant.",
           levelCategoryFilter: "Filtrer les niveaux par catégorie",
           levelProgress: "{unlocked}/{total} niveaux débloqués",
-          levelPreviousPage: "Page précédente",
-          levelNextPage: "Page suivante",
-          levelPageStatus: "Page {page} sur {pages}",
           levelBack: "Retour aux modes",
           levelNumber: "Niveau {level}",
           levelUnlocked: "Débloqué",
@@ -4611,7 +4601,6 @@
       const CATEGORY_PARAMETER_SPACE = 1000;
       const GENERAL_KNOWLEDGE_POOL_SIZE =
         GENERAL_KNOWLEDGE_TEMPLATE_COUNT * GENERAL_KNOWLEDGE_VARIANTS_PER_TEMPLATE;
-      const LEVELS_PER_PAGE = 25;
       if (GENERAL_KNOWLEDGE_POOL_SIZE % QUESTIONS_PER_LEVEL !== 0 ||
           GENERAL_KNOWLEDGE_VARIANTS_PER_TEMPLATE > GENERAL_KNOWLEDGE_PARAMETER_SPACE) {
         throw new Error("The randomized General Knowledge pool configuration is invalid.");
@@ -5007,7 +4996,6 @@
       let answeredQuestionIndexes = new Set();
       let roundQuestionIndexes = [];
       let activeQuestionPool = [];
-      let currentLevelPage = 0;
       let currentQuestion = 0;
       let score = 0;
       let points = 0;
@@ -6356,12 +6344,27 @@
         return indexes;
       }
 
+      function scrollLevelMapTo(level, behavior = "smooth") {
+        requestAnimationFrame(() => {
+          const grid = document.getElementById("levelGrid");
+          const card = grid.querySelector(`.level-card[data-level="${level}"]`);
+          if (!card) return;
+          const gridBounds = grid.getBoundingClientRect();
+          const cardBounds = card.getBoundingClientRect();
+          const cardTop = grid.scrollTop + cardBounds.top - gridBounds.top;
+          const centeredTop = cardTop - (grid.clientHeight - cardBounds.height) / 2;
+          grid.scrollTo({
+            top: Math.max(0, centeredTop),
+            behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : behavior
+          });
+        });
+      }
+
       /*
-       * Render one 25-node window from the selected category's 500-level map. The
-       * category tabs call this again after reading that category's in-memory
-       * unlock token, which is initialized from and persisted to localStorage by
-       * the progression helpers above. Completion records decorate nodes only;
-       * they never grant access or override the unlock token.
+       * Render every node for the selected category in one scrollable roadmap.
+       * Unlock tokens are initialized from and persisted to localStorage by the
+       * progression helpers above. Completion records decorate nodes only; they
+       * never grant access or override the unlock token.
        */
       function renderLevelMap(category = currentCategory) {
         if (!PROGRESSION_CATEGORIES.includes(category)) category = "General Knowledge";
@@ -6385,11 +6388,10 @@
           tab.addEventListener("click", () => {
             if (mapCategory === currentCategory) return;
             currentCategory = mapCategory;
-            currentLevelPage = Math.floor((unlockedLevelFor(mapCategory) - 1) / LEVELS_PER_PAGE);
-            // Explicit tap/click or keyboard activation switches category and opens its current unlocked chapter.
+            // Switching categories keeps the newly active level in view.
             selectPortalMode(categoryButtons.find((button) => button.dataset.category === mapCategory));
             renderLevelMap(mapCategory);
-            document.getElementById("levelGrid").scrollTop = 0;
+            scrollLevelMapTo(unlockedLevelFor(mapCategory));
           });
           tab.addEventListener("keydown", (event) => {
             const selectedIndex = PROGRESSION_CATEGORIES.indexOf(mapCategory);
@@ -6411,21 +6413,12 @@
           categoryTabs.append(tab);
         });
         grid.replaceChildren();
-        grid.setAttribute("aria-label", currentText.levelSelectTitle);
-        document.getElementById("levelEyebrow").textContent =
-          `${categoryName(category)} · ${currentText.levelSelectTitle}`;
+        grid.setAttribute("aria-label", `${categoryName(category)} · ${currentText.levelSelectTitle}`);
+        document.getElementById("levelTitle").textContent = currentText.levelSelectTitle;
         document.getElementById("levelCountLabel").textContent = currentText.levelProgress
           .replace("{unlocked}", formatNumber(unlockedLevel))
           .replace("{total}", formatNumber(levels.length));
-        const pageCount = Math.ceil(levels.length / LEVELS_PER_PAGE);
-        currentLevelPage = Math.min(Math.max(0, currentLevelPage), pageCount - 1);
-        const pageStart = currentLevelPage * LEVELS_PER_PAGE;
-        document.getElementById("levelPageLabel").textContent = currentText.levelPageStatus
-          .replace("{page}", formatNumber(currentLevelPage + 1))
-          .replace("{pages}", formatNumber(pageCount));
-        document.getElementById("levelPreviousButton").disabled = currentLevelPage === 0;
-        document.getElementById("levelNextButton").disabled = currentLevelPage >= pageCount - 1;
-        levels.slice(pageStart, pageStart + LEVELS_PER_PAGE).forEach(({ level }) => {
+        levels.forEach(({ level }) => {
           const completionKey = `${category}:${level}`;
           const savedResult = rewardCollection.levelResults.find((record) =>
             record.category === category && record.level === level
@@ -6456,12 +6449,6 @@
           const number = document.createElement("span");
           number.className = "level-card-number";
           number.textContent = formatNumber(level);
-          const name = document.createElement("span");
-          name.className = "level-card-name";
-          name.textContent = currentText.levelNumber.replace("{level}", formatNumber(level));
-          const details = document.createElement("span");
-          details.className = "level-card-detail";
-          details.textContent = currentText.levelQuestions.replace("{count}", formatNumber(QUESTIONS_PER_LEVEL));
           const rewardLine = document.createElement("span");
           rewardLine.className = "level-card-rewardline";
           if (isCompleted) {
@@ -6483,8 +6470,11 @@
           indicator.className = "level-card-indicator";
           indicator.setAttribute("aria-hidden", "true");
           indicator.textContent = isCompleted ? "🏆" : isUnlocked ? "⭐" : "🔒";
-          status.append(indicator, document.createTextNode(stateLabel));
-          card.append(number, name, details, rewardLine, status);
+          const stateText = document.createElement("span");
+          stateText.className = "level-card-state-label";
+          stateText.textContent = stateLabel;
+          status.append(indicator, stateText);
+          card.append(number, rewardLine, status);
           card.addEventListener("click", () => startQuiz(category, level));
           grid.append(card);
         });
@@ -7346,7 +7336,6 @@
             if (currentLevel < categoryLevels[currentCategory].length) {
               unlockedLevelsByCategory[currentCategory] = currentLevel + 1;
               saveUnlockedLevel(currentCategory, unlockedLevelsByCategory[currentCategory]);
-              currentLevelPage = Math.floor((unlockedLevelFor(currentCategory) - 1) / LEVELS_PER_PAGE);
               levelJustUnlocked = true;
             } else {
               allLevelsComplete = true;
@@ -7593,10 +7582,7 @@
           dashboardTrophyTitle: "dashboardTrophyGallery",
           dashboardBadgeTitle: "dashboardBadgeGallery",
           levelTitle: "levelSelectTitle",
-          levelDescription: "levelSelectDescription",
           levelBackLabel: "levelBack",
-          levelPreviousLabel: "levelPreviousPage",
-          levelNextLabel: "levelNextPage",
           totalQuestionsLabel: "totalQuestions",
           instantAnswersLabel: "instantAnswers",
           justForFunLabel: "justForFun",
@@ -7762,9 +7748,9 @@
         if (selectedCategory) {
           setGameModeTheme(selectedCategory);
           currentCategory = selectedCategory;
-          currentLevelPage = Math.floor((unlockedLevelFor(selectedCategory) - 1) / LEVELS_PER_PAGE);
           renderLevelMap(selectedCategory);
           showView("levels");
+          scrollLevelMapTo(unlockedLevelFor(selectedCategory), "auto");
         }
       });
       nextButton.addEventListener("click", advanceAnsweredQuestion);
@@ -7776,24 +7762,11 @@
         showView("welcome");
       });
       document.getElementById("returnLevelMapButton").addEventListener("click", () => {
-        currentLevelPage = Math.floor((currentLevel - 1) / LEVELS_PER_PAGE);
         renderLevelMap();
         showView("levels");
+        scrollLevelMapTo(unlockedLevelFor(currentCategory));
       });
       document.getElementById("levelBackButton").addEventListener("click", () => showView("welcome"));
-      document.getElementById("levelPreviousButton").addEventListener("click", () => {
-        if (currentLevelPage > 0) {
-          currentLevelPage -= 1;
-          renderLevelMap();
-        }
-      });
-      document.getElementById("levelNextButton").addEventListener("click", () => {
-        const pageCount = Math.ceil(categoryLevels[currentCategory].length / LEVELS_PER_PAGE);
-        if (currentLevelPage < pageCount - 1) {
-          currentLevelPage += 1;
-          renderLevelMap();
-        }
-      });
       document.getElementById("playAgainButton").addEventListener("click", () => {
         const isLevelRun = PROGRESSION_CATEGORIES.includes(currentCategory);
         const hasNextLevel = isLevelRun &&
