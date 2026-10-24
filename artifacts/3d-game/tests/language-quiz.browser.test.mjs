@@ -526,6 +526,21 @@ try {
     );
     assert.deepEqual(gameLayoutOrder, ["hud", "quiz"], "the compact controls HUD precedes the question on mobile");
     assert.equal(await page.locator("#languageSelect").isVisible(), false, "language selection stays on the welcome screen");
+    assert.equal(await page.locator("#gameLanguageSelect").isVisible(), true, "a quick language selector stays in the active HUD");
+    const gameLanguagePlacement = await page.evaluate(() => {
+      const coin = document.querySelector("#gameCoinBalanceChip").getBoundingClientRect();
+      const language = document.querySelector("#gameLanguageSelect").getBoundingClientRect();
+      return {
+        coinRight: coin.right,
+        languageLeft: language.left,
+        languageWidth: language.width,
+        languageHeight: language.height,
+        inStickyHud: document.querySelector("#gameLanguageSelect").closest(".game-sidebar") !== null,
+      };
+    });
+    assert.equal(gameLanguagePlacement.inStickyHud, true, "the language control is inside the sticky gameplay HUD");
+    assert.ok(gameLanguagePlacement.languageLeft >= gameLanguagePlacement.coinRight, "the language selector sits beside the coin vault");
+    assert.ok(gameLanguagePlacement.languageWidth >= 48 && gameLanguagePlacement.languageHeight >= 48, "the gameplay language selector is touch-sized");
     assert.ok(
       await page.locator(".option").first().evaluate((node) => node.getBoundingClientRect().height >= 50),
       "answer options are at least 50px high touch targets",
@@ -1137,6 +1152,27 @@ try {
     ),
     "all four lifelines are touch-sized",
   );
+  assert.ok(
+    await lifelinePage.locator("#gameLanguageSelect").evaluate((select) => {
+      const rect = select.getBoundingClientRect();
+      return rect.width >= 48 && rect.height >= 48 && select.closest("#gameCoinBalanceChip") === null;
+    }),
+    "the gameplay language selector stays independently touch-accessible beside the coin vault",
+  );
+  const englishQuestionBeforeSwitch = await lifelinePage.locator("#questionText").innerText();
+  await lifelinePage.waitForTimeout(1400);
+  const timerBeforeLanguageSwitch = Number(await lifelinePage.locator("#iqTimerBar").getAttribute("aria-valuenow"));
+  await lifelinePage.locator("#gameLanguageSelect").selectOption("bn");
+  const timerAfterLanguageSwitch = Number(await lifelinePage.locator("#iqTimerBar").getAttribute("aria-valuenow"));
+  assert.notEqual(await lifelinePage.locator("#questionText").innerText(), englishQuestionBeforeSwitch, "the active question immediately changes language");
+  assert.equal(await lifelinePage.locator("#gameLanguageSelect").inputValue(), "bn");
+  assert.equal(await lifelinePage.locator("#languageSelect").inputValue(), "bn", "the home language preference stays synchronized");
+  assert.ok(
+    timerAfterLanguageSwitch <= timerBeforeLanguageSwitch && timerAfterLanguageSwitch < 15,
+    "changing language does not restart the question timer",
+  );
+  await lifelinePage.locator("#gameLanguageSelect").selectOption("en");
+  assert.equal(await lifelinePage.locator("#questionText").innerText(), englishQuestionBeforeSwitch, "the original question returns in English");
 
   await lifelinePage.emulateMedia({ reducedMotion: "no-preference" });
   await lifelinePage.locator('[data-lifeline="fifty"]').tap();
@@ -1151,6 +1187,13 @@ try {
     180,
     "lifeline charges persist immediately",
   );
+  const questionAfterFiftyFifty = await lifelinePage.locator("#questionText").innerText();
+  await lifelinePage.locator("#gameLanguageSelect").selectOption("fr");
+  assert.notEqual(await lifelinePage.locator("#questionText").innerText(), questionAfterFiftyFifty, "French translation also updates the active question");
+  assert.equal(await lifelinePage.locator("#lifelineHeading").innerText(), "JOKERS TACTIQUES");
+  assert.equal(await lifelinePage.locator(".option[hidden]").count(), 2, "a language change preserves the active 50/50 state");
+  assert.equal(await lifelinePage.locator("#gameCoinBalance").innerText(), "180", "a language change preserves the coin balance");
+  await lifelinePage.locator("#gameLanguageSelect").selectOption("en");
 
   await lifelinePage.waitForTimeout(1200);
   await lifelinePage.locator('[data-lifeline="freeze"]').tap();
@@ -1168,7 +1211,7 @@ try {
   assert.equal(await lifelinePage.locator('[data-lifeline="skip"]').isDisabled(), true, "the two-use limit locks remaining lifelines");
   assert.equal(await lifelinePage.locator('[data-lifeline="fifty"]').isDisabled(), true, "a lifeline cannot be reused on one question");
 
-  assert.equal(await lifelinePage.locator(".topbar").isVisible(), false, "language and sound controls are not part of active play");
+  assert.equal(await lifelinePage.locator(".topbar").isVisible(), false, "global navigation and sound controls are not part of active play");
   await lifelinePage.locator(".option:not([hidden])").first().tap();
   const answeredQuestionBeforeSkip = await lifelinePage.locator("#questionText").innerText();
   await waitForQuestionAdvance(lifelinePage, answeredQuestionBeforeSkip);

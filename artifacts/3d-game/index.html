@@ -1397,7 +1397,34 @@
         backdrop-filter: blur(16px);
         -webkit-backdrop-filter: blur(16px);
       }
-      .game-coin-balance { grid-area: coins; min-height: 48px; margin: 0; padding: 7px 12px; }
+      .game-hud-identity {
+        grid-area: coins;
+        min-width: 0;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .game-coin-balance { min-height: 48px; flex: 0 0 auto; margin: 0; padding: 7px 12px; }
+      .game-language-select {
+        width: 112px;
+        min-width: 96px;
+        min-height: 48px;
+        flex: 0 1 112px;
+        padding: 0 27px 0 11px;
+        color: #f1f3ff;
+        border: 1px solid rgba(145, 157, 227, .3);
+        border-radius: 12px;
+        background: linear-gradient(145deg, rgba(35, 43, 83, .94), rgba(19, 25, 55, .98));
+        box-shadow: inset 0 1px rgba(255, 255, 255, .08);
+        font: inherit;
+        font-size: 11px;
+        font-weight: 750;
+        cursor: pointer;
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+      }
+      .game-language-select:focus-visible { outline: 3px solid #72f3e5; outline-offset: 2px; }
+      .game-language-select option { color: #fff; background: #141b39; }
       .quiz-utility-row { grid-area: utility; }
       /* Keep the internal live score available to assistive technology and existing game logic, not in the visual HUD. */
       .game-score-state { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; }
@@ -1710,6 +1737,8 @@
         body[data-view="game"] .sound-toggle { width: 48px; min-width: 48px; min-height: 48px; padding: 0; gap: 0; font-size: 0; }
         body[data-view="game"] .sound-toggle span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
         .game-layout { margin-top: 12px; gap: 10px; }
+        .game-hud-identity { gap: 6px; }
+        .game-language-select { width: 104px; min-width: 96px; flex-basis: 104px; }
         .game-coin-balance { justify-self: start; min-height: 40px; padding: 5px 12px; }
         .quiz-utility-row { grid-template-columns: minmax(94px, .32fr) minmax(0, 1.68fr); gap: 7px; }
         .quiz-utility-row .iq-timer { padding: 8px 9px; border-radius: 12px; }
@@ -1766,6 +1795,7 @@
       @media (max-width: 390px) {
         body[data-view="game"] .brand-name { font-size: 12px; }
         body[data-view="game"] .language-select { min-width: 76px; width: 80px; }
+        .game-language-select { width: 96px; min-width: 92px; flex-basis: 96px; padding-right: 23px; padding-left: 8px; font-size: 10px; }
         body[data-view="game"] .sound-toggle { font-size: 0; gap: 0; }
         body[data-view="game"] .sound-toggle svg { width: 17px; height: 17px; }
         #quitButton { gap: 4px; font-size: 9px; }
@@ -3526,12 +3556,22 @@
 
         <section class="view" id="gameView" aria-label="Quiz round">
           <div class="game-layout">
-            <!-- Sticky game controls contain only the live coin vault, countdown, and tactical lifelines. -->
+            <!-- Sticky game controls contain only the coin vault, quick language switcher, timer, and lifelines. -->
             <aside class="game-sidebar" aria-label="Quiz controls">
-              <div class="game-coin-balance" id="gameCoinBalanceChip" aria-label="Coin balance">
-                <span aria-hidden="true">🪙</span>
-                <span id="gameCoinLabel">Coins</span>
-                <strong id="gameCoinBalance">0</strong>
+              <div class="game-hud-identity" id="gameHudIdentity">
+                <div class="game-coin-balance" id="gameCoinBalanceChip" aria-label="Coin balance">
+                  <span aria-hidden="true">🪙</span>
+                  <span id="gameCoinLabel">Coins</span>
+                  <strong id="gameCoinBalance">0</strong>
+                </div>
+                <label class="visually-hidden" for="gameLanguageSelect" id="gameLanguageLabel">Language</label>
+                <select class="game-language-select" id="gameLanguageSelect" aria-labelledby="gameLanguageLabel">
+                  <option value="en">English</option>
+                  <option value="bn">বাংলা</option>
+                  <option value="hi">हिन्दी</option>
+                  <option value="es">Español</option>
+                  <option value="fr">Français</option>
+                </select>
               </div>
             <div class="quiz-utility-row" id="quizUtilityRow">
               <section class="iq-timer" id="iqTimer" hidden aria-label="Question timer">
@@ -5704,6 +5744,7 @@
       const progressFill = document.getElementById("progressFill");
       const progressBar = document.querySelector('[role="progressbar"]');
       const languageSelect = document.getElementById("languageSelect");
+      const gameLanguageSelect = document.getElementById("gameLanguageSelect");
       function readSavedLanguage() {
         try {
           const savedLanguage = localStorage.getItem("quiz-orbit-language");
@@ -8509,8 +8550,11 @@
         currentText = translations[currentLanguage];
         document.documentElement.lang = currentLanguage;
         languageSelect.value = currentLanguage;
+        gameLanguageSelect.value = currentLanguage;
         languageSelect.setAttribute("aria-label", currentText.language);
+        gameLanguageSelect.setAttribute("aria-label", currentText.language);
         document.getElementById("languageLabel").textContent = currentText.language;
+        document.getElementById("gameLanguageLabel").textContent = currentText.language;
         updateRulesCopy();
         updateSoundToggle();
         document.title = currentText.pageTitle;
@@ -8732,6 +8776,7 @@
       });
 
       languageSelect.addEventListener("change", (event) => setLanguage(event.target.value));
+      gameLanguageSelect.addEventListener("change", (event) => setLanguage(event.target.value));
       categoryButtons.forEach((button) => {
         button.addEventListener("click", () => selectPortalMode(button));
         button.addEventListener("focus", () => selectPortalMode(button));
