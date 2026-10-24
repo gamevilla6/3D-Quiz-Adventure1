@@ -119,6 +119,19 @@ try {
   assert.equal(await page.locator("#welcomeTitle").innerText(), "QuizVerse 3D");
   assert.equal(await page.locator(".brand-name").innerText(), "QuizVerse 3D");
   assert.equal(await page.title(), "QuizVerse 3D — Quiz Game");
+  assert.match(await page.locator('meta[name="viewport"]').getAttribute("content"), /viewport-fit=cover/);
+  const mobileHomeTargets = await page.evaluate(() =>
+    ["#brandHome", "#languageSelect", "#soundToggle", "#startGameButton", "#openRewardsButton", ".category"]
+      .map((selector) => {
+        const rect = document.querySelector(selector).getBoundingClientRect();
+        return { width: rect.width, height: rect.height };
+      })
+  );
+  assert.ok(mobileHomeTargets.every(({ width, height }) => width >= 48 && height >= 48), "home controls have touch-sized targets");
+  assert.ok(
+    await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth),
+    "the narrow mobile layout has no horizontal overflow",
+  );
   assert.equal(await page.locator("#soundToggle").innerText(), "Game sounds on");
   await page.locator("#soundToggle").tap();
   assert.equal(await page.locator("#soundToggle").getAttribute("aria-pressed"), "false");
@@ -141,6 +154,25 @@ try {
   assert.notEqual(await page.locator("#orbitLabel").innerText(), initialHeroTagline, "the hero message rotates");
   await page.locator("#openRewardsButton").click();
   assert.equal(await page.locator(".category-progress-item").count(), 5, "the home analytics hub shows every subject");
+  assert.equal(await page.locator("#rewardsDialogTitle").innerText(), "Your Collection");
+  assert.equal(await page.locator("#dashboardCategoryFilter option").count(), 6, "collection filter covers every category plus all");
+  assert.equal(await page.locator("#dashboardStatusFilter option").count(), 3, "collection can sort by default, unlocked, or locked");
+  assert.equal(await page.locator("#trophyGallery .trophy-showcase-card").count(), 3);
+  assert.equal(await page.locator("#badgeGallery .badge-showcase-card").count(), 5);
+  assert.ok(
+    await page.locator("#badgeGallery .badge-showcase-card.locked").first().getAttribute("data-tooltip"),
+    "locked badges include their unlock instructions",
+  );
+  await page.locator("#dashboardCategoryFilter").selectOption("IQ Check");
+  assert.equal(await page.locator("#badgeGallery .badge-showcase-card").count(), 3, "IQ filter shows IQ-specific badges and the shared badge");
+  await page.locator("#dashboardCategoryFilter").selectOption("Science & Technology");
+  assert.equal(await page.locator("#badgeGallery .badge-showcase-card").count(), 3, "category filter updates the collection gallery");
+  await page.locator("#dashboardCategoryFilter").selectOption("all");
+  await page.locator("#dashboardStatusFilter").selectOption("locked");
+  assert.ok(
+    await page.locator("#closeRewardsButton").evaluate((node) => node.getBoundingClientRect().height >= 48),
+    "the rewards dashboard close control has a touch-sized target",
+  );
   await page.locator("#closeRewardsButton").click();
   for (const [category, theme] of [
     ["Science & Technology", "theme-science"],
@@ -154,10 +186,35 @@ try {
     assert.equal(await page.locator("#levelView").evaluate((node) => node.classList.contains("active")), true);
     assert.equal(await page.locator("#levelGrid .level-card.unlocked").count(), 1);
     assert.equal(await page.locator("#levelGrid .level-card.locked").count(), 24);
+    const levelMapScroll = await page.locator("#levelGrid").evaluate((node) => ({
+      overflowY: getComputedStyle(node).overflowY,
+      canScroll: node.scrollHeight > node.clientHeight,
+    }));
+    assert.equal(levelMapScroll.overflowY, "auto");
+    assert.equal(levelMapScroll.canScroll, true, "the touch level map has its own scrollable area");
+    const pageButtonHeight = await page.locator("#levelNextButton").evaluate((node) => node.getBoundingClientRect().height);
+    assert.ok(pageButtonHeight >= 48, "level map navigation uses a touch-sized target");
+    await page.locator("#levelGrid").evaluate((node) => { node.scrollTop = 120; });
+    assert.ok(await page.locator("#levelGrid").evaluate((node) => node.scrollTop > 0), "level cards scroll vertically on touch screens");
+    await page.locator("#levelGrid").evaluate((node) => { node.scrollTop = 0; });
     await page.locator(".level-card.unlocked").click();
     assert.equal(await page.locator("#gameView").evaluate((node) => node.classList.contains("active")), true);
     assert.notEqual(await page.locator("#questionText").innerText(), "");
     assert.equal(await page.locator(".option").count(), 4);
+    const gameLayoutOrder = await page.locator(".game-layout").evaluate((node) =>
+      [...node.children].map((child) => child.classList.contains("game-sidebar") ? "hud" : "quiz")
+    );
+    assert.deepEqual(gameLayoutOrder, ["hud", "quiz"], "the score and streak HUD precedes the question on mobile");
+    for (const selector of ["#quitButton", "#languageSelect", "#soundToggle"]) {
+      assert.ok(
+        await page.locator(selector).evaluate((node) => node.getBoundingClientRect().height >= 48),
+        `${selector} remains a touch-sized game control`,
+      );
+    }
+    assert.ok(
+      await page.locator(".option").first().evaluate((node) => node.getBoundingClientRect().height >= 48),
+      "answer options are large touch targets",
+    );
     assert.equal(await page.locator("#iqTimer").isVisible(), true, "the countdown is active in every category");
     assert.equal(await page.locator(".option").first().getAttribute("data-answer"), null);
     for (const language of ["bn", "hi", "es", "fr"]) {
@@ -430,8 +487,14 @@ try {
   assert.equal(await blockedStoragePage.locator("#levelView").evaluate((node) => node.classList.contains("active")), true);
   assert.deepEqual(blockedStorageErrors, [], "the game remains usable when browser storage is blocked");
 
+  await page.setViewportSize({ width: 844, height: 390 });
+  assert.ok(
+    await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth),
+    "landscape resizing does not introduce horizontal overflow",
+  );
+  await page.setViewportSize({ width: 390, height: 844 });
   assert.deepEqual(pageErrors, [], `The game page raised browser errors: ${pageErrors.join("; ")}`);
-  console.log("Browser check passed: rotating hero, five live mode previews, Continue Journey, localized rounds, independent level maps, timer/focus penalties, rewards, and storage recovery.");
+  console.log("Browser check passed: mobile touch targets and scrolling, orientation layout, rotating hero, five live mode previews, Continue Journey, localized rounds, independent level maps, timer/focus penalties, rewards, and storage recovery.");
 } finally {
   await browser?.close();
   server.kill("SIGTERM");

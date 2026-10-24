@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <meta name="theme-color" content="#f1f4f8" />
     <title>QuizVerse 3D — a little room for big questions</title>
     <meta id="metaDescription" name="description" content="A thoughtful 3D quiz experience. Pick a subject, follow your curiosity, and see how far you get." />
@@ -82,7 +82,7 @@
         .loading-screen { transition-duration: .12s; }
       }
       .topbar { max-width: 1220px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; }
-      .brand { display: flex; gap: 11px; align-items: center; color: var(--ink); text-decoration: none; font-weight: 730; letter-spacing: -.04em; }
+      .brand { min-height: 48px; display: flex; gap: 11px; align-items: center; color: var(--ink); text-decoration: none; font-weight: 730; letter-spacing: -.04em; }
       .brand-mark { width: 34px; height: 34px; display: grid; place-items: center; border-radius: 12px; color: white; background: linear-gradient(145deg, #7198f4, #4d70da); box-shadow: 0 7px 16px rgba(76,120,232,.24); }
       .brand-mark svg { width: 19px; height: 19px; }
       .brand-name {
@@ -207,9 +207,9 @@
       .start-button { min-width: 190px; min-height: 48px; font-size: 13px; }
       .start-hint { min-height: 16px; color: #8995a6; font-size: 11px; text-align: center; }
 
-      .game-layout { display: grid; grid-template-columns: minmax(0, 1fr) 248px; align-items: start; gap: 19px; max-width: 1060px; margin: clamp(34px, 7vh, 72px) auto 0; }
+      .game-layout { display: grid; grid-template-columns: minmax(0, 1fr) 248px; grid-template-areas: "question sidebar"; align-items: start; gap: 19px; max-width: 1060px; margin: clamp(34px, 7vh, 72px) auto 0; }
       .quiz-card, .side-card, .result-card { border: 1px solid rgba(255,255,255,.88); background: rgba(255,255,255,.78); box-shadow: var(--shadow); backdrop-filter: blur(22px); -webkit-backdrop-filter: blur(22px); }
-      .quiz-card { min-height: 495px; border-radius: 26px; padding: clamp(24px, 4.2vw, 48px); }
+      .quiz-card { grid-area: question; min-height: 495px; border-radius: 26px; padding: clamp(24px, 4.2vw, 48px); }
       .quiz-meta { display: flex; justify-content: space-between; align-items: center; gap: 14px; }
       .category-tag { display: inline-flex; align-items: center; gap: 8px; color: #5474ae; background: #eef3ff; padding: 8px 11px; border-radius: 9px; font-size: 10px; font-weight: 760; letter-spacing: .09em; text-transform: uppercase; }
       .category-tag .tag-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
@@ -254,7 +254,7 @@
       .primary-button:hover { transform: translateY(-2px); box-shadow: 0 11px 22px rgba(76,120,232,.28); }
       .primary-button:disabled { opacity: .45; cursor: not-allowed; transform: none; box-shadow: none; }
       .primary-button svg { width: 15px; height: 15px; }
-      .game-sidebar { position: sticky; top: 18px; display: grid; gap: 13px; }
+      .game-sidebar { grid-area: sidebar; position: sticky; top: 18px; display: grid; gap: 13px; }
       .side-card { border-radius: 19px; padding: 21px; }
       .side-label { color: #8a97a8; font-size: 10px; font-weight: 740; letter-spacing: .12em; text-transform: uppercase; }
       .score-value { margin-top: 13px; font-size: 42px; line-height: 1; letter-spacing: -.065em; font-weight: 730; font-variant-numeric: tabular-nums; }
@@ -1016,6 +1016,22 @@
       .analytics-metric span { display: block; color: #c9c2e1; font-size: 9px; font-weight: 750; text-transform: uppercase; letter-spacing: .06em; }
       .analytics-metric strong { display: block; margin-top: 5px; color: #fff; font-size: 17px; font-weight: 900; font-variant-numeric: tabular-nums; }
       .analytics-rounds { margin: 11px 0 0; color: #c9c2e1; font-size: 10px; }
+      .collection-filter-toolbar {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(180px, .8fr) minmax(180px, .8fr);
+        align-items: end;
+        gap: 11px;
+        margin: 0 0 19px;
+        padding: 14px;
+        border: 1px solid rgba(255,255,255,.14);
+        border-radius: 16px;
+        background: rgba(255,255,255,.07);
+      }
+      .collection-filter-heading { margin: 0; color: #fff; font-size: 13px; font-weight: 850; }
+      .collection-filter-control { min-width: 0; display: grid; gap: 6px; color: #c9c2e1; font-size: 9px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; }
+      .collection-filter-control select { width: 100%; min-width: 0; min-height: 42px; padding: 0 34px 0 11px; color: #fff; border: 1px solid rgba(202,197,255,.24); border-radius: 11px; background: #211d45; font: inherit; font-size: 12px; font-weight: 700; text-transform: none; letter-spacing: 0; cursor: pointer; }
+      .collection-filter-control option { color: #fff; background: #211d45; }
+      .collection-filter-control select:focus-visible { outline: 3px solid #83f0e1; outline-offset: 2px; }
       .analytics-section { margin-top: 22px; }
       .analytics-section h3 { margin: 0 0 11px; color: #fff; font-size: 15px; font-weight: 900; }
       .trophy-gallery { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 11px; }
@@ -1030,11 +1046,37 @@
       .trophy-showcase-name { color: #fff; font-size: 12px; font-weight: 850; }
       .trophy-showcase-status { color: #d0c9e8; font-size: 10px; line-height: 1.35; }
       .badge-gallery { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 9px; }
-      .badge-showcase-card { min-width: 0; display: flex; align-items: center; gap: 9px; padding: 10px; border: 1px solid rgba(255,255,255,.15); border-radius: 13px; background: rgba(255,255,255,.08); }
+      .trophy-showcase-card, .badge-showcase-card { animation: collectionCardIn .24s ease both; }
+      .trophy-showcase-card:hover .trophy-showcase-art { animation-duration: 1.3s; filter: drop-shadow(0 8px 15px rgba(255,215,106,.35)); }
+      .badge-showcase-card { position: relative; min-width: 0; display: flex; align-items: center; gap: 9px; padding: 10px; border: 1px solid rgba(255,255,255,.15); border-radius: 13px; background: rgba(255,255,255,.08); }
+      .badge-showcase-card:focus-visible { outline: 3px solid #83f0e1; outline-offset: 2px; }
+      .badge-showcase-card[data-tooltip]:hover::after,
+      .badge-showcase-card[data-tooltip]:focus-visible::after {
+        position: absolute;
+        z-index: 5;
+        left: 50%;
+        bottom: calc(100% + 8px);
+        width: min(260px, calc(100vw - 60px));
+        padding: 10px 12px;
+        color: #fff;
+        border: 1px solid rgba(255,255,255,.2);
+        border-radius: 10px;
+        background: #17132f;
+        box-shadow: 0 12px 28px rgba(0,0,0,.34);
+        content: attr(data-tooltip);
+        font-size: 11px;
+        font-weight: 650;
+        line-height: 1.45;
+        text-align: left;
+        text-transform: none;
+        transform: translateX(-50%);
+        pointer-events: none;
+      }
       .badge-showcase-icon { flex: 0 0 34px; width: 34px; height: 34px; display: grid; place-items: center; color: #fff; border-radius: 11px; background: linear-gradient(145deg, #7044e6, #315dff); font-size: 17px; }
       .badge-showcase-copy { min-width: 0; }
       .badge-showcase-copy strong { display: block; overflow-wrap: anywhere; color: #fff; font-size: 11px; line-height: 1.3; }
-      .badge-showcase-copy small { display: block; margin-top: 3px; color: #cec7e4; font-size: 9px; }
+      .badge-showcase-copy small { display: block; margin-top: 3px; color: #cec7e4; font-size: 9px; line-height: 1.35; }
+      @keyframes collectionCardIn { from { opacity: 0; transform: translateY(7px); } to { opacity: 1; transform: translateY(0); } }
       @keyframes trophyShowcaseFloat { from { transform: perspective(160px) rotateY(-14deg) rotateX(5deg) translateY(1px); } to { transform: perspective(160px) rotateY(14deg) rotateX(-4deg) translateY(-3px); } }
       @media (max-width: 650px) {
         .collection-heading { align-items: flex-start; }
@@ -1077,7 +1119,18 @@
       .level-intro p:last-child { max-width: 540px; margin: 0 auto; color: #f0edff; font-size: 14px; line-height: 1.6; }
       .level-toolbar { display: flex; justify-content: space-between; align-items: center; gap: 14px; margin: 22px 0 13px; }
       .level-count { padding: 8px 12px; color: #453188; border: 1px solid #dbd2ff; border-radius: 99px; background: #fff; font-size: 11px; font-weight: 800; }
-      .level-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 11px; }
+      .level-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 11px;
+        max-height: min(65vh, 700px);
+        overflow-y: auto;
+        overscroll-behavior: contain;
+        -webkit-overflow-scrolling: touch;
+        scroll-behavior: smooth;
+        touch-action: pan-y;
+        scrollbar-width: thin;
+      }
       .level-card {
         min-width: 0;
         min-height: 132px;
@@ -1759,6 +1812,64 @@
         body[data-view="welcome"] .fallback-moon,
         body[data-view="welcome"] .start-button { animation: none !important; }
       }
+      /* Native touch scrolling stays enabled for the map; manipulation removes tap delay on controls. */
+      button, select, a { touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
+      button:active:not(:disabled), a:active { filter: brightness(.96); transform: scale(.985); }
+      .app {
+        padding-top: calc(26px + env(safe-area-inset-top));
+        padding-right: max(5.4vw, env(safe-area-inset-right));
+        padding-bottom: calc(30px + env(safe-area-inset-bottom));
+        padding-left: max(5.4vw, env(safe-area-inset-left));
+      }
+      @media (max-width: 820px) {
+        .app {
+          padding-top: calc(20px + env(safe-area-inset-top));
+          padding-right: max(5vw, env(safe-area-inset-right));
+          padding-bottom: calc(24px + env(safe-area-inset-bottom));
+          padding-left: max(5vw, env(safe-area-inset-left));
+        }
+      }
+      @media (max-width: 650px) {
+        .app {
+          padding-top: calc(16px + env(safe-area-inset-top));
+          padding-right: max(17px, env(safe-area-inset-right));
+          padding-bottom: calc(25px + env(safe-area-inset-bottom));
+          padding-left: max(17px, env(safe-area-inset-left));
+        }
+        body[data-view="welcome"] .app {
+          padding-top: calc(12px + env(safe-area-inset-top));
+          padding-right: max(12px, env(safe-area-inset-right));
+          padding-bottom: calc(22px + env(safe-area-inset-bottom));
+          padding-left: max(12px, env(safe-area-inset-left));
+        }
+        .game-layout { grid-template-areas: "hud" "quiz"; }
+        .level-grid { max-height: min(65svh, 620px); }
+        .collection-filter-toolbar { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px; padding: 11px; }
+        .collection-filter-heading { grid-column: 1 / -1; }
+        .badge-gallery { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      }
+      @media (max-width: 390px) {
+        .game-sidebar { grid-template-columns: minmax(0, 1fr); }
+      }
+      /* Touch controls use at least a 48px target; existing answer and map cards are larger. */
+      @media (max-width: 650px), (pointer: coarse) {
+        button, select { min-width: 48px; min-height: 48px; }
+        .language-select, .sound-toggle, .secondary-button, .primary-button,
+        .start-button, .text-button, .collection-open-button,
+        .rewards-close-button { min-height: 48px; }
+        .level-pagination .secondary-button { min-height: 48px; }
+        body[data-view="welcome"] .language-select,
+        body[data-view="welcome"] .sound-toggle { min-height: 48px; }
+        body[data-view="game"] .language-select,
+        body[data-view="game"] .sound-toggle { min-height: 48px; }
+        body[data-view="game"] #quitButton { min-width: 48px; min-height: 48px; }
+        .rewards-close-button { width: 48px; height: 48px; flex-basis: 48px; }
+        .brand { min-width: 48px; min-height: 48px; }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        html { scroll-behavior: auto; }
+        button:active:not(:disabled), a:active { transform: none; }
+      }
     </style>
   </head>
   <body data-view="welcome">
@@ -1943,11 +2054,22 @@
             <div class="rewards-dialog-shell">
               <header class="rewards-dialog-header">
                 <div class="rewards-dialog-heading">
-                  <h2 class="rewards-dialog-title" id="rewardsDialogTitle">Rewards &amp; Analytics</h2>
+                  <h2 class="rewards-dialog-title" id="rewardsDialogTitle">Your Collection</h2>
                   <p class="rewards-dialog-description" id="rewardsDialogDescription">Your progress, trophies, badges, and game-only IQ estimate.</p>
                 </div>
                 <button class="rewards-close-button" type="button" id="closeRewardsButton" aria-label="Close rewards dashboard"><span aria-hidden="true">×</span></button>
               </header>
+              <div class="collection-filter-toolbar" role="region" aria-labelledby="dashboardFiltersTitle">
+                <h3 class="collection-filter-heading" id="dashboardFiltersTitle">Collection filters</h3>
+                <label class="collection-filter-control">
+                  <span id="dashboardCategoryFilterLabel">Category</span>
+                  <select id="dashboardCategoryFilter"></select>
+                </label>
+                <label class="collection-filter-control">
+                  <span id="dashboardStatusFilterLabel">Sort by status</span>
+                  <select id="dashboardStatusFilter"></select>
+                </label>
+              </div>
               <div class="analytics-grid">
                 <section class="analytics-card" aria-labelledby="dashboardIQTitle">
                   <h3 id="dashboardIQTitle">IQ-style analytical estimate</h3>
@@ -1955,6 +2077,10 @@
                   <span class="analytics-iq-rating" id="dashboardIQRating">Finish an IQ Check round to see your estimate.</span>
                   <p class="analytics-card-note" id="dashboardIQFootnote">For fun only; this is not a clinical IQ test.</p>
                   <p class="analytics-rounds" id="dashboardIQAttempts">0 IQ Check rounds</p>
+                </section>
+                <section class="analytics-card" aria-labelledby="dashboardOverviewTitle">
+                  <h3 id="dashboardOverviewTitle">Collection stats</h3>
+                  <div class="analytics-metrics" id="dashboardOverallMetrics"></div>
                 </section>
                 <section class="analytics-card category-progress-card" aria-labelledby="dashboardCategoryProgressTitle">
                   <h3 id="dashboardCategoryProgressTitle">Progress by category</h3>
@@ -1995,27 +2121,6 @@
 
         <section class="view" id="gameView" aria-label="Quiz round">
           <div class="game-layout">
-            <article class="quiz-card" id="quizCard">
-              <div class="score-popups" id="scorePopups" aria-hidden="true"></div>
-              <div class="quiz-meta">
-                <button class="text-button" type="button" id="quitButton">← <span id="quitButtonLabel">Choose another subject</span></button>
-                <div class="category-tag"><span class="tag-dot"></span><span id="gameCategory">Science</span></div>
-                <div class="question-count" id="questionCount">01 <span aria-hidden="true">/</span> 04</div>
-              </div>
-              <div class="progress-track" id="progressTrack" role="progressbar" aria-label="Quiz progress" aria-valuemin="0" aria-valuemax="4" aria-valuenow="0"><div class="progress-fill" id="progressFill"></div></div>
-              <section class="iq-timer" id="iqTimer" hidden aria-label="Question timer">
-                <div class="iq-timer-heading"><span id="iqTimerLabel">Time left</span><strong id="iqTimerValue">15 s</strong></div>
-                <div class="iq-timer-track" id="iqTimerBar" role="progressbar" aria-label="Time remaining" aria-valuemin="0" aria-valuemax="15" aria-valuenow="15"><span id="iqTimerFill"></span></div>
-                <p id="iqTimerNote">Answer correctly in under 5 seconds to earn +5 bonus points.</p>
-              </section>
-              <p class="question-kicker" id="questionKicker">Take a moment</p>
-              <h1 class="question" id="questionText" tabindex="-1">Question goes here</h1>
-              <div class="options" id="options" role="group" aria-label="Answer options"></div>
-              <div class="feedback" id="feedback" aria-live="polite">Choose the answer that feels right.</div>
-              <div class="quiz-actions">
-                <button class="primary-button" type="button" id="nextButton" disabled>Check answer</button>
-              </div>
-            </article>
             <aside class="game-sidebar" aria-label="Round details">
               <div class="side-card score-hud-card">
                 <div class="score-hud-top">
@@ -2042,6 +2147,27 @@
                 <div class="side-note"><strong id="sideNoteTitle">Stay curious.</strong><br><span id="sideNoteBody">Every answer is a new little fact to keep.</span></div>
               </div>
             </aside>
+            <article class="quiz-card" id="quizCard">
+              <div class="score-popups" id="scorePopups" aria-hidden="true"></div>
+              <div class="quiz-meta">
+                <button class="text-button" type="button" id="quitButton">← <span id="quitButtonLabel">Choose another subject</span></button>
+                <div class="category-tag"><span class="tag-dot"></span><span id="gameCategory">Science</span></div>
+                <div class="question-count" id="questionCount">01 <span aria-hidden="true">/</span> 04</div>
+              </div>
+              <div class="progress-track" id="progressTrack" role="progressbar" aria-label="Quiz progress" aria-valuemin="0" aria-valuemax="4" aria-valuenow="0"><div class="progress-fill" id="progressFill"></div></div>
+              <section class="iq-timer" id="iqTimer" hidden aria-label="Question timer">
+                <div class="iq-timer-heading"><span id="iqTimerLabel">Time left</span><strong id="iqTimerValue">15 s</strong></div>
+                <div class="iq-timer-track" id="iqTimerBar" role="progressbar" aria-label="Time remaining" aria-valuemin="0" aria-valuemax="15" aria-valuenow="15"><span id="iqTimerFill"></span></div>
+                <p id="iqTimerNote">Answer correctly in under 5 seconds to earn +5 bonus points.</p>
+              </section>
+              <p class="question-kicker" id="questionKicker">Take a moment</p>
+              <h1 class="question" id="questionText" tabindex="-1">Question goes here</h1>
+              <div class="options" id="options" role="group" aria-label="Answer options"></div>
+              <div class="feedback" id="feedback" aria-live="polite">Choose the answer that feels right.</div>
+              <div class="quiz-actions">
+                <button class="primary-button" type="button" id="nextButton" disabled>Check answer</button>
+              </div>
+            </article>
           </div>
         </section>
 
@@ -2216,7 +2342,7 @@
           collectionTrophies: "Trophies",
           collectionBadges: "Badges",
           collectionEmpty: "None yet",
-          rewardsDashboardTitle: "Rewards & Analytics",
+          rewardsDashboardTitle: "Your Collection",
           rewardsDashboardDescription: "Your progress, trophies, badges, and game-only IQ estimate.",
           closeRewards: "Close rewards dashboard",
           dashboardIQAttempts: "{count} IQ Check rounds",
@@ -2230,6 +2356,17 @@
           dashboardTrophyGallery: "Trophy showcase",
           dashboardBadgeGallery: "Achievement badges",
           dashboardPreviousReward: "Earned in an earlier round",
+          dashboardFiltersTitle: "Collection filters",
+          dashboardCategoryFilter: "Category",
+          dashboardCategoryAll: "All categories",
+          dashboardStatusFilter: "Sort by status",
+          dashboardSortDefault: "Default order",
+          dashboardSortUnlocked: "Unlocked first",
+          dashboardSortLocked: "Locked first",
+          dashboardOverviewTitle: "Collection stats",
+          dashboardOverallAccuracy: "Overall accuracy",
+          dashboardTotalCorrect: "Correct answers",
+          dashboardTotalIncorrect: "Incorrect answers",
           achievements: "Unlocked badges",
           noAchievements: "No badges unlocked this round yet.",
           trophyAward: "Round reward",
@@ -2390,7 +2527,7 @@
           collectionTrophies: "ট্রফি",
           collectionBadges: "ব্যাজ",
           collectionEmpty: "এখনো কিছু নেই",
-          rewardsDashboardTitle: "পুরস্কার ও পরিসংখ্যান",
+          rewardsDashboardTitle: "আপনার সংগ্রহ",
           rewardsDashboardDescription: "আপনার অগ্রগতি, ট্রফি, ব্যাজ ও খেলার ভিত্তিতে IQ-ধাঁচের অনুমান একসঙ্গে দেখুন।",
           closeRewards: "পুরস্কারের ড্যাশবোর্ড বন্ধ করুন",
           dashboardIQAttempts: "{count}টি আইকিউ পরীক্ষার পর্ব",
@@ -2404,6 +2541,17 @@
           dashboardTrophyGallery: "ট্রফির প্রদর্শনী",
           dashboardBadgeGallery: "অর্জনের ব্যাজ",
           dashboardPreviousReward: "আগের পর্বে অর্জিত",
+          dashboardFiltersTitle: "সংগ্রহ ফিল্টার",
+          dashboardCategoryFilter: "বিভাগ",
+          dashboardCategoryAll: "সব বিভাগ",
+          dashboardStatusFilter: "অবস্থা অনুযায়ী সাজান",
+          dashboardSortDefault: "ডিফল্ট ক্রম",
+          dashboardSortUnlocked: "খোলা আগে",
+          dashboardSortLocked: "লক করা আগে",
+          dashboardOverviewTitle: "সংগ্রহের পরিসংখ্যান",
+          dashboardOverallAccuracy: "সামগ্রিক সঠিকতার হার",
+          dashboardTotalCorrect: "সঠিক উত্তর",
+          dashboardTotalIncorrect: "ভুল উত্তর",
           achievements: "অর্জিত ব্যাজ",
           noAchievements: "এই পর্বে এখনো কোনো ব্যাজ মেলেনি।",
           trophyAward: "এই পর্বের পুরস্কার",
@@ -2564,7 +2712,7 @@
           collectionTrophies: "ट्रॉफियाँ",
           collectionBadges: "बैज",
           collectionEmpty: "अभी कुछ नहीं",
-          rewardsDashboardTitle: "इनाम और आँकड़े",
+          rewardsDashboardTitle: "आपका संग्रह",
           rewardsDashboardDescription: "अपनी प्रगति, ट्रॉफियाँ, बैज और गेम-आधारित IQ अनुमान एक जगह देखें।",
           closeRewards: "इनाम डैशबोर्ड बंद करें",
           dashboardIQAttempts: "{count} IQ चेक राउंड",
@@ -2578,6 +2726,17 @@
           dashboardTrophyGallery: "ट्रॉफी संग्रह",
           dashboardBadgeGallery: "उपलब्धि बैज",
           dashboardPreviousReward: "पिछले राउंड में मिला",
+          dashboardFiltersTitle: "संग्रह फ़िल्टर",
+          dashboardCategoryFilter: "श्रेणी",
+          dashboardCategoryAll: "सभी श्रेणियाँ",
+          dashboardStatusFilter: "स्थिति के अनुसार क्रम",
+          dashboardSortDefault: "डिफ़ॉल्ट क्रम",
+          dashboardSortUnlocked: "पहले अनलॉक",
+          dashboardSortLocked: "पहले लॉक",
+          dashboardOverviewTitle: "संग्रह के आँकड़े",
+          dashboardOverallAccuracy: "कुल सटीकता",
+          dashboardTotalCorrect: "सही उत्तर",
+          dashboardTotalIncorrect: "गलत उत्तर",
           achievements: "अनलॉक बैज",
           noAchievements: "इस राउंड में अभी कोई बैज नहीं मिला।",
           trophyAward: "इस राउंड का इनाम",
@@ -2738,7 +2897,7 @@
           collectionTrophies: "Trofeos",
           collectionBadges: "Insignias",
           collectionEmpty: "Todavía no hay nada",
-          rewardsDashboardTitle: "Recompensas y estadísticas",
+          rewardsDashboardTitle: "Tu colección",
           rewardsDashboardDescription: "Consulta tu progreso, trofeos, insignias y estimación de IQ basada solo en el juego.",
           closeRewards: "Cerrar el panel de recompensas",
           dashboardIQAttempts: "{count} rondas de IQ Check",
@@ -2752,6 +2911,17 @@
           dashboardTrophyGallery: "Galería de trofeos",
           dashboardBadgeGallery: "Insignias de logros",
           dashboardPreviousReward: "Obtenido en una ronda anterior",
+          dashboardFiltersTitle: "Filtros de colección",
+          dashboardCategoryFilter: "Categoría",
+          dashboardCategoryAll: "Todas las categorías",
+          dashboardStatusFilter: "Ordenar por estado",
+          dashboardSortDefault: "Orden predeterminado",
+          dashboardSortUnlocked: "Desbloqueados primero",
+          dashboardSortLocked: "Bloqueados primero",
+          dashboardOverviewTitle: "Estadísticas de colección",
+          dashboardOverallAccuracy: "Precisión global",
+          dashboardTotalCorrect: "Respuestas correctas",
+          dashboardTotalIncorrect: "Respuestas incorrectas",
           achievements: "Insignias desbloqueadas",
           noAchievements: "Aún no has desbloqueado insignias en esta ronda.",
           trophyAward: "Recompensa de la ronda",
@@ -2912,7 +3082,7 @@
           collectionTrophies: "Trophées",
           collectionBadges: "Badges",
           collectionEmpty: "Pas encore de récompense",
-          rewardsDashboardTitle: "Récompenses et statistiques",
+          rewardsDashboardTitle: "Votre collection",
           rewardsDashboardDescription: "Retrouvez votre progression, vos trophées, vos badges et votre estimation de QI basée uniquement sur le jeu.",
           closeRewards: "Fermer le tableau des récompenses",
           dashboardIQAttempts: "{count} manches de test logique",
@@ -2926,6 +3096,17 @@
           dashboardTrophyGallery: "Galerie de trophées",
           dashboardBadgeGallery: "Badges de réussite",
           dashboardPreviousReward: "Obtenu lors d’une manche précédente",
+          dashboardFiltersTitle: "Filtres de collection",
+          dashboardCategoryFilter: "Catégorie",
+          dashboardCategoryAll: "Toutes les catégories",
+          dashboardStatusFilter: "Trier par statut",
+          dashboardSortDefault: "Ordre par défaut",
+          dashboardSortUnlocked: "Débloqués d’abord",
+          dashboardSortLocked: "Verrouillés d’abord",
+          dashboardOverviewTitle: "Statistiques de collection",
+          dashboardOverallAccuracy: "Précision globale",
+          dashboardTotalCorrect: "Bonnes réponses",
+          dashboardTotalIncorrect: "Mauvaises réponses",
           achievements: "Badges débloqués",
           noAchievements: "Aucun badge débloqué pour cette manche.",
           trophyAward: "Récompense de la manche",
@@ -3587,6 +3768,8 @@
       let audioContext = null;
       let answerSoundsMuted = readAnswerSoundsMuted();
       let rewardCollection = readRewardCollection();
+      let collectionCategoryFilter = "all";
+      let collectionStatusFilter = "default";
       let environmentTarget = 0;
       let cyberEnvironmentTarget = 0;
       let scienceEnvironmentTarget = 0;
@@ -4892,12 +5075,13 @@
       }
 
       function getAllBadgeDefinitions() {
+        const standardCategories = REWARD_MODES.filter((category) => category !== "IQ Check");
         return [
-          { id: "quizMaster", icon: "✦", title: currentText.badgeQuizMaster },
-          { id: "logicMaster", icon: "✦", title: currentText.badgeLogicMaster },
-          { id: "speedDemon", icon: "⚡", title: currentText.badgeSpeedDemon },
-          { id: "quizSpeedster", icon: "⚡", title: currentText.badgeQuizSpeedster },
-          { id: "knowledgeSeeker", icon: "◇", title: currentText.badgeKnowledgeSeeker }
+          { id: "quizMaster", icon: "✦", title: currentText.badgeQuizMaster, hint: currentText.badgeQuizMasterHint, categories: standardCategories },
+          { id: "logicMaster", icon: "✦", title: currentText.badgeLogicMaster, hint: currentText.badgeLogicMasterHint, categories: ["IQ Check"] },
+          { id: "speedDemon", icon: "⚡", title: currentText.badgeSpeedDemon, hint: currentText.badgeSpeedDemonHint, categories: standardCategories },
+          { id: "quizSpeedster", icon: "⚡", title: currentText.badgeQuizSpeedster, hint: currentText.badgeQuizSpeedsterHint, categories: ["IQ Check"] },
+          { id: "knowledgeSeeker", icon: "◇", title: currentText.badgeKnowledgeSeeker, hint: currentText.badgeKnowledgeSeekerHint, categories: REWARD_MODES }
         ];
       }
 
@@ -4952,7 +5136,54 @@
         );
       }
 
+      function renderCollectionFilters() {
+        const categorySelect = document.getElementById("dashboardCategoryFilter");
+        const statusSelect = document.getElementById("dashboardStatusFilter");
+        document.getElementById("dashboardFiltersTitle").textContent = currentText.dashboardFiltersTitle;
+        document.getElementById("dashboardCategoryFilterLabel").textContent = currentText.dashboardCategoryFilter;
+        document.getElementById("dashboardStatusFilterLabel").textContent = currentText.dashboardStatusFilter;
+        categorySelect.setAttribute("aria-label", currentText.dashboardCategoryFilter);
+        statusSelect.setAttribute("aria-label", currentText.dashboardStatusFilter);
+
+        const categoryOptions = [
+          ["all", currentText.dashboardCategoryAll],
+          ...REWARD_MODES.map((category) => [category, categoryName(category)])
+        ];
+        categorySelect.replaceChildren(...categoryOptions.map(([value, label]) => {
+          const option = document.createElement("option");
+          option.value = value;
+          option.textContent = label;
+          return option;
+        }));
+        categorySelect.value = collectionCategoryFilter;
+
+        const statusOptions = [
+          ["default", currentText.dashboardSortDefault],
+          ["unlocked", currentText.dashboardSortUnlocked],
+          ["locked", currentText.dashboardSortLocked]
+        ];
+        statusSelect.replaceChildren(...statusOptions.map(([value, label]) => {
+          const option = document.createElement("option");
+          option.value = value;
+          option.textContent = label;
+          return option;
+        }));
+        statusSelect.value = collectionStatusFilter;
+      }
+
+      function sortCollectionItems(items, isUnlocked) {
+        if (collectionStatusFilter === "default") return items;
+        const unlockedFirst = collectionStatusFilter === "unlocked";
+        return [...items].sort((left, right) => {
+          const leftPriority = Boolean(isUnlocked(left)) === unlockedFirst ? 0 : 1;
+          const rightPriority = Boolean(isUnlocked(right)) === unlockedFirst ? 0 : 1;
+          return leftPriority - rightPriority;
+        });
+      }
+
+      // The dashboard reads the normalized collection loaded from localStorage and redraws after each saved round or language change.
       function renderRewardsDashboard() {
+        renderCollectionFilters();
         const iqEstimate = rewardCollection.iqLatestEstimate;
         document.getElementById("dashboardIQTitle").textContent = currentText.iqEstimateLabel;
         document.getElementById("dashboardIQScore").textContent = iqEstimate === null
@@ -4968,6 +5199,31 @@
         document.getElementById("dashboardIQFootnote").textContent = currentText.iqDisclaimer;
         document.getElementById("dashboardIQAttempts").textContent = currentText.dashboardIQAttempts
           .replace("{count}", formatNumber(rewardCollection.iqRuns));
+
+        document.getElementById("dashboardOverviewTitle").textContent = currentText.dashboardOverviewTitle;
+        const answerTotals = PROGRESSION_CATEGORIES.reduce((totals, category) => {
+          const stats = rewardCollection.categoryStats[category] || { correct: 0, incorrect: 0 };
+          totals.correct += stats.correct;
+          totals.incorrect += stats.incorrect;
+          return totals;
+        }, { correct: 0, incorrect: 0 });
+        const totalAnswers = answerTotals.correct + answerTotals.incorrect;
+        const overallMetrics = document.getElementById("dashboardOverallMetrics");
+        overallMetrics.replaceChildren();
+        [
+          [currentText.dashboardOverallAccuracy, totalAnswers ? `${formatNumber(Math.round((answerTotals.correct / totalAnswers) * 100))}%` : "—"],
+          [currentText.dashboardTotalCorrect, formatNumber(answerTotals.correct)],
+          [currentText.dashboardTotalIncorrect, formatNumber(answerTotals.incorrect)]
+        ].forEach(([label, value]) => {
+          const metric = document.createElement("div");
+          metric.className = "analytics-metric";
+          const metricLabel = document.createElement("span");
+          metricLabel.textContent = label;
+          const metricValue = document.createElement("strong");
+          metricValue.textContent = value;
+          metric.append(metricLabel, metricValue);
+          overallMetrics.append(metric);
+        });
 
         document.getElementById("dashboardCategoryProgressTitle").textContent =
           currentText.dashboardCategoryProgressTitle;
@@ -5031,13 +5287,22 @@
         const trophyGallery = document.getElementById("trophyGallery");
         trophyGallery.replaceChildren();
         trophyGallery.setAttribute("aria-label", currentText.dashboardTrophyGallery);
-        TROPHY_TIERS.forEach((tier) => {
-          const isUnlocked = rewardCollection.trophies.includes(tier);
-          const modes = [...new Set(
-            rewardCollection.trophyRecords
-              .filter((record) => record.tier === tier)
-              .map((record) => record.mode)
-          )];
+        // Each persisted trophy record maps a tier to the category that earned it; the CSS preview adds a lightweight 3D-style rotation without another WebGL renderer.
+        const trophyItems = sortCollectionItems(TROPHY_TIERS.map((tier) => {
+          const records = rewardCollection.trophyRecords.filter((record) =>
+            record.tier === tier &&
+            (collectionCategoryFilter === "all" || record.mode === collectionCategoryFilter)
+          );
+          return {
+            tier,
+            records,
+            modes: [...new Set(records.map((record) => record.mode))],
+            isUnlocked: collectionCategoryFilter === "all"
+              ? rewardCollection.trophies.includes(tier)
+              : records.length > 0
+          };
+        }), (item) => item.isUnlocked);
+        trophyItems.forEach(({ tier, modes, isUnlocked }, index) => {
           const tierLabel = currentText[rewardTierPalettes[tier].label];
           const modeText = modes.length
             ? modes.map((mode) => categoryName(mode)).join(" · ")
@@ -5046,6 +5311,7 @@
               : currentText.levelLocked;
           const card = document.createElement("div");
           card.className = `trophy-showcase-card tier-${tier}${isUnlocked ? "" : " locked"}`;
+          card.style.animationDelay = `${index * 45}ms`;
           card.setAttribute("role", "listitem");
           card.setAttribute("aria-label", `${tierLabel} · ${isUnlocked ? currentText.levelUnlocked : currentText.levelLocked} · ${modeText}`);
           const artwork = document.createElement("span");
@@ -5067,12 +5333,20 @@
         const badgeGallery = document.getElementById("badgeGallery");
         badgeGallery.replaceChildren();
         badgeGallery.setAttribute("aria-label", currentText.dashboardBadgeGallery);
-        getAllBadgeDefinitions().forEach((badge) => {
+        const visibleBadges = getAllBadgeDefinitions().filter((badge) =>
+          collectionCategoryFilter === "all" || badge.categories.includes(collectionCategoryFilter)
+        );
+        sortCollectionItems(visibleBadges, (badge) => rewardCollection.badges.includes(badge.id))
+          .forEach((badge, index) => {
           const isUnlocked = rewardCollection.badges.includes(badge.id);
           const card = document.createElement("div");
           card.className = `badge-showcase-card${isUnlocked ? "" : " locked"}`;
+          card.style.animationDelay = `${index * 35}ms`;
+          card.dataset.tooltip = badge.hint;
+          card.title = badge.hint;
+          card.tabIndex = 0;
           card.setAttribute("role", "listitem");
-          card.setAttribute("aria-label", `${badge.title} · ${isUnlocked ? currentText.levelUnlocked : currentText.levelLocked}`);
+          card.setAttribute("aria-label", `${badge.title} · ${isUnlocked ? currentText.levelUnlocked : `${currentText.levelLocked} · ${badge.hint}`}`);
           const icon = document.createElement("span");
           icon.className = "badge-showcase-icon";
           icon.setAttribute("aria-hidden", "true");
@@ -5082,7 +5356,9 @@
           const title = document.createElement("strong");
           title.textContent = badge.title;
           const status = document.createElement("small");
-          status.textContent = isUnlocked ? currentText.levelUnlocked : currentText.levelLocked;
+          status.textContent = isUnlocked
+            ? currentText.levelUnlocked
+            : `${currentText.levelLocked} · ${badge.hint}`;
           copy.append(title, status);
           card.append(icon, copy);
           badgeGallery.append(card);
@@ -5472,6 +5748,17 @@
         renderRewardsDashboard();
         rewardsDialog.showModal();
       });
+      document.getElementById("dashboardCategoryFilter").addEventListener("change", (event) => {
+        collectionCategoryFilter = event.target.value === "all" || REWARD_MODES.includes(event.target.value)
+          ? event.target.value
+          : "all";
+        renderRewardsDashboard();
+      });
+      document.getElementById("dashboardStatusFilter").addEventListener("change", (event) => {
+        const validSortModes = ["default", "unlocked", "locked"];
+        collectionStatusFilter = validSortModes.includes(event.target.value) ? event.target.value : "default";
+        renderRewardsDashboard();
+      });
       document.getElementById("closeRewardsButton").addEventListener("click", () => {
         rewardsDialog.close();
       });
@@ -5580,13 +5867,30 @@
 
       // A small, low-cost procedural orbit scene; the quiz remains usable if WebGL is unavailable.
       const sceneRoot = document.getElementById("scene");
+      const isMobileRenderer = window.innerWidth <= 820 ||
+        window.matchMedia("(pointer: coarse)").matches;
+      const rendererPixelRatio = () => Math.min(
+        window.devicePixelRatio || 1,
+        isMobileRenderer ? 1.25 : 1.6
+      );
+      const rendererAntialias = !isMobileRenderer;
       let renderer;
       try {
         const rendererCanvas = document.createElement("canvas");
-        const webglContext = rendererCanvas.getContext("webgl2", { alpha: true, antialias: true });
+        const webglContext = rendererCanvas.getContext("webgl2", {
+          alpha: true,
+          antialias: rendererAntialias,
+          powerPreference: "low-power"
+        });
         if (!webglContext) throw new Error("WebGL2 is unavailable");
-        renderer = new THREE.WebGLRenderer({ canvas: rendererCanvas, context: webglContext, alpha: true, antialias: true });
-        renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.6));
+        renderer = new THREE.WebGLRenderer({
+          canvas: rendererCanvas,
+          context: webglContext,
+          alpha: true,
+          antialias: rendererAntialias,
+          powerPreference: "low-power"
+        });
+        renderer.setPixelRatio(rendererPixelRatio());
         renderer.setSize(window.innerWidth, window.innerHeight);
         renderer.setClearColor(0x000000, 0);
         renderer.outputColorSpace = THREE.SRGBColorSpace;
@@ -5725,7 +6029,7 @@
         });
         lobbyEnvironment.add(stars);
         // Lightweight, seeded home-screen particles add depth without external assets.
-        const lobbyParticleCount = window.innerWidth < 650 ? 120 : 240;
+        const lobbyParticleCount = isMobileRenderer ? 72 : 240;
         const lobbyParticlePositions = new Float32Array(lobbyParticleCount * 3);
         const lobbyParticleColors = new Float32Array(lobbyParticleCount * 3);
         const lobbyPalette = [0x9beeff, 0xd2b7ff, 0xffffff, 0xffa8e3].map((hex) => new THREE.Color(hex));
@@ -5769,7 +6073,7 @@
           cosmicSeed = cosmicSeed * 16807 % 2147483647;
           return (cosmicSeed - 1) / 2147483646;
         };
-        const starCount = 420;
+        const starCount = isMobileRenderer ? 220 : 420;
         const cosmicStarPositions = new Float32Array(starCount * 3);
         const starColors = new Float32Array(starCount * 3);
         const starPalette = [0x8eeaff, 0xffffff, 0xb9a6ff, 0xffa8e3].map((hex) => new THREE.Color(hex));
@@ -5797,7 +6101,7 @@
         const cosmicStarfield = new THREE.Points(cosmicStarGeometry, cosmicStarMaterial);
         cosmicEnvironment.add(cosmicStarfield);
 
-        const nebulaCount = 180;
+        const nebulaCount = isMobileRenderer ? 90 : 180;
         const nebulaPositions = new Float32Array(nebulaCount * 3);
         const nebulaColors = new Float32Array(nebulaCount * 3);
         const nebulaCenters = [[-3.4, 1.1, -6], [3.3, -1.3, -7.5], [.2, 2.7, -10]];
@@ -6097,8 +6401,11 @@
         let scienceBlend = 0;
         let popBlend = 0;
         let historyBlend = 0;
+        let animationFrameId = 0;
         function animate() {
-          requestAnimationFrame(animate);
+          animationFrameId = 0;
+          if (document.hidden) return;
+          animationFrameId = window.requestAnimationFrame(animate);
           const delta = Math.min(clock.getDelta(), .05);
           const elapsed = clock.elapsedTime;
           cosmicBlend = THREE.MathUtils.damp(cosmicBlend, environmentTarget, 1.65, delta);
@@ -6235,15 +6542,35 @@
           });
           renderer.render(scene, camera);
         }
+        // Stop the decorative renderer in background tabs to save mobile GPU and battery.
+        document.addEventListener("visibilitychange", () => {
+          if (document.hidden) {
+            if (animationFrameId) window.cancelAnimationFrame(animationFrameId);
+            animationFrameId = 0;
+          } else if (!animationFrameId) {
+            clock.getDelta();
+            animate();
+          }
+        });
         animate();
-        window.addEventListener("resize", () => {
-          camera.aspect = window.innerWidth / window.innerHeight;
+        // Resize on viewport changes and orientation rotations; visualViewport also
+        // catches mobile browser chrome expanding or collapsing the usable canvas.
+        const resizeScene = () => {
+          const width = Math.max(1, window.innerWidth);
+          const height = Math.max(1, window.innerHeight);
+          camera.aspect = width / height;
           camera.updateProjectionMatrix();
           setCosmicLayout();
           setRewardLayout();
-          renderer.setSize(window.innerWidth, window.innerHeight);
-          renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.6));
-        });
+          const nextPixelRatio = rendererPixelRatio();
+          if (renderer.getPixelRatio() !== nextPixelRatio) renderer.setPixelRatio(nextPixelRatio);
+          renderer.setSize(width, height);
+        };
+        window.addEventListener("resize", resizeScene, { passive: true });
+        window.addEventListener("orientationchange", resizeScene, { passive: true });
+        if (window.visualViewport) {
+          window.visualViewport.addEventListener("resize", resizeScene, { passive: true });
+        }
       } catch (error) {
         console.warn("3D scene initialization failed; using the CSS fallback.", error);
         document.body.classList.remove("webgl-ready");
