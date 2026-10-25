@@ -3971,7 +3971,7 @@
             "Your next challenge is one tap away"
           ],
           categoryDifficulty: {
-            "General Knowledge": "Mixed",
+            "General Knowledge": "World facts",
             "Science & Technology": "Intermediate",
             "Pop Culture & Movies": "Casual",
             "History & Geography": "Intermediate",
@@ -3993,7 +3993,7 @@
             "IQ Check": "IQ Check"
           },
           categoryDescriptions: {
-            "General Knowledge": "A little bit of everything",
+            "General Knowledge": "Pure GK + verified 2026 current affairs",
             "Science & Technology": "Experiments, space, and digital life",
             "Pop Culture & Movies": "Film, music, and games",
             "History & Geography": "Places, timelines, and journeys",
@@ -4176,7 +4176,7 @@
             "পরের চ্যালেঞ্জ এক ট্যাপ দূরে"
           ],
           categoryDifficulty: {
-            "General Knowledge": "বৈচিত্র্যময়",
+            "General Knowledge": "বিশ্বজ্ঞান",
             "Science & Technology": "মাঝারি",
             "Pop Culture & Movies": "সহজ",
             "History & Geography": "মাঝারি",
@@ -4198,7 +4198,7 @@
             "IQ Check": "আইকিউ পরীক্ষা"
           },
           categoryDescriptions: {
-            "General Knowledge": "নানান বিষয়ের মজার তথ্য",
+            "General Knowledge": "নির্ভরযোগ্য সাধারণ জ্ঞান ও যাচাইকৃত ২০২৬-এর সাম্প্রতিক তথ্য",
             "Science & Technology": "পরীক্ষা, মহাকাশ ও ডিজিটাল জীবন",
             "Pop Culture & Movies": "সিনেমা, গান ও গেম",
             "History & Geography": "স্থান, সময়রেখা ও ভ্রমণ",
@@ -4381,7 +4381,7 @@
             "अगली चुनौती बस एक टैप दूर"
           ],
           categoryDifficulty: {
-            "General Knowledge": "मिश्रित",
+            "General Knowledge": "विश्व ज्ञान",
             "Science & Technology": "मध्यम",
             "Pop Culture & Movies": "आसान",
             "History & Geography": "मध्यम",
@@ -4403,7 +4403,7 @@
             "IQ Check": "IQ जाँच"
           },
           categoryDescriptions: {
-            "General Knowledge": "हर विषय से थोड़ी-थोड़ी जानकारी",
+            "General Knowledge": "शुद्ध सामान्य ज्ञान और सत्यापित 2026 के समसामयिक तथ्य",
             "Science & Technology": "प्रयोग, अंतरिक्ष और डिजिटल जीवन",
             "Pop Culture & Movies": "फ़िल्म, संगीत और गेम",
             "History & Geography": "स्थान, समयरेखाएँ और यात्राएँ",
@@ -4586,7 +4586,7 @@
             "Tu próximo reto está a un toque"
           ],
           categoryDifficulty: {
-            "General Knowledge": "Variado",
+            "General Knowledge": "Saber mundial",
             "Science & Technology": "Intermedio",
             "Pop Culture & Movies": "Ligero",
             "History & Geography": "Intermedio",
@@ -4608,7 +4608,7 @@
             "IQ Check": "Desafío de lógica"
           },
           categoryDescriptions: {
-            "General Knowledge": "Un poco de todo",
+            "General Knowledge": "Cultura general y actualidad de 2026 verificada",
             "Science & Technology": "Experimentos, espacio y vida digital",
             "Pop Culture & Movies": "Cine, música y videojuegos",
             "History & Geography": "Lugares, cronologías y viajes",
@@ -4791,7 +4791,7 @@
             "Le prochain défi est à portée de clic"
           ],
           categoryDifficulty: {
-            "General Knowledge": "Varié",
+            "General Knowledge": "Savoirs du monde",
             "Science & Technology": "Intermédiaire",
             "Pop Culture & Movies": "Accessible",
             "History & Geography": "Intermédiaire",
@@ -4813,7 +4813,7 @@
             "IQ Check": "Défi logique"
           },
           categoryDescriptions: {
-            "General Knowledge": "Un peu de tout",
+            "General Knowledge": "Culture générale et actualité 2026 vérifiée",
             "Science & Technology": "Expériences, espace et vie numérique",
             "Pop Culture & Movies": "Cinéma, musique et jeux",
             "History & Geography": "Lieux, chronologies et voyages",
@@ -5185,38 +5185,301 @@
         }
       };
 
-      // IQ Check uses this localized, curated reasoning pool. General Knowledge
-      // level questions are generated per session from the procedural bank below.
+      // GK editorial snapshot, NOT a live news feed. Never advance this year or
+      // turn a scheduled event into a completed event without rechecking sources.
+      // Sources are documentation only: playing never fetches news or uploads data.
+      const GK_CONTENT_YEAR = 2026;
+      const GK_REVIEWED_AT = "2026-10-24";
+      const GK_SOURCES = Object.freeze({
+        bbnj: "https://www.un.org/bbnjagreement/en",
+        years: "https://www.un.org/en/observances/international-years",
+        artemis: "https://www.nasa.gov/mission/artemis-ii",
+        rabat: "https://www.unesco.org/en/articles/unesco-names-rabat-world-book-capital-2026",
+        cop31: "https://unfccc.int/cop31",
+        water: "https://sdgs.un.org/conferences/water2026"
+      });
+      const GK_LANGUAGES = ["en", "bn", "hi", "es", "fr"];
+      // Add a fact with a stable ID, subject, difficulty (1–3), correct index
+      // (0–3), and FIVE rows [question, A, B, C, D]. Options must stay aligned
+      // across languages. No calculations, themed arithmetic or filler variants.
+      function gkFact(id, subject, difficulty, answer, rows, metadata = {}) {
+        return {
+          id: `gk-${id}`, subject, difficulty, answer, ...metadata,
+          question: Object.fromEntries(GK_LANGUAGES.map((lang) => [lang, rows[lang][0]])),
+          options: Object.fromEntries(GK_LANGUAGES.map((lang) => [lang, rows[lang].slice(1)]))
+        };
+      }
+      const timelessGKExpansion = [
+        gkFact("angkor-wat", "monuments", 2, 2, {
+          en: ["In which country is Angkor Wat?", "Laos", "Thailand", "Cambodia", "Vietnam"],
+          bn: ["আঙ্কোর ওয়াট কোন দেশে?", "লাওস", "থাইল্যান্ড", "কম্বোডিয়া", "ভিয়েতনাম"],
+          hi: ["अंगकोर वाट किस देश में है?", "लाओस", "थाईलैंड", "कंबोडिया", "वियतनाम"],
+          es: ["¿En qué país está Angkor Wat?", "Laos", "Tailandia", "Camboya", "Vietnam"],
+          fr: ["Dans quel pays se trouve Angkor Wat ?", "Laos", "Thaïlande", "Cambodge", "Viêt Nam"]
+        }),
+        gkFact("machu-picchu", "monuments", 2, 1, {
+          en: ["Which civilization built Machu Picchu?", "Maya", "Inca", "Aztec", "Olmec"],
+          bn: ["মাচু পিচু কোন সভ্যতা নির্মাণ করেছিল?", "মায়া", "ইনকা", "অ্যাজটেক", "ওলমেক"],
+          hi: ["माचू पिच्चू किस सभ्यता ने बनाया?", "माया", "इंका", "एज़्टेक", "ओल्मेक"],
+          es: ["¿Qué civilización construyó Machu Picchu?", "Maya", "Inca", "Azteca", "Olmeca"],
+          fr: ["Quelle civilisation a construit le Machu Picchu ?", "Maya", "Inca", "Aztèque", "Olmèque"]
+        }),
+        gkFact("austen", "literature", 2, 0, {
+          en: ["Who wrote Pride and Prejudice?", "Jane Austen", "Charlotte Brontë", "Mary Shelley", "George Eliot"],
+          bn: ["প্রাইড অ্যান্ড প্রেজুডিস কে লিখেছেন?", "জেন অস্টেন", "শার্লট ব্রন্টে", "মেরি শেলি", "জর্জ এলিয়ট"],
+          hi: ["प्राइड ऐंड प्रेजुडिस किसने लिखा?", "जेन ऑस्टिन", "शार्लट ब्रॉन्टे", "मेरी शेली", "जॉर्ज एलियट"],
+          es: ["¿Quién escribió Orgullo y prejuicio?", "Jane Austen", "Charlotte Brontë", "Mary Shelley", "George Eliot"],
+          fr: ["Qui a écrit Orgueil et Préjugés ?", "Jane Austen", "Charlotte Brontë", "Mary Shelley", "George Eliot"]
+        }),
+        gkFact("cervantes", "literature", 2, 3, {
+          en: ["Who wrote Don Quixote?", "Dante Alighieri", "Victor Hugo", "Homer", "Miguel de Cervantes"],
+          bn: ["ডন কিহোতে কে লিখেছেন?", "দান্তে আলিঘিয়েরি", "ভিক্টর হুগো", "হোমার", "মিগেল দে সের্ভান্তেস"],
+          hi: ["डॉन किहोते किसने लिखा?", "दांते अलिघियेरी", "विक्टर ह्यूगो", "होमर", "मिगेल दे सर्वांतेस"],
+          es: ["¿Quién escribió Don Quijote?", "Dante Alighieri", "Victor Hugo", "Homero", "Miguel de Cervantes"],
+          fr: ["Qui a écrit Don Quichotte ?", "Dante Alighieri", "Victor Hugo", "Homère", "Miguel de Cervantes"]
+        }),
+        gkFact("beethoven", "arts", 2, 1, {
+          en: ["Who composed the Ninth Symphony featuring Ode to Joy?", "Mozart", "Beethoven", "Bach", "Chopin"],
+          bn: ["ওড টু জয়-সহ নবম সিম্ফনি কে রচনা করেন?", "মোৎসার্ট", "বেটোফেন", "বাখ", "শোপাঁ"],
+          hi: ["ओड टू जॉय वाली नौवीं सिम्फनी किसने रची?", "मोत्सार्ट", "बीथोवेन", "बाख", "शोपैं"],
+          es: ["¿Quién compuso la Novena Sinfonía con la Oda a la alegría?", "Mozart", "Beethoven", "Bach", "Chopin"],
+          fr: ["Qui a composé la Neuvième Symphonie avec l’Ode à la joie ?", "Mozart", "Beethoven", "Bach", "Chopin"]
+        }),
+        gkFact("constantinople", "history", 2, 2, {
+          en: ["Which modern city was historically called Constantinople?", "Athens", "Rome", "Istanbul", "Alexandria"],
+          bn: ["কনস্টান্টিনোপল কোন আধুনিক শহরের ঐতিহাসিক নাম?", "এথেন্স", "রোম", "ইস্তাম্বুল", "আলেকজান্দ্রিয়া"],
+          hi: ["कॉन्स्टैन्टिनोपल किस आधुनिक शहर का ऐतिहासिक नाम है?", "एथेंस", "रोम", "इस्तांबुल", "अलेक्ज़ान्ड्रिया"],
+          es: ["¿Qué ciudad actual se llamó Constantinopla?", "Atenas", "Roma", "Estambul", "Alejandría"],
+          fr: ["Quelle ville actuelle s’appelait Constantinople ?", "Athènes", "Rome", "Istanbul", "Alexandrie"]
+        }),
+        gkFact("rosetta-stone", "history", 3, 0, {
+          en: ["The Rosetta Stone helped scholars decipher which writing system?", "Egyptian hieroglyphs", "Maya glyphs", "Linear A", "Indus script"],
+          bn: ["রোজেটা স্টোন কোন লিপির পাঠোদ্ধারে সাহায্য করে?", "মিশরীয় হায়ারোগ্লিফ", "মায়া লিপি", "লিনিয়ার এ", "সিন্ধু লিপি"],
+          hi: ["रोसेटा शिला ने किस लिपि को समझने में मदद की?", "मिस्री चित्रलिपि", "माया लिपि", "लीनियर ए", "सिंधु लिपि"],
+          es: ["¿Qué escritura ayudó a descifrar la piedra de Rosetta?", "Jeroglíficos egipcios", "Glifos mayas", "Lineal A", "Escritura del Indo"],
+          fr: ["Quelle écriture la pierre de Rosette a-t-elle aidé à déchiffrer ?", "Hiéroglyphes égyptiens", "Glyphes mayas", "Linéaire A", "Écriture de l’Indus"]
+        }),
+        gkFact("suez", "geography", 3, 2, {
+          en: ["Which seas does the Suez Canal connect?", "Black Sea and Caspian Sea", "Baltic Sea and Black Sea", "Mediterranean Sea and Red Sea", "Red Sea and Arabian Sea"],
+          bn: ["সুয়েজ খাল কোন দুই সাগর যুক্ত করে?", "কৃষ্ণসাগর ও কাস্পিয়ান সাগর", "বাল্টিক সাগর ও কৃষ্ণসাগর", "ভূমধ্যসাগর ও লোহিত সাগর", "লোহিত সাগর ও আরব সাগর"],
+          hi: ["स्वेज़ नहर किन समुद्रों को जोड़ती है?", "काला और कैस्पियन सागर", "बाल्टिक और काला सागर", "भूमध्य और लाल सागर", "लाल और अरब सागर"],
+          es: ["¿Qué mares conecta el canal de Suez?", "Negro y Caspio", "Báltico y Negro", "Mediterráneo y Rojo", "Rojo y Arábigo"],
+          fr: ["Quelles mers le canal de Suez relie-t-il ?", "Noire et Caspienne", "Baltique et Noire", "Méditerranée et Rouge", "Rouge et d’Arabie"]
+        }),
+        gkFact("mitochondria", "science", 3, 1, {
+          en: ["Which organelles produce most ATP during aerobic respiration in human cells?", "Ribosomes", "Mitochondria", "Lysosomes", "Golgi apparatus"],
+          bn: ["মানবকোষে বায়বীয় শ্বসনে অধিকাংশ ATP কোন অঙ্গাণু তৈরি করে?", "রাইবোসোম", "মাইটোকন্ড্রিয়া", "লাইসোসোম", "গলজি যন্ত্র"],
+          hi: ["मानव कोशिकाओं में वायवीय श्वसन से अधिकतर ATP कौन बनाता है?", "राइबोसोम", "माइटोकॉन्ड्रिया", "लाइसोसोम", "गॉल्जी तंत्र"],
+          es: ["¿Qué orgánulos producen la mayor parte del ATP en la respiración aerobia de las células humanas?", "Ribosomas", "Mitocondrias", "Lisosomas", "Aparato de Golgi"],
+          fr: ["Quels organites produisent le plus d’ATP lors de la respiration aérobie des cellules humaines ?", "Ribosomes", "Mitochondries", "Lysosomes", "Appareil de Golgi"]
+        }),
+        gkFact("sodium", "science", 3, 3, {
+          en: ["Which element has the chemical symbol Na?", "Nitrogen", "Nickel", "Neon", "Sodium"],
+          bn: ["Na কোন মৌলের রাসায়নিক প্রতীক?", "নাইট্রোজেন", "নিকেল", "নিয়ন", "সোডিয়াম"],
+          hi: ["Na किस तत्व का रासायनिक प्रतीक है?", "नाइट्रोजन", "निकल", "निऑन", "सोडियम"],
+          es: ["¿Qué elemento tiene el símbolo químico Na?", "Nitrógeno", "Níquel", "Neón", "Sodio"],
+          fr: ["Quel élément a pour symbole chimique Na ?", "Azote", "Nickel", "Néon", "Sodium"]
+        }),
+        gkFact("renaissance", "arts", 3, 0, {
+          en: ["In which present-day country did the European Renaissance first flourish?", "Italy", "Norway", "Portugal", "Poland"],
+          bn: ["ইউরোপীয় রেনেসাঁ প্রথম কোন বর্তমান দেশে বিকশিত হয়?", "ইতালি", "নরওয়ে", "পর্তুগাল", "পোল্যান্ড"],
+          hi: ["यूरोपीय पुनर्जागरण सबसे पहले आज के किस देश में फला-फूला?", "इटली", "नॉर्वे", "पुर्तगाल", "पोलैंड"],
+          es: ["¿En qué país actual floreció primero el Renacimiento europeo?", "Italia", "Noruega", "Portugal", "Polonia"],
+          fr: ["Dans quel pays actuel la Renaissance européenne s’est-elle d’abord développée ?", "Italie", "Norvège", "Portugal", "Pologne"]
+        }),
+        gkFact("gutenberg", "history", 3, 2, {
+          en: ["Who developed a movable-metal-type printing system in Europe in the 15th century?", "Isaac Newton", "Galileo Galilei", "Johannes Gutenberg", "Nicolaus Copernicus"],
+          bn: ["পঞ্চদশ শতকে ইউরোপে চলনশীল ধাতব হরফের মুদ্রণ ব্যবস্থা কে বিকশিত করেন?", "আইজ্যাক নিউটন", "গ্যালিলিও গ্যালিলেই", "ইয়োহানেস গুটেনবার্গ", "নিকোলাস কোপার্নিকাস"],
+          hi: ["15वीं सदी में यूरोप में चल धातु-अक्षर मुद्रण प्रणाली किसने विकसित की?", "आइज़ैक न्यूटन", "गैलीलियो गैलिली", "योहानेस गुटेनबर्ग", "निकोलस कॉपरनिकस"],
+          es: ["¿Quién desarrolló en Europa la imprenta de tipos metálicos móviles en el siglo XV?", "Isaac Newton", "Galileo Galilei", "Johannes Gutenberg", "Nicolás Copérnico"],
+          fr: ["Qui a développé en Europe l’imprimerie à caractères métalliques mobiles au XVe siècle ?", "Isaac Newton", "Galilée", "Johannes Gutenberg", "Nicolas Copernic"]
+        })
+      ];
+      // All 2026 entries have explicit primary-source evidence and temporal
+      // status. Append new, verified records here; never synthesize news facts.
+      const currentAffairs2026 = [
+        gkFact("2026-bbnj", "current-affairs", 1, 0, {
+          en: ["When did the UN High Seas (BBNJ) Agreement enter into force in 2026?", "17 January", "17 March", "17 June", "17 September"],
+          bn: ["২০২৬ সালে জাতিসংঘের উচ্চ সমুদ্রের BBNJ চুক্তি কবে কার্যকর হয়?", "১৭ জানুয়ারি", "১৭ মার্চ", "১৭ জুন", "১৭ সেপ্টেম্বর"],
+          hi: ["2026 में संयुक्त राष्ट्र का उच्च समुद्र BBNJ समझौता कब लागू हुआ?", "17 जनवरी", "17 मार्च", "17 जून", "17 सितंबर"],
+          es: ["¿Cuándo entró en vigor en 2026 el Acuerdo de Alta Mar (BBNJ) de la ONU?", "17 de enero", "17 de marzo", "17 de junio", "17 de septiembre"],
+          fr: ["Quand l’accord de l’ONU sur la haute mer (BBNJ) est-il entré en vigueur en 2026 ?", "17 janvier", "17 mars", "17 juin", "17 septembre"]
+        }, { references: [GK_SOURCES.bbnj], event: "bbnj", status: "completed", eventDate: "2026-01-17" }),
+        gkFact("2026-woman-farmer", "current-affairs", 1, 1, {
+          en: ["Which UN international year in 2026 highlights women's roles in food and agriculture?", "Year of Women Engineers", "Year of the Woman Farmer", "Year of Women Astronomers", "Year of Women Architects"],
+          bn: ["খাদ্য ও কৃষিতে নারীর ভূমিকা তুলে ধরতে ২০২৬ সালে জাতিসংঘ কোন আন্তর্জাতিক বর্ষ পালন করছে?", "নারী প্রকৌশলী বর্ষ", "নারী কৃষক বর্ষ", "নারী জ্যোতির্বিজ্ঞানী বর্ষ", "নারী স্থপতি বর্ষ"],
+          hi: ["खाद्य और कृषि में महिलाओं की भूमिका के लिए 2026 में संयुक्त राष्ट्र का कौन-सा अंतरराष्ट्रीय वर्ष है?", "महिला इंजीनियर वर्ष", "महिला किसान वर्ष", "महिला खगोलविद वर्ष", "महिला वास्तुकार वर्ष"],
+          es: ["¿Qué año internacional de la ONU en 2026 destaca el papel de las mujeres en la alimentación y la agricultura?", "Año de las Ingenieras", "Año de la Agricultora", "Año de las Astrónomas", "Año de las Arquitectas"],
+          fr: ["Quelle année internationale de l’ONU en 2026 souligne le rôle des femmes dans l’alimentation et l’agriculture ?", "Année des ingénieures", "Année des agricultrices", "Année des astronomes", "Année des architectes"]
+        }, { references: [GK_SOURCES.years], event: "woman-farmer", status: "designated" }),
+        gkFact("2026-rangelands", "current-affairs", 1, 2, {
+          en: ["The UN designated 2026 as the International Year of Rangelands and which communities?", "Seafarers", "Miners", "Pastoralists", "Astronomers"],
+          bn: ["জাতিসংঘ ২০২৬ সালকে চারণভূমি ও কোন সম্প্রদায়ের আন্তর্জাতিক বর্ষ ঘোষণা করেছে?", "নাবিক", "খনিশ্রমিক", "পশুপালক", "জ্যোতির্বিজ্ঞানী"],
+          hi: ["संयुक्त राष्ट्र ने 2026 को चरागाहों और किस समुदाय का अंतरराष्ट्रीय वर्ष घोषित किया?", "नाविकों", "खनिकों", "पशुपालकों", "खगोलविदों"],
+          es: ["La ONU declaró 2026 Año Internacional de los Pastizales y de qué comunidades?", "Marineros", "Mineros", "Pastores", "Astrónomos"],
+          fr: ["L’ONU a déclaré 2026 Année internationale des parcours et de quelles communautés ?", "Marins", "Mineurs", "Éleveurs pastoraux", "Astronomes"]
+        }, { references: [GK_SOURCES.years], event: "rangelands", status: "designated" }),
+        gkFact("2026-volunteers", "current-affairs", 1, 3, {
+          en: ["Which of these UN international years is observed in 2026?", "Quantum Science and Technology", "Cooperatives", "Camelids", "Volunteers for Sustainable Development"],
+          bn: ["জাতিসংঘের এই আন্তর্জাতিক বর্ষগুলির মধ্যে কোনটি ২০২৬ সালে পালিত হচ্ছে?", "কোয়ান্টাম বিজ্ঞান ও প্রযুক্তি", "সমবায়", "উটজাতীয় প্রাণী", "টেকসই উন্নয়নের জন্য স্বেচ্ছাসেবক"],
+          hi: ["संयुक्त राष्ट्र का इनमें से कौन-सा अंतरराष्ट्रीय वर्ष 2026 में मनाया जा रहा है?", "क्वांटम विज्ञान और प्रौद्योगिकी", "सहकारिता", "ऊँट प्रजातियाँ", "सतत विकास के लिए स्वयंसेवक"],
+          es: ["¿Cuál de estos años internacionales de la ONU se celebra en 2026?", "Ciencia y Tecnología Cuánticas", "Cooperativas", "Camélidos", "Voluntarios para el Desarrollo Sostenible"],
+          fr: ["Laquelle de ces années internationales de l’ONU est célébrée en 2026 ?", "Sciences et technologies quantiques", "Coopératives", "Camélidés", "Volontaires au service du développement durable"]
+        }, { references: [GK_SOURCES.years], event: "volunteers", status: "designated" }),
+        gkFact("2026-rabat", "current-affairs", 1, 0, {
+          en: ["Which city is UNESCO's World Book Capital for 2026?", "Rabat", "Athens", "Lisbon", "Cairo"],
+          bn: ["২০২৬ সালের ইউনেস্কো বিশ্ব বই রাজধানী কোন শহর?", "রাবাত", "এথেন্স", "লিসবন", "কায়রো"],
+          hi: ["2026 की यूनेस्को विश्व पुस्तक राजधानी कौन-सा शहर है?", "रबात", "एथेंस", "लिस्बन", "काहिरा"],
+          es: ["¿Qué ciudad es la Capital Mundial del Libro de la UNESCO en 2026?", "Rabat", "Atenas", "Lisboa", "El Cairo"],
+          fr: ["Quelle ville est la Capitale mondiale du livre de l’UNESCO en 2026 ?", "Rabat", "Athènes", "Lisbonne", "Le Caire"]
+        }, { references: [GK_SOURCES.rabat], event: "rabat", status: "designated" }),
+        gkFact("2026-artemis-moon", "science", 1, 1, {
+          en: ["Which celestial body did the crewed Artemis II mission fly around in April 2026?", "Mars", "The Moon", "Venus", "Jupiter"],
+          bn: ["২০২৬ সালের এপ্রিলে মানুষবাহী আর্টেমিস II কোন মহাজাগতিক বস্তুর পাশ দিয়ে ঘুরে আসে?", "মঙ্গল", "চাঁদ", "শুক্র", "বৃহস্পতি"],
+          hi: ["अप्रैल 2026 में मानवयुक्त आर्टेमिस II मिशन किस खगोलीय पिंड के पास से घूमकर आया?", "मंगल", "चंद्रमा", "शुक्र", "बृहस्पति"],
+          es: ["¿Qué cuerpo celeste rodeó la misión tripulada Artemis II en abril de 2026?", "Marte", "La Luna", "Venus", "Júpiter"],
+          fr: ["Quel astre la mission habitée Artemis II a-t-elle contourné en avril 2026 ?", "Mars", "La Lune", "Vénus", "Jupiter"]
+        }, { references: [GK_SOURCES.artemis], event: "artemis-ii", status: "completed", eventDate: "2026-04-10" }),
+        gkFact("2026-artemis-crew", "science", 1, 2, {
+          en: ["How many astronauts flew on Artemis II in April 2026?", "Two", "Three", "Four", "Six"],
+          bn: ["২০২৬ সালের এপ্রিলে আর্টেমিস II-তে কতজন মহাকাশচারী ছিলেন?", "দুইজন", "তিনজন", "চারজন", "ছয়জন"],
+          hi: ["अप्रैल 2026 के आर्टेमिस II मिशन में कितने अंतरिक्ष यात्री थे?", "दो", "तीन", "चार", "छह"],
+          es: ["¿Cuántos astronautas viajaron en Artemis II en abril de 2026?", "Dos", "Tres", "Cuatro", "Seis"],
+          fr: ["Combien d’astronautes ont volé à bord d’Artemis II en avril 2026 ?", "Deux", "Trois", "Quatre", "Six"]
+        }, { references: [GK_SOURCES.artemis], event: "artemis-ii", status: "completed", eventDate: "2026-04-10" }),
+        gkFact("2026-artemis-orion", "science", 1, 3, {
+          en: ["Which spacecraft carried the Artemis II crew in April 2026?", "Vostok", "Gemini", "Shenzhou", "Orion"],
+          bn: ["২০২৬ সালের এপ্রিলে আর্টেমিস II-এর মহাকাশচারীরা কোন মহাকাশযানে ছিলেন?", "ভস্তক", "জেমিনি", "শেনঝৌ", "ওরিয়ন"],
+          hi: ["अप्रैल 2026 में आर्टेमिस II के यात्री किस अंतरिक्ष यान में थे?", "वोस्तोक", "जेमिनी", "शेनझोउ", "ओरायन"],
+          es: ["¿Qué nave llevó a la tripulación de Artemis II en abril de 2026?", "Vostok", "Gemini", "Shenzhou", "Orion"],
+          fr: ["Quel vaisseau a transporté l’équipage d’Artemis II en avril 2026 ?", "Vostok", "Gemini", "Shenzhou", "Orion"]
+        }, { references: [GK_SOURCES.artemis], event: "artemis-ii", status: "completed", eventDate: "2026-04-10" }),
+        gkFact("2026-cop31", "current-affairs", 1, 0, {
+          en: ["As scheduled in October 2026, which city will host COP31 in November 2026?", "Antalya, Türkiye", "Nairobi, Kenya", "Lima, Peru", "Oslo, Norway"],
+          bn: ["অক্টোবর ২০২৬-এর ঘোষিত সূচি অনুযায়ী, নভেম্বরে COP31 কোন শহরে হওয়ার কথা?", "আন্তালিয়া, তুরস্ক", "নাইরোবি, কেনিয়া", "লিমা, পেরু", "অসলো, নরওয়ে"],
+          hi: ["अक्टूबर 2026 में घोषित कार्यक्रम के अनुसार नवंबर में COP31 कहाँ होना है?", "अंताल्या, तुर्किये", "नैरोबी, केन्या", "लीमा, पेरू", "ओस्लो, नॉर्वे"],
+          es: ["Según lo programado en octubre de 2026, ¿qué ciudad acogerá la COP31 en noviembre?", "Antalya, Türkiye", "Nairobi, Kenia", "Lima, Perú", "Oslo, Noruega"],
+          fr: ["Selon le calendrier annoncé en octobre 2026, quelle ville accueillera la COP31 en novembre ?", "Antalya, Türkiye", "Nairobi, Kenya", "Lima, Pérou", "Oslo, Norvège"]
+        }, { references: [GK_SOURCES.cop31], event: "cop31", status: "scheduled", eventDate: "2026-11-09" }),
+        gkFact("2026-water", "current-affairs", 1, 1, {
+          en: ["Which countries are the designated co-hosts of the UN Water Conference scheduled for December 2026?", "Brazil and Japan", "United Arab Emirates and Senegal", "France and Canada", "India and Australia"],
+          bn: ["ডিসেম্বর ২০২৬-এ নির্ধারিত জাতিসংঘ জল সম্মেলনের যৌথ আয়োজক কোন দেশ দুটি?", "ব্রাজিল ও জাপান", "সংযুক্ত আরব আমিরাত ও সেনেগাল", "ফ্রান্স ও কানাডা", "ভারত ও অস্ট্রেলিয়া"],
+          hi: ["दिसंबर 2026 के लिए निर्धारित संयुक्त राष्ट्र जल सम्मेलन के सह-मेज़बान कौन हैं?", "ब्राज़ील और जापान", "संयुक्त अरब अमीरात और सेनेगल", "फ़्रांस और कनाडा", "भारत और ऑस्ट्रेलिया"],
+          es: ["¿Qué países coorganizarán la Conferencia de la ONU sobre el Agua prevista para diciembre de 2026?", "Brasil y Japón", "Emiratos Árabes Unidos y Senegal", "Francia y Canadá", "India y Australia"],
+          fr: ["Quels pays coorganiseront la Conférence de l’ONU sur l’eau prévue en décembre 2026 ?", "Brésil et Japon", "Émirats arabes unis et Sénégal", "France et Canada", "Inde et Australie"]
+        }, { references: [GK_SOURCES.water], event: "water2026", status: "scheduled", eventDate: "2026-12-08" })
+      ].map((item) => ({ ...item, kind: "current-affairs", year: GK_CONTENT_YEAR, reviewedAt: GK_REVIEWED_AT }));
+
+      // Base timeless GK stays human-authored. Append facts or gkFact(...) entries,
+      // not arithmetic generators. Every level draws ten distinct pool entries.
       const quizData = {
         "General Knowledge": [
           { question: { en: "What is the capital of Japan?", bn: "জাপানের রাজধানী কোনটি?", hi: "जापान की राजधानी क्या है?", es: "¿Cuál es la capital de Japón?", fr: "Quelle est la capitale du Japon ?" }, options: { en: ["Tokyo", "Kyoto", "Osaka", "Sapporo"], bn: ["টোকিও", "কিয়োটো", "ওসাকা", "সাপ্পোরো"], hi: ["टोक्यो", "क्योटो", "ओसाका", "साप्पोरो"], es: ["Tokio", "Kioto", "Osaka", "Sapporo"], fr: ["Tokyo", "Kyoto", "Osaka", "Sapporo"] }, answer: 0 },
           { question: { en: "Which is Earth's largest ocean?", bn: "পৃথিবীর বৃহত্তম মহাসাগর কোনটি?", hi: "पृथ्वी का सबसे बड़ा महासागर कौन-सा है?", es: "¿Cuál es el océano más grande de la Tierra?", fr: "Quel est le plus grand océan de la Terre ?" }, options: { en: ["Atlantic", "Indian", "Arctic", "Pacific"], bn: ["আটলান্টিক মহাসাগর", "ভারত মহাসাগর", "আর্কটিক মহাসাগর", "প্রশান্ত মহাসাগর"], hi: ["अटलांटिक", "हिंद महासागर", "आर्कटिक", "प्रशांत"], es: ["Atlántico", "Índico", "Ártico", "Pacífico"], fr: ["Atlantique", "Indien", "Arctique", "Pacifique"] }, answer: 3 },
           { question: { en: "The Eiffel Tower is in which city?", bn: "আইফেল টাওয়ার কোন শহরে অবস্থিত?", hi: "एफिल टॉवर किस शहर में है?", es: "¿En qué ciudad está la Torre Eiffel?", fr: "Dans quelle ville se trouve la tour Eiffel ?" }, options: { en: ["Rome", "Paris", "Madrid", "Vienna"], bn: ["রোম", "প্যারিস", "মাদ্রিদ", "ভিয়েনা"], hi: ["रोम", "पेरिस", "मैड्रिड", "वियना"], es: ["Roma", "París", "Madrid", "Viena"], fr: ["Rome", "Paris", "Madrid", "Vienne"] }, answer: 1 },
-          { question: { en: "How many sides does a hexagon have?", bn: "ষড়ভুজের কয়টি বাহু থাকে?", hi: "षट्भुज की कितनी भुजाएँ होती हैं?", es: "¿Cuántos lados tiene un hexágono?", fr: "Combien de côtés possède un hexagone ?" }, options: { en: ["Five", "Six", "Seven", "Eight"], bn: ["পাঁচটি", "ছয়টি", "সাতটি", "আটটি"], hi: ["पाँच", "छह", "सात", "आठ"], es: ["Cinco", "Seis", "Siete", "Ocho"], fr: ["Cinq", "Six", "Sept", "Huit"] }, answer: 1 },
+          gkFact("gitanjali", "literature", 1, 1, {
+            en: ["Who wrote Gitanjali?", "William Wordsworth", "Rabindranath Tagore", "John Keats", "Walt Whitman"],
+            bn: ["গীতাঞ্জলি কে লিখেছেন?", "উইলিয়াম ওয়ার্ডসওয়ার্থ", "রবীন্দ্রনাথ ঠাকুর", "জন কিটস", "ওয়াল্ট হুইটম্যান"],
+            hi: ["गीतांजलि किसने लिखी?", "विलियम वर्ड्सवर्थ", "रवींद्रनाथ टैगोर", "जॉन कीट्स", "वॉल्ट व्हिटमैन"],
+            es: ["¿Quién escribió Gitanjali?", "William Wordsworth", "Rabindranath Tagore", "John Keats", "Walt Whitman"],
+            fr: ["Qui a écrit Gitanjali ?", "William Wordsworth", "Rabindranath Tagore", "John Keats", "Walt Whitman"]
+          }),
           { question: { en: "The Pyramids of Giza are in which country?", bn: "গিজার পিরামিড কোন দেশে অবস্থিত?", hi: "गीज़ा के पिरामिड किस देश में हैं?", es: "¿En qué país están las pirámides de Guiza?", fr: "Dans quel pays se trouvent les pyramides de Gizeh ?" }, options: { en: ["Greece", "Italy", "Egypt", "Mexico"], bn: ["গ্রিস", "ইতালি", "মিশর", "মেক্সিকো"], hi: ["यूनान", "इटली", "मिस्र", "मेक्सिको"], es: ["Grecia", "Italia", "Egipto", "México"], fr: ["Grèce", "Italie", "Égypte", "Mexique"] }, answer: 2 },
           { question: { en: "Which language is primarily spoken in Brazil?", bn: "ব্রাজিলে প্রধানত কোন ভাষায় কথা বলা হয়?", hi: "ब्राज़ील में मुख्य रूप से कौन-सी भाषा बोली जाती है?", es: "¿Qué idioma se habla principalmente en Brasil?", fr: "Quelle langue est principalement parlée au Brésil ?" }, options: { en: ["Spanish", "Portuguese", "French", "Italian"], bn: ["স্প্যানিশ", "পর্তুগিজ", "ফরাসি", "ইতালীয়"], hi: ["स्पैनिश", "पुर्तगाली", "फ़्रेंच", "इतालवी"], es: ["Español", "Portugués", "Francés", "Italiano"], fr: ["Espagnol", "Portugais", "Français", "Italien"] }, answer: 1 },
-          { question: { en: "How many continents are there?", bn: "পৃথিবীতে কয়টি মহাদেশ আছে?", hi: "पृथ्वी पर कितने महाद्वीप हैं?", es: "¿Cuántos continentes hay?", fr: "Combien y a-t-il de continents ?" }, options: { en: ["Five", "Six", "Seven", "Eight"], bn: ["পাঁচটি", "ছয়টি", "সাতটি", "আটটি"], hi: ["पाँच", "छह", "सात", "आठ"], es: ["Cinco", "Seis", "Siete", "Ocho"], fr: ["Cinq", "Six", "Sept", "Huit"] }, answer: 2 },
+          gkFact("largest-continent", "geography", 1, 2, {
+            en: ["Which continent has the largest land area?", "Africa", "Europe", "Asia", "Antarctica"],
+            bn: ["স্থলভাগের আয়তনে বৃহত্তম মহাদেশ কোনটি?", "আফ্রিকা", "ইউরোপ", "এশিয়া", "অ্যান্টার্কটিকা"],
+            hi: ["स्थलीय क्षेत्रफल में सबसे बड़ा महाद्वीप कौन-सा है?", "अफ़्रीका", "यूरोप", "एशिया", "अंटार्कटिका"],
+            es: ["¿Qué continente tiene la mayor superficie terrestre?", "África", "Europa", "Asia", "Antártida"],
+            fr: ["Quel continent a la plus grande superficie terrestre ?", "Afrique", "Europe", "Asie", "Antarctique"]
+          }),
           { question: { en: "Which river flows through London?", bn: "লন্ডনের মধ্য দিয়ে কোন নদী বয়ে গেছে?", hi: "लंदन से कौन-सी नदी बहती है?", es: "¿Qué río atraviesa Londres?", fr: "Quel fleuve traverse Londres ?" }, options: { en: ["Seine", "Danube", "Tiber", "Thames"], bn: ["সেন", "ডানিউব", "টাইবার", "টেমস"], hi: ["सीन", "डैन्यूब", "टाइबर", "टेम्स"], es: ["Sena", "Danubio", "Tíber", "Támesis"], fr: ["Seine", "Danube", "Tibre", "Tamise"] }, answer: 3 },
-          { question: { en: "What is the currency of Japan?", bn: "জাপানের মুদ্রার নাম কী?", hi: "जापान की मुद्रा क्या है?", es: "¿Cuál es la moneda de Japón?", fr: "Quelle est la monnaie du Japon ?" }, options: { en: ["Yen", "Won", "Baht", "Rupee"], bn: ["ইয়েন", "ওন", "বাত", "রুপি"], hi: ["येन", "वॉन", "बात", "रुपया"], es: ["Yen", "Won", "Baht", "Rupia"], fr: ["Yen", "Won", "Baht", "Roupie"] }, answer: 0 },
+          gkFact("petra", "monuments", 1, 0, {
+            en: ["In which country is the ancient city of Petra?", "Jordan", "Italy", "Egypt", "Peru"],
+            bn: ["প্রাচীন পেত্রা শহর কোন দেশে?", "জর্ডান", "ইতালি", "মিশর", "পেরু"],
+            hi: ["प्राचीन पेट्रा शहर किस देश में है?", "जॉर्डन", "इटली", "मिस्र", "पेरू"],
+            es: ["¿En qué país está la antigua ciudad de Petra?", "Jordania", "Italia", "Egipto", "Perú"],
+            fr: ["Dans quel pays se trouve la cité antique de Pétra ?", "Jordanie", "Italie", "Égypte", "Pérou"]
+          }),
           { question: { en: "Who painted the Mona Lisa?", bn: "মোনালিসা কে এঁকেছিলেন?", hi: "मोना लिसा किसने बनाई थी?", es: "¿Quién pintó la Mona Lisa?", fr: "Qui a peint la Joconde ?" }, options: { en: ["Claude Monet", "Leonardo da Vinci", "Pablo Picasso", "Vincent van Gogh"], bn: ["ক্লদ মনে", "লিওনার্দো দা ভিঞ্চি", "পাবলো পিকাসো", "ভিনসেন্ট ভ্যান গখ"], hi: ["क्लॉद मोने", "लियोनार्डो दा विंची", "पाब्लो पिकासो", "विन्सेंट वैन गॉग"], es: ["Claude Monet", "Leonardo da Vinci", "Pablo Picasso", "Vincent van Gogh"], fr: ["Claude Monet", "Léonard de Vinci", "Pablo Picasso", "Vincent van Gogh"] }, answer: 1 },
-          { question: { en: "Which sport uses a shuttlecock?", bn: "কোন খেলায় শাটলকক ব্যবহার করা হয়?", hi: "शटलकॉक का उपयोग किस खेल में होता है?", es: "¿En qué deporte se usa un volante?", fr: "Dans quel sport utilise-t-on un volant ?" }, options: { en: ["Tennis", "Squash", "Badminton", "Table tennis"], bn: ["টেনিস", "স্কোয়াশ", "ব্যাডমিন্টন", "টেবিল টেনিস"], hi: ["टेनिस", "स्क्वैश", "बैडमिंटन", "टेबल टेनिस"], es: ["Tenis", "Squash", "Bádminton", "Tenis de mesa"], fr: ["Tennis", "Squash", "Badminton", "Tennis de table"] }, answer: 2 },
+          gkFact("sistine-ceiling", "arts", 1, 2, {
+            en: ["Who painted the Sistine Chapel ceiling?", "Claude Monet", "Rembrandt", "Michelangelo", "Paul Cézanne"],
+            bn: ["সিস্টিন চ্যাপেলের ছাদের চিত্র কে এঁকেছেন?", "ক্লদ মনে", "রেমব্রান্ট", "মাইকেলেঞ্জেলো", "পল সেজান"],
+            hi: ["सिस्टीन चैपल की छत पर चित्र किसने बनाए?", "क्लॉद मोने", "रेम्ब्रांट", "माइकेलैंजेलो", "पॉल सेज़ान"],
+            es: ["¿Quién pintó el techo de la Capilla Sixtina?", "Claude Monet", "Rembrandt", "Miguel Ángel", "Paul Cézanne"],
+            fr: ["Qui a peint le plafond de la chapelle Sixtine ?", "Claude Monet", "Rembrandt", "Michel-Ange", "Paul Cézanne"]
+          }),
           { question: { en: "What is the largest mammal?", bn: "পৃথিবীর বৃহত্তম স্তন্যপায়ী প্রাণী কোনটি?", hi: "सबसे बड़ा स्तनधारी जीव कौन-सा है?", es: "¿Cuál es el mamífero más grande?", fr: "Quel est le plus grand mammifère ?" }, options: { en: ["Elephant", "Giraffe", "Great white shark", "Blue whale"], bn: ["হাতি", "জিরাফ", "বড় সাদা হাঙর", "নীল তিমি"], hi: ["हाथी", "जिराफ़", "महान सफ़ेद शार्क", "नीली व्हेल"], es: ["Elefante", "Jirafa", "Tiburón blanco", "Ballena azul"], fr: ["Éléphant", "Girafe", "Grand requin blanc", "Baleine bleue"] }, answer: 3 },
           { question: { en: "How many keys does a standard piano have?", bn: "একটি সাধারণ পিয়ানোতে কয়টি কী থাকে?", hi: "एक सामान्य पियानो में कितनी कुंजियाँ होती हैं?", es: "¿Cuántas teclas tiene un piano estándar?", fr: "Combien de touches possède un piano standard ?" }, options: { en: ["88", "76", "80", "92"], bn: ["৮৮", "৭৬", "৮০", "৯২"], hi: ["८८", "७६", "८०", "९२"], es: ["88", "76", "80", "92"], fr: ["88", "76", "80", "92"] }, answer: 0 },
           { question: { en: "Which country gifted the Statue of Liberty to the United States?", bn: "যুক্তরাষ্ট্রকে স্ট্যাচু অব লিবার্টি উপহার দিয়েছিল কোন দেশ?", hi: "संयुक्त राज्य को स्टैच्यू ऑफ़ लिबर्टी किस देश ने भेंट की थी?", es: "¿Qué país regaló la Estatua de la Libertad a Estados Unidos?", fr: "Quel pays a offert la Statue de la Liberté aux États-Unis ?" }, options: { en: ["Italy", "Spain", "France", "Canada"], bn: ["ইতালি", "স্পেন", "ফ্রান্স", "কানাডা"], hi: ["इटली", "स्पेन", "फ़्रांस", "कनाडा"], es: ["Italia", "España", "Francia", "Canadá"], fr: ["Italie", "Espagne", "France", "Canada"] }, answer: 2 },
-          { question: { en: "What color is a clear daytime sky usually?", bn: "পরিষ্কার দিনের আকাশ সাধারণত কী রঙের?", hi: "साफ़ दिन में आकाश आम तौर पर किस रंग का होता है?", es: "¿De qué color suele ser el cielo despejado de día?", fr: "De quelle couleur est généralement le ciel dégagé en journée ?" }, options: { en: ["Green", "Blue", "Red", "Brown"], bn: ["সবুজ", "নীল", "লাল", "বাদামি"], hi: ["हरा", "नीला", "लाल", "भूरा"], es: ["Verde", "Azul", "Rojo", "Marrón"], fr: ["Vert", "Bleu", "Rouge", "Marron"] }, answer: 1 },
-          { question: { en: "How many minutes are in one hour?", bn: "এক ঘণ্টায় কত মিনিট?", hi: "एक घंटे में कितने मिनट होते हैं?", es: "¿Cuántos minutos tiene una hora?", fr: "Combien de minutes y a-t-il dans une heure ?" }, options: { en: ["30", "45", "60", "90"], bn: ["৩০", "৪৫", "৬০", "৯০"], hi: ["३०", "४५", "६०", "९०"], es: ["30", "45", "60", "90"], fr: ["30", "45", "60", "90"] }, answer: 2 },
+          gkFact("chlorophyll", "science", 1, 1, {
+            en: ["Which pigment helps green plants absorb light for photosynthesis?", "Melanin", "Chlorophyll", "Hemoglobin", "Keratin"],
+            bn: ["সালোকসংশ্লেষের জন্য সবুজ উদ্ভিদকে আলো শোষণে কোন রঞ্জক সাহায্য করে?", "মেলানিন", "ক্লোরোফিল", "হিমোগ্লোবিন", "কেরাটিন"],
+            hi: ["प्रकाश संश्लेषण में हरे पौधों को प्रकाश सोखने में कौन-सा वर्णक मदद करता है?", "मेलेनिन", "क्लोरोफिल", "हीमोग्लोबिन", "केराटिन"],
+            es: ["¿Qué pigmento ayuda a las plantas verdes a absorber luz para la fotosíntesis?", "Melanina", "Clorofila", "Hemoglobina", "Queratina"],
+            fr: ["Quel pigment aide les plantes vertes à absorber la lumière pour la photosynthèse ?", "Mélanine", "Chlorophylle", "Hémoglobine", "Kératine"]
+          }),
+          gkFact("water-formula", "science", 1, 2, {
+            en: ["What is the chemical formula of water?", "CO₂", "O₂", "H₂O", "NaCl"],
+            bn: ["পানির রাসায়নিক সংকেত কী?", "CO₂", "O₂", "H₂O", "NaCl"],
+            hi: ["पानी का रासायनिक सूत्र क्या है?", "CO₂", "O₂", "H₂O", "NaCl"],
+            es: ["¿Cuál es la fórmula química del agua?", "CO₂", "O₂", "H₂O", "NaCl"],
+            fr: ["Quelle est la formule chimique de l’eau ?", "CO₂", "O₂", "H₂O", "NaCl"]
+          }),
           { question: { en: "In which direction does the sun rise?", bn: "সূর্য কোন দিক থেকে ওঠে?", hi: "सूरज किस दिशा से उगता है?", es: "¿Por qué dirección sale el sol?", fr: "Dans quelle direction le soleil se lève-t-il ?" }, options: { en: ["East", "West", "North", "South"], bn: ["পূর্ব", "পশ্চিম", "উত্তর", "দক্ষিণ"], hi: ["पूर्व", "पश्चिम", "उत्तर", "दक्षिण"], es: ["Este", "Oeste", "Norte", "Sur"], fr: ["Est", "Ouest", "Nord", "Sud"] }, answer: 0 },
-          { question: { en: "What is the smallest prime number?", bn: "সবচেয়ে ছোট মৌলিক সংখ্যা কোনটি?", hi: "सबसे छोटी अभाज्य संख्या कौन-सी है?", es: "¿Cuál es el menor número primo?", fr: "Quel est le plus petit nombre premier ?" }, options: { en: ["1", "0", "2", "3"], bn: ["১", "০", "২", "৩"], hi: ["१", "०", "२", "३"], es: ["1", "0", "2", "3"], fr: ["1", "0", "2", "3"] }, answer: 2 },
-          { question: { en: "Which animal is known as the ship of the desert?", bn: "কোন প্রাণীকে মরুভূমির জাহাজ বলা হয়?", hi: "किस जानवर को रेगिस्तान का जहाज़ कहा जाता है?", es: "¿Qué animal es conocido como el barco del desierto?", fr: "Quel animal est surnommé le navire du désert ?" }, options: { en: ["Horse", "Llama", "Donkey", "Camel"], bn: ["ঘোড়া", "লামা", "গাধা", "উট"], hi: ["घोड़ा", "लामा", "गधा", "ऊँट"], es: ["Caballo", "Llama", "Burro", "Camello"], fr: ["Cheval", "Lama", "Âne", "Chameau"] }, answer: 3 },
-          { question: { en: "Which month has 28 days in a common year?", bn: "সাধারণ বছরে কোন মাসে ২৮ দিন থাকে?", hi: "सामान्य वर्ष में किस महीने में २८ दिन होते हैं?", es: "¿Qué mes tiene 28 días en un año común?", fr: "Quel mois compte 28 jours lors d’une année normale ?" }, options: { en: ["January", "February", "March", "April"], bn: ["জানুয়ারি", "ফেব্রুয়ারি", "মার্চ", "এপ্রিল"], hi: ["जनवरी", "फ़रवरी", "मार्च", "अप्रैल"], es: ["Enero", "Febrero", "Marzo", "Abril"], fr: ["Janvier", "Février", "Mars", "Avril"] }, answer: 1 },
-          { question: { en: "What is the main ingredient in guacamole?", bn: "গুয়াকামোলের প্রধান উপাদান কী?", hi: "ग्वाकामोले का मुख्य घटक क्या है?", es: "¿Cuál es el ingrediente principal del guacamole?", fr: "Quel est l’ingrédient principal du guacamole ?" }, options: { en: ["Avocado", "Tomato", "Cucumber", "Lemon"], bn: ["অ্যাভোকাডো", "টমেটো", "শসা", "লেবু"], hi: ["एवोकाडो", "टमाटर", "खीरा", "नींबू"], es: ["Aguacate", "Tomate", "Pepino", "Limón"], fr: ["Avocat", "Tomate", "Concombre", "Citron"] }, answer: 0 },
-          { question: { en: "Which city hosted the 2016 Summer Olympics?", bn: "২০১৬ সালের গ্রীষ্মকালীন অলিম্পিক কোন শহরে হয়েছিল?", hi: "२०१६ के ग्रीष्मकालीन ओलंपिक किस शहर में हुए थे?", es: "¿Qué ciudad acogió los Juegos Olímpicos de verano de 2016?", fr: "Quelle ville a accueilli les Jeux olympiques d’été de 2016 ?" }, options: { en: ["Tokyo", "London", "Rio de Janeiro", "Sydney"], bn: ["টোকিও", "লন্ডন", "রিও দি জেনেইরো", "সিডনি"], hi: ["टोक्यो", "लंदन", "रियो डी जनेरियो", "सिडनी"], es: ["Tokio", "Londres", "Río de Janeiro", "Sídney"], fr: ["Tokyo", "Londres", "Rio de Janeiro", "Sydney"] }, answer: 2 },
+          gkFact("magna-carta", "history", 1, 2, {
+            en: ["In which kingdom was Magna Carta sealed in 1215?", "France", "Scotland", "England", "Portugal"],
+            bn: ["১২১৫ সালে ম্যাগনা কার্টা কোন রাজ্যে সিলমোহর করা হয়?", "ফ্রান্স", "স্কটল্যান্ড", "ইংল্যান্ড", "পর্তুগাল"],
+            hi: ["1215 में मैग्ना कार्टा पर किस राज्य में मुहर लगाई गई?", "फ़्रांस", "स्कॉटलैंड", "इंग्लैंड", "पुर्तगाल"],
+            es: ["¿En qué reino se selló la Carta Magna en 1215?", "Francia", "Escocia", "Inglaterra", "Portugal"],
+            fr: ["Dans quel royaume la Magna Carta a-t-elle été scellée en 1215 ?", "France", "Écosse", "Angleterre", "Portugal"]
+          }),
+          gkFact("mammals", "science", 1, 3, {
+            en: ["Which feature is characteristic of mammals?", "Feathers", "Gills throughout life", "Six legs", "Feeding young with milk"],
+            bn: ["স্তন্যপায়ীদের বৈশিষ্ট্য কোনটি?", "পালক", "সারা জীবন ফুলকা", "ছয়টি পা", "বাচ্চাকে দুধ খাওয়ানো"],
+            hi: ["स्तनधारियों की विशेषता क्या है?", "पंख", "जीवन भर गलफड़े", "छह पैर", "बच्चों को दूध पिलाना"],
+            es: ["¿Qué rasgo caracteriza a los mamíferos?", "Plumas", "Branquias toda la vida", "Seis patas", "Alimentar a las crías con leche"],
+            fr: ["Quel trait caractérise les mammifères ?", "Des plumes", "Des branchies toute la vie", "Six pattes", "Allaiter les petits"]
+          }),
+          gkFact("seasons", "science", 1, 1, {
+            en: ["What primarily causes Earth's seasons?", "The Moon's phases", "Earth's axial tilt as it orbits the Sun", "Changes in Earth's mass", "Ocean tides"],
+            bn: ["পৃথিবীর ঋতু পরিবর্তনের প্রধান কারণ কী?", "চাঁদের কলা", "সূর্যকে প্রদক্ষিণকালে পৃথিবীর অক্ষের হেলন", "পৃথিবীর ভরের পরিবর্তন", "সমুদ্রের জোয়ার"],
+            hi: ["पृथ्वी पर ऋतुओं का मुख्य कारण क्या है?", "चंद्र कलाएँ", "सूर्य की परिक्रमा के दौरान पृथ्वी के अक्ष का झुकाव", "पृथ्वी के द्रव्यमान में बदलाव", "समुद्री ज्वार"],
+            es: ["¿Qué causa principalmente las estaciones terrestres?", "Las fases lunares", "La inclinación del eje terrestre al orbitar el Sol", "Cambios de masa terrestre", "Las mareas"],
+            fr: ["Quelle est la cause principale des saisons terrestres ?", "Les phases de la Lune", "L’inclinaison de l’axe terrestre pendant l’orbite autour du Soleil", "Les variations de masse terrestre", "Les marées"]
+          }),
+          gkFact("odyssey", "literature", 1, 0, {
+            en: ["Which ancient Greek poet is traditionally credited with the Odyssey?", "Homer", "Virgil", "Dante", "Ovid"],
+            bn: ["ওডিসি মহাকাব্যটি প্রচলিতভাবে কোন প্রাচীন গ্রিক কবির রচনা?", "হোমার", "ভার্জিল", "দান্তে", "ওভিড"],
+            hi: ["ओडिसी का श्रेय परंपरागत रूप से किस प्राचीन यूनानी कवि को दिया जाता है?", "होमर", "वर्जिल", "दांते", "ओविड"],
+            es: ["¿A qué poeta de la antigua Grecia se atribuye tradicionalmente la Odisea?", "Homero", "Virgilio", "Dante", "Ovidio"],
+            fr: ["À quel poète grec antique l’Odyssée est-elle traditionnellement attribuée ?", "Homère", "Virgile", "Dante", "Ovide"]
+          }),
+          gkFact("berlin-wall", "history", 1, 2, {
+            en: ["In which year did the Berlin Wall open, marking its fall?", "1961", "1975", "1989", "1999"],
+            bn: ["কোন সালে বার্লিন প্রাচীর খুলে দেওয়া হয়, যা তার পতনের সূচনা করে?", "১৯৬১", "১৯৭৫", "১৯৮৯", "১৯৯৯"],
+            hi: ["बर्लिन की दीवार किस वर्ष खुली, जिसे उसका पतन माना जाता है?", "1961", "1975", "1989", "1999"],
+            es: ["¿En qué año se abrió el Muro de Berlín, marcando su caída?", "1961", "1975", "1989", "1999"],
+            fr: ["En quelle année l’ouverture du mur de Berlin a-t-elle marqué sa chute ?", "1961", "1975", "1989", "1999"]
+          }),
           { question: { en: "What is Earth's natural satellite?", bn: "পৃথিবীর প্রাকৃতিক উপগ্রহ কী?", hi: "पृथ्वी का प्राकृतिक उपग्रह कौन-सा है?", es: "¿Cuál es el satélite natural de la Tierra?", fr: "Quel est le satellite naturel de la Terre ?" }, options: { en: ["Mars", "The Moon", "Venus", "The Sun"], bn: ["মঙ্গল", "চাঁদ", "শুক্র", "সূর্য"], hi: ["मंगल", "चंद्रमा", "शुक्र", "सूर्य"], es: ["Marte", "La Luna", "Venus", "El Sol"], fr: ["Mars", "La Lune", "Vénus", "Le Soleil"] }, answer: 1 },
-          { question: { en: "How many colors are in a traditional rainbow?", bn: "প্রচলিত রংধনুতে কয়টি রং থাকে?", hi: "पारंपरिक इंद्रधनुष में कितने रंग होते हैं?", es: "¿Cuántos colores tiene el arcoíris tradicional?", fr: "Combien de couleurs compte l’arc-en-ciel traditionnel ?" }, options: { en: ["Seven", "Five", "Six", "Eight"], bn: ["সাতটি", "পাঁচটি", "ছয়টি", "আটটি"], hi: ["सात", "पाँच", "छह", "आठ"], es: ["Siete", "Cinco", "Seis", "Ocho"], fr: ["Sept", "Cinq", "Six", "Huit"] }, answer: 0 },
+          gkFact("mantle", "science", 1, 0, {
+            en: ["Which layer of Earth lies directly beneath the crust?", "Mantle", "Outer core", "Inner core", "Atmosphere"],
+            bn: ["পৃথিবীর ভূত্বকের ঠিক নিচে কোন স্তর থাকে?", "ম্যান্টল", "বহিঃকেন্দ্র", "অন্তঃকেন্দ্র", "বায়ুমণ্ডল"],
+            hi: ["पृथ्वी की भूपर्पटी के ठीक नीचे कौन-सी परत है?", "मेंटल", "बाहरी क्रोड", "आंतरिक क्रोड", "वायुमंडल"],
+            es: ["¿Qué capa terrestre está justo debajo de la corteza?", "Manto", "Núcleo externo", "Núcleo interno", "Atmósfera"],
+            fr: ["Quelle couche terrestre se trouve juste sous la croûte ?", "Manteau", "Noyau externe", "Noyau interne", "Atmosphère"]
+          }),
           { question: { en: "Which country is known as the Land of the Rising Sun?", bn: "কোন দেশকে সূর্যোদয়ের দেশ বলা হয়?", hi: "किस देश को उगते सूरज का देश कहा जाता है?", es: "¿Qué país es conocido como la tierra del sol naciente?", fr: "Quel pays est surnommé le pays du Soleil-Levant ?" }, options: { en: ["China", "Thailand", "South Korea", "Japan"], bn: ["চীন", "থাইল্যান্ড", "দক্ষিণ কোরিয়া", "জাপান"], hi: ["चीन", "थाईलैंड", "दक्षिण कोरिया", "जापान"], es: ["China", "Tailandia", "Corea del Sur", "Japón"], fr: ["Chine", "Thaïlande", "Corée du Sud", "Japon"] }, answer: 3 },
           { question: { en: "What is the world's largest hot desert?", bn: "পৃথিবীর বৃহত্তম উষ্ণ মরুভূমি কোনটি?", hi: "दुनिया का सबसे बड़ा गर्म रेगिस्तान कौन-सा है?", es: "¿Cuál es el desierto cálido más grande del mundo?", fr: "Quel est le plus grand désert chaud du monde ?" }, options: { en: ["Gobi", "Kalahari", "Sahara", "Arabian"], bn: ["গোবি", "কালাহারি", "সাহারা", "আরব মরুভূমি"], hi: ["गोबी", "कालाहारी", "सहारा", "अरबी रेगिस्तान"], es: ["Gobi", "Kalahari", "Sáhara", "Arábigo"], fr: ["Gobi", "Kalahari", "Sahara", "Arabique"] }, answer: 2 },
           { question: { en: "Which gas do humans need to breathe to survive?", bn: "বেঁচে থাকার জন্য মানুষ কোন গ্যাস শ্বাস নেয়?", hi: "जीवित रहने के लिए मनुष्य कौन-सी गैस साँस में लेते हैं?", es: "¿Qué gas necesitan respirar los seres humanos para vivir?", fr: "Quel gaz les humains doivent-ils respirer pour vivre ?" }, options: { en: ["Nitrogen", "Oxygen", "Carbon dioxide", "Helium"], bn: ["নাইট্রোজেন", "অক্সিজেন", "কার্বন ডাই-অক্সাইড", "হিলিয়াম"], hi: ["नाइट्रोजन", "ऑक्सीजन", "कार्बन डाइऑक्साइड", "हीलियम"], es: ["Nitrógeno", "Oxígeno", "Dióxido de carbono", "Helio"], fr: ["Azote", "Oxygène", "Dioxyde de carbone", "Hélium"] }, answer: 1 },
-          { question: { en: "Which shape has three sides?", bn: "কোন আকৃতির তিনটি বাহু থাকে?", hi: "किस आकृति की तीन भुजाएँ होती हैं?", es: "¿Qué figura tiene tres lados?", fr: "Quelle forme possède trois côtés ?" }, options: { en: ["Triangle", "Square", "Pentagon", "Hexagon"], bn: ["ত্রিভুজ", "বর্গক্ষেত্র", "পঞ্চভুজ", "ষড়ভুজ"], hi: ["त्रिभुज", "वर्ग", "पंचभुज", "षट्भुज"], es: ["Triángulo", "Cuadrado", "Pentágono", "Hexágono"], fr: ["Triangle", "Carré", "Pentagone", "Hexagone"] }, answer: 0 },
+          gkFact("parthenon", "monuments", 1, 0, {
+            en: ["The Parthenon in Athens was dedicated to which goddess?", "Athena", "Hera", "Aphrodite", "Demeter"],
+            bn: ["এথেন্সের পার্থেনন কোন দেবীকে উৎসর্গ করা হয়েছিল?", "অ্যাথেনা", "হেরা", "আফ্রোদিতি", "দেমেতের"],
+            hi: ["एथेंस का पार्थेनॉन किस देवी को समर्पित था?", "एथेना", "हेरा", "अफ़्रोदिती", "डीमीटर"],
+            es: ["¿A qué diosa estaba dedicado el Partenón de Atenas?", "Atenea", "Hera", "Afrodita", "Deméter"],
+            fr: ["À quelle déesse le Parthénon d’Athènes était-il dédié ?", "Athéna", "Héra", "Aphrodite", "Déméter"]
+          }),
           { question: { en: "Barcelona is a city in which country?", bn: "বার্সেলোনা কোন দেশে অবস্থিত?", hi: "बार्सिलोना किस देश में है?", es: "¿En qué país está Barcelona?", fr: "Dans quel pays se trouve Barcelone ?" }, options: { en: ["Portugal", "Italy", "Spain", "France"], bn: ["পর্তুগাল", "ইতালি", "স্পেন", "ফ্রান্স"], hi: ["पुर्तगाल", "इटली", "स्पेन", "फ़्रांस"], es: ["Portugal", "Italia", "España", "Francia"], fr: ["Portugal", "Italie", "Espagne", "France"] }, answer: 2 },
           { question: { en: "Which ocean lies between Africa and Australia?", bn: "আফ্রিকা ও অস্ট্রেলিয়ার মাঝখানে কোন মহাসাগর?", hi: "अफ़्रीका और ऑस्ट्रेलिया के बीच कौन-सा महासागर है?", es: "¿Qué océano se encuentra entre África y Australia?", fr: "Quel océan se situe entre l’Afrique et l’Australie ?" }, options: { en: ["Atlantic", "Pacific", "Arctic", "Indian"], bn: ["আটলান্টিক", "প্রশান্ত", "আর্কটিক", "ভারত মহাসাগর"], hi: ["अटलांटिक", "प्रशांत", "आर्कटिक", "हिंद महासागर"], es: ["Atlántico", "Pacífico", "Ártico", "Índico"], fr: ["Atlantique", "Pacifique", "Arctique", "Indien"] }, answer: 3 }
         ],
@@ -5246,6 +5509,8 @@
           { question: { en: "What shape completes the repeating pattern: triangle, circle, circle, triangle, circle, circle, ...?", bn: "পুনরাবৃত্ত ধারাটিতে পরের আকৃতিটি কী: ত্রিভুজ, বৃত্ত, বৃত্ত, ত্রিভুজ, বৃত্ত, বৃত্ত, ...?", hi: "दोहराते क्रम में अगली आकृति क्या है: त्रिभुज, वृत्त, वृत्त, त्रिभुज, वृत्त, वृत्त, ...?", es: "¿Qué figura completa el patrón: triángulo, círculo, círculo, triángulo, círculo, círculo, ...?", fr: "Quelle forme complète le motif : triangle, cercle, cercle, triangle, cercle, cercle, ... ?" }, options: { en: ["Triangle", "Circle", "Square", "Cannot tell"], bn: ["ত্রিভুজ", "বৃত্ত", "বর্গ", "বলা যায় না"], hi: ["त्रिभुज", "वृत्त", "वर्ग", "नहीं बता सकते"], es: ["Triángulo", "Círculo", "Cuadrado", "No se puede saber"], fr: ["Triangle", "Cercle", "Carré", "Impossible à savoir"] }, answer: 0 }
         ]
       };
+
+      quizData["General Knowledge"].push(...timelessGKExpansion, ...currentAffairs2026);
 
       // Curated multilingual trivia anchors each subject; the procedural pool
       // supplies additional numeric challenges for hundreds of replayable levels.
@@ -5567,18 +5832,34 @@
         "IQ Check"
       ];
       const GENERAL_KNOWLEDGE_LEVEL_COUNT = LEVELS_PER_CATEGORY;
-      const GENERAL_KNOWLEDGE_TEMPLATE_COUNT = 10;
-      const GENERAL_KNOWLEDGE_VARIANTS_PER_TEMPLATE = 100;
-      const GENERAL_KNOWLEDGE_PARAMETER_SPACE = 1000;
       const CATEGORY_TEMPLATE_COUNT = 10;
       const CATEGORY_VARIANTS_PER_TEMPLATE = 100;
       const CATEGORY_PARAMETER_SPACE = 1000;
-      const GENERAL_KNOWLEDGE_POOL_SIZE =
-        GENERAL_KNOWLEDGE_TEMPLATE_COUNT * GENERAL_KNOWLEDGE_VARIANTS_PER_TEMPLATE;
-      if (GENERAL_KNOWLEDGE_POOL_SIZE % QUESTIONS_PER_LEVEL !== 0 ||
-          GENERAL_KNOWLEDGE_VARIANTS_PER_TEMPLATE > GENERAL_KNOWLEDGE_PARAMETER_SPACE) {
-        throw new Error("The randomized General Knowledge pool configuration is invalid.");
-      }
+      // Validate authored content before play: no missing locales, ambiguous
+      // duplicate options, invalid answers, or unsourced/future-completed news.
+      const generalKnowledgeBank = quizData["General Knowledge"];
+      const generalKnowledgeIds = new Set();
+      generalKnowledgeBank.forEach((item, index) => {
+        item.id ??= `gk-timeless-${index}`;
+        item.kind ??= "timeless";
+        item.difficulty ??= 1;
+        if (generalKnowledgeIds.has(item.id) || ![1, 2, 3].includes(item.difficulty) ||
+            !Number.isInteger(item.answer) || item.answer < 0 || item.answer > 3 ||
+            !GK_LANGUAGES.every((lang) => typeof item.question?.[lang] === "string" &&
+              item.question[lang].trim() && item.options?.[lang]?.length === 4 &&
+              item.options[lang].every((option) => typeof option === "string" && option.trim()) &&
+              new Set(item.options[lang]).size === 4)) {
+          throw new Error(`Invalid localized General Knowledge entry: ${item.id}`);
+        }
+        if (item.kind === "current-affairs" &&
+            (item.year !== GK_CONTENT_YEAR || item.reviewedAt !== GK_REVIEWED_AT ||
+             !item.references?.length || !item.references.every((url) => Object.values(GK_SOURCES).includes(url)) ||
+             !["completed", "designated", "scheduled"].includes(item.status) ||
+             (item.status === "completed" && (!item.eventDate || item.eventDate > GK_REVIEWED_AT)))) {
+          throw new Error(`Unverified or future-completed current-affairs entry: ${item.id}`);
+        }
+        generalKnowledgeIds.add(item.id);
+      });
       // Keep maps metadata-only: build a fresh question pool only after a level is selected.
       const categoryLevels = Object.fromEntries(PROGRESSION_CATEGORIES.map((category) => [
         category,
@@ -6857,10 +7138,9 @@
         fr: ["autocollants", "cartes", "perles", "livres", "crayons"]
       };
 
-      // Procedurally create one localized question from a bounded parameter
-      // space. Its ID omits the level intentionally, so a session cannot repeat
-      // the same prompt when a random parameter combination appears again later.
-      function makeGeneratedGeneralKnowledgeQuestion(level, family, instance) {
+      // Legacy quantitative-practice factory. It is intentionally disconnected
+      // from General Knowledge; getCategoryQuestionPool is the sole GK entry point.
+      function makeLegacyQuantitativeQuestion(level, family, instance) {
         const difficulty = 1 + Math.floor((level - 1) / 50);
         const n = (value, language) => formatNumber(value, language);
         let answer;
@@ -7386,7 +7666,7 @@
 
       function makeGeneratedCategoryQuestion(category, level, family, instance) {
         if (category === "General Knowledge") {
-          return makeGeneratedGeneralKnowledgeQuestion(level, family, instance);
+          throw new Error("General Knowledge must use its authored factual bank, not numeric generators.");
         }
         if (category === "IQ Check") {
           return makeGeneratedIQQuestion(level, family, instance);
@@ -7394,21 +7674,29 @@
         return makeGeneratedThemedQuestion(category, level, family, instance);
       }
 
-      // Every category has a separate 1,000-candidate pool per level. Ten
-      // localized questions are sampled without replacement, and IDs are
-      // tracked across retries/levels for the current browser session.
+      // GK uses ONLY authored timeless facts and verified 2026 records.
+      // The finite bank is shared across 500 progression nodes, not falsely
+      // advertised as 5,000 unique facts. Append records to expand each cycle.
       function getCategoryQuestionPool(category, level) {
         if (!PROGRESSION_CATEGORIES.includes(category) ||
             !Number.isInteger(level) || level < 1 || level > LEVELS_PER_CATEGORY) {
           throw new RangeError(`Category level ${category} ${level} does not exist.`);
         }
+        if (category === "General Knowledge") {
+          const difficulty = level >= 301 ? 3 : level >= 101 ? 2 : 1;
+          return generalKnowledgeBank.filter((item) => item.difficulty <= difficulty).map((item) =>
+            storeConcealedAnswer({
+              id: item.id, source: "trivia", kind: item.kind, subject: item.subject,
+              year: item.year, event: item.event, references: item.references,
+              reviewedAt: item.reviewedAt, status: item.status,
+              question: item.question, options: item.options
+            }, readConcealedAnswer(item))
+          );
+        }
+        // Other categories keep their existing generated and curated pools.
         const candidates = [];
-        const variantsPerTemplate = category === "General Knowledge"
-          ? GENERAL_KNOWLEDGE_VARIANTS_PER_TEMPLATE
-          : CATEGORY_VARIANTS_PER_TEMPLATE;
-        const parameterSpace = category === "General Knowledge"
-          ? GENERAL_KNOWLEDGE_PARAMETER_SPACE
-          : CATEGORY_PARAMETER_SPACE;
+        const variantsPerTemplate = CATEGORY_VARIANTS_PER_TEMPLATE;
+        const parameterSpace = CATEGORY_PARAMETER_SPACE;
         for (let family = 0; family < CATEGORY_TEMPLATE_COUNT; family += 1) {
           const variants = Array.from({ length: parameterSpace }, (_, index) => index);
           // Partial Fisher–Yates samples without replacement and cannot loop
@@ -7447,6 +7735,10 @@
         let indexes = allPoolIndexes.filter((index) =>
           !sessionUsedQuestionIds.has(activeQuestionPool[index].id)
         );
+        // Carry a partial GK tail into the next draw so no authored facts get
+        // discarded when the bank size is not a multiple of ten.
+        const carriedGKIndexes = category === "General Knowledge" && indexes.length < QUESTIONS_PER_LEVEL
+          ? [...indexes] : [];
         if (indexes.length < QUESTIONS_PER_LEVEL) {
           // Start a new cycle only after this category's session pool is exhausted.
           activeQuestionPool.forEach((item) => sessionUsedQuestionIds.delete(item.id));
@@ -7459,6 +7751,36 @@
           }
           return items;
         };
+        if (category === "General Knowledge") {
+          // Prefer two unused 2026 facts from different events, then timeless
+          // GK. If news entries are exhausted, use other unused facts. Recycle
+          // only after fewer than ten unused records remain; never within a round.
+          const current = shuffle(indexes.filter((index) => activeQuestionPool[index].kind === "current-affairs"));
+          const timeless = shuffle(indexes.filter((index) => activeQuestionPool[index].kind === "timeless"));
+          const selected = [...carriedGKIndexes];
+          const selectedIndexes = new Set(selected);
+          const events = new Set(selected.filter((index) => activeQuestionPool[index].kind === "current-affairs")
+            .map((index) => activeQuestionPool[index].event));
+          let currentCount = selected.filter((index) => activeQuestionPool[index].kind === "current-affairs").length;
+          for (const index of current) {
+            if (currentCount >= 2 || selected.length >= QUESTIONS_PER_LEVEL) break;
+            if (selectedIndexes.has(index) || events.has(activeQuestionPool[index].event)) continue;
+            selected.push(index);
+            selectedIndexes.add(index);
+            events.add(activeQuestionPool[index].event);
+            currentCount += 1;
+          }
+          selected.push(...timeless.filter((index) => !selectedIndexes.has(index))
+            .slice(0, QUESTIONS_PER_LEVEL - selected.length));
+          if (selected.length < QUESTIONS_PER_LEVEL) {
+            const selectedSet = new Set(selected);
+            selected.push(...shuffle(indexes.filter((index) => !selectedSet.has(index)))
+              .slice(0, QUESTIONS_PER_LEVEL - selected.length));
+          }
+          indexes = shuffle(selected);
+          indexes.forEach((index) => sessionUsedQuestionIds.add(activeQuestionPool[index].id));
+          return indexes;
+        }
         const triviaIndexes = shuffle(indexes.filter((index) =>
           activeQuestionPool[index].source === "trivia"
         ));

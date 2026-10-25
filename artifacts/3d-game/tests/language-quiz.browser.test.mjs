@@ -5,6 +5,7 @@ import path from "node:path";
 import { setTimeout as delay } from "node:timers/promises";
 import { fileURLToPath } from "node:url";
 import { chromium } from "playwright-core";
+import { correctGKIndex, currentGKFact } from "./gk-bank.fixture.mjs";
 
 const projectDirectory = path.resolve(fileURLToPath(new URL("..", import.meta.url)));
 const chromiumPath =
@@ -660,8 +661,8 @@ try {
   await thresholdPage.locator("#startGameButton").click();
   await thresholdPage.locator(".level-card.unlocked").click();
   await acceptRulesBriefingIfOpen(thresholdPage);
-  const knownCorrectIndexes = [1, 1, 2, 1, 3, 3, 3, 3, 3, 3];
-  for (const [questionIndex, correctIndex] of knownCorrectIndexes.entries()) {
+  for (let questionIndex = 0; questionIndex < 10; questionIndex += 1) {
+    const correctIndex = await correctGKIndex(thresholdPage);
     const questionBeforeAnswer = await thresholdPage.locator("#questionText").innerText();
     const answerIndex = questionIndex < 6 ? correctIndex : (correctIndex + 1) % 4;
     await thresholdPage.locator(".option").nth(answerIndex).click();
@@ -681,7 +682,8 @@ try {
   await thresholdPage.locator("#startGameButton").click();
   await thresholdPage.locator(".level-card.unlocked").click();
   await acceptRulesBriefingIfOpen(thresholdPage);
-  for (const [questionIndex, correctIndex] of knownCorrectIndexes.entries()) {
+  for (let questionIndex = 0; questionIndex < 10; questionIndex += 1) {
+    const correctIndex = await correctGKIndex(thresholdPage);
     const questionBeforeAnswer = await thresholdPage.locator("#questionText").innerText();
     const answerIndex = questionIndex < 5 ? correctIndex : (correctIndex + 1) % 4;
     await thresholdPage.locator(".option").nth(answerIndex).click();
@@ -752,18 +754,8 @@ try {
   await page.locator("#startGameButton").click();
   assert.equal(await page.locator("#levelView").evaluate((node) => node.classList.contains("active")), true);
   await page.locator(".level-card.unlocked").click();
-  const portalRandomizedQuestionOptions = {
-    "The Eiffel Tower is in which city?": ["Rome", "Paris", "Madrid", "Vienna"],
-    "In which city is the Colosseum?": ["Athens", "Rome", "Istanbul", "Naples"],
-  };
-  const portalIntroQuestion = await page.locator("#questionText").innerText();
-  assert.ok(Object.hasOwn(portalRandomizedQuestionOptions, portalIntroQuestion), "the level draws a valid question from its randomized pool");
-  assert.deepEqual(
-    await page.locator(".option span:nth-child(2)").allInnerTexts(),
-    portalRandomizedQuestionOptions[portalIntroQuestion],
-  );
-
-  await page.keyboard.press("2");
+  const portalCorrectIndex = await correctGKIndex(page);
+  await page.keyboard.press(String(portalCorrectIndex + 1));
   assert.equal(await page.evaluate(() => window.__answerCueOscillators), 0, "muted answers do not create sound cues");
   assert.match(await page.locator("#feedback").textContent(), /Correct!/);
   assert.ok(Number(await page.locator("#scoreValue").innerText()) >= 10);
@@ -783,8 +775,8 @@ try {
     "answer coins are saved immediately",
   );
   assert.equal(await page.locator("#correctCount").innerText(), "1");
-  assert.equal(await page.locator(".option").nth(1).getAttribute("disabled"), "");
-  assert.equal(await page.locator(".option").nth(1).getAttribute("class").then((value) => value.includes("correct")), true);
+  assert.equal(await page.locator(".option").nth(portalCorrectIndex).getAttribute("disabled"), "");
+  assert.equal(await page.locator(".option").nth(portalCorrectIndex).getAttribute("class").then((value) => value.includes("correct")), true);
   const audioTestPage = await context.newPage();
   audioTestPage.on("pageerror", (error) => pageErrors.push(error.message));
   await audioTestPage.goto(baseUrl, { waitUntil: "domcontentloaded" });
@@ -792,8 +784,7 @@ try {
   await audioTestPage.locator("#startGameButton").tap();
   await audioTestPage.locator(".level-card.unlocked").tap();
   const audioQuestion = await audioTestPage.locator("#questionText").innerText();
-  assert.ok(Object.hasOwn(portalRandomizedQuestionOptions, audioQuestion));
-  await audioTestPage.locator(".option").nth(1).tap();
+  await audioTestPage.locator(".option").nth(await correctGKIndex(audioTestPage)).tap();
   assert.equal(
     await audioTestPage.evaluate(() => window.__answerCueOscillators),
     2,
@@ -834,7 +825,7 @@ try {
   const elapsedTimerSeconds = Number((await penaltyPage.locator("#iqTimerValue").innerText()).match(/\d+/)?.[0]);
   assert.ok(elapsedTimerSeconds < initialTimerSeconds, "the visible timer decreases from the active question's start");
   const initialPenaltyQuestion = await penaltyPage.locator("#questionText").innerText();
-  await penaltyPage.locator(".option").nth(1).tap();
+  await penaltyPage.locator(".option").nth(await correctGKIndex(penaltyPage)).tap();
   const timerAtAnswer = await penaltyPage.locator("#iqTimerValue").innerText();
   await penaltyPage.waitForTimeout(250);
   assert.equal(await penaltyPage.locator("#iqTimerValue").innerText(), timerAtAnswer, "answer submission stops the timer immediately");
@@ -845,9 +836,9 @@ try {
     15,
     "each new question starts a fresh 15-second deadline",
   );
-  assert.equal(await penaltyPage.locator("#questionText").innerText(), "How many sides does a hexagon have?");
+  const nextCorrectIndex = await correctGKIndex(penaltyPage);
   const questionBeforePenalty = await penaltyPage.locator("#questionText").innerText();
-  await penaltyPage.locator(".option").first().tap();
+  await penaltyPage.locator(".option").nth((nextCorrectIndex + 1) % 4).tap();
   const scoreAfterPenalty = Number(await penaltyPage.locator("#scoreValue").innerText());
   assert.equal(scoreAfterPenalty, Math.max(0, scoreBeforePenalty - 5));
   assert.equal(await penaltyPage.locator("#feedback").evaluate((node) => node.classList.contains("penalty-warning")), true);
@@ -883,17 +874,10 @@ try {
     "roadmap category filters update with the selected language",
   );
   await page.locator(".level-card.unlocked").tap();
-  assert.equal(await page.locator("#questionText").innerText(), "আইফেল টাওয়ার কোন শহরে অবস্থিত?");
-  assert.deepEqual(await page.locator(".option span:nth-child(2)").allInnerTexts(), [
-    "রোম",
-    "প্যারিস",
-    "মাদ্রিদ",
-    "ভিয়েনা",
-  ]);
-
-  const correctOptionIndexes = [1, 1, 2, 1, 3, 3, 3, 3, 3, 3];
+  assert.equal((await currentGKFact(page)).language, "bn");
   const firstQuestion = await page.locator("#questionText").innerText();
-  for (const [questionIndex, optionIndex] of correctOptionIndexes.entries()) {
+  for (let questionIndex = 0; questionIndex < 10; questionIndex += 1) {
+    const optionIndex = await correctGKIndex(page);
     const questionBeforeAnswer = await page.locator("#questionText").innerText();
     await page.locator(".option").nth(optionIndex).tap();
     assert.equal(
