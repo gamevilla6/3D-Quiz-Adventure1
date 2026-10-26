@@ -6465,6 +6465,7 @@
         return unlockedLevelsByCategory[category] || 1;
       }
       const LAST_PLAYED_STORAGE_KEY = "quiz-orbit-last-played-v1";
+      const ACTIVE_QUIZ_SESSION_STORAGE_KEY = "quiz-orbit-active-session-v1";
       function readLastPlayed() {
         try {
           const saved = JSON.parse(localStorage.getItem(LAST_PLAYED_STORAGE_KEY) || "null");
@@ -6688,6 +6689,9 @@
         game: document.getElementById("gameView"),
         results: document.getElementById("resultsView")
       };
+      let activeViewName = "welcome";
+      let rulesReturnView = "welcome";
+      let privacyReturnView = "welcome";
       const questionText = document.getElementById("questionText");
       const optionsElement = document.getElementById("options");
       const feedback = document.getElementById("feedback");
@@ -6764,6 +6768,7 @@
       let roundCoinsEarned = 0;
       let answered = false;
       let lastSelected = null;
+      let pausedQuizSnapshot = null;
       let rewardGroup = null;
       let rewardMaterials = [];
       let audioContext = null;
@@ -7147,6 +7152,240 @@
         timerFreezeUntil = 0;
         timerFreezeRemainingSeconds = 0;
         renderQuestionTimer();
+      }
+
+      // Snapshot only the active round when leaving gameplay. The monotonic
+      // deadline is converted to remaining time, so the map pauses the round
+      // without leaving a live interval or granting extra time on resume.
+      function activeSessionAnswerMask(questionId) {
+        let hash = 0x811c9dc5;
+        for (const character of String(questionId)) {
+          hash ^= character.charCodeAt(0);
+          hash = Math.imul(hash, 0x01000193);
+        }
+        return ((hash >>> 0) % 3) + 1;
+      }
+
+      function isValidActiveQuizSnapshot(snapshot) {
+        if (!snapshot || snapshot.version !== 1 ||
+            !PROGRESSION_CATEGORIES.includes(snapshot.category) ||
+            !Number.isInteger(snapshot.level) || snapshot.level < 1 ||
+            snapshot.level > unlockedLevelFor(snapshot.category) ||
+            !Array.isArray(snapshot.roundItems) ||
+            snapshot.roundItems.length !== QUESTIONS_PER_LEVEL ||
+            !Number.isInteger(snapshot.currentQuestion) ||
+            snapshot.currentQuestion < 0 || snapshot.currentQuestion >= snapshot.roundItems.length ||
+            !Array.isArray(snapshot.sessionUsedQuestionIds) ||
+            snapshot.sessionUsedQuestionIds.length > 20000 ||
+            !Array.isArray(snapshot.answeredQuestionIds) ||
+            !Array.isArray(snapshot.lifelinesUsed) ||
+            snapshot.lifelinesUsed.length > MAX_LIFELINES_PER_QUESTION ||
+            snapshot.lifelinesUsed.some((id) => !Object.hasOwn(LIFELINE_COSTS, id)) ||
+            !Array.isArray(snapshot.eliminatedOptionIndexes) ||
+            snapshot.eliminatedOptionIndexes.some((index) => !Number.isInteger(index) || index < 0 || index > 3) ||
+            !Array.isArray(snapshot.answerTimes) ||
+            snapshot.answerTimes.some((seconds) => !Number.isFinite(seconds) || seconds < 0 || seconds > 3600) ||
+            !Number.isFinite(snapshot.timerRemainingSeconds) ||
+            snapshot.timerRemainingSeconds < 0 || snapshot.timerRemainingSeconds > QUESTION_TIME_LIMIT_SECONDS ||
+            !Number.isFinite(snapshot.freezeRemainingSeconds) ||
+            snapshot.freezeRemainingSeconds < 0 || snapshot.freezeRemainingSeconds > TIME_FREEZE_DURATION_MS / 1000 ||
+            !Number.isFinite(snapshot.elapsedSeconds) || snapshot.elapsedSeconds < 0 || snapshot.elapsedSeconds > 3600 ||
+            !Number.isInteger(snapshot.score) || snapshot.score < 0 || snapshot.score > snapshot.roundItems.length ||
+            !Number.isFinite(snapshot.points) || snapshot.points < 0 ||
+            !Number.isInteger(snapshot.currentStreak) || snapshot.currentStreak < 0 ||
+            !Number.isInteger(snapshot.bestStreak) || snapshot.bestStreak < snapshot.currentStreak ||
+            !Number.isFinite(snapshot.roundCoinsEarned) || snapshot.roundCoinsEarned < 0 ||
+            typeof snapshot.answered !== "boolean" ||
+            !(snapshot.lastSelected === null ||
+              (Number.isInteger(snapshot.lastSelected) && snapshot.lastSelected >= -1 && snapshot.lastSelected <= 3))) {
+          return false;
+        }
+        const questionIds = new Set();
+        for (const record of snapshot.roundItems) {
+          const item = record?.item;
+          if (!item || typeof item.id !== "string" || !item.id ||
+              !Number.isInteger(record.answerToken) || record.answerToken < 0 || record.answerToken > 3 ||
+              questionIds.has(item.id) || !item.question || !item.options) return false;
+          questionIds.add(item.id);
+          for (const language of ["en", "bn", "hi", "es", "fr"]) {
+            if (typeof item.question[language] !== "string" ||
+                !Array.isArray(item.options[language]) || item.options[language].length !== 4 ||
+                item.options[language].some((option) => typeof option !== "string")) return false;
+          }
+        }
+        return snapshot.sessionUsedQuestionIds.every((id) => typeof id === "string" && id.length <= 240) &&
+          snapshot.answeredQuestionIds.every((id) => questionIds.has(id)) &&
+          snapshot.answerTimes.length <= snapshot.currentQuestion + (snapshot.answered ? 1 : 0) &&
+          (snapshot.answered
+            ? Number.isInteger(snapshot.lastSelected) && snapshot.lastSelected >= -1 && snapshot.lastSelected <= 3
+            : snapshot.lastSelected === null);
+      }
+
+      function readActiveQuizSnapshot() {
+        if (isValidActiveQuizSnapshot(pausedQuizSnapshot)) return pausedQuizSnapshot;
+        try {
+          const raw = localStorage.getItem(ACTIVE_QUIZ_SESSION_STORAGE_KEY);
+          if (!raw || raw.length > 250000) return null;
+          const snapshot = JSON.parse(raw);
+          if (isValidActiveQuizSnapshot(snapshot)) return snapshot;
+          localStorage.removeItem(ACTIVE_QUIZ_SESSION_STORAGE_KEY);
+        } catch {
+          // Storage may be blocked or contain malformed data; a new round remains playable.
+        }
+        return null;
+      }
+
+      function clearActiveQuizSnapshot() {
+        pausedQuizSnapshot = null;
+        try {
+          localStorage.removeItem(ACTIVE_QUIZ_SESSION_STORAGE_KEY);
+        } catch {
+          // The in-memory round is still discarded if browser storage is unavailable.
+        }
+      }
+
+      function saveActiveQuizSnapshot() {
+        if (!views.game.classList.contains("active") ||
+            !PROGRESSION_CATEGORIES.includes(currentCategory) ||
+            roundQuestionIndexes.length !== QUESTIONS_PER_LEVEL) return null;
+        const now = performance.now();
+        const freezeRemainingSeconds = !answered && timerFreezeUntil > now
+          ? Math.max(0, (timerFreezeUntil - now) / 1000)
+          : 0;
+        const timerRemainingSeconds = answered
+          ? 0
+          : timerFreezeUntil > now
+            ? timerFreezeRemainingSeconds
+            : questionDeadline
+              ? Math.max(0, (questionDeadline - now) / 1000)
+              : QUESTION_TIME_LIMIT_SECONDS;
+        const roundItems = roundQuestionIndexes.map((index) => {
+          const item = activeQuestionPool[index];
+          if (!item || typeof item.id !== "string") throw new Error("Cannot save a missing quiz question.");
+          const safeItem = {
+            id: item.id, source: item.source, kind: item.kind, subject: item.subject,
+            year: item.year, event: item.event, references: item.references,
+            reviewedAt: item.reviewedAt, status: item.status, eventDate: item.eventDate,
+            question: item.question, options: item.options
+          };
+          return {
+            item: safeItem,
+            answerToken: readConcealedAnswer(item) ^ activeSessionAnswerMask(item.id)
+          };
+        });
+        const snapshot = {
+          version: 1,
+          category: currentCategory,
+          level: currentLevel,
+          roundItems,
+          currentQuestion,
+          score,
+          points,
+          currentStreak,
+          bestStreak,
+          lastPointsAwarded,
+          lastSpeedBonus,
+          answerTimes: [...answerTimes],
+          roundCoinsEarned,
+          sessionUsedQuestionIds: [...sessionUsedQuestionIds].slice(-20000),
+          answeredQuestionIds: roundQuestionIndexes
+            .filter((index) => answeredQuestionIndexes.has(index))
+            .map((index) => activeQuestionPool[index]?.id)
+            .filter(Boolean),
+          lifelinesUsed: [...lifelinesUsedThisQuestion],
+          eliminatedOptionIndexes: [...eliminatedOptionIndexes],
+          lifelineFeedbackType,
+          lastAnswerTimedOut,
+          lastAnswerInterrupted,
+          answered,
+          lastSelected,
+          timerRemainingSeconds,
+          freezeRemainingSeconds,
+          elapsedSeconds: questionStartedAt
+            ? Math.max(0, (now - questionStartedAt) / 1000)
+            : 0
+        };
+        if (!isValidActiveQuizSnapshot(snapshot)) return null;
+        pausedQuizSnapshot = snapshot;
+        try {
+          localStorage.setItem(ACTIVE_QUIZ_SESSION_STORAGE_KEY, JSON.stringify(snapshot));
+        } catch {
+          // Same-page Back/Resume still works from pausedQuizSnapshot when storage is unavailable.
+        }
+        return snapshot;
+      }
+
+      function restoreActiveQuizSnapshot(snapshot = readActiveQuizSnapshot()) {
+        if (!isValidActiveQuizSnapshot(snapshot)) return false;
+        try {
+          currentCategory = snapshot.category;
+          selectedCategory = snapshot.category;
+          currentLevel = snapshot.level;
+          setGameModeTheme(currentCategory);
+          activeQuestionPool = getCategoryQuestionPool(currentCategory, currentLevel);
+          roundQuestionIndexes = snapshot.roundItems.map(({ item, answerToken }) => {
+            const restoredItem = { ...item };
+            const answerIndex = answerToken ^ activeSessionAnswerMask(item.id);
+            storeConcealedAnswer(restoredItem, answerIndex);
+            activeQuestionPool.push(restoredItem);
+            return activeQuestionPool.length - 1;
+          });
+          sessionUsedQuestionIds = new Set(snapshot.sessionUsedQuestionIds);
+          roundQuestionIndexes.forEach((index) => sessionUsedQuestionIds.add(activeQuestionPool[index].id));
+          const answeredIds = new Set(snapshot.answeredQuestionIds);
+          answeredQuestionIndexes = new Set(roundQuestionIndexes.filter(
+            (index) => answeredIds.has(activeQuestionPool[index].id)
+          ));
+          currentQuestion = snapshot.currentQuestion;
+          score = snapshot.score;
+          points = snapshot.points;
+          currentStreak = snapshot.currentStreak;
+          bestStreak = snapshot.bestStreak;
+          lastPointsAwarded = snapshot.lastPointsAwarded;
+          lastSpeedBonus = snapshot.lastSpeedBonus;
+          answerTimes = [...snapshot.answerTimes];
+          roundCoinsEarned = snapshot.roundCoinsEarned;
+          lifelinesUsedThisQuestion = new Set(snapshot.lifelinesUsed);
+          eliminatedOptionIndexes = new Set(snapshot.eliminatedOptionIndexes);
+          lifelineFeedbackType = snapshot.lifelineFeedbackType || "";
+          lifelineHintAnimationPending = false;
+          lastAnswerTimedOut = snapshot.lastAnswerTimedOut === true;
+          lastAnswerInterrupted = snapshot.lastAnswerInterrupted === true;
+          answered = snapshot.answered;
+          lastSelected = snapshot.lastSelected;
+          clearAnswerAdvanceTimeout();
+          const now = performance.now();
+          const freezeMs = snapshot.freezeRemainingSeconds * 1000;
+          timerFreezeRemainingSeconds = snapshot.freezeRemainingSeconds
+            ? snapshot.timerRemainingSeconds
+            : 0;
+          timerFreezeUntil = freezeMs ? now + freezeMs : 0;
+          questionDeadline = snapshot.answered
+            ? now
+            : now + (snapshot.timerRemainingSeconds + snapshot.freezeRemainingSeconds) * 1000;
+          questionStartedAt = now - snapshot.elapsedSeconds * 1000;
+          lastTimerTickSecond = null;
+          levelJustUnlocked = false;
+          levelFailed = false;
+          allLevelsComplete = false;
+          document.getElementById("gameCategory").textContent = gameCategoryLabel(currentCategory);
+          updateScoreDisplay();
+          document.getElementById("roundLength").textContent = `${formatNumber(roundLength())} ${currentText.questions}`;
+          progressBar.setAttribute("aria-valuemax", String(roundLength()));
+          showView("game");
+          renderQuestion(true);
+          resumeQuestionTimer();
+          pausedQuizSnapshot = null;
+          try {
+            localStorage.removeItem(ACTIVE_QUIZ_SESSION_STORAGE_KEY);
+          } catch {
+            // The live session has restored successfully in memory.
+          }
+          return true;
+        } catch {
+          clearActiveQuizSnapshot();
+          return false;
+        }
       }
 
       function renderLifelineNotice(message, messageKind = "", typewriter = false) {
