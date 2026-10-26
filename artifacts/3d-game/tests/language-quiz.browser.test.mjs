@@ -184,7 +184,7 @@ try {
   assert.equal(await page.title(), "QuizVerse 3D — Quiz Game");
   assert.match(await page.locator('meta[name="viewport"]').getAttribute("content"), /viewport-fit=cover/);
   const mobileHomeTargets = await page.evaluate(() =>
-    ["#brandHome", "#languageSelect", "#soundToggle", "#startGameButton", "#openRewardsButton", ".category"]
+    ["#brandHome", "#languageSelect", "#soundToggle", "#startGameButton", "#openRewardsButton", "#homeModesButton", "#openRulesPageButton", "#openPrivacyPageButton", "#openPrivacyModalButton", "#openSettingsHomeButton", "#homeSoundToggle", ".category"]
       .map((selector) => {
         const rect = document.querySelector(selector).getBoundingClientRect();
         return { width: rect.width, height: rect.height };
@@ -216,7 +216,7 @@ try {
   assert.ok(narrowHeader.brandRight <= narrowHeader.actionsLeft + 1, `the brand and home controls do not overlap: ${JSON.stringify(narrowHeader)}`);
   await page.setViewportSize({ width: 280, height: 653 });
   const foldableHomeTargets = await page.evaluate(() => {
-    const selectors = ["#brandHome", "#languageSelect", "#soundToggle", "#startGameButton", "#openRewardsButton", ".category"];
+    const selectors = ["#brandHome", "#languageSelect", "#soundToggle", "#startGameButton", "#openRewardsButton", "#homeModesButton", "#openRulesPageButton", "#openPrivacyPageButton", "#openPrivacyModalButton", "#openSettingsHomeButton", "#homeSoundToggle", ".category"];
     return {
       pageWidth: document.documentElement.scrollWidth,
       viewportWidth: innerWidth,
@@ -242,13 +242,39 @@ try {
   assert.equal(await page.locator("#soundToggle").innerText(), "Game sounds on");
   await page.locator("#soundToggle").tap();
   assert.equal(await page.locator("#soundToggle").getAttribute("aria-pressed"), "false");
+  assert.equal(await page.locator("#homeSoundToggleLabel").innerText(), "Game sounds off");
+  assert.equal(await page.locator("#homeSoundToggle").getAttribute("aria-pressed"), "false");
   assert.equal(
     await page.evaluate(() => localStorage.getItem("quiz-orbit-answer-sounds-muted")),
     "true",
   );
+  await page.locator("#homeSoundToggle").tap();
+  assert.equal(await page.locator("#soundToggle").getAttribute("aria-pressed"), "true", "the dock sound control syncs with the topbar");
+  await page.locator("#soundToggle").tap();
   await page.reload({ waitUntil: "domcontentloaded" });
   assert.equal(await page.locator("#soundToggle").innerText(), "Game sounds off");
   assert.equal(await page.locator("#soundToggle").getAttribute("aria-pressed"), "false");
+  assert.equal(await page.locator(".home-option-group").count(), 3, "the home dock groups actions, information, and controls");
+  assert.equal(await page.locator("#homeOptionHub").isVisible(), true);
+  assert.ok(
+    await page.locator("#homeSoundToggle").evaluate((node) => node.getBoundingClientRect().height >= 48),
+    "the footer sound control remains touch-sized",
+  );
+  await page.locator("#languageSelect").selectOption("fr");
+  assert.equal(await page.locator("#homeQuickGroupTitle").textContent(), "Actions rapides");
+  assert.equal(await page.locator("#homeSettingsTitle").innerText(), "Paramètres");
+  await page.locator("#languageSelect").selectOption("en");
+  await page.locator("#openSettingsHomeButton").tap();
+  assert.equal(await page.locator("#settingsDialog").evaluate((node) => node.open), true, "home settings opens the existing settings dialog");
+  await page.locator("#closeSettingsButton").tap();
+  await page.locator("#openPrivacyModalButton").tap();
+  assert.equal(await page.locator("#privacyDialog").evaluate((node) => node.open), true, "privacy summary opens without navigation");
+  await page.locator("#closePrivacyButton").tap();
+  await page.locator("#openPrivacyPageButton").tap();
+  assert.equal(await page.locator("#privacyView").evaluate((node) => node.classList.contains("active")), true);
+  await page.locator("#privacyBackButton").tap();
+  await page.locator("#homeModesButton").tap();
+  assert.equal(await page.locator(".category.selected").count(), 1, "the dock mode shortcut returns focus to the current selection");
 
   assert.equal(await page.locator(".category").count(), 5, "all five quiz subjects are available");
   assert.equal(await page.locator(".category-preview").count(), 5, "each mode has an interactive progress preview");

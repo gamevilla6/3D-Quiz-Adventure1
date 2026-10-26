@@ -3244,6 +3244,207 @@
     .topbar-actions{flex-wrap:wrap}
     .welcome-links{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;padding:8px 0 24px}
     .welcome-links .sp-btn{min-height:48px;font-size:.88rem;font-weight:650;background:rgba(18,25,51,.5)}
+    /* Home navigation is one responsive glass surface with task-based groups.
+       Buttons are real controls (48px+ targets); touch uses the press state,
+       while hover glow is limited to pointer devices. */
+    body[data-view="welcome"] .home-mode-panel,
+    body[data-view="welcome"] .home-option-hub {
+      position: relative;
+      isolation: isolate;
+      min-width: 0;
+      margin: clamp(20px, 3.5vw, 34px) auto 0;
+      padding: clamp(15px, 2.6vw, 24px);
+      overflow: hidden;
+      border: 1px solid rgba(151, 182, 255, .2);
+      border-radius: 24px;
+      background: linear-gradient(145deg, rgba(17, 25, 54, .8), rgba(11, 17, 39, .76));
+      box-shadow: 0 18px 46px rgba(0, 0, 0, .18), inset 0 1px rgba(255, 255, 255, .08);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+    }
+    body[data-view="welcome"] .home-mode-panel::before,
+    body[data-view="welcome"] .home-option-hub::before {
+      position: absolute;
+      z-index: -1;
+      inset: 0;
+      pointer-events: none;
+      content: "";
+      background:
+        radial-gradient(ellipse at 8% 0%, rgba(79, 220, 240, .12), transparent 36%),
+        radial-gradient(ellipse at 100% 100%, rgba(169, 106, 255, .12), transparent 42%);
+    }
+    body[data-view="welcome"] .home-mode-panel .section-heading { margin-top: 0; }
+    body[data-view="welcome"] .home-mode-panel .category { min-width: 0; }
+    body[data-view="welcome"] .home-option-hub { max-width: 1160px; text-align: left; }
+    .home-option-header {
+      display: flex;
+      min-width: 0;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      margin-bottom: 18px;
+    }
+    .home-option-kicker {
+      margin: 0 0 6px;
+      color: #8cebe7;
+      font-size: 9px;
+      font-weight: 850;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+    }
+    .home-option-header h2 {
+      margin: 0;
+      color: #f8f7ff;
+      font-size: clamp(19px, 3vw, 26px);
+      font-weight: 850;
+      letter-spacing: -.035em;
+    }
+    .home-option-header > div > p:last-child {
+      max-width: 620px;
+      margin: 6px 0 0;
+      color: #b8c4df;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+    .home-option-orbit {
+      position: relative;
+      flex: 0 0 56px;
+      width: 56px;
+      height: 56px;
+      border: 1px solid rgba(119, 222, 255, .3);
+      border-radius: 50%;
+      box-shadow: inset 0 0 20px rgba(111, 117, 255, .14), 0 0 26px rgba(76, 198, 245, .1);
+    }
+    .home-option-orbit::before {
+      position: absolute;
+      inset: 11px -4px;
+      border: 1px solid rgba(208, 155, 255, .48);
+      border-radius: 50%;
+      content: "";
+      transform: rotate(-32deg);
+    }
+    .home-option-orbit i,.home-option-orbit b {
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #71f2e8;
+      box-shadow: 0 0 13px #71f2e8;
+    }
+    .home-option-orbit i { top: 5px; right: 6px; }
+    .home-option-orbit b { bottom: 7px; left: 6px; background: #c59aff; box-shadow: 0 0 13px #c59aff; }
+    .home-option-groups { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+    .home-option-group {
+      min-width: 0;
+      padding: 13px;
+      border: 1px solid rgba(148, 172, 231, .14);
+      border-radius: 18px;
+      background: rgba(6, 12, 30, .43);
+      box-shadow: inset 0 1px rgba(255, 255, 255, .04);
+    }
+    .home-option-group-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 0 0 10px;
+      color: #b9c6e2;
+      font-size: 9px;
+      font-weight: 850;
+      letter-spacing: .11em;
+      text-transform: uppercase;
+    }
+    .home-option-group-title::before {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #75e6e0;
+      box-shadow: 0 0 10px rgba(117, 230, 224, .7);
+      content: "";
+    }
+    .home-option-group:nth-child(2) .home-option-group-title::before { background: #b99bff; box-shadow: 0 0 10px rgba(185, 155, 255, .7); }
+    .home-option-group:nth-child(3) .home-option-group-title::before { background: #ffca7c; box-shadow: 0 0 10px rgba(255, 202, 124, .7); }
+    .home-option-list { display: grid; gap: 8px; }
+    .home-option-card {
+      display: grid;
+      grid-template-columns: 40px minmax(0, 1fr) 18px;
+      min-width: 0;
+      min-height: 64px;
+      align-items: center;
+      gap: 10px;
+      width: 100%;
+      padding: 9px 10px;
+      color: #f6f7ff;
+      border: 1px solid rgba(153, 176, 235, .18);
+      border-radius: 14px;
+      background: linear-gradient(125deg, rgba(26, 37, 72, .82), rgba(19, 25, 55, .78));
+      box-shadow: inset 0 1px rgba(255, 255, 255, .055);
+      font: inherit;
+      text-align: left;
+      cursor: pointer;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
+      transition: transform .18s ease, border-color .18s ease, background .18s ease, box-shadow .18s ease;
+    }
+    .home-option-card[hidden] { display: none !important; }
+    .home-option-card:hover {
+      border-color: rgba(121, 222, 255, .48);
+      background: linear-gradient(125deg, rgba(31, 50, 89, .94), rgba(32, 35, 75, .9));
+      box-shadow: 0 8px 20px rgba(3, 8, 27, .2), 0 0 18px rgba(83, 192, 231, .08), inset 0 1px rgba(255, 255, 255, .09);
+    }
+    .home-option-card:active { transform: scale(.95); }
+    .home-option-card:focus-visible { outline: 3px solid #81eee9; outline-offset: 3px; }
+    .home-option-icon {
+      display: grid;
+      width: 40px;
+      height: 40px;
+      place-items: center;
+      color: #8feaff;
+      border: 1px solid rgba(128, 220, 255, .2);
+      border-radius: 12px;
+      background: rgba(74, 149, 207, .12);
+    }
+    .home-option-icon svg { width: 21px; height: 21px; }
+    .home-option-icon.rewards-icon { color: #ffda88; border-color: rgba(255, 214, 122, .24); background: rgba(167, 124, 44, .16); }
+    .home-option-icon.rules-icon,.home-option-icon.summary-icon { color: #c5a5ff; border-color: rgba(187, 149, 255, .22); background: rgba(119, 81, 187, .16); }
+    .home-option-icon.privacy-icon { color: #84edc7; border-color: rgba(106, 236, 189, .2); background: rgba(46, 151, 123, .15); }
+    .home-option-icon.settings-icon { color: #ffca84; border-color: rgba(255, 195, 123, .2); background: rgba(167, 109, 42, .16); }
+    .home-option-icon.sound-icon { color: #8feaff; }
+    .home-option-copy { display: grid; min-width: 0; gap: 3px; }
+    .home-option-copy strong { color: #f5f6ff; font-size: 11px; font-weight: 820; line-height: 1.3; overflow-wrap: anywhere; }
+    .home-option-copy small { color: #b4c0dc; font-size: 9px; font-weight: 550; line-height: 1.4; overflow-wrap: anywhere; }
+    .home-option-copy .home-option-note { color: #8e9fbe; }
+    .home-option-arrow { color: #7fdfea; font-size: 14px; transition: transform .18s ease; }
+    .home-option-card:hover .home-option-arrow { transform: translateX(2px); }
+    .sound-state-indicator { width: 8px; height: 8px; border-radius: 50%; background: #6cf0c5; box-shadow: 0 0 12px rgba(108, 240, 197, .65); }
+    .home-sound-toggle.is-muted .sound-state-indicator { background: #ff9eaa; box-shadow: 0 0 12px rgba(255, 158, 170, .56); }
+    body[data-view="welcome"] .welcome-foot { gap: 8px; margin-top: 17px; padding: 0; }
+    body[data-view="welcome"] .welcome-foot > span {
+      min-height: 34px;
+      padding: 6px 10px;
+      border: 1px solid rgba(146, 169, 223, .14);
+      border-radius: 999px;
+      background: rgba(14, 22, 47, .64);
+    }
+    @media (max-width: 900px) {
+      .home-option-groups { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .home-option-group:last-child { grid-column: 1 / -1; }
+      .home-option-group:last-child .home-option-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+    @media (max-width: 650px) {
+      .home-option-groups { grid-template-columns: minmax(0, 1fr); }
+      .home-option-group:last-child { grid-column: auto; }
+      .home-option-group:last-child .home-option-list { grid-template-columns: minmax(0, 1fr); }
+      .home-option-header { gap: 8px; }
+      .home-option-orbit { flex-basis: 44px; width: 44px; height: 44px; }
+      .home-option-hub { border-radius: 20px; }
+    }
+    @media (hover: hover) and (pointer: fine) {
+      .home-option-card:hover { transform: translateY(-2px) scale(1.01); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .home-option-card,.home-option-arrow { transition: none; }
+      .home-option-card:hover,.home-option-card:active { transform: none; }
+    }
     .sp-dialog{width:min(520px,calc(100vw - 24px));max-height:min(88dvh,780px);padding:0;overflow:hidden;border:1px solid rgba(171,196,255,.28);border-radius:24px;color:#f6f7ff;background:linear-gradient(150deg,rgba(28,36,78,.94),rgba(10,16,36,.96) 75%);box-shadow:0 28px 90px rgba(0,0,0,.58),inset 0 1px rgba(255,255,255,.1);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);overscroll-behavior:contain}
     .sp-dialog[open]{display:flex;flex-direction:column;animation:rules-dialog-enter .2s ease-out both}
     .sp-dialog::backdrop{background:rgba(3,6,17,.76);backdrop-filter:blur(14px)}
@@ -3413,10 +3614,11 @@
               <div class="orbit-label" id="orbitLabel" aria-live="off">Choose a mode · conquer 500 levels</div>
             </div>
           </div>
-          <div class="section-heading">
-            <h2 id="categoryHeading">Choose your mode</h2>
-            <p id="categoryHeadingHint">Choose a mode · IQ has a timer</p>
-          </div>
+          <section class="home-mode-panel" aria-labelledby="categoryHeading">
+            <div class="section-heading">
+              <h2 id="categoryHeading">Choose your mode</h2>
+              <p id="categoryHeadingHint">Choose a mode · IQ has a timer</p>
+            </div>
           <div class="category-grid" id="categoryGrid" role="group" aria-label="Choose a quiz category">
             <button class="category selected" type="button" data-category="General Knowledge" aria-pressed="true">
               <span class="category-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M4.5 6.2c2.4-1.1 4.8-.9 7.5.8v12c-2.7-1.7-5.1-1.9-7.5-.8v-12Zm15 0c-2.4-1.1-4.8-.9-7.5.8v12c2.7-1.7 5.1-1.9 7.5-.8v-12Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M8 9.2h1.4m6.6 0h1.4M8 12h1.4m6.6 0h1.4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></span>
@@ -3479,22 +3681,73 @@
               </span><span class="category-arrow" aria-hidden="true">→</span>
             </button>
           </div>
+          </section>
           <div class="start-row">
             <button class="primary-button start-button" type="button" id="startGameButton"><span id="startGameLabel">Start game</span> <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M4.2 10h11.6m-4.5-4.5 4.5 4.5-4.5 4.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
-            <button class="rules-home-button" type="button" id="openRulesPageButton">
-              <span aria-hidden="true">ⓘ</span>
-              <span id="rulesHomeButtonLabel">How to play</span>
-            </button>
             <div class="start-hint" id="startHint" aria-live="polite">Choose a subject to begin your orbit.</div>
-            <button class="continue-journey-button" type="button" id="continueJourneyButton" hidden>
-              <span class="continue-icon" aria-hidden="true">↗</span>
-              <span class="continue-copy"><strong id="continueJourneyLabel">Continue journey</strong><small id="continueJourneyTarget">General Knowledge · Level 1</small></span>
-              <span class="continue-arrow" aria-hidden="true">→</span>
-            </button>
           </div>
           <div class="welcome-foot"><span><b class="tiny-check">✓</b> <span id="totalQuestionsLabel">30 General Knowledge questions</span></span><span><b class="tiny-check">✓</b> <span id="instantAnswersLabel">Instant answers</span></span><span><b class="tiny-check">✓</b> <span id="justForFunLabel">Just for fun</span></span></div>
-          <!-- Home footer: privacy entry points -->
-          <div class="welcome-links"><button class="sp-btn" type="button" id="openPrivacyPageButton">Privacy page</button><button class="sp-btn" type="button" id="openPrivacyModalButton">Privacy summary</button></div>
+          <!-- Home menu: existing navigation and controls, grouped by task. -->
+          <section class="home-option-hub" id="homeOptionHub" aria-labelledby="homeMenuTitle">
+            <header class="home-option-header">
+              <div>
+                <p class="home-option-kicker" id="homeMenuKicker">NAVIGATION DECK</p>
+                <h2 id="homeMenuTitle">Everything in one place</h2>
+                <p id="homeMenuDescription">Jump into a mode, check your progress, or adjust your game.</p>
+              </div>
+              <span class="home-option-orbit" aria-hidden="true"><i></i><b></b></span>
+            </header>
+            <div class="home-option-groups">
+              <section class="home-option-group" aria-labelledby="homeQuickGroupTitle">
+                <h3 class="home-option-group-title" id="homeQuickGroupTitle">Quick actions</h3>
+                <div class="home-option-list">
+                  <button class="home-option-card" type="button" id="homeModesButton" data-testid="home-modes">
+                    <span class="home-option-icon mode-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8" stroke="currentColor" stroke-width="1.7"/><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.7"/><path d="M12 2v4m10 6h-4M12 22v-4M2 12h4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg></span>
+                    <span class="home-option-copy"><strong id="homeModesTitle">Explore modes</strong><small id="homeModesDescription">Jump to the five quiz categories.</small></span><span class="home-option-arrow" aria-hidden="true">↗</span>
+                  </button>
+                  <button class="home-option-card continue-journey-button" type="button" id="continueJourneyButton" data-testid="continue-journey" hidden>
+                    <span class="home-option-icon continue-icon" aria-hidden="true">↗</span>
+                    <span class="home-option-copy"><strong id="continueJourneyLabel">Continue journey</strong><small id="continueJourneyTarget">General Knowledge · Level 1</small><small class="home-option-note" id="continueJourneyHint">Resume your latest available level.</small></span>
+                    <span class="home-option-arrow" aria-hidden="true">→</span>
+                  </button>
+                  <button class="home-option-card" type="button" id="openRewardsButton" data-testid="open-rewards">
+                    <span class="home-option-icon rewards-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M8 4h8v3a4 4 0 0 1-8 0V4Zm0 2H4v2a4 4 0 0 0 4 4m8-6h4v2a4 4 0 0 1-4 4m-4 0v4m-4 4h8m-6-4h4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                    <span class="home-option-copy"><strong id="homeRewardsTitle">Rewards &amp; Analytics</strong><small id="homeRewardsDescription">Your trophies, badges, and progress.</small></span><span class="home-option-arrow" aria-hidden="true">→</span>
+                  </button>
+                </div>
+              </section>
+              <section class="home-option-group" aria-labelledby="homeInfoGroupTitle">
+                <h3 class="home-option-group-title" id="homeInfoGroupTitle">Guides &amp; privacy</h3>
+                <div class="home-option-list">
+                  <button class="home-option-card" type="button" id="openRulesPageButton" data-testid="open-rules">
+                    <span class="home-option-icon rules-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M5 4.5h10.5A3.5 3.5 0 0 1 19 8v11.5H8A3 3 0 0 1 5 16.5v-12Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M8 8h7m-7 3.5h7M8 15h4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg></span>
+                    <span class="home-option-copy"><strong id="rulesHomeButtonLabel">How to play</strong><small id="homeRulesDescription">Timers, coins, lifelines, and level rules.</small></span><span class="home-option-arrow" aria-hidden="true">→</span>
+                  </button>
+                  <button class="home-option-card" type="button" id="openPrivacyPageButton" data-testid="open-privacy">
+                    <span class="home-option-icon privacy-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M12 3 19 6v5.2c0 4.7-2.9 7.8-7 9.8-4.1-2-7-5.1-7-9.8V6l7-3Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="m9 12 2 2 4-4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                    <span class="home-option-copy"><strong id="homePrivacyPageTitle">Privacy Policy</strong><small id="homePrivacyPageDescription">Read the full data and storage notice.</small></span><span class="home-option-arrow" aria-hidden="true">→</span>
+                  </button>
+                  <button class="home-option-card" type="button" id="openPrivacyModalButton" data-testid="open-privacy-summary">
+                    <span class="home-option-icon summary-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8.5" stroke="currentColor" stroke-width="1.7"/><path d="M12 11v5m0-8h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span>
+                    <span class="home-option-copy"><strong id="homePrivacySummaryTitle">Privacy at a glance</strong><small id="homePrivacySummaryDescription">Open a short summary without leaving.</small></span><span class="home-option-arrow" aria-hidden="true">→</span>
+                  </button>
+                </div>
+              </section>
+              <section class="home-option-group" aria-labelledby="homeControlsGroupTitle">
+                <h3 class="home-option-group-title" id="homeControlsGroupTitle">System controls</h3>
+                <div class="home-option-list">
+                  <button class="home-option-card" type="button" id="openSettingsHomeButton" data-testid="open-settings-home">
+                    <span class="home-option-icon settings-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.7"/><path d="m9.5 3-.5 2-1.6.9-2-.6L3 9.7l1.5 1.5v1.6L3 14.3l2.4 4.4 2-.6L9 19l.5 2h5l.5-2 1.6-.9 2 .6 2.4-4.4-1.5-1.5v-1.6L21 9.7l-2.4-4.4-2 .6L15 5l-.5-2h-5Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg></span>
+                    <span class="home-option-copy"><strong id="homeSettingsTitle">Settings</strong><small id="homeSettingsDescription">Language, visual effects, and progress controls.</small></span><span class="home-option-arrow" aria-hidden="true">→</span>
+                  </button>
+                  <button class="home-option-card home-sound-toggle" type="button" id="homeSoundToggle" aria-pressed="true" data-testid="home-sound-toggle">
+                    <span class="home-option-icon sound-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M4 10v4h4l5 4V6l-5 4H4Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M16 9a4 4 0 0 1 0 6m2.5-8.5a7.5 7.5 0 0 1 0 11" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg></span>
+                    <span class="home-option-copy"><strong id="homeSoundToggleLabel">Game sounds on</strong><small id="homeSoundToggleDescription">Toggle answer and reward sounds.</small></span><span class="sound-state-indicator" aria-hidden="true"></span>
+                  </button>
+                </div>
+              </section>
+            </div>
+          </section>
           <div class="portal-telemetry" id="portalTelemetry" role="group" aria-label="Live portal telemetry">
             <div class="portal-telemetry-heading"><span class="live-dot" aria-hidden="true"></span><span id="portalTelemetryTitle">LIVE NEURAL TELEMETRY</span></div>
             <div class="portal-telemetry-stream">
@@ -3507,7 +3760,6 @@
           <section class="collection-panel" aria-labelledby="collectionTitle">
             <div class="collection-heading">
               <h2 id="collectionTitle">Your collection</h2>
-              <button class="collection-open-button" type="button" id="openRewardsButton">Rewards &amp; Analytics</button>
             </div>
             <div class="collection-stats">
               <div class="collection-stat"><strong id="collectionBestPoints">0</strong><span id="collectionBestPointsLabel">Personal best points</span></div>
@@ -5028,6 +5280,81 @@
           universeLevelsLabel: "Niveaux de l’univers",
           coinVaultLabel: "Coffre de pièces",
           telemetryGroup: "Télémétrie du portail en direct"
+        }
+      };
+
+      // Localized copy for the home navigation dock. Action names reuse the
+      // existing rules, settings, privacy and rewards dictionaries below.
+      const homeMenuTranslations = {
+        en: {
+          kicker: "NAVIGATION DECK", title: "Everything in one place",
+          description: "Jump into a mode, check your progress, or adjust your game.",
+          quick: "Quick actions", info: "Guides & privacy", controls: "System controls",
+          modesTitle: "Explore modes", modesDescription: "Jump to the five quiz categories.",
+          continueHint: "Resume your latest available level.",
+          rewardsDescription: "Your trophies, badges, and progress.",
+          rulesDescription: "Timers, coins, lifelines, and level rules.",
+          privacyPageDescription: "Read the full data and storage notice.",
+          privacySummaryTitle: "Privacy at a glance",
+          privacySummaryDescription: "Open a short summary without leaving.",
+          settingsDescription: "Language, visual effects, and progress controls.",
+          soundDescription: "Toggle answer and reward sounds."
+        },
+        bn: {
+          kicker: "নেভিগেশন ডেক", title: "সবকিছু এক জায়গায়",
+          description: "মোড বেছে নিন, অগ্রগতি দেখুন বা গেমের সেটিং বদলান।",
+          quick: "দ্রুত কাজ", info: "নিয়ম ও গোপনীয়তা", controls: "সিস্টেম নিয়ন্ত্রণ",
+          modesTitle: "মোড দেখুন", modesDescription: "পাঁচটি কুইজ বিভাগের কাছে যান।",
+          continueHint: "সর্বশেষ খোলা লেভেলে ফিরে যান।",
+          rewardsDescription: "আপনার ট্রফি, ব্যাজ ও অগ্রগতি।",
+          rulesDescription: "টাইমার, কয়েন, লাইফলাইন ও লেভেলের নিয়ম।",
+          privacyPageDescription: "তথ্য ও স্টোরেজের সম্পূর্ণ নীতি পড়ুন।",
+          privacySummaryTitle: "এক নজরে গোপনীয়তা",
+          privacySummaryDescription: "এই পৃষ্ঠা না ছেড়েই সংক্ষিপ্তসার দেখুন।",
+          settingsDescription: "ভাষা, ভিজ্যুয়াল এফেক্ট ও অগ্রগতির নিয়ন্ত্রণ।",
+          soundDescription: "উত্তর ও পুরস্কারের শব্দ চালু বা বন্ধ করুন।"
+        },
+        hi: {
+          kicker: "नेविगेशन डेक", title: "सब कुछ एक जगह",
+          description: "मोड चुनें, प्रगति देखें या गेम की सेटिंग बदलें।",
+          quick: "त्वरित विकल्प", info: "नियम और गोपनीयता", controls: "सिस्टम नियंत्रण",
+          modesTitle: "मोड देखें", modesDescription: "पाँच क्विज़ श्रेणियों पर जाएँ।",
+          continueHint: "अपने हाल के उपलब्ध स्तर पर लौटें।",
+          rewardsDescription: "आपकी ट्रॉफी, बैज और प्रगति।",
+          rulesDescription: "टाइमर, कॉइन, लाइफ़लाइन और स्तर के नियम।",
+          privacyPageDescription: "डेटा और स्टोरेज की पूरी सूचना पढ़ें।",
+          privacySummaryTitle: "गोपनीयता एक नज़र में",
+          privacySummaryDescription: "यह पेज छोड़े बिना संक्षिप्त जानकारी खोलें।",
+          settingsDescription: "भाषा, दृश्य प्रभाव और प्रगति नियंत्रण।",
+          soundDescription: "जवाब और इनाम की आवाज़ चालू या बंद करें।"
+        },
+        es: {
+          kicker: "CENTRO DE NAVEGACIÓN", title: "Todo en un solo lugar",
+          description: "Elige un modo, consulta tu progreso o ajusta el juego.",
+          quick: "Accesos rápidos", info: "Guía y privacidad", controls: "Controles del sistema",
+          modesTitle: "Explorar modos", modesDescription: "Ir a las cinco categorías del quiz.",
+          continueHint: "Vuelve a tu último nivel disponible.",
+          rewardsDescription: "Tus trofeos, insignias y progreso.",
+          rulesDescription: "Temporizador, monedas, ayudas y reglas de nivel.",
+          privacyPageDescription: "Lee el aviso completo sobre datos y almacenamiento.",
+          privacySummaryTitle: "Privacidad en breve",
+          privacySummaryDescription: "Abre un resumen sin salir de esta pantalla.",
+          settingsDescription: "Idioma, efectos visuales y controles de progreso.",
+          soundDescription: "Activa o desactiva los sonidos de respuestas y premios."
+        },
+        fr: {
+          kicker: "CENTRE DE NAVIGATION", title: "Tout au même endroit",
+          description: "Choisissez un mode, consultez vos progrès ou réglez le jeu.",
+          quick: "Actions rapides", info: "Guide et confidentialité", controls: "Réglages système",
+          modesTitle: "Explorer les modes", modesDescription: "Accéder aux cinq catégories du quiz.",
+          continueHint: "Reprendre au dernier niveau disponible.",
+          rewardsDescription: "Vos trophées, badges et progrès.",
+          rulesDescription: "Minuteur, pièces, jokers et règles des niveaux.",
+          privacyPageDescription: "Lire l’avis complet sur les données et le stockage.",
+          privacySummaryTitle: "Confidentialité en bref",
+          privacySummaryDescription: "Afficher un résumé sans quitter cette page.",
+          settingsDescription: "Langue, effets visuels et commandes de progression.",
+          soundDescription: "Activer ou désactiver les sons des réponses et récompenses."
         }
       };
 
@@ -9286,6 +9613,46 @@
         document.getElementById("rulesView").setAttribute("aria-label", copy.pageTitle);
       }
 
+      function updateHomeMenuCopy() {
+        const copy = homeMenuTranslations[currentLanguage] || homeMenuTranslations.en;
+        const textById = {
+          homeMenuKicker: "kicker", homeMenuTitle: "title",
+          homeMenuDescription: "description", homeQuickGroupTitle: "quick",
+          homeInfoGroupTitle: "info", homeControlsGroupTitle: "controls",
+          homeModesTitle: "modesTitle", homeModesDescription: "modesDescription",
+          continueJourneyHint: "continueHint",
+          homeRewardsDescription: "rewardsDescription",
+          homeRulesDescription: "rulesDescription",
+          homePrivacyPageDescription: "privacyPageDescription",
+          homePrivacySummaryTitle: "privacySummaryTitle",
+          homePrivacySummaryDescription: "privacySummaryDescription",
+          homeSettingsDescription: "settingsDescription",
+          homeSoundToggleDescription: "soundDescription"
+        };
+        Object.entries(textById).forEach(([id, key]) => {
+          document.getElementById(id).textContent = copy[key];
+        });
+        document.getElementById("homeOptionHub").setAttribute("aria-label", copy.title);
+        document.getElementById("homeRewardsTitle").textContent = currentText.rewardsDashboardTitle;
+        document.getElementById("homePrivacyPageTitle").textContent = settingsCopy[currentLanguage].privacy;
+        document.getElementById("homeSettingsTitle").textContent = settingsCopy[currentLanguage].title;
+        document.getElementById("homeModesButton").setAttribute(
+          "aria-label", `${copy.modesTitle}. ${copy.modesDescription}`
+        );
+        document.getElementById("openRewardsButton").setAttribute(
+          "aria-label", `${currentText.rewardsDashboardTitle}. ${copy.rewardsDescription}`
+        );
+        document.getElementById("openPrivacyPageButton").setAttribute(
+          "aria-label", `${settingsCopy[currentLanguage].privacy}. ${copy.privacyPageDescription}`
+        );
+        document.getElementById("openPrivacyModalButton").setAttribute(
+          "aria-label", `${settingsCopy[currentLanguage].summary}. ${copy.privacySummaryDescription}`
+        );
+        document.getElementById("openSettingsHomeButton").setAttribute(
+          "aria-label", `${settingsCopy[currentLanguage].title}. ${copy.settingsDescription}`
+        );
+      }
+
       function renderPrivacyContent(target, headingTag) {
         const copy = settingsCopy[currentLanguage];
         const disclaimer = document.createElement("p");
@@ -9314,12 +9681,12 @@
           saveSettingsButton: "save", settingsPrivacyButton: "privacy",
           privacyTitle: "privacy", privacyModalTitle: "privacy", privacyKicker: "privacy",
           privacyDescription: "privacyDescription", privacyModalDescription: "privacyDescription",
-          openPrivacyPageButton: "privacy", openPrivacyModalButton: "summary",
           rulesPrivacyButton: "privacy", privacyFullPageButton: "fullPolicy",
           privacyPageSettingsButton: "title"
         };
         Object.entries(textById).forEach(([id, key]) => { document.getElementById(id).textContent = copy[key]; });
         document.getElementById("openSettingsButton").setAttribute("aria-label", copy.title);
+        document.getElementById("openSettingsHomeButton").setAttribute("aria-label", copy.title);
         document.getElementById("closeSettingsButton").setAttribute("aria-label", copy.save);
         document.getElementById("closePrivacyButton").setAttribute("aria-label", copy.back);
         document.getElementById("privacyBackButton").setAttribute("aria-label", copy.back);
@@ -9390,6 +9757,7 @@
         updateRulesCopy();
         updateSoundToggle();
         updateSettingsCopy();
+        updateHomeMenuCopy();
         document.title = currentText.pageTitle;
         document.getElementById("metaDescription").content = currentText.metaDescription;
         const loadingScreen = document.getElementById("loadingScreen");
@@ -9418,7 +9786,6 @@
           categoryHeading: "categoryHeading",
           categoryHeadingHint: "categoryHeadingHint",
           startGameLabel: "startGame",
-          openRewardsButton: "rewardsDashboardTitle",
           rewardsDialogTitle: "rewardsDashboardTitle",
           rewardsDialogDescription: "rewardsDashboardDescription",
           dashboardIQTitle: "iqEstimateLabel",
@@ -9520,6 +9887,11 @@
         soundToggle.setAttribute("aria-pressed", String(!answerSoundsMuted));
         soundToggle.setAttribute("aria-label", label);
         document.getElementById("soundToggleLabel").textContent = label;
+        const homeSoundToggle = document.getElementById("homeSoundToggle");
+        homeSoundToggle.setAttribute("aria-pressed", String(!answerSoundsMuted));
+        homeSoundToggle.setAttribute("aria-label", label);
+        homeSoundToggle.classList.toggle("is-muted", answerSoundsMuted);
+        document.getElementById("homeSoundToggleLabel").textContent = label;
         document.getElementById("settingsSoundEnabled").checked = !answerSoundsMuted;
       }
 
@@ -9570,6 +9942,9 @@
       document.getElementById("soundToggle").addEventListener("click", () => {
         setSoundEnabled(answerSoundsMuted);
       });
+      document.getElementById("homeSoundToggle").addEventListener("click", () => {
+        setSoundEnabled(answerSoundsMuted);
+      });
 
       const settingsDialog = document.getElementById("settingsDialog");
       const privacyDialog = document.getElementById("privacyDialog");
@@ -9590,7 +9965,7 @@
         showView("privacy");
         document.getElementById("privacyTitle").focus({ preventScroll: true });
       }
-      ["openSettingsButton", "privacyPageSettingsButton"].forEach((id) =>
+      ["openSettingsButton", "openSettingsHomeButton", "privacyPageSettingsButton"].forEach((id) =>
         document.getElementById(id).addEventListener("click", openSettings));
       ["openPrivacyModalButton", "rulesPrivacyButton", "settingsPrivacyButton"].forEach((id) =>
         document.getElementById(id).addEventListener("click", openPrivacyModal));
@@ -9695,6 +10070,15 @@
       categoryButtons.forEach((button) => {
         button.addEventListener("click", () => selectPortalMode(button));
         button.addEventListener("focus", () => selectPortalMode(button));
+      });
+      document.getElementById("homeModesButton").addEventListener("click", () => {
+        const selected = categoryButtons.find((button) => button.dataset.category === selectedCategory) ??
+          categoryButtons[0];
+        selected.scrollIntoView({
+          behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth",
+          block: "center"
+        });
+        selected.focus({ preventScroll: true });
       });
       continueJourneyButton.addEventListener("click", () => {
         const target = readLastPlayed();
