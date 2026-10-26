@@ -3,10 +3,33 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-    <meta name="theme-color" content="#f1f4f8" />
-    <title>QuizVerse 3D — a little room for big questions</title>
-    <meta id="metaDescription" name="description" content="A thoughtful 3D quiz experience. Pick a subject, follow your curiosity, and see how far you get." />
+    <meta name="theme-color" content="#11152e" />
+    <meta name="application-name" content="QuizVerse 3D" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <title>QuizVerse 3D: General Knowledge &amp; Trivia</title>
+    <meta id="metaDescription" name="description" content="Play QuizVerse 3D, a colorful 3D quiz game with general knowledge, category-based trivia, progressive levels, and 2026 current affairs questions." />
+    <meta id="ogTitle" property="og:title" content="QuizVerse 3D: General Knowledge &amp; Trivia" />
+    <meta id="ogDescription" property="og:description" content="A colorful 3D quiz game with general knowledge, category-based trivia, progressive levels, and 2026 current affairs questions." />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary" />
+    <meta id="twitterDescription" name="twitter:description" content="A colorful 3D quiz game with general knowledge, category-based trivia, progressive levels, and 2026 current affairs questions." />
+    <link rel="manifest" href="/manifest.webmanifest" />
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='18' fill='%23ef4890'/%3E%3Cpath d='M32 11v42M11 32h42M17 17l30 30M47 17 17 47' stroke='white' stroke-width='3' stroke-linecap='round'/%3E%3Ccircle cx='32' cy='32' r='8' fill='%23ffd85a'/%3E%3C/svg%3E" />
+    <script type="application/ld+json" id="gameStructuredData">
+      {
+        "@context": "https://schema.org",
+        "@type": "VideoGame",
+        "name": "QuizVerse 3D: General Knowledge & Trivia",
+        "description": "A colorful browser-based 3D quiz game with category-specific trivia, progressive levels, and 2026 current affairs questions.",
+        "applicationCategory": "GameApplication",
+        "operatingSystem": "Web Browser",
+        "genre": ["Quiz", "Trivia", "Educational"],
+        "inLanguage": ["en", "bn", "hi", "es", "fr"],
+        "keywords": "general knowledge quiz, trivia game, 2026 current affairs quiz, 3D quiz game",
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+      }
+    </script>
     <style>
       :root {
         color-scheme: light;
@@ -3582,6 +3605,31 @@
       .dialog-back-button { transition: none; }
       .dialog-back-button:active { transform: none; }
     }
+    /* Reserved banner slots are shown only when a native wrapper explicitly opts in.
+       They live below the Home/Map content and are never inside or over the quiz HUD. */
+    .native-ad-slot {
+      width: min(100%, 728px);
+      min-height: 62px;
+      margin: clamp(18px, 3vh, 30px) auto 0;
+      padding: 8px 12px;
+      display: grid;
+      place-items: center;
+      color: #8490aa;
+      border: 1px dashed rgba(161, 176, 213, .28);
+      border-radius: 14px;
+      background: rgba(17, 23, 51, .42);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: .08em;
+      text-align: center;
+      text-transform: uppercase;
+      overflow: hidden;
+    }
+    .native-ad-slot[hidden] { display: none !important; }
+    .native-ad-slot > span { pointer-events: none; }
+    @media (max-width: 540px) {
+      .native-ad-slot { min-height: 58px; margin-top: 18px; }
+    }
     </style>
   </head>
   <body data-view="welcome">
@@ -3899,6 +3947,12 @@
               </div>
             </div>
           </dialog>
+          <!-- Browser builds keep this integration point dormant; a native wrapper may
+               bind a compliant AdMob banner here on the Home screen only. -->
+          <aside class="native-ad-slot" id="homeBannerAdSlot" data-ad-placement="home-banner"
+            role="complementary" aria-label="Home screen advertisement placement" hidden>
+            <span>Banner placement · Home</span>
+          </aside>
         </section>
 
         <section class="view rules-page" id="rulesView" aria-labelledby="rulesPageTitle">
@@ -3951,6 +4005,12 @@
             <div class="level-category-tabs" id="levelCategoryTabs" role="tablist" aria-label="Filter level map by category"></div>
             <p class="map-unlock-notice" id="mapUnlockNotice" role="status" aria-live="polite" hidden></p>
             <div class="level-grid" id="levelGrid" role="group" aria-label="Choose a level"></div>
+            <!-- A native wrapper can anchor its banner in this reserved area; it is
+                 intentionally absent from active quiz gameplay. -->
+            <aside class="native-ad-slot" id="levelMapBannerAdSlot" data-ad-placement="level-map-banner"
+              role="complementary" aria-label="Level map advertisement placement" hidden>
+              <span>Banner placement · Level Map</span>
+            </aside>
             <dialog class="level-unlock-dialog" id="levelUnlockDialog" aria-labelledby="levelUnlockDialogTitle" aria-describedby="levelUnlockDialogBody">
               <div class="level-unlock-header">
                 <button class="dialog-back-button" type="button" id="cancelLevelUnlockButton" aria-label="Not now">
@@ -4278,8 +4338,8 @@
       // All persistent labels and short gameplay messages live in this locale dictionary.
       const translations = {
         en: {
-          pageTitle: "QuizVerse 3D — Quiz Game",
-          metaDescription: "Play QuizVerse 3D: explore five quiz worlds, conquer progressive levels, and test your logic.",
+          pageTitle: "QuizVerse 3D: General Knowledge & Trivia",
+          metaDescription: "Play QuizVerse 3D, a colorful 3D quiz game with general knowledge, category-based trivia, progressive levels, and 2026 current affairs questions.",
           language: "Language",
           topNote: "A small space for curiosity",
           brandHome: "QuizVerse 3D home",
@@ -4484,8 +4544,8 @@
           optionLetters: ["A", "B", "C", "D"]
         },
         bn: {
-          pageTitle: "QuizVerse 3D — 3D কুইজ গেম",
-          metaDescription: "QuizVerse 3D খেলুন: পাঁচটি কুইজ জগৎ ঘুরে দেখুন, লেভেল পেরোন এবং যুক্তির পরীক্ষা দিন।",
+          pageTitle: "QuizVerse 3D: সাধারণ জ্ঞান ও ট্রিভিয়া",
+          metaDescription: "QuizVerse 3D খেলুন—সাধারণ জ্ঞান, বিষয়ভিত্তিক কুইজ, প্রগ্রেসিভ লেভেল এবং ২০২৬ সালের সাম্প্রতিক বিষয় নিয়ে রঙিন 3D কুইজ গেম।",
           language: "ভাষা",
           topNote: "কৌতূহলের জন্য ছোট্ট এক জগৎ",
           brandHome: "QuizVerse 3D হোম",
@@ -4690,8 +4750,8 @@
           optionLetters: ["ক", "খ", "গ", "ঘ"]
         },
         hi: {
-          pageTitle: "QuizVerse 3D — 3D क्विज़ गेम",
-          metaDescription: "QuizVerse 3D खेलें: पाँच क्विज़ दुनिया खोजें, स्तर पार करें और अपनी तर्कशक्ति जाँचें।",
+          pageTitle: "QuizVerse 3D: सामान्य ज्ञान और ट्रिविया",
+          metaDescription: "QuizVerse 3D खेलें—सामान्य ज्ञान, विषय-आधारित ट्रिविया, प्रगतिशील स्तर और 2026 के समसामयिक प्रश्नों वाला रंगीन 3D क्विज़ गेम।",
           language: "भाषा",
           topNote: "जिज्ञासा के लिए एक छोटी-सी जगह",
           brandHome: "QuizVerse 3D होम",
@@ -4896,8 +4956,8 @@
           optionLetters: ["क", "ख", "ग", "घ"]
         },
         es: {
-          pageTitle: "QuizVerse 3D — Juego de preguntas",
-          metaDescription: "Juega a QuizVerse 3D: explora cinco mundos, supera niveles y pon a prueba tu lógica.",
+          pageTitle: "QuizVerse 3D: Cultura general y trivia",
+          metaDescription: "Juega a QuizVerse 3D, un colorido juego de preguntas 3D con cultura general, categorías, niveles progresivos y actualidad de 2026.",
           language: "Idioma",
           topNote: "Un pequeño espacio para la curiosidad",
           brandHome: "Inicio de QuizVerse 3D",
@@ -5102,8 +5162,8 @@
           optionLetters: ["A", "B", "C", "D"]
         },
         fr: {
-          pageTitle: "QuizVerse 3D — Quiz",
-          metaDescription: "Jouez à QuizVerse 3D : explorez cinq univers, progressez de niveau et testez votre logique.",
+          pageTitle: "QuizVerse 3D : Culture générale et quiz",
+          metaDescription: "Jouez à QuizVerse 3D, un jeu de quiz 3D coloré avec culture générale, catégories, niveaux progressifs et actualités de 2026.",
           language: "Langue",
           topNote: "Un petit espace pour la curiosité",
           brandHome: "Accueil de QuizVerse 3D",
@@ -8868,7 +8928,51 @@
           }
         }
         activeViewName = name;
+        syncNativeBannerPlacement(name);
         window.scrollTo({ top: 0, behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
+      }
+
+      // AdMob's SDK belongs in the Android/iOS wrapper, not in this web game.
+      // The wrapper may set QUIZVERSE_NATIVE_ADS_ENABLED=true only after its
+      // SDK is initialized and any required consent/disclosure flow is complete.
+      // These events are inert in the regular browser build.
+      function syncNativeBannerPlacement(viewName) {
+        const placementByView = {
+          welcome: ["home-banner", "homeBannerAdSlot"],
+          levels: ["level-map-banner", "levelMapBannerAdSlot"]
+        };
+        const slots = [...document.querySelectorAll(".native-ad-slot")];
+        slots.forEach((slot) => { slot.hidden = true; });
+        if (window.QUIZVERSE_NATIVE_ADS_ENABLED !== true) return;
+        const placement = placementByView[viewName];
+        if (!placement) return;
+        const [placementId, slotId] = placement;
+        const slot = document.getElementById(slotId);
+        if (!slot) return;
+        slot.hidden = false;
+        window.dispatchEvent(new CustomEvent("quizverse:banner-placement", {
+          detail: {
+            placement: placementId,
+            slotId,
+            format: "banner",
+            anchor: "bottom",
+            gameplayVisible: false,
+            overlaysGameplayControls: false
+          }
+        }));
+      }
+
+      function requestNativeInterstitialOpportunity(completedLevel, nextLevel) {
+        if (window.QUIZVERSE_NATIVE_ADS_ENABLED !== true) return;
+        window.dispatchEvent(new CustomEvent("quizverse:interstitial-opportunity", {
+          detail: {
+            placement: "between-levels",
+            completedLevel,
+            nextLevel,
+            gameplayVisible: false,
+            userInitiated: true
+          }
+        }));
       }
 
       function startQuiz(category, level = 1, bypassRulesBriefing = false) {
@@ -10108,6 +10212,15 @@
         updateHomeMenuCopy();
         document.title = currentText.pageTitle;
         document.getElementById("metaDescription").content = currentText.metaDescription;
+        document.getElementById("ogTitle").content = currentText.pageTitle;
+        document.getElementById("ogDescription").content = currentText.metaDescription;
+        document.getElementById("twitterDescription").content = currentText.metaDescription;
+        const structuredData = document.getElementById("gameStructuredData");
+        const schema = JSON.parse(structuredData.textContent);
+        schema.name = currentText.pageTitle;
+        schema.description = currentText.metaDescription;
+        schema.inLanguage = currentLanguage;
+        structuredData.textContent = JSON.stringify(schema);
         const loadingScreen = document.getElementById("loadingScreen");
         if (loadingScreen) {
           loadingScreen.setAttribute("aria-label", currentText.loadingScreenLabel);
@@ -10495,6 +10608,11 @@
         const hasNextLevel = isLevelRun &&
           !levelFailed &&
           currentLevel < unlockedLevelFor(currentCategory);
+        if (hasNextLevel) {
+          // Native wrapper may consider an interstitial here, after a cleared
+          // level and before the player starts the next one—never during play.
+          requestNativeInterstitialOpportunity(currentLevel, currentLevel + 1);
+        }
         startQuiz(currentCategory, hasNextLevel ? currentLevel + 1 : currentLevel || 1);
       });
       document.getElementById("brandHome").addEventListener("click", (event) => {
@@ -10527,6 +10645,7 @@
       setLanguage(currentLanguage);
       applyParticlePreference();
       if (location.hash === "#privacy") showView("privacy");
+      else syncNativeBannerPlacement("welcome");
       window.addEventListener("hashchange", () => {
         if (location.hash === "#privacy") openPrivacyPage();
         else if (views.privacy.classList.contains("active")) showView("welcome");

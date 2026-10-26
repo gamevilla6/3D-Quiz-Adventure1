@@ -1,3 +1,18 @@
-<svg width="180" height="180" viewBox="0 0 180 180" fill="none" xmlns="http://www.w3.org/2000/svg">
-<rect width="180" height="180" rx="36" fill="#FF3C00"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="bg" x1="54" y1="42" x2="450" y2="468" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#7B5CFF"/>
+      <stop offset=".55" stop-color="#263B99"/>
+      <stop offset="1" stop-color="#10142F"/>
+    </linearGradient>
+    <linearGradient id="core" x1="190" y1="167" x2="327" y2="347" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFF28A"/>
+      <stop offset="1" stop-color="#FF8D55"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="118" fill="url(#bg)"/>
+  <circle cx="256" cy="256" r="163" fill="none" stroke="#92E9FF" stroke-opacity=".72" stroke-width="12"/>
+  <ellipse cx="256" cy="256" rx="207" ry="84" transform="rotate(-32 256 256)" fill="none" stroke="#E4A5FF" stroke-opacity=".76" stroke-width="10"/>
+  <path d="m256 139 31 80 86 5-66 57 22 84-73-47-73 47 22-84-66-57 86-5 31-80Z" fill="url(#core)" stroke="#FFF7D3" stroke-linejoin="round" stroke-width="9"/>
+  <circle cx="405" cy="135" r="16" fill="#8FFFF0"/>
 </svg>

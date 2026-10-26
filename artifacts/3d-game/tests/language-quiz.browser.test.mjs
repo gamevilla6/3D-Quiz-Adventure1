@@ -120,6 +120,69 @@ try {
   page.on("pageerror", (error) => pageErrors.push(error.message));
 
   await page.goto(baseUrl, { waitUntil: "domcontentloaded" });
+  const searchMetadata = await page.evaluate(() => ({
+    title: document.title,
+    description: document.querySelector('meta[name="description"]')?.content,
+    manifest: document.querySelector('link[rel="manifest"]')?.getAttribute("href"),
+    schema: JSON.parse(document.querySelector("#gameStructuredData")?.textContent || "{}"),
+    bannerSlots: [...document.querySelectorAll(".native-ad-slot")].map((node) => ({
+      placement: node.dataset.adPlacement,
+      hidden: node.hidden,
+      parentView: node.closest(".view")?.id,
+    })),
+    externalAdSdk: [...document.scripts].some((node) => /google.*ads|admob/i.test(node.src)),
+  }));
+  assert.match(searchMetadata.title, /General Knowledge.*Trivia/i);
+  assert.match(searchMetadata.description, /2026 current affairs/i);
+  assert.equal(searchMetadata.manifest, "/manifest.webmanifest");
+  assert.equal(searchMetadata.schema["@type"], "VideoGame");
+  assert.equal(searchMetadata.schema.operatingSystem, "Web Browser");
+  assert.deepEqual(searchMetadata.bannerSlots, [
+    { placement: "home-banner", hidden: true, parentView: "welcomeView" },
+    { placement: "level-map-banner", hidden: true, parentView: "levelView" },
+  ]);
+  assert.equal(searchMetadata.externalAdSdk, false, "the browser build must not load ad SDKs or trackers");
+  const manifestResponse = await fetch(`${baseUrl}/manifest.webmanifest`);
+  assert.equal(manifestResponse.ok, true, "the install metadata manifest is served");
+  const manifest = await manifestResponse.json();
+  assert.equal(manifest.name, "QuizVerse 3D: General Knowledge & Trivia");
+  assert.equal(manifest.display, "standalone");
+
+  // Exercise the native-wrapper contract separately so real browser tests remain
+  // ad-free and the regular mobile layout is unchanged.
+  const adContext = await browser.newContext({ viewport: { width: 390, height: 844 } });
+  await adContext.addInitScript(() => {
+    window.QUIZVERSE_NATIVE_ADS_ENABLED = true;
+    window.__quizVerseAdEvents = [];
+    for (const eventName of ["quizverse:banner-placement", "quizverse:interstitial-opportunity"]) {
+      window.addEventListener(eventName, (event) => {
+        window.__quizVerseAdEvents.push({ type: eventName, ...event.detail });
+      });
+    }
+  });
+  const adPage = await adContext.newPage();
+  await adPage.goto(baseUrl, { waitUntil: "domcontentloaded" });
+  assert.equal(await adPage.locator("#homeBannerAdSlot").isVisible(), true);
+  await adPage.locator("#startGameButton").click();
+  assert.equal(await adPage.locator("#levelMapBannerAdSlot").isVisible(), true);
+  assert.equal(await adPage.locator("#homeBannerAdSlot").isVisible(), false);
+  const bannerEvents = await adPage.evaluate(() => window.__quizVerseAdEvents);
+  assert.deepEqual(
+    bannerEvents.map((event) => event.placement),
+    ["home-banner", "level-map-banner"],
+    "wrapper receives bottom-banner placements only on Home and the Level Map",
+  );
+  await adPage.locator(".level-card.unlocked").first().click();
+  await acceptRulesBriefingIfOpen(adPage);
+  assert.equal(await adPage.locator("#homeBannerAdSlot").isVisible(), false);
+  assert.equal(await adPage.locator("#levelMapBannerAdSlot").isVisible(), false);
+  assert.equal(
+    (await adPage.evaluate(() => window.__quizVerseAdEvents)).length,
+    2,
+    "the native wrapper receives no banner placement while gameplay is active",
+  );
+  await adContext.close();
+
   await page.selectOption("#languageSelect", "en");
   const portalLocaleCopy = {
     en: ["Initiate sequence", "LIVE NEURAL TELEMETRY"],
@@ -181,7 +244,7 @@ try {
   assert.equal(await page.locator("html").getAttribute("lang"), "en");
   assert.equal(await page.locator("#welcomeTitle").innerText(), "QuizVerse 3D");
   assert.equal(await page.locator(".brand-name").innerText(), "QuizVerse 3D");
-  assert.equal(await page.title(), "QuizVerse 3D — Quiz Game");
+  assert.equal(await page.title(), "QuizVerse 3D: General Knowledge & Trivia");
   assert.match(await page.locator('meta[name="viewport"]').getAttribute("content"), /viewport-fit=cover/);
   const mobileHomeTargets = await page.evaluate(() =>
     ["#brandHome", "#languageSelect", "#soundToggle", "#startGameButton", "#openRewardsButton", "#homeModesButton", "#openRulesPageButton", "#openPrivacyPageButton", "#openPrivacyModalButton", "#openSettingsHomeButton", "#homeSoundToggle", ".category"]
@@ -680,6 +743,13 @@ try {
         return array;
       },
     });
+    window.QUIZVERSE_NATIVE_ADS_ENABLED = true;
+    window.__quizVerseAdEvents = [];
+    for (const eventName of ["quizverse:banner-placement", "quizverse:interstitial-opportunity"]) {
+      window.addEventListener(eventName, (event) => {
+        window.__quizVerseAdEvents.push({ type: eventName, ...event.detail });
+      });
+    }
   });
   const thresholdPage = await thresholdContext.newPage();
   thresholdPage.setDefaultTimeout(10_000);
@@ -702,6 +772,24 @@ try {
     }),
     "2",
     "six correct answers out of ten unlock the next level",
+  );
+  assert.deepEqual(
+    await thresholdPage.evaluate(() => window.__quizVerseAdEvents.map(({ type, placement }) => [type, placement])),
+    [
+      ["quizverse:banner-placement", "home-banner"],
+      ["quizverse:banner-placement", "level-map-banner"],
+    ],
+    "banner events are limited to non-gameplay screens",
+  );
+  await thresholdPage.locator("#playAgainButton").click();
+  await thresholdPage.waitForFunction(() => document.querySelector("#hudLevel")?.textContent.includes("Level 2"));
+  assert.deepEqual(
+    await thresholdPage.evaluate(() => window.__quizVerseAdEvents
+      .filter(({ type }) => type === "quizverse:interstitial-opportunity")
+      .map(({ placement, completedLevel, nextLevel, gameplayVisible }) =>
+        ({ placement, completedLevel, nextLevel, gameplayVisible }))),
+    [{ placement: "between-levels", completedLevel: 1, nextLevel: 2, gameplayVisible: false }],
+    "interstitial opportunities are emitted after a cleared level and before the next one",
   );
   await thresholdPage.evaluate(() => localStorage.clear());
   await thresholdPage.reload({ waitUntil: "domcontentloaded" });
