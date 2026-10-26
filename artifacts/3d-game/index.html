@@ -3716,6 +3716,319 @@
       .home-option-orbit { flex-basis: 44px; width: 44px; height: 44px; }
       .home-option-hub { border-radius: 20px; }
     }
+    .daily-share-banner {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 14px 20px;
+      width: min(100%, 1160px);
+      min-width: 0;
+      margin: clamp(16px, 2.5vw, 24px) auto 0;
+      padding: clamp(14px, 2.6vw, 22px);
+      border: 1px solid rgba(255, 211, 119, .34);
+      border-radius: 20px;
+      background:
+        radial-gradient(ellipse at 0 0, rgba(255, 192, 73, .17), transparent 55%),
+        linear-gradient(125deg, rgba(47, 36, 48, .86), rgba(19, 24, 50, .9));
+      box-shadow: 0 14px 38px rgba(0, 0, 0, .2), inset 0 1px rgba(255, 241, 204, .08);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+    }
+    .daily-share-copy { display: grid; min-width: 0; gap: 5px; }
+    .daily-share-badge {
+      width: fit-content;
+      max-width: 100%;
+      padding: 5px 9px;
+      color: #3a2711;
+      border: 1px solid rgba(255, 236, 172, .72);
+      border-radius: 999px;
+      background: linear-gradient(110deg, #ffe888, #ffbf65);
+      box-shadow: 0 0 18px rgba(255, 194, 85, .22);
+      font-size: 9px;
+      font-weight: 900;
+      letter-spacing: .08em;
+      line-height: 1.3;
+      text-transform: uppercase;
+      overflow-wrap: anywhere;
+    }
+    .daily-share-copy h2 {
+      margin: 2px 0 0;
+      color: #fff8e4;
+      font-size: clamp(16px, 2.2vw, 21px);
+      font-weight: 850;
+      line-height: 1.25;
+      overflow-wrap: anywhere;
+    }
+    .daily-share-copy p {
+      margin: 0;
+      color: #e2d5c5;
+      font-size: 12px;
+      line-height: 1.45;
+      overflow-wrap: anywhere;
+    }
+    .daily-share-streak { color: #ffd987 !important; font-weight: 750; }
+    .daily-share-button {
+      display: inline-flex;
+      min-width: min(100%, 190px);
+      min-height: 52px;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+      padding: 10px 16px;
+      color: #2e2115;
+      border: 1px solid rgba(255, 241, 192, .74);
+      border-radius: 15px;
+      background: linear-gradient(115deg, #ffe17f, #ffb45d);
+      box-shadow: 0 8px 22px rgba(255, 182, 77, .16), inset 0 1px rgba(255, 255, 255, .58);
+      font: inherit;
+      font-size: 12px;
+      font-weight: 850;
+      line-height: 1.25;
+      text-align: center;
+      cursor: pointer;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
+      transition: transform .18s ease, filter .18s ease, box-shadow .18s ease;
+    }
+    .daily-share-button svg { flex: 0 0 19px; width: 19px; height: 19px; }
+    .daily-share-button:hover { filter: brightness(1.06); transform: translateY(-1px); }
+    .daily-share-button:active { transform: scale(.96); }
+    .daily-share-button:focus-visible { outline: 3px solid #8ce8ff; outline-offset: 3px; }
+    .daily-share-button:disabled { cursor: wait; filter: saturate(.65); opacity: .82; }
+    .daily-share-feedback {
+      grid-column: 1 / -1;
+      min-height: 1.2em;
+      margin: 0;
+      color: #cfe7e6;
+      font-size: 11px;
+      line-height: 1.4;
+      overflow-wrap: anywhere;
+    }
+    .daily-share-feedback:empty { display: none; }
+    @media (max-width: 650px) {
+      .daily-share-banner { grid-template-columns: minmax(0, 1fr); }
+      .daily-share-button { width: 100%; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .daily-share-button { transition: none; }
+      .daily-share-button:hover,.daily-share-button:active { transform: none; }
+    }
+    .daily-login-card {
+      display: grid;
+      gap: 14px;
+      width: min(100%, 1160px);
+      min-width: 0;
+      margin: 12px auto 0;
+      padding: clamp(14px, 2.6vw, 22px);
+      color: #fff;
+      border: 1px solid rgba(114, 235, 214, .28);
+      border-radius: 20px;
+      background:
+        radial-gradient(ellipse at 100% 0, rgba(87, 218, 206, .13), transparent 48%),
+        linear-gradient(130deg, rgba(20, 34, 58, .94), rgba(19, 21, 50, .94));
+      box-shadow: 0 14px 38px rgba(0, 0, 0, .2), inset 0 1px rgba(255, 255, 255, .08);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+    }
+    .daily-login-heading {
+      display: flex;
+      min-width: 0;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .daily-login-copy { display: grid; min-width: 0; gap: 5px; }
+    .daily-login-kicker {
+      width: fit-content;
+      max-width: 100%;
+      padding: 4px 8px;
+      color: #baf8ed;
+      border: 1px solid rgba(136, 245, 223, .24);
+      border-radius: 999px;
+      background: rgba(48, 188, 166, .12);
+      font-size: 9px;
+      font-weight: 900;
+      letter-spacing: .1em;
+      line-height: 1.3;
+      text-transform: uppercase;
+      overflow-wrap: anywhere;
+    }
+    .daily-login-copy h2 {
+      margin: 2px 0 0;
+      color: #fff;
+      font-size: clamp(16px, 2.2vw, 21px);
+      font-weight: 900;
+      line-height: 1.25;
+      overflow-wrap: anywhere;
+    }
+    .daily-login-copy p {
+      margin: 0;
+      color: #cbd5ea;
+      font-size: 11px;
+      line-height: 1.45;
+      overflow-wrap: anywhere;
+    }
+    .daily-login-multiplier {
+      flex: 0 0 auto;
+      min-width: 60px;
+      display: grid;
+      justify-items: center;
+      gap: 2px;
+      padding: 8px 10px;
+      color: #ffe9a5;
+      border: 1px solid rgba(255, 215, 109, .3);
+      border-radius: 13px;
+      background: linear-gradient(145deg, rgba(154, 107, 35, .3), rgba(54, 43, 65, .6));
+      box-shadow: 0 0 20px rgba(255, 203, 91, .1);
+      font-size: 19px;
+      font-weight: 950;
+      line-height: 1;
+    }
+    .daily-login-multiplier small { color: #e7d9b8; font-size: 8px; font-weight: 800; letter-spacing: .07em; }
+    .daily-login-card[data-milestone="true"] .daily-login-multiplier {
+      animation: streakMultiplierPulse 1.8s ease-in-out infinite;
+      border-color: rgba(255, 223, 130, .65);
+    }
+    @keyframes streakMultiplierPulse {
+      50% { box-shadow: 0 0 24px rgba(255, 203, 91, .38); transform: translateY(-2px); }
+    }
+    .daily-login-days {
+      display: grid;
+      grid-template-columns: repeat(7, minmax(0, 1fr));
+      gap: clamp(4px, 1.4vw, 9px);
+      min-width: 0;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+    .daily-login-day {
+      display: grid;
+      min-width: 0;
+      min-height: 48px;
+      justify-items: center;
+      align-content: center;
+      gap: 2px;
+      padding: 5px 2px;
+      color: #9ca8c6;
+      border: 1px solid rgba(255, 255, 255, .1);
+      border-radius: 11px;
+      background: rgba(5, 10, 29, .35);
+      text-align: center;
+    }
+    .daily-login-day[data-active="true"] {
+      color: #fff4c5;
+      border-color: rgba(255, 199, 86, .55);
+      background: linear-gradient(145deg, rgba(138, 91, 26, .48), rgba(48, 43, 63, .6));
+      box-shadow: inset 0 0 14px rgba(255, 197, 81, .1);
+    }
+    .daily-login-day[data-current="true"] { outline: 2px solid rgba(137, 242, 220, .7); outline-offset: 1px; }
+    .daily-login-flame { font-size: 14px; line-height: 1; filter: grayscale(1); opacity: .45; }
+    .daily-login-day[data-active="true"] .daily-login-flame { filter: none; opacity: 1; }
+    .daily-login-day small { font-size: 8px; font-weight: 850; line-height: 1.1; }
+    .daily-login-progress-row {
+      display: flex;
+      min-width: 0;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px 12px;
+      color: #cfd9ef;
+      font-size: 10px;
+      font-weight: 750;
+    }
+    #dailyLoginCountdown { color: #ffe3a0; text-align: right; }
+    .daily-login-actions { display: grid; grid-template-columns: minmax(0, 1fr); gap: 8px; }
+    .daily-login-claim {
+      display: inline-flex;
+      width: min(100%, 330px);
+      min-height: 50px;
+      align-items: center;
+      justify-content: center;
+      justify-self: end;
+      gap: 9px;
+      padding: 10px 16px;
+      color: #312416;
+      border: 1px solid rgba(255, 241, 192, .7);
+      border-radius: 14px;
+      background: linear-gradient(115deg, #ffe68a, #ffbb63);
+      box-shadow: 0 8px 22px rgba(255, 182, 77, .16), inset 0 1px rgba(255, 255, 255, .58);
+      font: inherit;
+      font-size: 12px;
+      font-weight: 900;
+      line-height: 1.25;
+      text-align: center;
+      cursor: pointer;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
+      transition: transform .18s ease, filter .18s ease;
+    }
+    .daily-login-claim:hover { filter: brightness(1.06); transform: translateY(-1px); }
+    .daily-login-claim:active { transform: scale(.97); }
+    .daily-login-claim:disabled { cursor: default; filter: saturate(.7); opacity: .74; }
+    .daily-login-claim:focus-visible,.daily-login-modal-close:focus-visible { outline: 3px solid #8ce8ff; outline-offset: 3px; }
+    .daily-login-feedback { min-height: 1.2em; margin: 0; color: #aaf5e7; font-size: 11px; line-height: 1.4; overflow-wrap: anywhere; }
+    .daily-login-feedback:empty { display: none; }
+    .daily-login-dialog {
+      width: min(460px, calc(100vw - 24px));
+      max-width: 460px;
+      max-height: min(90dvh, 650px);
+      margin: auto;
+      padding: 0;
+      overflow: auto;
+      color: #fff;
+      border: 1px solid rgba(255, 226, 144, .4);
+      border-radius: 24px;
+      background:
+        radial-gradient(ellipse at 50% 0, rgba(247, 186, 74, .22), transparent 47%),
+        linear-gradient(145deg, #202047, #121934 72%);
+      box-shadow: 0 28px 100px rgba(4, 3, 20, .65), 0 0 42px rgba(255, 201, 79, .14);
+      overscroll-behavior: contain;
+      text-align: center;
+    }
+    .daily-login-dialog::backdrop { background: rgba(3, 6, 17, .78); backdrop-filter: blur(16px); }
+    .daily-login-dialog[open] { animation: rules-dialog-enter .23s ease-out both; }
+    .daily-login-modal-shell { display: grid; justify-items: center; gap: 12px; padding: clamp(22px, 6vw, 34px); }
+    .daily-login-modal-eyebrow { color: #ffe08b; font-size: 10px; font-weight: 900; letter-spacing: .15em; }
+    .daily-login-modal-icon {
+      width: 82px;
+      height: 82px;
+      display: grid;
+      place-items: center;
+      color: #fff1ad;
+      border: 1px solid rgba(255, 232, 154, .5);
+      border-radius: 24px;
+      background: linear-gradient(145deg, rgba(255, 197, 78, .34), rgba(112, 64, 188, .36));
+      box-shadow: 0 0 34px rgba(255, 196, 76, .25), inset 0 1px rgba(255, 255, 255, .18);
+      font-size: 42px;
+      animation: trophyShowcaseFloat 2.2s ease-in-out infinite alternate;
+    }
+    .daily-login-modal-shell h2 { margin: 0; color: #fff5d8; font-size: clamp(23px, 7vw, 32px); font-weight: 950; line-height: 1.15; }
+    .daily-login-modal-shell p { max-width: 340px; margin: 0; color: #dce2f4; font-size: 13px; line-height: 1.55; overflow-wrap: anywhere; }
+    .daily-login-modal-reward { color: #ffe78e; font-size: clamp(30px, 9vw, 42px); font-weight: 950; font-variant-numeric: tabular-nums; text-shadow: 0 0 25px rgba(255, 215, 99, .35); }
+    .daily-login-modal-close {
+      width: min(100%, 300px);
+      min-height: 50px;
+      margin-top: 4px;
+      padding: 10px 16px;
+      color: #271f13;
+      border: 1px solid rgba(255, 245, 204, .7);
+      border-radius: 14px;
+      background: linear-gradient(115deg, #ffe68a, #ffbb63);
+      font: inherit;
+      font-size: 13px;
+      font-weight: 900;
+      cursor: pointer;
+      touch-action: manipulation;
+    }
+    @media (max-width: 650px) {
+      .daily-login-heading { align-items: center; }
+      .daily-login-claim { width: 100%; justify-self: stretch; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .daily-login-card[data-milestone="true"] .daily-login-multiplier,.daily-login-modal-icon { animation: none; }
+      .daily-login-claim { transition: none; }
+      .daily-login-claim:hover,.daily-login-claim:active { transform: none; }
+    }
     @media (hover: hover) and (pointer: fine) {
       .home-option-card:hover { transform: translateY(-2px) scale(1.01); }
     }
@@ -3909,6 +4222,216 @@
     .topbar-actions { margin-left: auto; justify-content: flex-end; }
     @media (max-width: 540px) {
       .native-ad-slot { min-height: 58px; margin-top: 18px; }
+    }
+    .boss-arena-shell {
+      width: min(100%, 980px);
+      margin: clamp(14px, 4vh, 36px) auto 34px;
+      padding: clamp(15px, 3vw, 28px);
+      border: 1px solid rgba(149, 183, 255, .2);
+      border-radius: clamp(20px, 4vw, 30px);
+      background:
+        radial-gradient(ellipse at 10% 0%, rgba(81, 232, 208, .12), transparent 34%),
+        radial-gradient(ellipse at 100% 16%, rgba(149, 104, 255, .17), transparent 34%),
+        linear-gradient(145deg, rgba(16, 27, 55, .96), rgba(9, 14, 34, .95));
+      box-shadow: 0 24px 70px rgba(0, 0, 0, .28), inset 0 1px rgba(255, 255, 255, .06);
+    }
+    .boss-arena-heading { max-width: 760px; margin: 0 auto 20px; text-align: center; }
+    .boss-arena-kicker, .boss-rank-kicker {
+      margin: 0 0 7px;
+      color: #7de6de;
+      font-size: 10px;
+      font-weight: 900;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+    }
+    .boss-arena-heading h1 { margin: 0; color: #fff; font-size: clamp(26px, 5vw, 42px); line-height: 1.08; }
+    .boss-arena-heading p:last-child { margin: 10px auto 0; color: #c6d2ee; font-size: clamp(12px, 2vw, 15px); line-height: 1.55; }
+    .boss-arena-panel {
+      min-width: 0;
+      padding: clamp(14px, 3vw, 23px);
+      border: 1px solid rgba(175, 195, 255, .17);
+      border-radius: 20px;
+      background: rgba(9, 15, 34, .72);
+      box-shadow: inset 0 1px rgba(255,255,255,.045);
+      animation: collectionCardIn .28s ease both;
+    }
+    .boss-arena-panel[hidden] { display: none !important; }
+    .boss-rank-card {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+      padding: 15px;
+      border: 1px solid rgba(255, 201, 109, .28);
+      border-radius: 16px;
+      background: linear-gradient(125deg, rgba(98, 72, 33, .34), rgba(25, 35, 65, .56));
+    }
+    .boss-rank-card strong { display: block; color: #ffe4a4; font-size: clamp(18px, 3vw, 25px); line-height: 1.1; }
+    .boss-rank-card small { display: block; margin-top: 5px; color: #c7d0e6; font-size: 11px; }
+    .boss-rating-pill {
+      min-width: 80px;
+      padding: 8px 11px;
+      color: #fff4ce;
+      border: 1px solid rgba(255, 213, 122, .24);
+      border-radius: 999px;
+      background: rgba(7, 11, 27, .48);
+      font-size: 11px;
+      font-weight: 900;
+      text-align: center;
+      white-space: nowrap;
+    }
+    .boss-rank-track, .boss-score-track, .boss-clock-track {
+      height: 9px;
+      overflow: hidden;
+      border: 1px solid rgba(174, 197, 255, .13);
+      border-radius: 999px;
+      background: rgba(2, 7, 20, .66);
+    }
+    .boss-rank-fill, .boss-score-fill, .boss-clock-fill {
+      display: block;
+      width: 0;
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, #70e7d6, #93bcff 58%, #c99cff);
+      transition: width .22s ease;
+    }
+    .boss-rank-progress { margin: -7px 0 16px; color: #aebbd7; font-size: 10px; text-align: right; }
+    .boss-arena-form { display: grid; gap: 12px; }
+    .boss-arena-form label { color: #dce5f7; font-size: 11px; font-weight: 800; }
+    .boss-category-select {
+      width: 100%;
+      min-height: 50px;
+      padding: 10px 13px;
+      color: #fff;
+      border: 1px solid rgba(144, 176, 255, .24);
+      border-radius: 13px;
+      background: #121d3d;
+      font: inherit;
+      font-size: 13px;
+    }
+    .boss-category-select option { color: #fff; background: #121d3d; }
+    .boss-daily-status { margin: 0; min-height: 20px; color: #b8c6e1; font-size: 11px; line-height: 1.5; }
+    .boss-daily-status[data-state="locked"], .boss-arena-error { color: #ffb6c1; }
+    .boss-daily-status[data-state="ready"] { color: #91ecd4; }
+    .boss-primary-button, .boss-secondary-button, .boss-next-button {
+      display: inline-flex;
+      min-width: 0;
+      min-height: 52px;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 11px 17px;
+      border: 1px solid rgba(173, 255, 245, .54);
+      border-radius: 14px;
+      background: linear-gradient(105deg, #7af4df, #8fdcff 56%, #bea3ff);
+      color: #0d2134;
+      font: inherit;
+      font-size: 13px;
+      font-weight: 950;
+      text-align: center;
+      cursor: pointer;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
+      transition: transform .16s ease, filter .16s ease, opacity .16s ease;
+    }
+    .boss-primary-button:hover:not(:disabled), .boss-next-button:hover:not(:disabled) { filter: brightness(1.08); transform: translateY(-1px); }
+    .boss-primary-button:active:not(:disabled), .boss-secondary-button:active, .boss-next-button:active:not(:disabled) { transform: scale(.97); }
+    .boss-primary-button:disabled { cursor: not-allowed; opacity: .52; filter: saturate(.5); }
+    .boss-secondary-button { color: #e5ecff; border-color: rgba(161, 182, 234, .22); background: rgba(255,255,255,.055); }
+    .boss-arena-nav { display: flex; justify-content: center; margin-top: 14px; }
+    .boss-battle-header { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 14px; }
+    .boss-round-label { color: #dce6f8; font-size: 12px; font-weight: 900; }
+    .boss-clock {
+      min-width: 70px;
+      padding: 8px 10px;
+      color: #c3fff1;
+      border: 1px solid rgba(101, 235, 207, .25);
+      border-radius: 999px;
+      background: rgba(16, 77, 77, .26);
+      font-variant-numeric: tabular-nums;
+      font-size: 12px;
+      font-weight: 950;
+      text-align: center;
+    }
+    .boss-clock-track { margin-bottom: 16px; height: 7px; }
+    .boss-clock-fill { background: linear-gradient(90deg, #6ce3a9, #f1d66b 65%, #ff747e); }
+    .boss-clock-track.is-urgent { border-color: rgba(255, 91, 113, .6); box-shadow: 0 0 14px rgba(255, 83, 105, .23); }
+    .boss-clock-track.is-urgent .boss-clock-fill { background: linear-gradient(90deg, #ffb15f, #ff657c); }
+    .boss-scoreboard { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-bottom: 17px; }
+    .boss-contender {
+      min-width: 0;
+      padding: 12px;
+      border: 1px solid rgba(160, 184, 239, .17);
+      border-radius: 15px;
+      background: linear-gradient(145deg, rgba(30, 52, 87, .54), rgba(18, 24, 49, .6));
+    }
+    .boss-contender[data-side="rival"] { border-color: rgba(199, 157, 255, .22); }
+    .boss-contender-heading { display: flex; justify-content: space-between; gap: 6px; color: #c5d0e8; font-size: 10px; font-weight: 800; }
+    .boss-contender strong { color: #fff; font-size: 23px; font-variant-numeric: tabular-nums; }
+    .boss-contender .boss-score-track { margin-top: 7px; }
+    .boss-contender[data-side="rival"] .boss-score-fill { background: linear-gradient(90deg, #b590ff, #ef8de6); }
+    .boss-question-card {
+      min-height: 74px;
+      display: grid;
+      align-content: center;
+      margin: 0 0 13px;
+      padding: clamp(14px, 3vw, 21px);
+      border: 1px solid rgba(164, 189, 250, .17);
+      border-radius: 17px;
+      background: rgba(17, 26, 52, .8);
+      color: #fff;
+      font-size: clamp(17px, 3vw, 24px);
+      font-weight: 850;
+      line-height: 1.42;
+      overflow-wrap: anywhere;
+    }
+    .boss-options { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px; }
+    .boss-option {
+      min-width: 0;
+      min-height: 54px;
+      padding: 11px 13px;
+      border: 1px solid rgba(151, 181, 243, .18);
+      border-radius: 13px;
+      background: rgba(255,255,255,.055);
+      color: #f3f5ff;
+      font: inherit;
+      font-size: 12px;
+      font-weight: 750;
+      line-height: 1.4;
+      text-align: left;
+      overflow-wrap: anywhere;
+      cursor: pointer;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .boss-option:hover:not(:disabled) { border-color: rgba(123, 237, 221, .65); background: rgba(76, 187, 173, .16); }
+    .boss-option:disabled { cursor: default; opacity: .7; }
+    .boss-option.is-correct { border-color: #5ae0a7; background: rgba(40, 164, 114, .24); }
+    .boss-option.is-wrong { border-color: #ff778d; background: rgba(186, 54, 77, .2); }
+    .boss-round-status, .boss-round-feedback { min-height: 21px; margin: 12px 0 0; color: #b9c6e0; font-size: 11px; line-height: 1.5; }
+    .boss-round-feedback { color: #fff0b6; font-weight: 800; }
+    .boss-next-button { display: flex; width: 100%; margin-top: 10px; }
+    .boss-next-button[hidden] { display: none !important; }
+    .boss-final-result { text-align: center; }
+    .boss-result-emblem { font-size: clamp(44px, 9vw, 70px); filter: drop-shadow(0 0 20px rgba(255, 204, 108, .25)); }
+    .boss-final-result h2 { margin: 7px 0; color: #fff; font-size: clamp(24px, 5vw, 36px); }
+    .boss-final-result > p { color: #c4cee5; font-size: 12px; line-height: 1.55; }
+    .boss-final-score { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 12px; margin: 17px 0; padding: 15px; border: 1px solid rgba(158, 181, 240, .17); border-radius: 16px; background: rgba(255,255,255,.04); }
+    .boss-final-score span { display: grid; gap: 4px; color: #b7c2dd; font-size: 10px; font-weight: 800; }
+    .boss-final-score strong { color: #fff; font-size: 30px; }
+    .boss-final-score b { color: #8290af; font-size: 12px; }
+    .boss-reward-line { color: #ffe3a0 !important; font-size: 15px !important; font-weight: 900; }
+    .boss-arena-panel .boss-arena-nav { margin-top: 15px; }
+    @media (max-width: 520px) {
+      .boss-arena-shell { border-radius: 20px; }
+      .boss-options { grid-template-columns: minmax(0, 1fr); gap: 8px; }
+      .boss-option { min-height: 52px; }
+      .boss-final-score { gap: 7px; padding: 12px 8px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .boss-primary-button, .boss-secondary-button, .boss-next-button, .boss-score-fill, .boss-clock-fill { transition: none !important; }
+      .boss-arena-panel { animation: none; }
     }
     </style>
   </head>
@@ -4114,6 +4637,46 @@
             <button class="primary-button start-button" type="button" id="startGameButton"><span id="startGameLabel">Start game</span> <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M4.2 10h11.6m-4.5-4.5 4.5 4.5-4.5 4.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
             <div class="start-hint" id="startHint" aria-live="polite">Choose a subject to begin your orbit.</div>
           </div>
+          <section class="daily-share-banner" id="dailyShareBanner" aria-labelledby="dailyShareTitle">
+            <div class="daily-share-copy">
+              <span class="daily-share-badge" id="dailyShareBadge">2× BONUS ACTIVE 🔥</span>
+              <h2 id="dailyShareTitle">Share today to double your daily reward!</h2>
+              <p id="dailyShareDescription">One successful share earns 50 coins (25 base × 2).</p>
+              <p class="daily-share-streak" id="dailyShareStreak">Share streak: 0 days</p>
+            </div>
+            <button class="daily-share-button" type="button" id="dailyShareButton" data-testid="daily-share-button">
+              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="18" cy="5" r="2.5" stroke="currentColor" stroke-width="1.8"/><circle cx="6" cy="12" r="2.5" stroke="currentColor" stroke-width="1.8"/><circle cx="18" cy="19" r="2.5" stroke="currentColor" stroke-width="1.8"/><path d="m8.2 10.8 7.5-4.4m-7.5 6.8 7.5 4.4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+              <span id="dailyShareButtonLabel">Share &amp; earn 50 coins</span>
+            </button>
+            <p class="daily-share-feedback" id="dailyShareFeedback" role="status" aria-live="polite"></p>
+          </section>
+          <section class="daily-login-card" id="dailyLoginCard" aria-labelledby="dailyLoginTitle">
+            <header class="daily-login-heading">
+              <div class="daily-login-copy">
+                <span class="daily-login-kicker" id="dailyLoginKicker">DAILY LOGIN STREAK</span>
+                <h2 id="dailyLoginTitle">Build your Streak Legend</h2>
+                <p id="dailyLoginDescription">Claim your reward once each day. Day seven pays 3× coins.</p>
+              </div>
+              <span class="daily-login-multiplier" id="dailyLoginMultiplier" aria-label="Three times reward">3×<small>COINS</small></span>
+            </header>
+            <ol class="daily-login-days" id="dailyLoginDays" aria-label="Seven day login streak">
+              <li class="daily-login-day" data-login-day="1" data-active="false" data-current="false"><span class="daily-login-flame" aria-hidden="true">🔥</span><small>1</small></li>
+              <li class="daily-login-day" data-login-day="2" data-active="false" data-current="false"><span class="daily-login-flame" aria-hidden="true">🔥</span><small>2</small></li>
+              <li class="daily-login-day" data-login-day="3" data-active="false" data-current="false"><span class="daily-login-flame" aria-hidden="true">🔥</span><small>3</small></li>
+              <li class="daily-login-day" data-login-day="4" data-active="false" data-current="false"><span class="daily-login-flame" aria-hidden="true">🔥</span><small>4</small></li>
+              <li class="daily-login-day" data-login-day="5" data-active="false" data-current="false"><span class="daily-login-flame" aria-hidden="true">🔥</span><small>5</small></li>
+              <li class="daily-login-day" data-login-day="6" data-active="false" data-current="false"><span class="daily-login-flame" aria-hidden="true">🔥</span><small>6</small></li>
+              <li class="daily-login-day" data-login-day="7" data-active="false" data-current="false"><span class="daily-login-flame" aria-hidden="true">🔥</span><small>7</small></li>
+            </ol>
+            <div class="daily-login-progress-row">
+              <span id="dailyLoginProgress">0/7 days claimed</span>
+              <span id="dailyLoginCountdown">7 days to the 3× reward</span>
+            </div>
+            <button class="daily-login-claim" type="button" id="dailyLoginClaimButton">
+              <span aria-hidden="true">🪙</span><span id="dailyLoginClaimLabel">Claim 25 coins</span>
+            </button>
+            <p class="daily-login-feedback" id="dailyLoginFeedback" role="status" aria-live="polite"></p>
+          </section>
           <div class="welcome-foot"><span><b class="tiny-check">✓</b> <span id="totalQuestionsLabel">30 General Knowledge questions</span></span><span><b class="tiny-check">✓</b> <span id="instantAnswersLabel">Instant answers</span></span><span><b class="tiny-check">✓</b> <span id="justForFunLabel">Just for fun</span></span></div>
           <!-- Home menu: existing navigation and controls, grouped by task. -->
           <section class="home-option-hub" id="homeOptionHub" aria-labelledby="homeMenuTitle">
@@ -4132,6 +4695,11 @@
                   <button class="home-option-card" type="button" id="homeModesButton" data-testid="home-modes">
                     <span class="home-option-icon mode-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8" stroke="currentColor" stroke-width="1.7"/><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.7"/><path d="M12 2v4m10 6h-4M12 22v-4M2 12h4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg></span>
                     <span class="home-option-copy"><strong id="homeModesTitle">Explore modes</strong><small id="homeModesDescription">Jump to the five quiz categories.</small></span><span class="home-option-arrow" aria-hidden="true">↗</span>
+                  </button>
+                  <button class="home-option-card" type="button" id="openBossArenaButton" data-testid="open-boss-arena">
+                    <span class="home-option-icon boss-home-icon" aria-hidden="true">⚔</span>
+                    <span class="home-option-copy"><strong id="bossHomeTitle">Daily Boss Arena</strong><small id="bossHomeDescription">Bronze · 0 RP · one duel each day</small></span>
+                    <span class="home-option-arrow" id="bossHomeRankIcon" aria-hidden="true">↗</span>
                   </button>
                   <button class="home-option-card continue-journey-button" type="button" id="continueJourneyButton" data-testid="continue-journey" hidden>
                     <span class="home-option-icon continue-icon" aria-hidden="true">↗</span>
@@ -4350,6 +4918,90 @@
           </div>
         </section>
 
+        <section class="view boss-arena-view" id="bossArenaView" aria-labelledby="bossArenaTitle">
+          <div class="boss-arena-shell">
+            <header class="boss-arena-heading">
+              <p class="boss-arena-kicker" id="bossArenaKicker">DAILY RIVAL DUEL</p>
+              <h1 id="bossArenaTitle">Boss Arena</h1>
+              <p id="bossArenaDescription">Ten fast questions. You and the Rival Bot answer at the same time.</p>
+            </header>
+            <section class="boss-arena-panel" id="bossIntroPanel" aria-labelledby="bossRankTitle">
+              <div class="boss-rank-card">
+                <div>
+                  <p class="boss-rank-kicker" id="bossRankLabel">YOUR RANK</p>
+                  <strong id="bossRankTitle">Bronze</strong>
+                  <small id="bossRankRecord">0 wins · 0 draws · 0 losses</small>
+                </div>
+                <span class="boss-rating-pill" id="bossRatingPill">0 RP</span>
+              </div>
+              <div class="boss-rank-track" role="progressbar" id="bossRankTrack" aria-label="Rank progression" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+                <span class="boss-rank-fill" id="bossRankFill"></span>
+              </div>
+              <p class="boss-rank-progress" id="bossRankProgress">100 RP to Silver</p>
+              <div class="boss-arena-form">
+                <label for="bossCategorySelect" id="bossCategoryLabel">Battle category</label>
+                <select class="boss-category-select" id="bossCategorySelect">
+                  <option value="General Knowledge">General Knowledge</option>
+                  <option value="Science &amp; Technology">Science &amp; Technology</option>
+                  <option value="Pop Culture &amp; Movies">Pop Culture &amp; Movies</option>
+                  <option value="History &amp; Geography">History &amp; Geography</option>
+                  <option value="IQ Check">IQ Check</option>
+                </select>
+                <p class="boss-daily-status" id="bossDailyStatus" role="status" aria-live="polite"></p>
+                <p class="boss-daily-status boss-arena-error" id="bossArenaError" role="alert" hidden></p>
+                <button class="boss-primary-button" type="button" id="bossStartButton">Challenge today's boss</button>
+              </div>
+              <nav class="boss-arena-nav" aria-label="Boss Arena navigation">
+                <button class="boss-secondary-button" type="button" id="bossHomeBackButton">← Back to Home</button>
+              </nav>
+            </section>
+            <section class="boss-arena-panel" id="bossBattlePanel" aria-label="Active head-to-head quiz" hidden>
+              <div class="boss-battle-header">
+                <span class="boss-round-label" id="bossRoundLabel">Question 1 of 10</span>
+                <span class="boss-clock" id="bossClock">12 s</span>
+              </div>
+              <div class="boss-clock-track" id="bossClockTrack" role="progressbar" aria-label="Time remaining" aria-valuemin="0" aria-valuemax="12" aria-valuenow="12">
+                <span class="boss-clock-fill" id="bossClockFill"></span>
+              </div>
+              <div class="boss-scoreboard" aria-label="Live battle scores">
+                <article class="boss-contender" data-side="player">
+                  <div class="boss-contender-heading"><span id="bossPlayerLabel">YOU</span><span id="bossPlayerProgress">0 / 10</span></div>
+                  <strong id="bossPlayerScore">0</strong>
+                  <div class="boss-score-track"><span class="boss-score-fill" id="bossPlayerScoreFill"></span></div>
+                </article>
+                <article class="boss-contender" data-side="rival">
+                  <div class="boss-contender-heading"><span id="bossRivalLabel">RIVAL BOT</span><span id="bossRivalProgress">0 / 10</span></div>
+                  <strong id="bossRivalScore">0</strong>
+                  <div class="boss-score-track"><span class="boss-score-fill" id="bossRivalScoreFill"></span></div>
+                </article>
+              </div>
+              <p class="boss-rank-progress" id="bossCategoryInMatch"></p>
+              <h2 class="boss-question-card" id="bossQuestionText"></h2>
+              <div class="boss-options" id="bossOptions" role="group" aria-label="Boss battle answer options"></div>
+              <p class="boss-round-status" id="bossRoundStatus" role="status" aria-live="polite"></p>
+              <p class="boss-round-feedback" id="bossRoundFeedback" aria-live="polite"></p>
+              <button class="boss-next-button" type="button" id="bossNextButton" hidden>Next question</button>
+              <nav class="boss-arena-nav" aria-label="Active battle navigation">
+                <button class="boss-secondary-button" type="button" id="bossBattleBackButton">Pause &amp; Return Home</button>
+              </nav>
+            </section>
+            <section class="boss-arena-panel boss-final-result" id="bossResultPanel" aria-labelledby="bossResultTitle" hidden>
+              <div class="boss-result-emblem" id="bossResultEmblem" aria-hidden="true">🏆</div>
+              <p class="boss-arena-kicker" id="bossResultKicker">DAILY DUEL COMPLETE</p>
+              <h2 id="bossResultTitle">Victory!</h2>
+              <p id="bossResultDescription"></p>
+              <div class="boss-final-score">
+                <span><small id="bossResultYouLabel">YOU</small><strong id="bossResultPlayerScore">0</strong></span>
+                <b aria-hidden="true">—</b>
+                <span><small id="bossResultRivalLabel">RIVAL BOT</small><strong id="bossResultBotScore">0</strong></span>
+              </div>
+              <p class="boss-reward-line" id="bossResultReward"></p>
+              <p id="bossResultRankChange"></p>
+              <button class="boss-primary-button" type="button" id="bossResultHomeButton">Return to Home</button>
+            </section>
+          </div>
+        </section>
+
         <section class="view" id="gameView" aria-label="Quiz round">
           <div class="game-layout">
             <!-- Sticky game controls contain only the coin vault, quick language switcher, timer, and lifelines. -->
@@ -4536,6 +5188,18 @@
             <button class="sp-btn" type="button" id="rulesPrivacyButton" style="width:100%;margin-top:10px">Privacy</button>
           </div>
         </dialog>
+        <dialog class="daily-login-dialog" id="dailyLoginDialog" aria-labelledby="dailyLoginModalTitle" aria-describedby="dailyLoginModalDescription">
+          <div class="daily-login-modal-shell">
+            <span class="daily-login-modal-eyebrow" id="dailyLoginModalEyebrow">SEVEN-DAY MILESTONE</span>
+            <span class="daily-login-modal-icon" aria-hidden="true">🔥</span>
+            <h2 id="dailyLoginModalTitle">STREAK LEGEND</h2>
+            <p id="dailyLoginModalDescription">Seven consecutive daily claims! The elite badge is in your collection.</p>
+            <span class="daily-login-modal-reward-label" id="dailyLoginModalRewardLabel">3× DAILY REWARD</span>
+            <strong class="daily-login-modal-reward" id="dailyLoginModalReward">+75 coins</strong>
+            <p id="dailyLoginModalBadge">Achievement unlocked</p>
+            <button class="daily-login-modal-close" type="button" id="closeDailyLoginDialogButton">Continue</button>
+          </div>
+        </dialog>
         <!-- Privacy full page -->
         <section class="view privacy-page" id="privacyView" aria-labelledby="privacyTitle">
           <div class="privacy-shell">
@@ -4603,55 +5267,55 @@
       // Contact links are ordinary mailto links, not a form that uploads game data.
       const settingsLocaleKeys = ["title", "description", "sound", "soundDescription", "particles", "particlesDescription", "reset", "warning", "cancel", "confirm", "save", "privacy", "summary", "fullPolicy", "back", "saved", "unsaved", "resetFailed", "privacyDescription", "notice"];
       const settingsLocaleRows = {
-        en: ["Settings", "Make this universe work for your device.", "Sound effects", "Synthetic answer, timer, and coin sounds.", "Background visual effects", "Turn off animated 3D backgrounds to reduce GPU use.", "Reset game progress", "Permanently erase coins, levels, trophies, badges and game statistics on this browser. Language, sound and visual preferences stay. This cannot be undone.", "Cancel", "Erase game progress", "Save & close", "Privacy Policy", "Quick privacy view", "Read full policy", "Back to Home", "Preference saved on this browser.", "Applied for this visit. Browser storage is unavailable.", "Reset could not finish because browser storage is unavailable. Check browser site-data settings before trying again.", "How this browser game uses storage and protects fair play.", "This notice describes this browser build. It is informational, not legal advice or a certification of GDPR or store-policy compliance."],
-        bn: ["সেটিংস", "আপনার ডিভাইসের উপযোগী করে গেমটি সাজান।", "সাউন্ড ইফেক্ট", "কৃত্রিমভাবে তৈরি উত্তর, টাইমার ও কয়েনের শব্দ।", "পটভূমির ভিজ্যুয়াল ইফেক্ট", "GPU-এর ব্যবহার কমাতে অ্যানিমেটেড 3D পটভূমি বন্ধ করুন।", "গেমের অগ্রগতি মুছুন", "এই ব্রাউজারের কয়েন, লেভেল, ট্রফি, ব্যাজ ও গেমের পরিসংখ্যান স্থায়ীভাবে মুছে যাবে। ভাষা, শব্দ ও ভিজ্যুয়াল পছন্দ থাকবে। এটি ফেরানো যাবে না।", "বাতিল", "অগ্রগতি মুছে ফেলুন", "সংরক্ষণ করে বন্ধ করুন", "গোপনীয়তা নীতি", "গোপনীয়তার সংক্ষিপ্ত বিবরণ", "সম্পূর্ণ নীতি পড়ুন", "হোমে ফিরুন", "পছন্দ এই ব্রাউজারে সংরক্ষিত হয়েছে।", "এই ভিজিটের জন্য প্রযোজ্য। ব্রাউজার স্টোরেজ ব্যবহার করা যাচ্ছে না।", "ব্রাউজার স্টোরেজ ব্যবহার করা যাচ্ছে না বলে রিসেট সম্পূর্ণ হয়নি। আবার চেষ্টা করার আগে ব্রাউজারের সাইট ডেটা সেটিংস দেখুন।", "এই ব্রাউজার গেম কীভাবে ডেটা রাখে ও ন্যায্য খেলা নিশ্চিত করে।", "এই বিজ্ঞপ্তি বর্তমান ব্রাউজার সংস্করণের বিবরণ। এটি তথ্যের জন্য; আইনি পরামর্শ বা GDPR বা স্টোর নীতির সনদ নয়।"],
-        hi: ["सेटिंग्स", "अपने डिवाइस के अनुसार गेम सेट करें।", "ध्वनि प्रभाव", "कृत्रिम उत्तर, टाइमर और सिक्कों की आवाज़ें।", "पृष्ठभूमि दृश्य प्रभाव", "GPU का उपयोग घटाने के लिए एनिमेटेड 3D पृष्ठभूमि बंद करें।", "गेम प्रगति रीसेट करें", "इस ब्राउज़र के सिक्के, स्तर, ट्रॉफियाँ, बैज और आँकड़े स्थायी रूप से मिटेंगे। भाषा, ध्वनि और दृश्य प्राथमिकताएँ बनी रहेंगी। इसे वापस नहीं किया जा सकता।", "रद्द करें", "गेम प्रगति मिटाएँ", "सहेजें और बंद करें", "गोपनीयता नीति", "गोपनीयता का संक्षिप्त विवरण", "पूरी नीति पढ़ें", "होम पर लौटें", "प्राथमिकता इस ब्राउज़र में सहेजी गई।", "इस विज़िट के लिए लागू। ब्राउज़र स्टोरेज उपलब्ध नहीं है।", "ब्राउज़र स्टोरेज उपलब्ध न होने से रीसेट पूरा नहीं हुआ। दोबारा कोशिश से पहले साइट डेटा सेटिंग्स जाँचें।", "यह ब्राउज़र गेम स्टोरेज और निष्पक्ष खेल को कैसे संभालता है।", "यह सूचना वर्तमान ब्राउज़र संस्करण का वर्णन करती है। यह जानकारी है, कानूनी सलाह या GDPR अथवा स्टोर नीति अनुपालन का प्रमाण नहीं।"],
-        es: ["Ajustes", "Adapta este universo a tu dispositivo.", "Efectos de sonido", "Sonidos sintéticos de respuestas, reloj y monedas.", "Efectos visuales de fondo", "Desactiva los fondos 3D animados para reducir el uso de GPU.", "Restablecer progreso", "Borra permanentemente monedas, niveles, trofeos, insignias y estadísticas de este navegador. Se conservan idioma, sonido y efectos. No se puede deshacer.", "Cancelar", "Borrar progreso", "Guardar y cerrar", "Política de privacidad", "Vista rápida de privacidad", "Leer la política completa", "Volver al inicio", "Preferencia guardada en este navegador.", "Aplicado durante esta visita. El almacenamiento no está disponible.", "No se pudo completar el borrado porque el almacenamiento no está disponible. Revisa los datos del sitio en el navegador.", "Cómo este juego usa el almacenamiento y comprueba el juego limpio.", "Este aviso describe esta versión del navegador. Es informativo, no asesoramiento legal ni una certificación de cumplimiento del RGPD o de las políticas de las tiendas."],
-        fr: ["Paramètres", "Adaptez cet univers à votre appareil.", "Effets sonores", "Sons synthétiques de réponses, du minuteur et des pièces.", "Effets visuels en arrière-plan", "Désactivez les fonds 3D animés pour réduire l’utilisation du GPU.", "Réinitialiser la progression", "Efface définitivement les pièces, niveaux, trophées, badges et statistiques de ce navigateur. La langue, le son et les effets sont conservés. Cette action est irréversible.", "Annuler", "Effacer la progression", "Enregistrer et fermer", "Politique de confidentialité", "Aperçu de confidentialité", "Lire la politique complète", "Retour à l’accueil", "Préférence enregistrée dans ce navigateur.", "Appliqué pour cette visite. Le stockage est indisponible.", "La réinitialisation a échoué car le stockage est indisponible. Vérifiez les données du site dans votre navigateur.", "Comment ce jeu utilise le stockage et contrôle le jeu équitable.", "Cet avis décrit cette version pour navigateur. Il est informatif et ne constitue ni un conseil juridique ni une certification de conformité au RGPD ou aux politiques des boutiques."]
+        en: ["Settings", "Make this universe work for your device.", "Sound effects", "Synthetic answer, timer, and coin sounds.", "Background visual effects", "Turn off animated 3D backgrounds to reduce GPU use.", "Reset game progress", "Permanently erase coins, levels, trophies, badges, daily share and login streaks, and game statistics on this browser. Language, sound and visual preferences stay. This cannot be undone.", "Cancel", "Erase game progress", "Save & close", "Privacy Policy", "Quick privacy view", "Read full policy", "Back to Home", "Preference saved on this browser.", "Applied for this visit. Browser storage is unavailable.", "Reset could not finish because browser storage is unavailable. Check browser site-data settings before trying again.", "How this browser game uses storage and protects fair play.", "This notice describes this browser build. It is informational, not legal advice or a certification of GDPR or store-policy compliance."],
+        bn: ["সেটিংস", "আপনার ডিভাইসের উপযোগী করে গেমটি সাজান।", "সাউন্ড ইফেক্ট", "কৃত্রিমভাবে তৈরি উত্তর, টাইমার ও কয়েনের শব্দ।", "পটভূমির ভিজ্যুয়াল ইফেক্ট", "GPU-এর ব্যবহার কমাতে অ্যানিমেটেড 3D পটভূমি বন্ধ করুন।", "গেমের অগ্রগতি মুছুন", "এই ব্রাউজারের কয়েন, লেভেল, ট্রফি, ব্যাজ, দৈনিক শেয়ার ও লগইন ধারাবাহিকতা এবং গেমের পরিসংখ্যান স্থায়ীভাবে মুছে যাবে। ভাষা, শব্দ ও ভিজ্যুয়াল পছন্দ থাকবে। এটি ফেরানো যাবে না।", "বাতিল", "অগ্রগতি মুছে ফেলুন", "সংরক্ষণ করে বন্ধ করুন", "গোপনীয়তা নীতি", "গোপনীয়তার সংক্ষিপ্ত বিবরণ", "সম্পূর্ণ নীতি পড়ুন", "হোমে ফিরুন", "পছন্দ এই ব্রাউজারে সংরক্ষিত হয়েছে।", "এই ভিজিটের জন্য প্রযোজ্য। ব্রাউজার স্টোরেজ ব্যবহার করা যাচ্ছে না।", "ব্রাউজার স্টোরেজ ব্যবহার করা যাচ্ছে না বলে রিসেট সম্পূর্ণ হয়নি। আবার চেষ্টা করার আগে ব্রাউজারের সাইট ডেটা সেটিংস দেখুন।", "এই ব্রাউজার গেম কীভাবে ডেটা রাখে ও ন্যায্য খেলা নিশ্চিত করে।", "এই বিজ্ঞপ্তি বর্তমান ব্রাউজার সংস্করণের বিবরণ। এটি তথ্যের জন্য; আইনি পরামর্শ বা GDPR বা স্টোর নীতির সনদ নয়।"],
+        hi: ["सेटिंग्स", "अपने डिवाइस के अनुसार गेम सेट करें।", "ध्वनि प्रभाव", "कृत्रिम उत्तर, टाइमर और सिक्कों की आवाज़ें।", "पृष्ठभूमि दृश्य प्रभाव", "GPU का उपयोग घटाने के लिए एनिमेटेड 3D पृष्ठभूमि बंद करें।", "गेम प्रगति रीसेट करें", "इस ब्राउज़र के सिक्के, स्तर, ट्रॉफियाँ, बैज, दैनिक शेयर और लॉगिन स्ट्रीक तथा आँकड़े स्थायी रूप से मिटेंगे। भाषा, ध्वनि और दृश्य प्राथमिकताएँ बनी रहेंगी। इसे वापस नहीं किया जा सकता।", "रद्द करें", "गेम प्रगति मिटाएँ", "सहेजें और बंद करें", "गोपनीयता नीति", "गोपनीयता का संक्षिप्त विवरण", "पूरी नीति पढ़ें", "होम पर लौटें", "प्राथमिकता इस ब्राउज़र में सहेजी गई।", "इस विज़िट के लिए लागू। ब्राउज़र स्टोरेज उपलब्ध नहीं है।", "ब्राउज़र स्टोरेज उपलब्ध न होने से रीसेट पूरा नहीं हुआ। दोबारा कोशिश से पहले साइट डेटा सेटिंग्स जाँचें।", "यह ब्राउज़र गेम स्टोरेज और निष्पक्ष खेल को कैसे संभालता है।", "यह सूचना वर्तमान ब्राउज़र संस्करण का वर्णन करती है। यह जानकारी है, कानूनी सलाह या GDPR अथवा स्टोर नीति अनुपालन का प्रमाण नहीं।"],
+        es: ["Ajustes", "Adapta este universo a tu dispositivo.", "Efectos de sonido", "Sonidos sintéticos de respuestas, reloj y monedas.", "Efectos visuales de fondo", "Desactiva los fondos 3D animados para reducir el uso de GPU.", "Restablecer progreso", "Borra permanentemente monedas, niveles, trofeos, insignias, las rachas diarias de compartir e iniciar sesión y las estadísticas de este navegador. Se conservan idioma, sonido y efectos. No se puede deshacer.", "Cancelar", "Borrar progreso", "Guardar y cerrar", "Política de privacidad", "Vista rápida de privacidad", "Leer la política completa", "Volver al inicio", "Preferencia guardada en este navegador.", "Aplicado durante esta visita. El almacenamiento no está disponible.", "No se pudo completar el borrado porque el almacenamiento no está disponible. Revisa los datos del sitio en el navegador.", "Cómo este juego usa el almacenamiento y comprueba el juego limpio.", "Este aviso describe esta versión del navegador. Es informativo, no asesoramiento legal ni una certificación de cumplimiento del RGPD o de las políticas de las tiendas."],
+        fr: ["Paramètres", "Adaptez cet univers à votre appareil.", "Effets sonores", "Sons synthétiques de réponses, du minuteur et des pièces.", "Effets visuels en arrière-plan", "Désactivez les fonds 3D animés pour réduire l’utilisation du GPU.", "Réinitialiser la progression", "Efface définitivement les pièces, niveaux, trophées, badges, les séries quotidiennes de partage et de connexion, ainsi que les statistiques de ce navigateur. La langue, le son et les effets sont conservés. Cette action est irréversible.", "Annuler", "Effacer la progression", "Enregistrer et fermer", "Politique de confidentialité", "Aperçu de confidentialité", "Lire la politique complète", "Retour à l’accueil", "Préférence enregistrée dans ce navigateur.", "Appliqué pour cette visite. Le stockage est indisponible.", "La réinitialisation a échoué car le stockage est indisponible. Vérifiez les données du site dans votre navigateur.", "Comment ce jeu utilise le stockage et contrôle le jeu équitable.", "Cet avis décrit cette version pour navigateur. Il est informatif et ne constitue ni un conseil juridique ni une certification de conformité au RGPD ou aux politiques des boutiques."]
       };
       const settingsCopy = Object.fromEntries(Object.entries(settingsLocaleRows).map(([locale, row]) => [locale,
         Object.fromEntries(settingsLocaleKeys.map((key, index) => [key, row[index]]))
       ]));
       const privacySections = {
         en: [
-          ["Data stored on your device", "QuizVerse 3D stores game progress, unlocked and coin-skipped levels, coin balances, trophies, badges, scores, accuracy, last-played level and preferences in localStorage on this browser. The game does not ask for an account, location, contacts, camera, microphone, or sensitive personal information. The game code does not upload your saved game or use advertising or analytics trackers."],
+          ["Data stored on your device", "QuizVerse 3D stores game progress, unlocked and coin-skipped levels, coin balances, trophies, badges, scores, accuracy, last-played level, preferences, daily share bonus date/streak/claim count/timestamp, and daily login launch and claim dates, current streak, claim count, and timestamp in this browser's localStorage. The game does not ask for an account, location, contacts, camera, microphone, or sensitive personal information. If you choose Share, the browser/OS share sheet receives QuizVerse's title, invitation text, and page URL so you can select an app; that app may process it under its own policy. The game does not identify recipients or upload your saved game."],
           ["Fair-play checks", "During an active round, the Page Visibility API and window focus events detect leaving the game. The current question may be submitted as incorrect. These checks do not read other tabs, browsing history, screen contents or other applications. Question order and timing are handled in memory. Client-side checks discourage casual cheating; they are not tamper-proof security."],
           ["Cookies, retention and your control", "The game code does not set tracking cookies. Local saves remain until you reset progress in Settings or clear this site's browser data. Reset erases game progress and rewards but keeps language, sound and visual preferences. Clear site data to remove those too. Blocking storage allows temporary play, but changes may not survive closing the page. Local storage is not encrypted by the game and is not a cloud backup."],
           ["External resources and hosting", "The optional Three.js library is delivered by jsDelivr. Loading it sends ordinary network information, such as your IP address and browser request details, to that CDN. The website host may process connection logs to serve and protect the site. Those providers have their own privacy practices. No game-data upload, ad SDK or payment SDK is implemented in this browser build."],
           ["Privacy questions and rights", "For privacy inquiries, support, feedback, or applicable access, correction or deletion requests, contact contact.gamevilla@gmail.com. Local-only saves cannot be accessed remotely by the developer; use Settings or browser site-data controls to delete them. If you email us, your email address and message are provided voluntarily to the recipient and email provider. Where applicable, you may also complain to your data protection authority."],
-          ["Scope and updates", "This notice covers this browser version of QuizVerse 3D, updated 24 October 2026. Any future accounts, ads, payments or online analytics require a revised notice and any necessary choices before activation. The publishing operator's legal identity, target audience and jurisdiction must be confirmed before a store submission. Three.js is open-source software under the MIT license, not a claim that third-party software has no copyright."]
+          ["Scope and updates", "This notice covers this browser version of QuizVerse 3D, updated 26 October 2026. Any future accounts, ads, payments or online analytics require a revised notice and any necessary choices before activation. The publishing operator's legal identity, target audience and jurisdiction must be confirmed before a store submission. Three.js is open-source software under the MIT license, not a claim that third-party software has no copyright."]
         ],
         bn: [
-          ["আপনার ডিভাইসে রাখা তথ্য", "QuizVerse 3D এই ব্রাউজারের localStorage-এ অগ্রগতি, আনলক ও কয়েনে এড়ানো লেভেল, কয়েন, ট্রফি, ব্যাজ, স্কোর, নির্ভুলতা, শেষ খেলা লেভেল ও পছন্দ রাখে। গেমটি অ্যাকাউন্ট, অবস্থান, পরিচিতি, ক্যামেরা, মাইক্রোফোন বা সংবেদনশীল ব্যক্তিগত তথ্য চায় না। গেমের কোড আপনার সেভ আপলোড করে না এবং বিজ্ঞাপন বা অ্যানালিটিক্স ট্র্যাকার ব্যবহার করে না।"],
+          ["আপনার ডিভাইসে রাখা তথ্য", "QuizVerse 3D এই ব্রাউজারের localStorage-এ অগ্রগতি, আনলক ও কয়েনে এড়ানো লেভেল, কয়েন, ট্রফি, ব্যাজ, স্কোর, নির্ভুলতা, শেষ খেলা লেভেল, পছন্দ, দৈনিক শেয়ার বোনাসের UTC তারিখ, ধারাবাহিকতা, দাবি সংখ্যা ও সময়চিহ্ন এবং দৈনিক লগইন চালু/দাবির তারিখ, বর্তমান ধারাবাহিকতা ও দাবি সংখ্যা রাখে। গেমটি অ্যাকাউন্ট, অবস্থান, পরিচিতি, ক্যামেরা, মাইক্রোফোন বা সংবেদনশীল ব্যক্তিগত তথ্য চায় না। Share বেছে নিলে ব্রাউজার/সিস্টেম শেয়ার শিটে QuizVerse-এর শিরোনাম, আমন্ত্রণ বার্তা ও পৃষ্ঠার URL যায়; নির্বাচিত অ্যাপ তার নিজস্ব নীতি অনুযায়ী তা ব্যবহার করতে পারে। গেম প্রাপককে শনাক্ত করে না বা সেভ আপলোড করে না।"],
           ["ন্যায্য খেলার পরীক্ষা", "সক্রিয় রাউন্ডে Page Visibility API ও উইন্ডোর ফোকাস পরিবর্তনের মাধ্যমে গেম ছেড়ে যাওয়া শনাক্ত হয়। বর্তমান প্রশ্ন ভুল হিসেবে জমা হতে পারে। অন্য ট্যাব, ব্রাউজিং ইতিহাস, স্ক্রিন বা অন্য অ্যাপ পড়া হয় না। প্রশ্নের ক্রম ও সময় মেমরিতে পরিচালিত হয়। ব্রাউজারভিত্তিক পরীক্ষা সাধারণ প্রতারণা কমায়, সম্পূর্ণ সুরক্ষা নয়।"],
           ["কুকি, সংরক্ষণ ও নিয়ন্ত্রণ", "গেমের কোড ট্র্যাকিং কুকি সেট করে না। সেটিংস থেকে রিসেট বা ব্রাউজারের সাইট ডেটা মুছলে সেভ মুছে যায়। রিসেটে অগ্রগতি ও পুরস্কার মুছে যায়, ভাষা, শব্দ ও ভিজ্যুয়াল পছন্দ থাকে। সেগুলিও মুছতে সাইট ডেটা মুছুন। স্টোরেজ বন্ধ থাকলে সাময়িকভাবে খেলা যায়, কিন্তু পরিবর্তন নাও থাকতে পারে। গেম localStorage এনক্রিপ্ট করে না; এটি ক্লাউড ব্যাকআপ নয়।"],
           ["বাহ্যিক রিসোর্স ও হোস্টিং", "ঐচ্ছিক Three.js লাইব্রেরি jsDelivr থেকে আসে। এটি লোড করলে IP ঠিকানা ও ব্রাউজারের অনুরোধের মতো সাধারণ নেটওয়ার্ক তথ্য CDN পায়। সাইট পরিবেশন ও সুরক্ষার জন্য হোস্ট সংযোগের লগ রাখতে পারে। তাদের নিজস্ব গোপনীয়তা নীতি আছে। এই ব্রাউজার সংস্করণে গেম ডেটা আপলোড, বিজ্ঞাপন SDK বা পেমেন্ট SDK নেই।"],
           ["গোপনীয়তা প্রশ্ন ও অধিকার", "গোপনীয়তা, সহায়তা, মতামত বা প্রযোজ্য তথ্য দেখা, সংশোধন ও মুছে ফেলার অনুরোধ পাঠান contact.gamevilla@gmail.com-এ। ডেভেলপার দূর থেকে স্থানীয় সেভ দেখতে পারেন না; সেটিংস বা ব্রাউজার দিয়ে মুছুন। ইমেইল পাঠালে আপনার ইমেইল ঠিকানা ও বার্তা স্বেচ্ছায় প্রাপক ও ইমেইল সেবাদাতাকে দেওয়া হয়। প্রযোজ্য ক্ষেত্রে তথ্য সুরক্ষা কর্তৃপক্ষের কাছে অভিযোগ করতে পারেন।"],
-          ["পরিসর ও পরিবর্তন", "এই নীতি QuizVerse 3D-এর ব্রাউজার সংস্করণের জন্য; হালনাগাদ ২৪ অক্টোবর ২০২৬। ভবিষ্যতে অ্যাকাউন্ট, বিজ্ঞাপন, পেমেন্ট বা অনলাইন বিশ্লেষণ যোগ করার আগে নীতি ও প্রয়োজনীয় পছন্দ হালনাগাদ করতে হবে। স্টোরে প্রকাশের আগে প্রকাশকের আইনি পরিচয়, লক্ষ্য বয়স ও এখতিয়ার নিশ্চিত করতে হবে। Three.js MIT লাইসেন্সের ওপেন-সোর্স সফটওয়্যার; এর অর্থ কপিরাইট নেই নয়।"]
+          ["পরিসর ও পরিবর্তন", "এই নীতি QuizVerse 3D-এর ব্রাউজার সংস্করণের জন্য; হালনাগাদ ২৬ অক্টোবর ২০২৬। ভবিষ্যতে অ্যাকাউন্ট, বিজ্ঞাপন, পেমেন্ট বা অনলাইন বিশ্লেষণ যোগ করার আগে নীতি ও প্রয়োজনীয় পছন্দ হালনাগাদ করতে হবে। স্টোরে প্রকাশের আগে প্রকাশকের আইনি পরিচয়, লক্ষ্য বয়স ও এখতিয়ার নিশ্চিত করতে হবে। Three.js MIT লাইসেন্সের ওপেন-সোর্স সফটওয়্যার; এর অর্থ কপিরাইট নেই নয়।"]
         ],
         hi: [
-          ["डिवाइस पर सहेजा गया डेटा", "QuizVerse 3D प्रगति, खुले व सिक्कों से छोड़े स्तर, सिक्के, ट्रॉफियाँ, बैज, स्कोर, सटीकता, अंतिम स्तर और प्राथमिकताएँ इसी ब्राउज़र के localStorage में रखता है। गेम खाता, स्थान, संपर्क, कैमरा, माइक्रोफ़ोन या संवेदनशील जानकारी नहीं माँगता। गेम कोड सेव अपलोड नहीं करता और विज्ञापन या एनालिटिक्स ट्रैकर नहीं चलाता।"],
+          ["डिवाइस पर सहेजा गया डेटा", "QuizVerse 3D प्रगति, खुले व सिक्कों से छोड़े स्तर, सिक्के, ट्रॉफियाँ, बैज, स्कोर, सटीकता, अंतिम स्तर, प्राथमिकताएँ, दैनिक शेयर बोनस की UTC तारीख/स्ट्रीक/दावे/समय-चिह्न और दैनिक लॉगिन की शुरुआत व दावा तारीखें, वर्तमान स्ट्रीक, दावे की संख्या व समय-चिह्न इस ब्राउज़र के localStorage में रखता है। गेम खाता, स्थान, संपर्क, कैमरा, माइक्रोफ़ोन या संवेदनशील जानकारी नहीं माँगता। Share चुनने पर ब्राउज़र/OS शेयर शीट को QuizVerse का शीर्षक, आमंत्रण संदेश और पेज URL दिया जाता है ताकि आप ऐप चुन सकें; वह ऐप अपनी नीति के अनुसार इसे संसाधित कर सकता है। गेम प्राप्तकर्ताओं की पहचान या सेव अपलोड नहीं करता।"],
           ["निष्पक्ष खेल जाँच", "सक्रिय राउंड में Page Visibility API और विंडो फ़ोकस घटनाएँ गेम छोड़ने का पता लगाती हैं। वर्तमान प्रश्न गलत के रूप में जमा हो सकता है। ये अन्य टैब, इतिहास, स्क्रीन या दूसरे ऐप नहीं पढ़ते। प्रश्न क्रम और समय मेमोरी में रहते हैं। क्लाइंट जाँच सामान्य धोखाधड़ी रोकने में मदद करती है, छेड़छाड़ से पूर्ण सुरक्षा नहीं देती।"],
           ["कुकी, अवधि और नियंत्रण", "गेम कोड ट्रैकिंग कुकी नहीं बनाता। सेव तब तक रहते हैं जब तक सेटिंग्स में प्रगति रीसेट या साइट डेटा साफ नहीं होता। रीसेट प्रगति व पुरस्कार मिटाता है लेकिन भाषा, ध्वनि व दृश्य प्राथमिकताएँ रखता है। इन्हें मिटाने के लिए साइट डेटा साफ करें। स्टोरेज बंद होने पर अस्थायी खेल संभव है पर बदलाव नहीं टिक सकते। गेम स्थानीय स्टोरेज एन्क्रिप्ट नहीं करता; यह क्लाउड बैकअप नहीं है।"],
           ["बाहरी संसाधन और होस्टिंग", "वैकल्पिक Three.js लाइब्रेरी jsDelivr से आती है। इसे लोड करते समय IP और ब्राउज़र अनुरोध जैसी सामान्य नेटवर्क जानकारी CDN को जाती है। साइट होस्ट सेवा और सुरक्षा हेतु कनेक्शन लॉग रख सकता है। इन प्रदाताओं की अपनी गोपनीयता प्रथाएँ हैं। इस संस्करण में गेम डेटा अपलोड, विज्ञापन SDK या भुगतान SDK नहीं है।"],
           ["प्रश्न और अधिकार", "गोपनीयता, सहायता, सुझाव या लागू पहुँच, सुधार व मिटाने के अनुरोध के लिए contact.gamevilla@gmail.com पर लिखें। डेवलपर स्थानीय सेव दूर से नहीं देख सकता; सेटिंग्स या ब्राउज़र से हटाएँ। ईमेल भेजने पर पता और संदेश स्वेच्छा से प्राप्तकर्ता व ईमेल प्रदाता को दिए जाते हैं। लागू होने पर डेटा सुरक्षा प्राधिकरण से शिकायत भी कर सकते हैं।"],
-          ["दायरा और बदलाव", "यह सूचना QuizVerse 3D के ब्राउज़र संस्करण की है; अद्यतन 24 अक्टूबर 2026। भविष्य में खाते, विज्ञापन, भुगतान या ऑनलाइन विश्लेषण जोड़ने से पहले सूचना और आवश्यक विकल्प बदलने होंगे। स्टोर प्रकाशन से पहले प्रकाशक की कानूनी पहचान, लक्षित आयु व क्षेत्राधिकार निश्चित करना होगा। Three.js MIT लाइसेंस वाला ओपन-सोर्स सॉफ़्टवेयर है; इसका अर्थ कॉपीराइट का अभाव नहीं है।"]
+          ["दायरा और बदलाव", "यह सूचना QuizVerse 3D के ब्राउज़र संस्करण की है; अद्यतन 26 अक्टूबर 2026। भविष्य में खाते, विज्ञापन, भुगतान या ऑनलाइन विश्लेषण जोड़ने से पहले सूचना और आवश्यक विकल्प बदलने होंगे। स्टोर प्रकाशन से पहले प्रकाशक की कानूनी पहचान, लक्षित आयु व क्षेत्राधिकार निश्चित करना होगा। Three.js MIT लाइसेंस वाला ओपन-सोर्स सॉफ़्टवेयर है; इसका अर्थ कॉपीराइट का अभाव नहीं है।"]
         ],
         es: [
-          ["Datos guardados en tu dispositivo", "QuizVerse 3D guarda progreso, niveles abiertos u omitidos con monedas, saldo, trofeos, insignias, puntuaciones, precisión, último nivel y preferencias en localStorage de este navegador. No solicita cuenta, ubicación, contactos, cámara, micrófono ni datos sensibles. El código del juego no sube las partidas ni incluye rastreadores publicitarios o analíticos."],
+          ["Datos guardados en tu dispositivo", "QuizVerse 3D guarda progreso, niveles abiertos u omitidos con monedas, saldo, trofeos, insignias, puntuaciones, precisión, último nivel, preferencias, fecha UTC/racha/recuento/marca temporal del bono por compartir y fechas de inicio y reclamo de inicio diario, racha actual, número de reclamos y marca temporal en el localStorage de este navegador. No solicita cuenta, ubicación, contactos, cámara, micrófono ni datos sensibles. Si eliges Compartir, la hoja del navegador o sistema recibe el título, texto de invitación y URL de QuizVerse para que elijas una aplicación; esa aplicación puede tratarlo según su propia política. El juego no identifica a los destinatarios ni sube tus partidas."],
           ["Comprobaciones de juego limpio", "Durante una ronda, Page Visibility API y los eventos de foco detectan si abandonas el juego. La pregunta actual puede enviarse como incorrecta. No leen otras pestañas, historial, pantalla ni otras aplicaciones. El orden y los tiempos se gestionan en memoria. Las comprobaciones del cliente dificultan las trampas casuales, pero no son inviolables."],
           ["Cookies, conservación y control", "El juego no establece cookies de rastreo. Los datos permanecen hasta restablecer el progreso en Ajustes o borrar los datos del sitio. El restablecimiento conserva idioma, sonido y efectos; borra los datos del sitio para eliminarlos también. Si bloqueas el almacenamiento, puedes jugar temporalmente sin garantía de conservar los cambios. El juego no cifra localStorage ni ofrece copia en la nube."],
           ["Recursos externos y alojamiento", "La biblioteca opcional Three.js se obtiene de jsDelivr. Al cargarla, el CDN recibe datos de red habituales, como IP y detalles de la solicitud. El proveedor de alojamiento puede procesar registros de conexión para servir y proteger el sitio. Estos proveedores tienen sus propias prácticas. Esta versión no incluye subidas de datos del juego, SDK publicitario ni SDK de pagos."],
           ["Consultas y derechos", "Para privacidad, soporte, comentarios o solicitudes de acceso, rectificación o supresión que correspondan, escribe a contact.gamevilla@gmail.com. El desarrollador no puede acceder remotamente a partidas locales: elimínalas en Ajustes o en el navegador. Al enviar un correo, facilitas voluntariamente tu dirección y mensaje al destinatario y proveedor de correo. Cuando proceda, puedes reclamar ante tu autoridad de protección de datos."],
-          ["Alcance y cambios", "Aviso para la versión de navegador de QuizVerse 3D, actualizado el 24 de octubre de 2026. Cuentas, anuncios, pagos o análisis en línea futuros requieren un aviso revisado y las opciones necesarias antes de activarse. Deben confirmarse la identidad legal del editor, público y jurisdicción antes de publicar en una tienda. Three.js es software de código abierto con licencia MIT, no software sin derechos de autor."]
+          ["Alcance y cambios", "Aviso para la versión de navegador de QuizVerse 3D, actualizado el 26 de octubre de 2026. Cuentas, anuncios, pagos o análisis en línea futuros requieren un aviso revisado y las opciones necesarias antes de activarse. Deben confirmarse la identidad legal del editor, público y jurisdicción antes de publicar en una tienda. Three.js es software de código abierto con licencia MIT, no software sin derechos de autor."]
         ],
         fr: [
-          ["Données conservées sur votre appareil", "QuizVerse 3D conserve progression, niveaux débloqués ou passés avec des pièces, solde, trophées, badges, scores, précision, dernier niveau et préférences dans le localStorage de ce navigateur. Le jeu ne demande ni compte, localisation, contacts, caméra, microphone ni données sensibles. Son code ne téléverse pas les sauvegardes et n’utilise pas de traceur publicitaire ou analytique."],
+          ["Données conservées sur votre appareil", "QuizVerse 3D conserve progression, niveaux débloqués ou passés avec des pièces, solde, trophées, badges, scores, précision, dernier niveau, préférences, date UTC/série/nombre de gains/horodatage du partage quotidien, ainsi que dates de lancement et de réclamation quotidiennes, série actuelle, nombre de gains et horodatage dans le localStorage de ce navigateur. Le jeu ne demande ni compte, localisation, contacts, caméra, microphone ni données sensibles. Si vous choisissez Partager, la feuille de partage du navigateur ou du système reçoit le titre, le texte d’invitation et l’URL de QuizVerse afin que vous choisissiez une application ; celle-ci peut les traiter selon sa propre politique. Le jeu n’identifie pas les destinataires et ne téléverse pas vos sauvegardes."],
           ["Contrôles de jeu équitable", "Pendant une manche, Page Visibility API et les événements de focus détectent que vous quittez le jeu. La question active peut être envoyée comme incorrecte. Ces contrôles ne lisent ni autres onglets, historique, écran ni autres applications. L’ordre et les délais sont gérés en mémoire. Les contrôles côté client découragent la triche occasionnelle mais ne sont pas inviolables."],
           ["Cookies, conservation et contrôle", "Le jeu ne crée pas de cookies de suivi. Les sauvegardes restent jusqu’à une réinitialisation dans Paramètres ou l’effacement des données du site. La réinitialisation conserve langue, son et effets ; effacez les données du site pour les supprimer aussi. Si le stockage est bloqué, le jeu reste temporairement utilisable mais les changements peuvent être perdus. Le jeu ne chiffre pas localStorage et ne fournit pas de sauvegarde cloud."],
           ["Ressources externes et hébergement", "La bibliothèque optionnelle Three.js est fournie par jsDelivr. Son chargement transmet au CDN des informations réseau ordinaires, telles que l’adresse IP et les détails de requête. L’hébergeur peut traiter des journaux de connexion pour servir et protéger le site. Ces fournisseurs ont leurs propres pratiques. Cette version ne comprend ni téléversement de partie, ni SDK publicitaire ou de paiement."],
           ["Questions et droits", "Pour la confidentialité, l’assistance, des remarques ou les demandes applicables d’accès, de rectification ou d’effacement, écrivez à contact.gamevilla@gmail.com. Le développeur ne peut pas accéder à distance aux sauvegardes locales : supprimez-les via Paramètres ou le navigateur. Un courriel transmet volontairement votre adresse et message au destinataire et au fournisseur de messagerie. Le cas échéant, vous pouvez saisir votre autorité de protection des données."],
-          ["Portée et modifications", "Avis pour la version navigateur de QuizVerse 3D, mis à jour le 24 octobre 2026. De futurs comptes, publicités, paiements ou analyses en ligne nécessitent un avis révisé et les choix requis avant activation. L’identité juridique de l’éditeur, le public visé et la juridiction doivent être confirmés avant publication en boutique. Three.js est un logiciel libre sous licence MIT, ce qui ne signifie pas une absence de droits d’auteur."]
+          ["Portée et modifications", "Avis pour la version navigateur de QuizVerse 3D, mis à jour le 26 octobre 2026. De futurs comptes, publicités, paiements ou analyses en ligne nécessitent un avis révisé et les choix requis avant activation. L’identité juridique de l’éditeur, le public visé et la juridiction doivent être confirmés avant publication en boutique. Three.js est un logiciel libre sous licence MIT, ce qui ne signifie pas une absence de droits d’auteur."]
         ]
       };
 
@@ -4835,6 +5499,8 @@
           badgeKnowledgeSeekerHint: "60% accuracy or higher",
           badgeStreakGod: "Streak God",
           badgeStreakGodHint: "Get a streak of 5 correct answers in one round.",
+          badgeStreakLegend: "Streak Legend",
+          badgeStreakLegendHint: "Claim daily login rewards 7 days in a row.",
           correct: "Correct",
           incorrectAnswers: "Incorrect",
           round: "Round",
@@ -5048,6 +5714,8 @@
           badgeKnowledgeSeekerHint: "সঠিকতার হার ৬০% বা বেশি",
           badgeStreakGod: "স্ট্রিক চ্যাম্পিয়ন",
           badgeStreakGodHint: "এক পর্বে টানা ৫টি সঠিক উত্তর দিন।",
+          badgeStreakLegend: "স্ট্রিক লেজেন্ড",
+          badgeStreakLegendHint: "টানা ৭ দিন দৈনিক লগইন পুরস্কার নিন।",
           correct: "সঠিক",
           incorrectAnswers: "ভুল",
           round: "পর্ব",
@@ -5261,6 +5929,8 @@
           badgeKnowledgeSeekerHint: "60% या अधिक सटीकता",
           badgeStreakGod: "स्ट्रीक मास्टर",
           badgeStreakGodHint: "एक राउंड में लगातार 5 सही जवाब दें।",
+          badgeStreakLegend: "स्ट्रीक लीजेंड",
+          badgeStreakLegendHint: "लगातार 7 दिन दैनिक लॉगिन इनाम लें।",
           correct: "सही",
           incorrectAnswers: "गलत",
           round: "राउंड",
@@ -5474,6 +6144,8 @@
           badgeKnowledgeSeekerHint: "60% de aciertos o más",
           badgeStreakGod: "Racha imparable",
           badgeStreakGodHint: "Consigue 5 respuestas correctas seguidas en una ronda.",
+          badgeStreakLegend: "Leyenda de la racha",
+          badgeStreakLegendHint: "Reclama el premio diario 7 días seguidos.",
           correct: "Correctas",
           incorrectAnswers: "Incorrectas",
           round: "Ronda",
@@ -5687,6 +6359,8 @@
           badgeKnowledgeSeekerHint: "Précision de 60 % ou plus",
           badgeStreakGod: "Série de maître",
           badgeStreakGodHint: "Donnez 5 bonnes réponses d’affilée dans une manche.",
+          badgeStreakLegend: "Légende de série",
+          badgeStreakLegendHint: "Réclamez la récompense quotidienne 7 jours de suite.",
           correct: "Bonnes réponses",
           incorrectAnswers: "Incorrectes",
           round: "Manche",
@@ -5800,7 +6474,24 @@
           privacySummaryTitle: "Privacy at a glance",
           privacySummaryDescription: "Open a short summary without leaving.",
           settingsDescription: "Language, visual effects, and progress controls.",
-          soundDescription: "Toggle answer and reward sounds."
+          soundDescription: "Toggle answer and reward sounds.",
+          dailyReadyBadge: "2× BONUS ACTIVE 🔥",
+          dailyClaimedBadge: "2× CLAIMED TODAY",
+          dailyReadyTitle: "Share today to double your daily reward!",
+          dailyClaimedTitle: "Today's double share bonus is claimed",
+          dailyReadyDescription: "Share QuizVerse once today to earn 50 coins (25 base × 2).",
+          dailyClaimedDescription: "Today's 50-coin bonus is in your vault.",
+          dailyStreak: "{count}-day share streak",
+          dailyShareButton: "Share & earn {coins} coins",
+          dailyShareAgainButton: "Share QuizVerse",
+          dailyCopyButton: "Copy invite link",
+          dailyFeedbackClaimed: "Bonus claimed: +{coins} coins.",
+          dailyFeedbackAlready: "Today's share bonus is already claimed.",
+          dailyFeedbackCanceled: "Share cancelled; no coins were added.",
+          dailyFeedbackError: "Couldn't complete sharing. Please try again.",
+          dailyFeedbackCopied: "Invite link copied. Use the native share sheet to earn coins.",
+          dailyFeedbackStorage: "Share completed, but storage failed; no coins were added.",
+          dailyFeedbackClock: "Your device date is earlier than your last share; no bonus was added."
         },
         bn: {
           kicker: "নেভিগেশন ডেক", title: "সবকিছু এক জায়গায়",
@@ -5814,7 +6505,24 @@
           privacySummaryTitle: "এক নজরে গোপনীয়তা",
           privacySummaryDescription: "এই পৃষ্ঠা না ছেড়েই সংক্ষিপ্তসার দেখুন।",
           settingsDescription: "ভাষা, ভিজ্যুয়াল এফেক্ট ও অগ্রগতির নিয়ন্ত্রণ।",
-          soundDescription: "উত্তর ও পুরস্কারের শব্দ চালু বা বন্ধ করুন।"
+          soundDescription: "উত্তর ও পুরস্কারের শব্দ চালু বা বন্ধ করুন।",
+          dailyReadyBadge: "২× বোনাস চালু 🔥",
+          dailyClaimedBadge: "আজকের ২× বোনাস নেওয়া হয়েছে",
+          dailyReadyTitle: "আজ শেয়ার করে দৈনিক পুরস্কার দ্বিগুণ করুন!",
+          dailyClaimedTitle: "আজকের দ্বিগুণ শেয়ার বোনাস নেওয়া হয়েছে",
+          dailyReadyDescription: "আজ QuizVerse শেয়ার করে ৫০ কয়েন পান (২৫ × ২)।",
+          dailyClaimedDescription: "আজকের ৫০ কয়েন আপনার ভল্টে যোগ হয়েছে।",
+          dailyStreak: "{count} দিনের শেয়ার ধারাবাহিকতা",
+          dailyShareButton: "শেয়ার করুন ও {coins} কয়েন পান",
+          dailyShareAgainButton: "QuizVerse শেয়ার করুন",
+          dailyCopyButton: "আমন্ত্রণ লিংক কপি করুন",
+          dailyFeedbackClaimed: "বোনাস পেয়েছেন: +{coins} কয়েন।",
+          dailyFeedbackAlready: "আজকের শেয়ার বোনাস ইতিমধ্যে নেওয়া হয়েছে।",
+          dailyFeedbackCanceled: "শেয়ার বাতিল হয়েছে; কোনো কয়েন যোগ হয়নি।",
+          dailyFeedbackError: "শেয়ার করা যায়নি। আবার চেষ্টা করুন।",
+          dailyFeedbackCopied: "আমন্ত্রণ লিংক কপি হয়েছে। কয়েন পেতে শেয়ার শিট ব্যবহার করুন।",
+          dailyFeedbackStorage: "শেয়ার হয়েছে, কিন্তু স্টোরেজে সমস্যা; কয়েন যোগ হয়নি।",
+          dailyFeedbackClock: "ডিভাইসের তারিখ শেষ শেয়ারের আগের; বোনাস যোগ হয়নি।"
         },
         hi: {
           kicker: "नेविगेशन डेक", title: "सब कुछ एक जगह",
@@ -5828,7 +6536,24 @@
           privacySummaryTitle: "गोपनीयता एक नज़र में",
           privacySummaryDescription: "यह पेज छोड़े बिना संक्षिप्त जानकारी खोलें।",
           settingsDescription: "भाषा, दृश्य प्रभाव और प्रगति नियंत्रण।",
-          soundDescription: "जवाब और इनाम की आवाज़ चालू या बंद करें।"
+          soundDescription: "जवाब और इनाम की आवाज़ चालू या बंद करें।",
+          dailyReadyBadge: "2× बोनस चालू 🔥",
+          dailyClaimedBadge: "आज का 2× बोनस मिल गया",
+          dailyReadyTitle: "आज शेयर करें और दैनिक इनाम दोगुना पाएँ!",
+          dailyClaimedTitle: "आज का दोगुना शेयर बोनस मिल गया",
+          dailyReadyDescription: "आज QuizVerse शेयर करें और 50 कॉइन पाएँ (25 × 2)।",
+          dailyClaimedDescription: "आज के 50 कॉइन आपके वॉल्ट में जोड़ दिए गए।",
+          dailyStreak: "{count} दिन की शेयर स्ट्रीक",
+          dailyShareButton: "शेयर करें और {coins} कॉइन पाएँ",
+          dailyShareAgainButton: "QuizVerse शेयर करें",
+          dailyCopyButton: "आमंत्रण लिंक कॉपी करें",
+          dailyFeedbackClaimed: "बोनस मिला: +{coins} कॉइन।",
+          dailyFeedbackAlready: "आज का शेयर बोनस पहले ही मिल चुका है।",
+          dailyFeedbackCanceled: "शेयर रद्द हुआ; कोई कॉइन नहीं जोड़ा गया।",
+          dailyFeedbackError: "शेयर पूरा नहीं हो सका। फिर कोशिश करें।",
+          dailyFeedbackCopied: "आमंत्रण लिंक कॉपी हुआ। कॉइन के लिए शेयर शीट से साझा करें।",
+          dailyFeedbackStorage: "शेयर हुआ, लेकिन स्टोरेज नहीं चला; कॉइन नहीं जोड़े गए।",
+          dailyFeedbackClock: "डिवाइस की तारीख आपके पिछले शेयर से पहले है; बोनस नहीं मिला।"
         },
         es: {
           kicker: "CENTRO DE NAVEGACIÓN", title: "Todo en un solo lugar",
@@ -5842,7 +6567,24 @@
           privacySummaryTitle: "Privacidad en breve",
           privacySummaryDescription: "Abre un resumen sin salir de esta pantalla.",
           settingsDescription: "Idioma, efectos visuales y controles de progreso.",
-          soundDescription: "Activa o desactiva los sonidos de respuestas y premios."
+          soundDescription: "Activa o desactiva los sonidos de respuestas y premios.",
+          dailyReadyBadge: "BONO 2× ACTIVO 🔥",
+          dailyClaimedBadge: "BONO 2× COBRADO HOY",
+          dailyReadyTitle: "¡Comparte hoy y duplica tu recompensa diaria!",
+          dailyClaimedTitle: "Ya cobraste el bono doble de hoy",
+          dailyReadyDescription: "Comparte QuizVerse hoy y gana 50 monedas (25 × 2).",
+          dailyClaimedDescription: "Las 50 monedas de hoy ya están en tu bóveda.",
+          dailyStreak: "Racha de {count} días compartiendo",
+          dailyShareButton: "Compartir y ganar {coins} monedas",
+          dailyShareAgainButton: "Compartir QuizVerse",
+          dailyCopyButton: "Copiar enlace de invitación",
+          dailyFeedbackClaimed: "Bono recibido: +{coins} monedas.",
+          dailyFeedbackAlready: "El bono de hoy ya está cobrado.",
+          dailyFeedbackCanceled: "Se canceló el envío; no se añadieron monedas.",
+          dailyFeedbackError: "No se pudo compartir. Inténtalo de nuevo.",
+          dailyFeedbackCopied: "Enlace copiado. Usa la hoja nativa para ganar monedas.",
+          dailyFeedbackStorage: "Se compartió, pero falló el almacenamiento; no se añadieron monedas.",
+          dailyFeedbackClock: "La fecha del dispositivo es anterior al último envío; no se dio el bono."
         },
         fr: {
           kicker: "CENTRE DE NAVIGATION", title: "Tout au même endroit",
@@ -5856,7 +6598,352 @@
           privacySummaryTitle: "Confidentialité en bref",
           privacySummaryDescription: "Afficher un résumé sans quitter cette page.",
           settingsDescription: "Langue, effets visuels et commandes de progression.",
-          soundDescription: "Activer ou désactiver les sons des réponses et récompenses."
+          soundDescription: "Activer ou désactiver les sons des réponses et récompenses.",
+          dailyReadyBadge: "BONUS 2× ACTIF 🔥",
+          dailyClaimedBadge: "BONUS 2× RÉCUPÉRÉ AUJOURD’HUI",
+          dailyReadyTitle: "Partagez aujourd’hui pour doubler votre récompense !",
+          dailyClaimedTitle: "Le bonus de partage doublé du jour est récupéré",
+          dailyReadyDescription: "Partagez QuizVerse aujourd’hui pour gagner 50 pièces (25 × 2).",
+          dailyClaimedDescription: "Les 50 pièces du jour sont dans votre coffre.",
+          dailyStreak: "Série de partage : {count} jour(s)",
+          dailyShareButton: "Partager et gagner {coins} pièces",
+          dailyShareAgainButton: "Partager QuizVerse",
+          dailyCopyButton: "Copier le lien d’invitation",
+          dailyFeedbackClaimed: "Bonus obtenu : +{coins} pièces.",
+          dailyFeedbackAlready: "Le bonus de partage du jour est déjà récupéré.",
+          dailyFeedbackCanceled: "Partage annulé ; aucune pièce ajoutée.",
+          dailyFeedbackError: "Le partage a échoué. Réessayez.",
+          dailyFeedbackCopied: "Lien copié. Utilisez le partage natif pour gagner des pièces.",
+          dailyFeedbackStorage: "Partage effectué, mais stockage indisponible ; aucune pièce ajoutée.",
+          dailyFeedbackClock: "La date de l’appareil précède le dernier partage ; aucun bonus ajouté."
+        }
+      };
+
+      const dailyLoginTranslations = {
+        en: {
+          kicker: "DAILY LOGIN STREAK",
+          coinLabel: "COINS",
+          title: "Build your Streak Legend",
+          description: "Claim your reward once each day. Your seventh consecutive claim pays 3× coins.",
+          progress: "{count}/7 days claimed",
+          countdown: "{count} days to the 3× reward",
+          milestone: "Streak Legend milestone reached!",
+          ready: "Your daily login reward is ready.",
+          claimed: "Today's login reward is already in your vault.",
+          claimButton: "Claim {coins} coins",
+          claimedButton: "Claimed today",
+          dayLabel: "Day {day}",
+          dayClaimed: "claimed",
+          dayWaiting: "up next",
+          feedbackClaimed: "+{coins} coins added. Day {day} of 7.",
+          feedbackMilestone: "Streak Legend unlocked! +{coins} coins added.",
+          feedbackAlready: "Today's login reward has already been claimed.",
+          feedbackClock: "Your device date is earlier than your last claim; no reward was added.",
+          feedbackStorage: "Browser storage is unavailable; no reward was added.",
+          feedbackError: "The reward could not be saved. Please try again.",
+          modalEyebrow: "SEVEN-DAY MILESTONE",
+          modalTitle: "STREAK LEGEND",
+          modalDescription: "Seven consecutive daily claims! The elite badge is in your collection.",
+          modalRewardLabel: "3× DAILY REWARD",
+          modalPayout: "+{coins} coins",
+          modalBadge: "Achievement unlocked",
+          modalClose: "Continue"
+        },
+        bn: {
+          kicker: "দৈনিক লগইন স্ট্রিক",
+          coinLabel: "কয়েন",
+          title: "স্ট্রিক লেজেন্ড হয়ে উঠুন",
+          description: "প্রতিদিন পুরস্কার নিন। টানা সপ্তম দিনের দাবি ৩× কয়েন দেয়।",
+          progress: "{count}/৭ দিনের পুরস্কার নেওয়া",
+          countdown: "৩× পুরস্কারের আর {count} দিন",
+          milestone: "স্ট্রিক লেজেন্ড মাইলস্টোন সম্পন্ন!",
+          ready: "আজকের লগইন পুরস্কার প্রস্তুত।",
+          claimed: "আজকের লগইন পুরস্কার আপনার ভল্টে আছে।",
+          claimButton: "{coins} কয়েন নিন",
+          claimedButton: "আজ নেওয়া হয়েছে",
+          dayLabel: "দিন {day}",
+          dayClaimed: "নেওয়া হয়েছে",
+          dayWaiting: "পরবর্তী",
+          feedbackClaimed: "+{coins} কয়েন যোগ হয়েছে। ৭ দিনের মধ্যে দিন {day}।",
+          feedbackMilestone: "স্ট্রিক লেজেন্ড ব্যাজ আনলক! +{coins} কয়েন যোগ হয়েছে।",
+          feedbackAlready: "আজকের লগইন পুরস্কার ইতিমধ্যে নেওয়া হয়েছে।",
+          feedbackClock: "ডিভাইসের তারিখ শেষ দাবির আগের; পুরস্কার যোগ হয়নি।",
+          feedbackStorage: "ব্রাউজার স্টোরেজ নেই; পুরস্কার যোগ হয়নি।",
+          feedbackError: "পুরস্কার সংরক্ষণ হয়নি। আবার চেষ্টা করুন।",
+          modalEyebrow: "টানা সাত দিনের মাইলস্টোন",
+          modalTitle: "স্ট্রিক লেজেন্ড",
+          modalDescription: "টানা সাত দিন পুরস্কার নিয়েছেন! এলিট ব্যাজটি আপনার কালেকশনে যোগ হয়েছে।",
+          modalRewardLabel: "৩× দৈনিক পুরস্কার",
+          modalPayout: "+{coins} কয়েন",
+          modalBadge: "অর্জন আনলক হয়েছে",
+          modalClose: "চালিয়ে যান"
+        },
+        hi: {
+          kicker: "दैनिक लॉगिन स्ट्रीक",
+          coinLabel: "कॉइन",
+          title: "स्ट्रीक लीजेंड बनें",
+          description: "हर दिन अपना इनाम लें। लगातार सातवें दिन 3× कॉइन मिलते हैं।",
+          progress: "{count}/7 दिन के इनाम मिले",
+          countdown: "3× इनाम में {count} दिन",
+          milestone: "स्ट्रीक लीजेंड माइलस्टोन पूरा!",
+          ready: "आज का लॉगिन इनाम तैयार है।",
+          claimed: "आज का लॉगिन इनाम आपके वॉल्ट में है।",
+          claimButton: "{coins} कॉइन लें",
+          claimedButton: "आज मिल गया",
+          dayLabel: "दिन {day}",
+          dayClaimed: "मिला",
+          dayWaiting: "आगे",
+          feedbackClaimed: "+{coins} कॉइन जोड़े गए। 7 में से दिन {day}।",
+          feedbackMilestone: "स्ट्रीक लीजेंड अनलॉक! +{coins} कॉइन जोड़े गए।",
+          feedbackAlready: "आज का लॉगिन इनाम पहले ही मिल चुका है।",
+          feedbackClock: "डिवाइस की तारीख पिछली क्लेम तारीख से पहले है; इनाम नहीं मिला।",
+          feedbackStorage: "ब्राउज़र स्टोरेज उपलब्ध नहीं; इनाम नहीं जोड़ा गया।",
+          feedbackError: "इनाम सहेजा नहीं जा सका। फिर कोशिश करें।",
+          modalEyebrow: "सात-दिन का माइलस्टोन",
+          modalTitle: "स्ट्रीक लीजेंड",
+          modalDescription: "लगातार सात दिनों तक इनाम लिया! एलीट बैज आपके कलेक्शन में है।",
+          modalRewardLabel: "3× दैनिक इनाम",
+          modalPayout: "+{coins} कॉइन",
+          modalBadge: "उपलब्धि अनलॉक",
+          modalClose: "जारी रखें"
+        },
+        es: {
+          kicker: "RACHA DE INICIO DIARIO",
+          coinLabel: "MONEDAS",
+          title: "Conviértete en Leyenda de la Racha",
+          description: "Reclama un premio cada día. El séptimo día consecutivo paga 3× monedas.",
+          progress: "{count}/7 días reclamados",
+          countdown: "{count} días para el premio 3×",
+          milestone: "¡Hito de Leyenda de la Racha alcanzado!",
+          ready: "Tu premio diario está listo.",
+          claimed: "El premio de hoy ya está en tu bóveda.",
+          claimButton: "Reclamar {coins} monedas",
+          claimedButton: "Reclamado hoy",
+          dayLabel: "Día {day}",
+          dayClaimed: "reclamado",
+          dayWaiting: "siguiente",
+          feedbackClaimed: "+{coins} monedas añadidas. Día {day} de 7.",
+          feedbackMilestone: "¡Insignia Leyenda de la Racha desbloqueada! +{coins} monedas.",
+          feedbackAlready: "Ya reclamaste el premio diario de hoy.",
+          feedbackClock: "La fecha del dispositivo es anterior al último reclamo; no se añadió premio.",
+          feedbackStorage: "El almacenamiento no está disponible; no se añadió premio.",
+          feedbackError: "No se pudo guardar el premio. Inténtalo de nuevo.",
+          modalEyebrow: "HITO DE SIETE DÍAS",
+          modalTitle: "LEYENDA DE LA RACHA",
+          modalDescription: "¡Siete reclamos diarios consecutivos! La insignia élite está en tu colección.",
+          modalRewardLabel: "PREMIO DIARIO 3×",
+          modalPayout: "+{coins} monedas",
+          modalBadge: "Logro desbloqueado",
+          modalClose: "Continuar"
+        },
+        fr: {
+          kicker: "SÉRIE DE CONNEXIONS QUOTIDIENNES",
+          coinLabel: "PIÈCES",
+          title: "Devenez une légende de série",
+          description: "Réclamez votre récompense chaque jour. Le septième jour consécutif rapporte 3× pièces.",
+          progress: "{count}/7 jours réclamés",
+          countdown: "{count} jours avant la récompense 3×",
+          milestone: "Palier Légende de série atteint !",
+          ready: "Votre récompense quotidienne est prête.",
+          claimed: "La récompense du jour est déjà dans votre coffre.",
+          claimButton: "Réclamer {coins} pièces",
+          claimedButton: "Réclamée aujourd’hui",
+          dayLabel: "Jour {day}",
+          dayClaimed: "réclamé",
+          dayWaiting: "à venir",
+          feedbackClaimed: "+{coins} pièces ajoutées. Jour {day} sur 7.",
+          feedbackMilestone: "Badge Légende de série débloqué ! +{coins} pièces.",
+          feedbackAlready: "La récompense quotidienne du jour est déjà réclamée.",
+          feedbackClock: "La date de l’appareil précède la dernière réclamation ; aucune récompense ajoutée.",
+          feedbackStorage: "Stockage indisponible ; aucune récompense ajoutée.",
+          feedbackError: "La récompense n’a pas pu être enregistrée. Réessayez.",
+          modalEyebrow: "PALIER DE SEPT JOURS",
+          modalTitle: "LÉGENDE DE SÉRIE",
+          modalDescription: "Sept réclamations quotidiennes consécutives ! Le badge élite est dans votre collection.",
+          modalRewardLabel: "RÉCOMPENSE QUOTIDIENNE 3×",
+          modalPayout: "+{coins} pièces",
+          modalBadge: "Succès débloqué",
+          modalClose: "Continuer"
+        }
+      };
+
+      // The Boss Arena keeps its copy together so the whole duel can switch
+      // languages mid-round without changing the saved attempt or timer.
+      const bossArenaTranslations = {
+        en: {
+          badgeTitle: "Arena Champion", badgeHint: "Win a Daily Boss duel.",
+          homeTitle: "Daily Boss Arena", homeDescription: "{rank} · {rp} RP · 1 duel each day",
+          homeUsed: "Played today · resets at 00:00 UTC",
+          kicker: "DAILY RIVAL DUEL", title: "Boss Arena",
+          description: "Ten fast questions. You and the Rival Bot answer at the same time.",
+          rankLabel: "YOUR RANK", record: "{wins} wins · {draws} draws · {losses} losses",
+          categoryLabel: "Battle category",
+          dailyReady: "One official attempt per UTC day. Win for +100 coins and +30 RP.",
+          dailyResume: "Your duel is saved. Resume the remaining questions.",
+          dailyUsed: "Today's attempt is complete. Come back after 00:00 UTC.",
+          startButton: "Challenge today's boss", resumeButton: "Resume today's duel",
+          usedButton: "Already played today", backHome: "← Back to Home",
+          rankProgress: "{rp} / {next} RP to {rank}", rankMax: "Grandmaster rank reached",
+          storageError: "Browser storage is unavailable. Enable it to save your daily attempt.",
+          poolError: "This category does not have enough unique questions for a duel.",
+          round: "Question {current} of 10 · {category}", playerLabel: "YOU",
+          rivalLabel: "RIVAL BOT", progress: "{score} / 10", time: "{seconds} s",
+          botThinking: "Rival Bot is thinking…", botLocked: "Rival Bot has locked an answer.",
+          playerLocked: "Answer locked — waiting for the rival…",
+          answerCorrect: "Correct! You earn this point.",
+          answerWrong: "Not quite. Correct answer: {answer}.",
+          answerTimeout: "Time's up. No point this round.",
+          nextQuestion: "Next duel question", finishBattle: "Finish the duel",
+          pauseReturn: "Pause & Return Home",
+          resultKicker: "DAILY DUEL COMPLETE", winTitle: "Victory!",
+          lossTitle: "The rival takes this round.", drawTitle: "A tied duel.",
+          winDescription: "You outscored the Rival Bot. Your Arena Champion badge is now in your collection.",
+          lossDescription: "The Rival Bot scored higher this time. Your daily attempt is used; your rank can recover tomorrow.",
+          drawDescription: "You and the Rival Bot finished level. Your daily attempt is used.",
+          resultReward: "+{coins} coins · {rp} RP",
+          rankChange: "{before} → {after}", resultYou: "YOU", resultRival: "RIVAL BOT",
+          resultHome: "Return to Home", returnError: "Couldn't save the battle result. Your attempt remains available to finish.",
+          rankNames: ["Bronze", "Silver", "Gold", "Platinum", "Diamond", "Master", "Grandmaster"]
+        },
+        bn: {
+          badgeTitle: "এরিনা চ্যাম্পিয়ন", badgeHint: "একটি দৈনিক বস দ্বৈরথে জিতুন।",
+          homeTitle: "দৈনিক বস এরিনা", homeDescription: "{rank} · {rp} RP · প্রতিদিন ১টি দ্বৈরথ",
+          homeUsed: "আজ খেলা হয়েছে · ০০:০০ UTC-তে রিসেট",
+          kicker: "দৈনিক প্রতিদ্বন্দ্বী দ্বৈরথ", title: "বস এরিনা",
+          description: "দ্রুত ১০টি প্রশ্ন। আপনি ও প্রতিদ্বন্দ্বী বট একই সময়ে উত্তর দেবেন।",
+          rankLabel: "আপনার র‍্যাঙ্ক", record: "{wins} জয় · {draws} ড্র · {losses} হার",
+          categoryLabel: "দ্বৈরথের বিভাগ",
+          dailyReady: "প্রতি UTC দিনে একটি অফিসিয়াল চেষ্টা। জিতলে +১০০ কয়েন ও +৩০ RP।",
+          dailyResume: "আপনার দ্বৈরথ সংরক্ষিত আছে। বাকি প্রশ্নগুলো চালিয়ে যান।",
+          dailyUsed: "আজকের চেষ্টা শেষ। ০০:০০ UTC-র পরে আবার আসুন।",
+          startButton: "আজকের বসকে চ্যালেঞ্জ করুন", resumeButton: "আজকের দ্বৈরথ চালিয়ে যান",
+          usedButton: "আজ খেলা হয়েছে", backHome: "← হোমে ফিরুন",
+          rankProgress: "{rank} পেতে {rp} / {next} RP", rankMax: "গ্র্যান্ডমাস্টার র‍্যাঙ্ক অর্জিত",
+          storageError: "ব্রাউজার স্টোরেজ নেই। দৈনিক চেষ্টা সংরক্ষণ করতে এটি চালু করুন।",
+          poolError: "এই বিভাগে দ্বৈরথের জন্য যথেষ্ট আলাদা প্রশ্ন নেই।",
+          round: "১০টির মধ্যে প্রশ্ন {current} · {category}", playerLabel: "আপনি",
+          rivalLabel: "প্রতিদ্বন্দ্বী বট", progress: "{score} / 10", time: "{seconds} সেকেন্ড",
+          botThinking: "প্রতিদ্বন্দ্বী বট ভাবছে…", botLocked: "প্রতিদ্বন্দ্বী বট উত্তর বেছে নিয়েছে।",
+          playerLocked: "উত্তর লক হয়েছে — প্রতিদ্বন্দ্বীর অপেক্ষায়…",
+          answerCorrect: "সঠিক! এই পয়েন্টটি আপনার।",
+          answerWrong: "ভুল। সঠিক উত্তর: {answer}।",
+          answerTimeout: "সময় শেষ। এই রাউন্ডে পয়েন্ট নেই।",
+          nextQuestion: "পরের দ্বৈরথের প্রশ্ন", finishBattle: "দ্বৈরথ শেষ করুন",
+          pauseReturn: "বিরতি দিয়ে হোমে ফিরুন",
+          resultKicker: "দৈনিক দ্বৈরথ শেষ", winTitle: "জয়!",
+          lossTitle: "এই রাউন্ডে প্রতিদ্বন্দ্বী জিতেছে।", drawTitle: "দ্বৈরথ ড্র।",
+          winDescription: "আপনি প্রতিদ্বন্দ্বী বটের চেয়ে বেশি পয়েন্ট পেয়েছেন। আপনার কलेकশনে এরিনা চ্যাম্পিয়ন ব্যাজ যোগ হয়েছে।",
+          lossDescription: "এবার প্রতিদ্বন্দ্বী বট বেশি পয়েন্ট পেয়েছে। আজকের চেষ্টা শেষ; কাল আবার র‍্যাঙ্ক বাড়াতে পারবেন।",
+          drawDescription: "আপনি ও প্রতিদ্বন্দ্বী বট সমান পয়েন্ট পেয়েছেন। আজকের চেষ্টা শেষ।",
+          resultReward: "+{coins} কয়েন · {rp} RP",
+          rankChange: "{before} → {after}", resultYou: "আপনি", resultRival: "প্রতিদ্বন্দ্বী",
+          resultHome: "হোমে ফিরুন", returnError: "ফল সংরক্ষণ করা যায়নি। দ্বৈরথটি শেষ করার সুযোগ রইল।",
+          rankNames: ["ব্রোঞ্জ", "সিলভার", "গোল্ড", "প্ল্যাটিনাম", "ডায়মন্ড", "মাস্টার", "গ্র্যান্ডমাস্টার"]
+        },
+        hi: {
+          badgeTitle: "एरीना चैंपियन", badgeHint: "डेली बॉस द्वंद्व जीतें।",
+          homeTitle: "डेली बॉस एरीना", homeDescription: "{rank} · {rp} RP · रोज़ 1 द्वंद्व",
+          homeUsed: "आज खेल चुके · 00:00 UTC पर रीसेट",
+          kicker: "डेली राइवल द्वंद्व", title: "बॉस एरीना",
+          description: "तेज़ 10 सवाल। आप और राइवल बॉट एक साथ जवाब देंगे।",
+          rankLabel: "आपकी रैंक", record: "{wins} जीत · {draws} ड्रॉ · {losses} हार",
+          categoryLabel: "द्वंद्व श्रेणी",
+          dailyReady: "हर UTC दिन एक आधिकारिक प्रयास। जीतें और +100 कॉइन तथा +30 RP पाएँ।",
+          dailyResume: "आपका द्वंद्व सेव है। बाकी सवाल जारी रखें।",
+          dailyUsed: "आज का प्रयास पूरा हुआ। 00:00 UTC के बाद लौटें।",
+          startButton: "आज के बॉस को चुनौती दें", resumeButton: "आज का द्वंद्व जारी रखें",
+          usedButton: "आज खेल चुके", backHome: "← होम पर लौटें",
+          rankProgress: "{rank} तक {rp} / {next} RP", rankMax: "ग्रैंडमास्टर रैंक हासिल",
+          storageError: "ब्राउज़र स्टोरेज उपलब्ध नहीं। दैनिक प्रयास सेव करने के लिए इसे चालू करें।",
+          poolError: "इस श्रेणी में द्वंद्व के लिए पर्याप्त अलग सवाल नहीं हैं।",
+          round: "10 में से सवाल {current} · {category}", playerLabel: "आप",
+          rivalLabel: "राइवल बॉट", progress: "{score} / 10", time: "{seconds} सेकंड",
+          botThinking: "राइवल बॉट सोच रहा है…", botLocked: "राइवल बॉट ने जवाब चुन लिया।",
+          playerLocked: "जवाब लॉक — राइवल का इंतज़ार…",
+          answerCorrect: "सही! यह अंक आपका है।",
+          answerWrong: "सही नहीं। सही जवाब: {answer}।",
+          answerTimeout: "समय समाप्त। इस राउंड में अंक नहीं।",
+          nextQuestion: "अगला द्वंद्व सवाल", finishBattle: "द्वंद्व पूरा करें",
+          pauseReturn: "रोकें और होम पर लौटें",
+          resultKicker: "डेली द्वंद्व पूरा", winTitle: "जीत!",
+          lossTitle: "इस बार राइवल आगे रहा।", drawTitle: "द्वंद्व बराबर।",
+          winDescription: "आपने राइवल बॉट से अधिक अंक पाए। एरीना चैंपियन बैज आपके कलेक्शन में जुड़ गया।",
+          lossDescription: "इस बार राइवल बॉट ने अधिक अंक पाए। आज का प्रयास पूरा; कल रैंक फिर बढ़ाएँ।",
+          drawDescription: "आप और राइवल बॉट बराबर रहे। आज का प्रयास पूरा।",
+          resultReward: "+{coins} कॉइन · {rp} RP",
+          rankChange: "{before} → {after}", resultYou: "आप", resultRival: "राइवल",
+          resultHome: "होम पर लौटें", returnError: "नतीजा सेव नहीं हुआ। द्वंद्व पूरा करने के लिए प्रयास उपलब्ध है।",
+          rankNames: ["ब्रॉन्ज़", "सिल्वर", "गोल्ड", "प्लैटिनम", "डायमंड", "मास्टर", "ग्रैंडमास्टर"]
+        },
+        es: {
+          badgeTitle: "Campeón de la Arena", badgeHint: "Gana un duelo diario contra el jefe.",
+          homeTitle: "Arena del Jefe Diario", homeDescription: "{rank} · {rp} RP · 1 duelo al día",
+          homeUsed: "Jugado hoy · reinicia a las 00:00 UTC",
+          kicker: "DUELO DIARIO", title: "Arena del Jefe",
+          description: "Diez preguntas rápidas. Tú y el Bot Rival responden a la vez.",
+          rankLabel: "TU RANGO", record: "{wins} victorias · {draws} empates · {losses} derrotas",
+          categoryLabel: "Categoría del duelo",
+          dailyReady: "Un intento oficial por día UTC. Gana +100 monedas y +30 RP.",
+          dailyResume: "Tu duelo está guardado. Continúa las preguntas restantes.",
+          dailyUsed: "El intento de hoy terminó. Vuelve después de las 00:00 UTC.",
+          startButton: "Desafiar al jefe de hoy", resumeButton: "Reanudar duelo de hoy",
+          usedButton: "Ya jugaste hoy", backHome: "← Volver al inicio",
+          rankProgress: "{rp} / {next} RP para {rank}", rankMax: "Rango Gran Maestro alcanzado",
+          storageError: "El almacenamiento del navegador no está disponible. Actívalo para guardar el intento diario.",
+          poolError: "Esta categoría no tiene suficientes preguntas únicas para un duelo.",
+          round: "Pregunta {current} de 10 · {category}", playerLabel: "TÚ",
+          rivalLabel: "BOT RIVAL", progress: "{score} / 10", time: "{seconds} s",
+          botThinking: "El Bot Rival está pensando…", botLocked: "El Bot Rival ya eligió respuesta.",
+          playerLocked: "Respuesta bloqueada; esperando al rival…",
+          answerCorrect: "¡Correcto! Este punto es tuyo.",
+          answerWrong: "No exactamente. Respuesta correcta: {answer}.",
+          answerTimeout: "Se acabó el tiempo. Sin punto en esta ronda.",
+          nextQuestion: "Siguiente pregunta del duelo", finishBattle: "Finalizar duelo",
+          pauseReturn: "Pausar y volver al inicio",
+          resultKicker: "DUELO DIARIO COMPLETADO", winTitle: "¡Victoria!",
+          lossTitle: "El rival gana esta ronda.", drawTitle: "Duelo empatado.",
+          winDescription: "Superaste al Bot Rival. El distintivo Campeón de la Arena ya está en tu colección.",
+          lossDescription: "Esta vez el Bot Rival obtuvo más puntos. Tu intento diario terminó; mañana podrás recuperar rango.",
+          drawDescription: "Tú y el Bot Rival terminaron igualados. Tu intento diario terminó.",
+          resultReward: "+{coins} monedas · {rp} RP",
+          rankChange: "{before} → {after}", resultYou: "TÚ", resultRival: "RIVAL",
+          resultHome: "Volver al inicio", returnError: "No se pudo guardar el resultado. Puedes terminar el duelo sin perder el intento.",
+          rankNames: ["Bronce", "Plata", "Oro", "Platino", "Diamante", "Maestro", "Gran Maestro"]
+        },
+        fr: {
+          badgeTitle: "Champion de l’Arène", badgeHint: "Remportez un duel quotidien contre le boss.",
+          homeTitle: "Arène du Boss quotidien", homeDescription: "{rank} · {rp} RP · 1 duel par jour",
+          homeUsed: "Joué aujourd’hui · réinitialisation à 00:00 UTC",
+          kicker: "DUEL QUOTIDIEN", title: "Arène du Boss",
+          description: "Dix questions rapides. Vous et le Bot Rival répondez en même temps.",
+          rankLabel: "VOTRE RANG", record: "{wins} victoires · {draws} nuls · {losses} défaites",
+          categoryLabel: "Catégorie du duel",
+          dailyReady: "Une tentative officielle par jour UTC. Gagnez +100 pièces et +30 RP.",
+          dailyResume: "Votre duel est enregistré. Reprenez les questions restantes.",
+          dailyUsed: "La tentative du jour est terminée. Revenez après 00:00 UTC.",
+          startButton: "Défier le boss du jour", resumeButton: "Reprendre le duel du jour",
+          usedButton: "Déjà joué aujourd’hui", backHome: "← Retour à l’accueil",
+          rankProgress: "{rp} / {next} RP avant {rank}", rankMax: "Rang Grand maître atteint",
+          storageError: "Le stockage du navigateur est indisponible. Activez-le pour enregistrer la tentative quotidienne.",
+          poolError: "Cette catégorie ne contient pas assez de questions uniques pour un duel.",
+          round: "Question {current} sur 10 · {category}", playerLabel: "VOUS",
+          rivalLabel: "BOT RIVAL", progress: "{score} / 10", time: "{seconds} s",
+          botThinking: "Le Bot Rival réfléchit…", botLocked: "Le Bot Rival a choisi sa réponse.",
+          playerLocked: "Réponse verrouillée — attente du rival…",
+          answerCorrect: "Correct ! Ce point est pour vous.",
+          answerWrong: "Pas tout à fait. Bonne réponse : {answer}.",
+          answerTimeout: "Temps écoulé. Aucun point pour cette manche.",
+          nextQuestion: "Question suivante du duel", finishBattle: "Terminer le duel",
+          pauseReturn: "Mettre en pause et revenir",
+          resultKicker: "DUEL QUOTIDIEN TERMINÉ", winTitle: "Victoire !",
+          lossTitle: "Le rival remporte cette manche.", drawTitle: "Duel à égalité.",
+          winDescription: "Vous avez battu le Bot Rival. Le badge Champion de l’Arène est dans votre collection.",
+          lossDescription: "Le Bot Rival a marqué plus de points. Votre tentative du jour est terminée ; récupérez votre rang demain.",
+          drawDescription: "Vous et le Bot Rival êtes à égalité. Votre tentative quotidienne est terminée.",
+          resultReward: "+{coins} pièces · {rp} RP",
+          rankChange: "{before} → {after}", resultYou: "VOUS", resultRival: "RIVAL",
+          resultHome: "Retour à l’accueil", returnError: "Impossible d’enregistrer le résultat. La tentative reste disponible pour terminer le duel.",
+          rankNames: ["Bronze", "Argent", "Or", "Platine", "Diamant", "Maître", "Grand maître"]
         }
       };
 
@@ -7003,9 +8090,29 @@
       const REWARD_COLLECTION_STORAGE_KEY = "quiz-orbit-reward-collection";
       const RULES_ACCEPTED_STORAGE_KEY = "quiz-orbit-rules-accepted";
       const COIN_SKIPPED_LEVELS_STORAGE_KEY = "quiz-orbit-coin-skipped-levels-v1";
+      const DAILY_SHARE_STORAGE_KEY = "quizverse-daily-share-state-v1";
+      const DAILY_SHARE_LOCK_KEY = `${DAILY_SHARE_STORAGE_KEY}:claim-lock`;
+      const DAILY_LOGIN_STORAGE_KEY = "quizverse-daily-login-state-v1";
+      const DAILY_LOGIN_LOCK_KEY = `${DAILY_LOGIN_STORAGE_KEY}:claim-lock`;
+      const DAILY_BOSS_STORAGE_KEY = "quizverse-daily-boss-state-v1";
+      const DAILY_BOSS_LOCK_KEY = `${DAILY_BOSS_STORAGE_KEY}:start-lock`;
+      const DAILY_BOSS_QUESTION_COUNT = 10;
+      const DAILY_BOSS_TIME_LIMIT_MS = 12_000;
+      const DAILY_BOSS_RANKS = Object.freeze([
+        { minimum: 0, nameIndex: 0 },
+        { minimum: 100, nameIndex: 1 },
+        { minimum: 250, nameIndex: 2 },
+        { minimum: 450, nameIndex: 3 },
+        { minimum: 700, nameIndex: 4 },
+        { minimum: 1_000, nameIndex: 5 },
+        { minimum: 1_400, nameIndex: 6 }
+      ]);
       const REWARD_COLLECTION_VERSION = 5;
       const TROPHY_TIERS = ["gold", "silver", "bronze"];
-      const BADGE_IDS = ["quizMaster", "logicMaster", "speedDemon", "quizSpeedster", "knowledgeSeeker", "streakGod"];
+      const BADGE_IDS = ["quizMaster", "logicMaster", "speedDemon", "quizSpeedster", "knowledgeSeeker", "streakGod", "streakLegend", "arenaChampion"];
+      const DAILY_LOGIN_STREAK_TARGET = 7;
+      const DAILY_LOGIN_BASE_COINS = 25;
+      const DAILY_LOGIN_MILESTONE_MULTIPLIER = 3;
       const REWARD_MODES = PROGRESSION_CATEGORIES;
       // Simple reward tuning constants; the persistent balance is ready for future hint, skip, or theme purchases.
       const COIN_REWARDS = {
@@ -7015,8 +8122,11 @@
         streakFive: 10,
         levelClear: 50,
         newBadge: 25,
+        dailyShareBase: 25,
+        dailyLoginBase: DAILY_LOGIN_BASE_COINS,
         trophy: { gold: 100, silver: 60, bronze: 30 }
       };
+      const DAILY_SHARE_MULTIPLIER = 2;
 
       function emptyRewardCollection() {
         return {
@@ -7175,6 +8285,229 @@
         }
       }
 
+      function utcDayKey(timestamp = Date.now()) {
+        const date = new Date(timestamp);
+        return Number.isFinite(date.getTime()) ? date.toISOString().slice(0, 10) : "";
+      }
+
+      function emptyDailyShareState() {
+        return {
+          version: 1,
+          lastShareDate: "",
+          lastShareTimestamp: 0,
+          currentStreak: 0,
+          totalClaims: 0
+        };
+      }
+
+      // Local storage is validated and deduplicated client-side; it is not a secure
+      // server ledger and can be edited by the device owner.
+      function readDailyShareState() {
+        try {
+          const serialized = localStorage.getItem(DAILY_SHARE_STORAGE_KEY);
+          if (!serialized) return emptyDailyShareState();
+          const saved = JSON.parse(serialized);
+          if (!saved || saved.version !== 1) return emptyDailyShareState();
+          const validDay = (value) => {
+            if (value === "") return true;
+            if (typeof value !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
+            const parsed = new Date(`${value}T00:00:00.000Z`);
+            return Number.isFinite(parsed.getTime()) && parsed.toISOString().slice(0, 10) === value;
+          };
+          if (
+            !validDay(saved.lastShareDate) ||
+            !Number.isSafeInteger(saved.lastShareTimestamp) ||
+            saved.lastShareTimestamp < 0 ||
+            saved.lastShareTimestamp > Date.now() + 5 * 60 * 1000 ||
+            !Number.isSafeInteger(saved.currentStreak) ||
+            saved.currentStreak < 0 ||
+            saved.currentStreak > 100_000 ||
+            !Number.isSafeInteger(saved.totalClaims) ||
+            saved.totalClaims < 0 ||
+            saved.totalClaims > 100_000
+          ) return emptyDailyShareState();
+          if (saved.lastShareDate) {
+            if (!saved.lastShareTimestamp || utcDayKey(saved.lastShareTimestamp) !== saved.lastShareDate) {
+              return emptyDailyShareState();
+            }
+          } else if (saved.lastShareTimestamp || saved.currentStreak || saved.totalClaims) {
+            return emptyDailyShareState();
+          }
+          return {
+            version: 1,
+            lastShareDate: saved.lastShareDate,
+            lastShareTimestamp: saved.lastShareTimestamp,
+            currentStreak: saved.currentStreak,
+            totalClaims: saved.totalClaims
+          };
+        } catch {
+          return emptyDailyShareState();
+        }
+      }
+
+      function emptyDailyLoginState() {
+        return {
+          version: 1,
+          lastLaunchDate: "",
+          lastLaunchTimestamp: 0,
+          totalLaunchDays: 0,
+          lastClaimDate: "",
+          lastClaimTimestamp: 0,
+          currentStreak: 0,
+          totalClaims: 0
+        };
+      }
+
+      function readDailyLoginState() {
+        try {
+          const serialized = localStorage.getItem(DAILY_LOGIN_STORAGE_KEY);
+          if (!serialized) return emptyDailyLoginState();
+          const saved = JSON.parse(serialized);
+          if (!saved || saved.version !== 1) return emptyDailyLoginState();
+          const validDay = (value) => {
+            if (value === "") return true;
+            if (typeof value !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
+            const parsed = new Date(`${value}T00:00:00.000Z`);
+            return Number.isFinite(parsed.getTime()) && parsed.toISOString().slice(0, 10) === value;
+          };
+          const validTimestamp = (date, timestamp) => {
+            if (!date) return timestamp === 0;
+            return Number.isSafeInteger(timestamp) && timestamp > 0 &&
+              timestamp <= Date.now() + 5 * 60 * 1000 &&
+              utcDayKey(timestamp) === date;
+          };
+          const validCount = (value) => Number.isSafeInteger(value) && value >= 0 && value <= 100_000;
+          if (
+            !validDay(saved.lastLaunchDate) ||
+            !validDay(saved.lastClaimDate) ||
+            !validTimestamp(saved.lastLaunchDate, saved.lastLaunchTimestamp) ||
+            !validTimestamp(saved.lastClaimDate, saved.lastClaimTimestamp) ||
+            !validCount(saved.totalLaunchDays) ||
+            !validCount(saved.currentStreak) ||
+            !validCount(saved.totalClaims) ||
+            saved.currentStreak > 0 && !saved.lastClaimDate ||
+            saved.totalClaims > saved.totalLaunchDays ||
+            saved.lastClaimDate && saved.lastLaunchDate < saved.lastClaimDate
+          ) return emptyDailyLoginState();
+          return {
+            version: 1,
+            lastLaunchDate: saved.lastLaunchDate,
+            lastLaunchTimestamp: saved.lastLaunchTimestamp,
+            totalLaunchDays: saved.totalLaunchDays,
+            lastClaimDate: saved.lastClaimDate,
+            lastClaimTimestamp: saved.lastClaimTimestamp,
+            currentStreak: saved.currentStreak,
+            totalClaims: saved.totalClaims
+          };
+        } catch {
+          return emptyDailyLoginState();
+        }
+      }
+
+      function emptyDailyBossState() {
+        return {
+          version: 1,
+          ratingPoints: 0,
+          wins: 0,
+          draws: 0,
+          losses: 0,
+          lastAttemptDate: "",
+          status: "ready",
+          lastOutcome: "",
+          lastCoinsAwarded: 0,
+          lastRpDelta: 0,
+          lastResult: null,
+          active: null
+        };
+      }
+
+      function readDailyBossState() {
+        try {
+          const serialized = localStorage.getItem(DAILY_BOSS_STORAGE_KEY);
+          if (!serialized) return emptyDailyBossState();
+          const saved = JSON.parse(serialized);
+          const validCount = (value) => Number.isSafeInteger(value) && value >= 0 && value <= 1_000_000;
+          const validDay = saved?.lastAttemptDate === "" ||
+            (typeof saved?.lastAttemptDate === "string" &&
+              /^\d{4}-\d{2}-\d{2}$/.test(saved.lastAttemptDate) &&
+              new Date(`${saved.lastAttemptDate}T00:00:00.000Z`).toISOString().slice(0, 10) === saved.lastAttemptDate);
+          const validStatuses = ["ready", "in-progress", "completed"];
+          if (!saved || saved.version !== 1 ||
+              !validCount(saved.ratingPoints) ||
+              !validCount(saved.wins) || !validCount(saved.draws) || !validCount(saved.losses) ||
+              !validDay || !validStatuses.includes(saved.status) ||
+              !["", "win", "draw", "loss"].includes(saved.lastOutcome) ||
+              !validCount(saved.lastCoinsAwarded) ||
+              !Number.isSafeInteger(saved.lastRpDelta) || Math.abs(saved.lastRpDelta) > 1_000_000) {
+            return emptyDailyBossState();
+          }
+          let active = null;
+          if (saved.status === "in-progress") {
+            const source = saved.active;
+            const validActive = source &&
+              PROGRESSION_CATEGORIES.includes(source.category) &&
+              Array.isArray(source.questionIds) &&
+              source.questionIds.length === DAILY_BOSS_QUESTION_COUNT &&
+              source.questionIds.every((id) => typeof id === "string" && id.length > 0 && id.length <= 160) &&
+              new Set(source.questionIds).size === DAILY_BOSS_QUESTION_COUNT &&
+              Number.isInteger(source.currentIndex) && source.currentIndex >= 0 &&
+              source.currentIndex < DAILY_BOSS_QUESTION_COUNT &&
+              validCount(source.playerScore) && source.playerScore <= DAILY_BOSS_QUESTION_COUNT &&
+              validCount(source.botScore) && source.botScore <= DAILY_BOSS_QUESTION_COUNT &&
+              typeof source.playerLocked === "boolean" && typeof source.playerCorrect === "boolean" &&
+              Number.isInteger(source.playerChoice) && source.playerChoice >= -1 && source.playerChoice <= 3 &&
+              typeof source.botLocked === "boolean" && typeof source.botCorrect === "boolean" &&
+              typeof source.roundResolved === "boolean" &&
+              Number.isSafeInteger(source.deadlineAt) && source.deadlineAt > 0 &&
+              Number.isSafeInteger(source.botAnswerAt) && source.botAnswerAt > 0;
+            if (!validActive) return emptyDailyBossState();
+            active = {
+              category: source.category,
+              questionIds: [...source.questionIds],
+              currentIndex: source.currentIndex,
+              playerScore: source.playerScore,
+              botScore: source.botScore,
+              playerLocked: source.playerLocked,
+              playerCorrect: source.playerCorrect,
+              playerChoice: source.playerChoice,
+              botLocked: source.botLocked,
+              botCorrect: source.botCorrect,
+              roundResolved: source.roundResolved,
+              deadlineAt: source.deadlineAt,
+              botAnswerAt: source.botAnswerAt
+            };
+          }
+          let lastResult = null;
+          if (saved.lastResult && ["win", "draw", "loss"].includes(saved.lastResult.outcome) &&
+              validCount(saved.lastResult.playerScore) && saved.lastResult.playerScore <= DAILY_BOSS_QUESTION_COUNT &&
+              validCount(saved.lastResult.botScore) && saved.lastResult.botScore <= DAILY_BOSS_QUESTION_COUNT) {
+            lastResult = {
+              outcome: saved.lastResult.outcome,
+              playerScore: saved.lastResult.playerScore,
+              botScore: saved.lastResult.botScore,
+              beforeRank: Math.max(0, Math.min(DAILY_BOSS_RANKS.length - 1, saved.lastResult.beforeRank)),
+              afterRank: Math.max(0, Math.min(DAILY_BOSS_RANKS.length - 1, saved.lastResult.afterRank))
+            };
+          }
+          return {
+            version: 1,
+            ratingPoints: saved.ratingPoints,
+            wins: saved.wins,
+            draws: saved.draws,
+            losses: saved.losses,
+            lastAttemptDate: saved.lastAttemptDate,
+            status: saved.status,
+            lastOutcome: saved.lastOutcome,
+            lastCoinsAwarded: saved.lastCoinsAwarded,
+            lastRpDelta: saved.lastRpDelta,
+            lastResult,
+            active
+          };
+        } catch {
+          return emptyDailyBossState();
+        }
+      }
+
       function readAnswerSoundsMuted() {
         try {
           return localStorage.getItem(ANSWER_SOUND_STORAGE_KEY) === "true";
@@ -7188,6 +8521,7 @@
         rules: document.getElementById("rulesView"),
         privacy: document.getElementById("privacyView"),
         levels: document.getElementById("levelView"),
+        boss: document.getElementById("bossArenaView"),
         game: document.getElementById("gameView"),
         results: document.getElementById("resultsView")
       };
@@ -7307,6 +8641,17 @@
       let particlesEnabled = readPreference(PARTICLES_STORAGE_KEY, "true") !== "false";
       let syncSceneAnimation = () => {};
       let rewardCollection = readRewardCollection();
+      let dailyShareState = readDailyShareState();
+      let dailyShareFeedbackKey = "";
+      let dailyShareFeedbackCoins = 0;
+      let dailyShareInProgress = false;
+      let dailyLoginState = readDailyLoginState();
+      let dailyLoginFeedbackKey = "";
+      let dailyLoginFeedbackCoins = 0;
+      let dailyLoginInProgress = false;
+      let dailyBossState = readDailyBossState();
+      let bossRoundQuestions = [];
+      let bossTimerInterval = null;
       updateStartupProgress(63, 2);
       await loadingDelay(90);
       let lastDisplayedCoinBalance = null;
@@ -7520,6 +8865,141 @@
         if (views.levels.classList.contains("active")) renderLevelMap(currentCategory);
         if (views.results.classList.contains("active")) renderResults();
         return true;
+      }
+
+      async function withDailyShareClaimLock(callback) {
+        if (navigator.locks?.request) {
+          return navigator.locks.request(
+            "quizverse-daily-share-claim",
+            { mode: "exclusive" },
+            callback
+          );
+        }
+        const owner = `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+        try {
+          const existing = JSON.parse(localStorage.getItem(DAILY_SHARE_LOCK_KEY) || "null");
+          if (existing && Number.isFinite(existing.expiresAt) && existing.expiresAt > Date.now()) {
+            return { status: "busy" };
+          }
+          localStorage.setItem(DAILY_SHARE_LOCK_KEY, JSON.stringify({
+            owner,
+            expiresAt: Date.now() + 5_000
+          }));
+          const acquired = JSON.parse(localStorage.getItem(DAILY_SHARE_LOCK_KEY) || "null");
+          if (acquired?.owner !== owner) return { status: "busy" };
+          try {
+            return await callback();
+          } finally {
+            const current = JSON.parse(localStorage.getItem(DAILY_SHARE_LOCK_KEY) || "null");
+            if (current?.owner === owner) localStorage.removeItem(DAILY_SHARE_LOCK_KEY);
+          }
+        } catch {
+          return { status: "storage" };
+        }
+      }
+
+      async function claimDailyShareBonus() {
+        return withDailyShareClaimLock(() => {
+          const now = Date.now();
+          const today = utcDayKey(now);
+          const latestShareState = readDailyShareState();
+          dailyShareState = latestShareState;
+          if (latestShareState.lastShareDate === today) return { status: "already" };
+          if (latestShareState.lastShareDate && latestShareState.lastShareDate > today) {
+            return { status: "clock" };
+          }
+
+          const latestCollection = readRewardCollection();
+          const award = COIN_REWARDS.dailyShareBase * DAILY_SHARE_MULTIPLIER;
+          if (!Number.isSafeInteger(latestCollection.coins) ||
+              latestCollection.coins > Number.MAX_SAFE_INTEGER - award) {
+            return { status: "storage" };
+          }
+          const consecutiveDays = latestShareState.lastShareDate
+            ? utcDaysBetween(today, latestShareState.lastShareDate) === 1
+            : false;
+          const nextShareState = {
+            version: 1,
+            lastShareDate: today,
+            lastShareTimestamp: now,
+            currentStreak: consecutiveDays ? latestShareState.currentStreak + 1 : 1,
+            totalClaims: latestShareState.totalClaims + 1
+          };
+          const nextCollection = {
+            ...latestCollection,
+            coins: latestCollection.coins + award
+          };
+          let previousShareState = null;
+          let previousCollection = null;
+          try {
+            previousShareState = localStorage.getItem(DAILY_SHARE_STORAGE_KEY);
+            previousCollection = localStorage.getItem(REWARD_COLLECTION_STORAGE_KEY);
+            // Save the dated claim and coin vault together; restore both if either write fails.
+            localStorage.setItem(DAILY_SHARE_STORAGE_KEY, JSON.stringify(nextShareState));
+            localStorage.setItem(REWARD_COLLECTION_STORAGE_KEY, JSON.stringify(nextCollection));
+          } catch {
+            try {
+              if (previousShareState === null) localStorage.removeItem(DAILY_SHARE_STORAGE_KEY);
+              else if (previousShareState !== null) localStorage.setItem(DAILY_SHARE_STORAGE_KEY, previousShareState);
+              if (previousCollection === null) localStorage.removeItem(REWARD_COLLECTION_STORAGE_KEY);
+              else if (previousCollection !== null) localStorage.setItem(REWARD_COLLECTION_STORAGE_KEY, previousCollection);
+            } catch {
+              // Storage may remain unavailable; do not claim a payout in the UI.
+            }
+            return { status: "storage" };
+          }
+          dailyShareState = nextShareState;
+          rewardCollection = nextCollection;
+          updateCoinBalanceDisplays();
+          renderHomeHub();
+          renderRewardCollection();
+          renderRewardsDashboard();
+          updateDailyShareUI();
+          spawnCoinPopup(award, document.getElementById("coinBalanceChip"));
+          playCoinCue();
+          return { status: "claimed", award };
+        });
+      }
+
+      async function shareGameForDailyBonus() {
+        if (dailyShareInProgress) return;
+        dailyShareInProgress = true;
+        dailyShareFeedbackKey = "";
+        updateDailyShareUI();
+        try {
+          const shareUrl = new URL(location.href);
+          shareUrl.hash = "";
+          shareUrl.search = "";
+          if (typeof navigator.share === "function") {
+            await navigator.share({
+              title: "QuizVerse 3D",
+              text: (homeMenuTranslations[currentLanguage] || homeMenuTranslations.en).dailyReadyTitle,
+              url: shareUrl.toString()
+            });
+            const result = await claimDailyShareBonus();
+            const feedbackKeys = {
+              claimed: "dailyFeedbackClaimed",
+              already: "dailyFeedbackAlready",
+              clock: "dailyFeedbackClock",
+              storage: "dailyFeedbackStorage",
+              busy: "dailyFeedbackError"
+            };
+            dailyShareFeedbackKey = feedbackKeys[result.status] || "dailyFeedbackError";
+            dailyShareFeedbackCoins = result.award || 0;
+          } else if (typeof navigator.clipboard?.writeText === "function") {
+            await navigator.clipboard.writeText(shareUrl.toString());
+            dailyShareFeedbackKey = "dailyFeedbackCopied";
+          } else {
+            dailyShareFeedbackKey = "dailyFeedbackError";
+          }
+        } catch (error) {
+          dailyShareFeedbackKey = error?.name === "AbortError"
+            ? "dailyFeedbackCanceled"
+            : "dailyFeedbackError";
+        } finally {
+          dailyShareInProgress = false;
+          updateDailyShareUI();
+        }
       }
 
       function spawnCoinPopup(amount, target = null, direction = "earned") {
@@ -9281,6 +10761,7 @@
           lifelineEffectTimeouts.forEach((timeout) => window.clearTimeout(timeout));
           lifelineEffectTimeouts.clear();
         }
+        if (name !== "boss") stopBossTimer();
         document.getElementById("iqTimer").hidden = name !== "game";
         document.body.dataset.view = name;
         Object.values(views).forEach((view) => view.classList.remove("active"));
@@ -9306,6 +10787,12 @@
           }
         }
         activeViewName = name;
+        if (name === "boss") {
+          renderBossArena();
+          if (dailyBossState.status === "in-progress" && dailyBossState.lastAttemptDate === utcDayKey()) {
+            startBossTimer();
+          }
+        }
         syncNativeBannerPlacement(name);
         window.scrollTo({ top: 0, behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
       }
@@ -9615,6 +11102,7 @@
           resumeQuestionTimer();
         }
       });
+      document.addEventListener("visibilitychange", handleBossArenaVisibility);
       window.addEventListener("blur", () => {
         if (!views.game.classList.contains("active") || answered || document.activeElement?.tagName === "SELECT") return;
         window.clearTimeout(focusLossGraceTimeout);
@@ -9709,7 +11197,9 @@
           { id: "speedDemon", icon: "⚡", title: currentText.badgeSpeedDemon, hint: currentText.badgeSpeedDemonHint, categories: standardCategories },
           { id: "quizSpeedster", icon: "⚡", title: currentText.badgeQuizSpeedster, hint: currentText.badgeQuizSpeedsterHint, categories: ["IQ Check"] },
           { id: "knowledgeSeeker", icon: "◇", title: currentText.badgeKnowledgeSeeker, hint: currentText.badgeKnowledgeSeekerHint, categories: REWARD_MODES },
-          { id: "streakGod", icon: "🔥", title: currentText.badgeStreakGod, hint: currentText.badgeStreakGodHint, categories: REWARD_MODES }
+          { id: "streakGod", icon: "🔥", title: currentText.badgeStreakGod, hint: currentText.badgeStreakGodHint, categories: REWARD_MODES },
+          { id: "streakLegend", icon: "🔥", title: currentText.badgeStreakLegend, hint: currentText.badgeStreakLegendHint, categories: REWARD_MODES },
+          { id: "arenaChampion", icon: "⚔", title: bossCopy().badgeTitle, hint: bossCopy().badgeHint, categories: REWARD_MODES }
         ];
       }
 
@@ -10480,6 +11970,881 @@
         document.getElementById("openSettingsHomeButton").setAttribute(
           "aria-label", `${settingsCopy[currentLanguage].title}. ${copy.settingsDescription}`
         );
+        updateDailyShareUI();
+        updateDailyLoginUI();
+        updateBossArenaHomeCopy();
+      }
+
+      function utcDaysBetween(newerDay, olderDay) {
+        const newer = Date.parse(`${newerDay}T00:00:00.000Z`);
+        const older = Date.parse(`${olderDay}T00:00:00.000Z`);
+        return Number.isFinite(newer) && Number.isFinite(older)
+          ? Math.round((newer - older) / 86_400_000)
+          : Number.POSITIVE_INFINITY;
+      }
+
+      function updateDailyShareUI() {
+        const copy = homeMenuTranslations[currentLanguage] || homeMenuTranslations.en;
+        const today = utcDayKey();
+        const claimedToday = dailyShareState.lastShareDate === today;
+        const daysSinceLastShare = dailyShareState.lastShareDate
+          ? utcDaysBetween(today, dailyShareState.lastShareDate)
+          : Number.POSITIVE_INFINITY;
+        const visibleStreak = claimedToday || daysSinceLastShare === 1
+          ? dailyShareState.currentStreak
+          : 0;
+        const bonus = COIN_REWARDS.dailyShareBase * DAILY_SHARE_MULTIPLIER;
+        document.getElementById("dailyShareBanner").dataset.claimedToday = String(claimedToday);
+        document.getElementById("dailyShareBadge").textContent =
+          claimedToday ? copy.dailyClaimedBadge : copy.dailyReadyBadge;
+        document.getElementById("dailyShareTitle").textContent =
+          claimedToday ? copy.dailyClaimedTitle : copy.dailyReadyTitle;
+        document.getElementById("dailyShareDescription").textContent = claimedToday
+          ? copy.dailyClaimedDescription
+          : copy.dailyReadyDescription;
+        document.getElementById("dailyShareStreak").textContent =
+          copy.dailyStreak.replace("{count}", formatNumber(visibleStreak));
+        const shareSupported = typeof navigator.share === "function";
+        const buttonLabel = !shareSupported
+          ? copy.dailyCopyButton
+          : claimedToday
+            ? copy.dailyShareAgainButton
+            : copy.dailyShareButton.replace("{coins}", formatNumber(bonus));
+        document.getElementById("dailyShareButtonLabel").textContent = buttonLabel;
+        const button = document.getElementById("dailyShareButton");
+        button.disabled = dailyShareInProgress;
+        button.setAttribute("aria-label", buttonLabel);
+        const feedback = dailyShareFeedbackKey ? copy[dailyShareFeedbackKey] : "";
+        document.getElementById("dailyShareFeedback").textContent = feedback
+          ? feedback.replace("{coins}", formatNumber(dailyShareFeedbackCoins))
+          : "";
+      }
+
+      function recordDailyLoginLaunch(now = Date.now()) {
+        const today = utcDayKey(now);
+        if (!today) return;
+        const latest = readDailyLoginState();
+        if (
+          latest.lastLaunchDate > today ||
+          latest.lastClaimDate > today
+        ) {
+          dailyLoginState = latest;
+          updateDailyLoginUI();
+          return;
+        }
+        const next = { ...latest };
+        const daysSinceClaim = latest.lastClaimDate
+          ? utcDaysBetween(today, latest.lastClaimDate)
+          : Number.POSITIVE_INFINITY;
+        if (daysSinceClaim > 1) next.currentStreak = 0;
+        if (latest.lastLaunchDate !== today) {
+          next.lastLaunchDate = today;
+          next.lastLaunchTimestamp = now;
+          next.totalLaunchDays = Math.min(100_000, latest.totalLaunchDays + 1);
+        }
+        dailyLoginState = next;
+        try {
+          localStorage.setItem(DAILY_LOGIN_STORAGE_KEY, JSON.stringify(next));
+        } catch {
+          // Keep this visit functional even when browser storage is blocked.
+        }
+        updateDailyLoginUI();
+      }
+
+      function dailyLoginProgressSnapshot(today = utcDayKey()) {
+        const claimedToday = dailyLoginState.lastClaimDate === today;
+        const daysSinceClaim = dailyLoginState.lastClaimDate
+          ? utcDaysBetween(today, dailyLoginState.lastClaimDate)
+          : Number.POSITIVE_INFINITY;
+        const activeStreak = claimedToday || daysSinceClaim === 1
+          ? dailyLoginState.currentStreak
+          : 0;
+        const progress = claimedToday
+          ? ((activeStreak - 1) % DAILY_LOGIN_STREAK_TARGET) + 1
+          : daysSinceClaim === 1
+            ? activeStreak % DAILY_LOGIN_STREAK_TARGET
+            : 0;
+        const nextStreak = activeStreak + 1;
+        const milestoneToday = claimedToday &&
+          activeStreak >= DAILY_LOGIN_STREAK_TARGET &&
+          activeStreak % DAILY_LOGIN_STREAK_TARGET === 0;
+        return {
+          today,
+          claimedToday,
+          activeStreak,
+          progress: Math.max(0, progress),
+          remainingDays: milestoneToday ? 0 : DAILY_LOGIN_STREAK_TARGET - Math.max(0, progress),
+          nextReward: nextStreak % DAILY_LOGIN_STREAK_TARGET === 0
+            ? DAILY_LOGIN_BASE_COINS * DAILY_LOGIN_MILESTONE_MULTIPLIER
+            : DAILY_LOGIN_BASE_COINS,
+          milestoneToday
+        };
+      }
+
+      function updateDailyLoginModalCopy() {
+        const copy = dailyLoginTranslations[currentLanguage] || dailyLoginTranslations.en;
+        document.getElementById("dailyLoginModalEyebrow").textContent = copy.modalEyebrow;
+        document.getElementById("dailyLoginModalTitle").textContent = copy.modalTitle;
+        document.getElementById("dailyLoginModalDescription").textContent = copy.modalDescription;
+        document.getElementById("dailyLoginModalRewardLabel").textContent = copy.modalRewardLabel;
+        document.getElementById("dailyLoginModalReward").textContent =
+          copy.modalPayout.replace("{coins}", formatNumber(dailyLoginFeedbackCoins));
+        document.getElementById("dailyLoginModalBadge").textContent = copy.modalBadge;
+        document.getElementById("closeDailyLoginDialogButton").textContent = copy.modalClose;
+        document.getElementById("closeDailyLoginDialogButton").setAttribute("aria-label", copy.modalClose);
+      }
+
+      function updateDailyLoginUI() {
+        const copy = dailyLoginTranslations[currentLanguage] || dailyLoginTranslations.en;
+        const snapshot = dailyLoginProgressSnapshot();
+        const upcomingRewardLabel = snapshot.milestoneToday
+          ? copy.milestone
+          : snapshot.claimedToday
+            ? copy.claimed
+            : copy.ready;
+        const progressText = copy.progress.replace("{count}", formatNumber(snapshot.progress));
+        document.getElementById("dailyLoginKicker").textContent = copy.kicker;
+        document.getElementById("dailyLoginTitle").textContent =
+          snapshot.milestoneToday ? copy.milestone : copy.title;
+        document.getElementById("dailyLoginDescription").textContent = upcomingRewardLabel;
+        document.getElementById("dailyLoginCard").dataset.claimedToday = String(snapshot.claimedToday);
+        document.getElementById("dailyLoginCard").dataset.milestone = String(snapshot.milestoneToday);
+        document.getElementById("dailyLoginMultiplier").setAttribute(
+          "aria-label",
+          `${DAILY_LOGIN_MILESTONE_MULTIPLIER}× ${copy.modalRewardLabel.toLowerCase()}`
+        );
+        document.querySelector("#dailyLoginMultiplier small").textContent = copy.coinLabel;
+        document.getElementById("dailyLoginProgress").textContent = progressText;
+        document.getElementById("dailyLoginDays").setAttribute(
+          "aria-label",
+          `${progressText}. ${copy.countdown.replace("{count}", formatNumber(snapshot.remainingDays))}`
+        );
+        document.getElementById("dailyLoginCountdown").textContent = snapshot.milestoneToday
+          ? copy.milestone
+          : copy.countdown.replace("{count}", formatNumber(snapshot.remainingDays));
+        document.querySelectorAll("[data-login-day]").forEach((dayElement) => {
+          const day = Number(dayElement.dataset.loginDay);
+          const isActive = day <= snapshot.progress;
+          dayElement.dataset.active = String(isActive);
+          dayElement.dataset.current = String(!snapshot.claimedToday && day === snapshot.progress + 1);
+          dayElement.setAttribute(
+            "aria-label",
+            `${copy.dayLabel.replace("{day}", formatNumber(day))} — ${isActive ? copy.dayClaimed : copy.dayWaiting}`
+          );
+        });
+        const button = document.getElementById("dailyLoginClaimButton");
+        const coinAmount = formatNumber(snapshot.nextReward);
+        document.getElementById("dailyLoginClaimLabel").textContent = snapshot.claimedToday
+          ? copy.claimedButton
+          : copy.claimButton.replace("{coins}", coinAmount);
+        button.disabled = dailyLoginInProgress || snapshot.claimedToday;
+        button.setAttribute(
+          "aria-label",
+          snapshot.claimedToday ? copy.claimedButton : copy.claimButton.replace("{coins}", coinAmount)
+        );
+        const feedback = dailyLoginFeedbackKey ? copy[dailyLoginFeedbackKey] : "";
+        document.getElementById("dailyLoginFeedback").textContent = feedback
+          ? feedback
+            .replace("{coins}", formatNumber(dailyLoginFeedbackCoins))
+            .replace("{day}", formatNumber(snapshot.activeStreak % DAILY_LOGIN_STREAK_TARGET || DAILY_LOGIN_STREAK_TARGET))
+          : "";
+        updateDailyLoginModalCopy();
+      }
+
+      async function withDailyLoginClaimLock(callback) {
+        if (navigator.locks?.request) {
+          return navigator.locks.request(
+            "quizverse-daily-login-claim",
+            { mode: "exclusive" },
+            callback
+          );
+        }
+        const owner = `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+        try {
+          const existing = JSON.parse(localStorage.getItem(DAILY_LOGIN_LOCK_KEY) || "null");
+          if (existing && Number.isFinite(existing.expiresAt) && existing.expiresAt > Date.now()) {
+            return { status: "busy" };
+          }
+          localStorage.setItem(DAILY_LOGIN_LOCK_KEY, JSON.stringify({
+            owner,
+            expiresAt: Date.now() + 5_000
+          }));
+          const acquired = JSON.parse(localStorage.getItem(DAILY_LOGIN_LOCK_KEY) || "null");
+          if (acquired?.owner !== owner) return { status: "busy" };
+          try {
+            return await callback();
+          } finally {
+            const current = JSON.parse(localStorage.getItem(DAILY_LOGIN_LOCK_KEY) || "null");
+            if (current?.owner === owner) localStorage.removeItem(DAILY_LOGIN_LOCK_KEY);
+          }
+        } catch {
+          return { status: "storage" };
+        }
+      }
+
+      async function claimDailyLoginReward() {
+        return withDailyLoginClaimLock(() => {
+          const now = Date.now();
+          const today = utcDayKey(now);
+          const latestLogin = readDailyLoginState();
+          dailyLoginState = latestLogin;
+          if (latestLogin.lastClaimDate === today) return { status: "already" };
+          if (latestLogin.lastClaimDate > today || latestLogin.lastLaunchDate > today) {
+            return { status: "clock" };
+          }
+          const daysSinceClaim = latestLogin.lastClaimDate
+            ? utcDaysBetween(today, latestLogin.lastClaimDate)
+            : Number.POSITIVE_INFINITY;
+          const consecutive = daysSinceClaim === 1;
+          const nextStreak = consecutive ? latestLogin.currentStreak + 1 : 1;
+          const milestoneReached = nextStreak >= DAILY_LOGIN_STREAK_TARGET &&
+            nextStreak % DAILY_LOGIN_STREAK_TARGET === 0;
+          const payout = milestoneReached
+            ? DAILY_LOGIN_BASE_COINS * DAILY_LOGIN_MILESTONE_MULTIPLIER
+            : DAILY_LOGIN_BASE_COINS;
+          const latestCollection = readRewardCollection();
+          if (!Number.isSafeInteger(latestCollection.coins) ||
+              latestCollection.coins > Number.MAX_SAFE_INTEGER - payout) {
+            return { status: "storage" };
+          }
+          const nextLoginState = {
+            version: 1,
+            lastLaunchDate: latestLogin.lastLaunchDate || today,
+            lastLaunchTimestamp: latestLogin.lastLaunchTimestamp || now,
+            totalLaunchDays: Math.min(
+              100_000,
+              latestLogin.totalLaunchDays + (latestLogin.lastLaunchDate === today ? 0 : 1)
+            ),
+            lastClaimDate: today,
+            lastClaimTimestamp: now,
+            currentStreak: Math.min(100_000, nextStreak),
+            totalClaims: Math.min(100_000, latestLogin.totalClaims + 1)
+          };
+          const addLegendBadge = milestoneReached &&
+            !latestCollection.badges.includes("streakLegend");
+          const nextCollection = {
+            ...latestCollection,
+            coins: latestCollection.coins + payout,
+            badges: addLegendBadge
+              ? [...new Set([...latestCollection.badges, "streakLegend"])]
+              : latestCollection.badges
+          };
+          let previousLogin = null;
+          let previousCollection = null;
+          try {
+            previousLogin = localStorage.getItem(DAILY_LOGIN_STORAGE_KEY);
+            previousCollection = localStorage.getItem(REWARD_COLLECTION_STORAGE_KEY);
+            localStorage.setItem(DAILY_LOGIN_STORAGE_KEY, JSON.stringify(nextLoginState));
+            localStorage.setItem(REWARD_COLLECTION_STORAGE_KEY, JSON.stringify(nextCollection));
+          } catch {
+            try {
+              if (previousLogin === null) localStorage.removeItem(DAILY_LOGIN_STORAGE_KEY);
+              else if (previousLogin !== null) localStorage.setItem(DAILY_LOGIN_STORAGE_KEY, previousLogin);
+              if (previousCollection === null) localStorage.removeItem(REWARD_COLLECTION_STORAGE_KEY);
+              else if (previousCollection !== null) localStorage.setItem(REWARD_COLLECTION_STORAGE_KEY, previousCollection);
+            } catch {
+              // Browser storage remains unavailable; do not show a successful payout.
+            }
+            return { status: "storage" };
+          }
+          dailyLoginState = nextLoginState;
+          rewardCollection = nextCollection;
+          updateCoinBalanceDisplays();
+          renderHomeHub();
+          renderRewardCollection();
+          renderRewardsDashboard();
+          updateDailyLoginUI();
+          spawnCoinPopup(payout, document.getElementById("coinBalanceChip"));
+          playCoinCue();
+          return {
+            status: "claimed",
+            payout,
+            streak: nextStreak,
+            milestoneReached,
+            badgeUnlocked: addLegendBadge
+          };
+        });
+      }
+
+      async function handleDailyLoginClaim() {
+        if (dailyLoginInProgress) return;
+        dailyLoginInProgress = true;
+        dailyLoginFeedbackKey = "";
+        updateDailyLoginUI();
+        try {
+          const result = await claimDailyLoginReward();
+          const feedbackKeys = {
+            already: "feedbackAlready",
+            clock: "feedbackClock",
+            storage: "feedbackStorage",
+            busy: "feedbackError"
+          };
+          if (result.status === "claimed") {
+            dailyLoginFeedbackKey = result.milestoneReached ? "feedbackMilestone" : "feedbackClaimed";
+            dailyLoginFeedbackCoins = result.payout;
+            if (result.milestoneReached) {
+              updateDailyLoginUI();
+              const dialog = document.getElementById("dailyLoginDialog");
+              if (!dialog.open) dialog.showModal();
+            }
+          } else {
+            dailyLoginFeedbackKey = feedbackKeys[result.status] || "feedbackError";
+            dailyLoginFeedbackCoins = 0;
+          }
+        } catch {
+          dailyLoginFeedbackKey = "feedbackError";
+          dailyLoginFeedbackCoins = 0;
+        } finally {
+          dailyLoginInProgress = false;
+          updateDailyLoginUI();
+        }
+      }
+
+      function bossCopy() {
+        return bossArenaTranslations[currentLanguage] || bossArenaTranslations.en;
+      }
+
+      function bossRankAt(points) {
+        let rankIndex = 0;
+        for (let index = 1; index < DAILY_BOSS_RANKS.length; index += 1) {
+          if (points >= DAILY_BOSS_RANKS[index].minimum) rankIndex = index;
+          else break;
+        }
+        const current = DAILY_BOSS_RANKS[rankIndex];
+        const next = DAILY_BOSS_RANKS[rankIndex + 1] || null;
+        return { rankIndex, current, next };
+      }
+
+      function localizedBossRank(index) {
+        const names = bossCopy().rankNames;
+        return names[Math.max(0, Math.min(names.length - 1, index))] || names[0];
+      }
+
+      function persistDailyBossState(nextState) {
+        try {
+          localStorage.setItem(DAILY_BOSS_STORAGE_KEY, JSON.stringify(nextState));
+          dailyBossState = nextState;
+          return true;
+        } catch {
+          return false;
+        }
+      }
+
+      function updateBossArenaHomeCopy() {
+        const copy = bossCopy();
+        const rank = bossRankAt(dailyBossState.ratingPoints);
+        const playedToday = dailyBossState.lastAttemptDate === utcDayKey();
+        const homeDescription = document.getElementById("bossHomeDescription");
+        if (!homeDescription) return;
+        if (playedToday && dailyBossState.status === "in-progress") {
+          homeDescription.textContent = copy.dailyResume;
+        } else if (playedToday && dailyBossState.status === "completed") {
+          homeDescription.textContent = copy.homeUsed;
+        } else {
+          homeDescription.textContent = copy.homeDescription
+            .replace("{rank}", localizedBossRank(rank.rankIndex))
+            .replace("{rp}", formatNumber(dailyBossState.ratingPoints));
+        }
+        document.getElementById("bossHomeTitle").textContent = copy.homeTitle;
+        document.getElementById("openBossArenaButton").setAttribute(
+          "aria-label", `${copy.homeTitle}. ${homeDescription.textContent}`
+        );
+      }
+
+      function updateBossResultPanel() {
+        const copy = bossCopy();
+        const result = dailyBossState.lastResult;
+        if (!result) return;
+        const outcomeCopy = {
+          win: [copy.winTitle, copy.winDescription, "🏆"],
+          draw: [copy.drawTitle, copy.drawDescription, "🤝"],
+          loss: [copy.lossTitle, copy.lossDescription, "⚔️"]
+        }[result.outcome];
+        document.getElementById("bossResultTitle").textContent = outcomeCopy[0];
+        document.getElementById("bossResultDescription").textContent = outcomeCopy[1];
+        document.getElementById("bossResultEmblem").textContent = outcomeCopy[2];
+        document.getElementById("bossResultPlayerScore").textContent = formatNumber(result.playerScore);
+        document.getElementById("bossResultBotScore").textContent = formatNumber(result.botScore);
+        document.getElementById("bossResultYouLabel").textContent = copy.resultYou;
+        document.getElementById("bossResultRivalLabel").textContent = copy.resultRival;
+        const signedRp = dailyBossState.lastRpDelta >= 0
+          ? `+${formatNumber(dailyBossState.lastRpDelta)}`
+          : `−${formatNumber(Math.abs(dailyBossState.lastRpDelta))}`;
+        document.getElementById("bossResultReward").textContent = copy.resultReward
+          .replace("{coins}", formatNumber(dailyBossState.lastCoinsAwarded))
+          .replace("{rp}", signedRp);
+        document.getElementById("bossResultRankChange").textContent =
+          `${copy.rankChange.replace("{before}", localizedBossRank(result.beforeRank))
+            .replace("{after}", localizedBossRank(result.afterRank))} · ${signedRp} RP`;
+        document.getElementById("bossResultHomeButton").textContent = copy.resultHome;
+      }
+
+      function updateBossArenaUI() {
+        const copy = bossCopy();
+        const rank = bossRankAt(dailyBossState.ratingPoints);
+        const today = utcDayKey();
+        const playedToday = dailyBossState.lastAttemptDate === today;
+        const activeToday = playedToday && dailyBossState.status === "in-progress" && Boolean(dailyBossState.active);
+        const completedToday = playedToday && dailyBossState.status === "completed";
+        const categorySelect = document.getElementById("bossCategorySelect");
+        [...categorySelect.options].forEach((option) => {
+          option.textContent = categoryName(option.value);
+        });
+        if (activeToday) categorySelect.value = dailyBossState.active.category;
+        else if (!PROGRESSION_CATEGORIES.includes(categorySelect.value)) {
+          categorySelect.value = PROGRESSION_CATEGORIES.includes(selectedCategory)
+            ? selectedCategory
+            : PROGRESSION_CATEGORIES[0];
+        }
+        categorySelect.disabled = activeToday;
+        document.getElementById("bossArenaKicker").textContent = copy.kicker;
+        document.getElementById("bossArenaTitle").textContent = copy.title;
+        document.getElementById("bossArenaDescription").textContent = copy.description;
+        document.getElementById("bossRankLabel").textContent = copy.rankLabel;
+        document.getElementById("bossRankTitle").textContent = localizedBossRank(rank.rankIndex);
+        document.getElementById("bossRatingPill").textContent = `${formatNumber(dailyBossState.ratingPoints)} RP`;
+        document.getElementById("bossRankRecord").textContent = copy.record
+          .replace("{wins}", formatNumber(dailyBossState.wins))
+          .replace("{draws}", formatNumber(dailyBossState.draws))
+          .replace("{losses}", formatNumber(dailyBossState.losses));
+        document.getElementById("bossCategoryLabel").textContent = copy.categoryLabel;
+        const rankProgress = rank.next
+          ? copy.rankProgress
+            .replace("{rp}", formatNumber(dailyBossState.ratingPoints))
+            .replace("{next}", formatNumber(rank.next.minimum))
+            .replace("{rank}", localizedBossRank(rank.rankIndex + 1))
+          : copy.rankMax;
+        document.getElementById("bossRankProgress").textContent = rankProgress;
+        const rankPercent = rank.next
+          ? Math.max(0, Math.min(100,
+            ((dailyBossState.ratingPoints - rank.current.minimum) /
+            (rank.next.minimum - rank.current.minimum)) * 100))
+          : 100;
+        document.getElementById("bossRankFill").style.width = `${rankPercent}%`;
+        document.getElementById("bossRankTrack").setAttribute("aria-valuenow", String(Math.round(rankPercent)));
+        document.getElementById("bossDailyStatus").textContent = activeToday
+          ? copy.dailyResume
+          : completedToday ? copy.dailyUsed : copy.dailyReady;
+        document.getElementById("bossDailyStatus").dataset.state = completedToday ? "locked" : "ready";
+        const startButton = document.getElementById("bossStartButton");
+        startButton.textContent = activeToday
+          ? copy.resumeButton
+          : completedToday ? copy.usedButton : copy.startButton;
+        startButton.disabled = completedToday;
+        document.getElementById("bossIntroPanel").hidden = activeToday || completedToday;
+        document.getElementById("bossBattlePanel").hidden = !activeToday;
+        document.getElementById("bossResultPanel").hidden = !completedToday;
+        document.getElementById("bossHomeBackButton").textContent = copy.backHome;
+        document.getElementById("bossBattleBackButton").textContent = copy.pauseReturn;
+        if (completedToday) updateBossResultPanel();
+        updateBossArenaHomeCopy();
+      }
+
+      function bossQuestionObjectsForActive() {
+        const active = dailyBossState.active;
+        if (!active) return [];
+        if (bossRoundQuestions.length === DAILY_BOSS_QUESTION_COUNT &&
+            bossRoundQuestions.every((question, index) => question.id === active.questionIds[index])) {
+          return bossRoundQuestions;
+        }
+        const pool = getCategoryQuestionPool(active.category, 1);
+        const byId = new Map(pool.map((question) => [question.id, question]));
+        const restored = active.questionIds.map((id) => {
+          const existing = byId.get(id);
+          if (existing || active.category !== "IQ Check") return existing;
+          const generatedId = /^generated-iq-check-(\d+)-(\d+)$/.exec(id);
+          if (!generatedId) return undefined;
+          const family = Number(generatedId[1]);
+          const instance = Number(generatedId[2]);
+          if (family >= CATEGORY_TEMPLATE_COUNT || instance >= CATEGORY_PARAMETER_SPACE) return undefined;
+          return concealQuestionAnswer(makeGeneratedIQQuestion(1, family, instance));
+        });
+        if (restored.some((question) => !question)) return [];
+        bossRoundQuestions = restored;
+        return restored;
+      }
+
+      function updateBossScoreboard(active) {
+        const copy = bossCopy();
+        document.getElementById("bossPlayerLabel").textContent = copy.playerLabel;
+        document.getElementById("bossRivalLabel").textContent = copy.rivalLabel;
+        document.getElementById("bossPlayerProgress").textContent = copy.progress
+          .replace("{score}", formatNumber(active.playerScore));
+        document.getElementById("bossRivalProgress").textContent = copy.progress
+          .replace("{score}", formatNumber(active.botScore));
+        document.getElementById("bossPlayerScore").textContent = formatNumber(active.playerScore);
+        document.getElementById("bossRivalScore").textContent = formatNumber(active.botScore);
+        document.getElementById("bossPlayerScoreFill").style.width =
+          `${Math.max(0, Math.min(100, active.playerScore * 10))}%`;
+        document.getElementById("bossRivalScoreFill").style.width =
+          `${Math.max(0, Math.min(100, active.botScore * 10))}%`;
+      }
+
+      function updateBossClock() {
+        const active = dailyBossState.active;
+        if (!active) return;
+        const remaining = Math.max(0, active.deadlineAt - Date.now());
+        const seconds = Math.ceil(remaining / 1000);
+        const fraction = Math.max(0, Math.min(1, remaining / DAILY_BOSS_TIME_LIMIT_MS));
+        document.getElementById("bossClock").textContent = bossCopy().time
+          .replace("{seconds}", formatNumber(seconds));
+        document.getElementById("bossClockFill").style.width = `${fraction * 100}%`;
+        document.getElementById("bossClockTrack").classList.toggle("is-urgent", seconds <= 3);
+        document.getElementById("bossClockTrack").setAttribute("aria-valuenow", String(seconds));
+      }
+
+      function renderBossArena() {
+        updateBossArenaUI();
+        const active = dailyBossState.active;
+        if (!active || dailyBossState.lastAttemptDate !== utcDayKey()) return;
+        const questions = bossQuestionObjectsForActive();
+        if (questions.length !== DAILY_BOSS_QUESTION_COUNT) {
+          const error = document.getElementById("bossArenaError");
+          error.textContent = bossCopy().poolError;
+          error.hidden = false;
+          return;
+        }
+        const copy = bossCopy();
+        const question = questions[active.currentIndex];
+        const prompt = question.question[currentLanguage] || question.question.en;
+        const options = question.options[currentLanguage] || question.options.en;
+        document.getElementById("bossRoundLabel").textContent = copy.round
+          .replace("{current}", formatNumber(active.currentIndex + 1))
+          .replace("{category}", categoryName(active.category));
+        document.getElementById("bossCategoryInMatch").textContent = categoryName(active.category);
+        document.getElementById("bossQuestionText").textContent = prompt;
+        updateBossScoreboard(active);
+        updateBossClock();
+        const correctIndex = readConcealedAnswer(question);
+        const optionContainer = document.getElementById("bossOptions");
+        optionContainer.replaceChildren();
+        options.forEach((optionText, index) => {
+          const option = document.createElement("button");
+          option.type = "button";
+          option.className = "boss-option";
+          option.textContent = optionText;
+          option.disabled = active.playerLocked || active.roundResolved;
+          option.setAttribute("aria-label", optionText);
+          if (active.roundResolved && index === correctIndex) option.classList.add("is-correct");
+          else if (active.roundResolved && index === active.playerChoice && !active.playerCorrect) option.classList.add("is-wrong");
+          option.addEventListener("click", () => submitBossPlayerAnswer(index, false));
+          optionContainer.append(option);
+        });
+        const status = active.playerLocked
+          ? copy.playerLocked
+          : active.botLocked ? copy.botLocked : copy.botThinking;
+        document.getElementById("bossRoundStatus").textContent = status;
+        let feedback = "";
+        if (active.roundResolved) {
+          if (active.playerChoice === -1) feedback = copy.answerTimeout;
+          else if (active.playerCorrect) feedback = copy.answerCorrect;
+          else feedback = copy.answerWrong.replace("{answer}", options[correctIndex]);
+        }
+        document.getElementById("bossRoundFeedback").textContent = feedback;
+        const nextButton = document.getElementById("bossNextButton");
+        nextButton.hidden = !active.roundResolved;
+        nextButton.textContent = active.currentIndex === DAILY_BOSS_QUESTION_COUNT - 1
+          ? copy.finishBattle
+          : copy.nextQuestion;
+      }
+
+      function persistBossRoundOrShowError() {
+        if (!persistDailyBossState(dailyBossState)) {
+          const error = document.getElementById("bossArenaError");
+          error.textContent = bossCopy().storageError;
+          error.hidden = false;
+          return false;
+        }
+        return true;
+      }
+
+      function resolveBossRound() {
+        const active = dailyBossState.active;
+        if (!active || active.roundResolved || !active.playerLocked || !active.botLocked) return;
+        if (active.playerCorrect) active.playerScore = Math.min(DAILY_BOSS_QUESTION_COUNT, active.playerScore + 1);
+        if (active.botCorrect) active.botScore = Math.min(DAILY_BOSS_QUESTION_COUNT, active.botScore + 1);
+        active.roundResolved = true;
+        stopBossTimer();
+        persistBossRoundOrShowError();
+        renderBossArena();
+      }
+
+      function lockBossPlayerAnswer(choiceIndex, timedOut = false) {
+        const active = dailyBossState.active;
+        if (!active || active.playerLocked || active.roundResolved) return;
+        active.playerLocked = true;
+        active.playerChoice = timedOut ? -1 : choiceIndex;
+        active.playerCorrect = !timedOut &&
+          choiceIndex === readConcealedAnswer(bossQuestionObjectsForActive()[active.currentIndex]);
+        if (!persistBossRoundOrShowError()) return;
+        if (active.botLocked) resolveBossRound();
+        else renderBossArena();
+      }
+
+      function submitBossPlayerAnswer(choiceIndex, timedOut = false) {
+        const active = dailyBossState.active;
+        if (!active || active.playerLocked || active.roundResolved ||
+            !Number.isInteger(choiceIndex) || choiceIndex < 0 || choiceIndex > 3) return;
+        const now = Date.now();
+        if (now >= active.deadlineAt) {
+          lockBossPlayerAnswer(-1, true);
+          return;
+        }
+        if (!active.botLocked && now >= active.botAnswerAt) {
+          active.botLocked = true;
+          persistBossRoundOrShowError();
+        }
+        lockBossPlayerAnswer(choiceIndex, timedOut);
+      }
+
+      function tickBossArena() {
+        const active = dailyBossState.active;
+        if (!active || active.roundResolved ||
+            dailyBossState.status !== "in-progress" ||
+            dailyBossState.lastAttemptDate !== utcDayKey()) return;
+        const now = Date.now();
+        let changed = false;
+        if (!active.botLocked && (now >= active.botAnswerAt || now >= active.deadlineAt)) {
+          active.botLocked = true;
+          changed = true;
+        }
+        if (!active.playerLocked && now >= active.deadlineAt) {
+          active.playerLocked = true;
+          active.playerCorrect = false;
+          active.playerChoice = -1;
+          changed = true;
+        }
+        if (changed) persistBossRoundOrShowError();
+        updateBossClock();
+        if (active.playerLocked && active.botLocked) resolveBossRound();
+        else if (changed) renderBossArena();
+      }
+
+      function stopBossTimer() {
+        if (bossTimerInterval !== null) {
+          window.clearInterval(bossTimerInterval);
+          bossTimerInterval = null;
+        }
+      }
+
+      function startBossTimer() {
+        stopBossTimer();
+        if (dailyBossState.status !== "in-progress" ||
+            dailyBossState.lastAttemptDate !== utcDayKey() ||
+            !dailyBossState.active || dailyBossState.active.roundResolved) return;
+        tickBossArena();
+        bossTimerInterval = window.setInterval(tickBossArena, 150);
+      }
+
+      function createBossActiveRound(category, questionIds, ratingPoints, scores = { player: 0, bot: 0 }) {
+        const now = Date.now();
+        const rank = bossRankAt(ratingPoints).rankIndex;
+        const botAccuracy = Math.min(.86, .58 + rank * .045);
+        return {
+          category,
+          questionIds,
+          currentIndex: 0,
+          playerScore: scores.player,
+          botScore: scores.bot,
+          playerLocked: false,
+          playerCorrect: false,
+          playerChoice: -1,
+          botLocked: false,
+          botCorrect: Math.random() < botAccuracy,
+          roundResolved: false,
+          deadlineAt: now + DAILY_BOSS_TIME_LIMIT_MS,
+          botAnswerAt: now + 2_400 + randomIndex(3_800)
+        };
+      }
+
+      function withDailyBossStartLock(callback) {
+        if (navigator.locks?.request) {
+          return navigator.locks.request(DAILY_BOSS_LOCK_KEY, { mode: "exclusive" }, callback);
+        }
+        const owner = `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+        try {
+          const existing = JSON.parse(localStorage.getItem(DAILY_BOSS_LOCK_KEY) || "null");
+          if (existing?.expiresAt > Date.now()) return Promise.resolve(false);
+          localStorage.setItem(DAILY_BOSS_LOCK_KEY, JSON.stringify({ owner, expiresAt: Date.now() + 5_000 }));
+          const acquired = JSON.parse(localStorage.getItem(DAILY_BOSS_LOCK_KEY) || "null");
+          if (acquired?.owner !== owner) return Promise.resolve(false);
+          return Promise.resolve(callback()).finally(() => {
+            try {
+              const current = JSON.parse(localStorage.getItem(DAILY_BOSS_LOCK_KEY) || "null");
+              if (current?.owner === owner) localStorage.removeItem(DAILY_BOSS_LOCK_KEY);
+            } catch { /* The daily state still prevents another attempt in this browser. */ }
+          });
+        } catch {
+          return Promise.resolve(false);
+        }
+      }
+
+      async function startDailyBossChallenge() {
+        const button = document.getElementById("bossStartButton");
+        button.disabled = true;
+        const error = document.getElementById("bossArenaError");
+        error.textContent = "";
+        error.hidden = true;
+        try {
+          const started = await withDailyBossStartLock(async () => {
+            dailyBossState = readDailyBossState();
+            const today = utcDayKey();
+            if (dailyBossState.lastAttemptDate === today && dailyBossState.status === "in-progress" && dailyBossState.active) {
+              if (bossQuestionObjectsForActive().length !== DAILY_BOSS_QUESTION_COUNT) {
+                document.getElementById("bossArenaError").textContent = bossCopy().poolError;
+                document.getElementById("bossArenaError").hidden = false;
+                return false;
+              }
+              showView("boss");
+              return true;
+            }
+            if (dailyBossState.lastAttemptDate === today && dailyBossState.status === "completed") {
+              updateBossArenaUI();
+              return false;
+            }
+            const category = document.getElementById("bossCategorySelect").value;
+            if (!PROGRESSION_CATEGORIES.includes(category)) return false;
+            const pool = getCategoryQuestionPool(category, 1);
+            if (pool.length < DAILY_BOSS_QUESTION_COUNT) {
+              document.getElementById("bossArenaError").textContent = bossCopy().poolError;
+              document.getElementById("bossArenaError").hidden = false;
+              return false;
+            }
+            const shuffled = [...pool];
+            for (let index = shuffled.length - 1; index > 0; index -= 1) {
+              const swap = randomIndex(index + 1);
+              [shuffled[index], shuffled[swap]] = [shuffled[swap], shuffled[index]];
+            }
+            const chosen = shuffled.slice(0, DAILY_BOSS_QUESTION_COUNT);
+            bossRoundQuestions = chosen;
+            const nextState = {
+              ...dailyBossState,
+              lastAttemptDate: today,
+              status: "in-progress",
+              active: createBossActiveRound(category, chosen.map((question) => question.id), dailyBossState.ratingPoints)
+            };
+            if (!persistDailyBossState(nextState)) {
+              document.getElementById("bossArenaError").textContent = bossCopy().storageError;
+              document.getElementById("bossArenaError").hidden = false;
+              return false;
+            }
+            showView("boss");
+            return true;
+          });
+          if (!started && !document.getElementById("bossArenaError").textContent) {
+            document.getElementById("bossArenaError").textContent = bossCopy().storageError;
+            document.getElementById("bossArenaError").hidden = false;
+          }
+        } catch {
+          document.getElementById("bossArenaError").textContent = bossCopy().storageError;
+          document.getElementById("bossArenaError").hidden = false;
+        } finally {
+          updateBossArenaUI();
+          if (views.boss.classList.contains("active")) renderBossArena();
+          button.disabled = dailyBossState.status === "completed" &&
+            dailyBossState.lastAttemptDate === utcDayKey();
+        }
+      }
+
+      function advanceBossRound() {
+        const active = dailyBossState.active;
+        if (!active || !active.roundResolved) return;
+        if (active.currentIndex >= DAILY_BOSS_QUESTION_COUNT - 1) {
+          finishDailyBossChallenge();
+          return;
+        }
+        const nextIndex = active.currentIndex + 1;
+        const nextRound = createBossActiveRound(
+          active.category,
+          active.questionIds,
+          dailyBossState.ratingPoints,
+          { player: active.playerScore, bot: active.botScore }
+        );
+        nextRound.currentIndex = nextIndex;
+        const nextState = { ...dailyBossState, active: nextRound };
+        if (!persistDailyBossState(nextState)) {
+          document.getElementById("bossArenaError").textContent = bossCopy().storageError;
+          document.getElementById("bossArenaError").hidden = false;
+          return;
+        }
+        renderBossArena();
+        startBossTimer();
+      }
+
+      function finishDailyBossChallenge() {
+        const active = dailyBossState.active;
+        if (!active || !active.roundResolved ||
+            active.currentIndex !== DAILY_BOSS_QUESTION_COUNT - 1) return;
+        const outcome = active.playerScore > active.botScore
+          ? "win"
+          : active.playerScore === active.botScore ? "draw" : "loss";
+        const rpDelta = outcome === "win" ? 30 : outcome === "draw" ? 10 : -20;
+        const coinPayout = outcome === "win" ? 100 : outcome === "draw" ? 40 : 15;
+        const beforeRank = bossRankAt(dailyBossState.ratingPoints).rankIndex;
+        const ratingPoints = Math.max(0, dailyBossState.ratingPoints + rpDelta);
+        const afterRank = bossRankAt(ratingPoints).rankIndex;
+        const nextBossState = {
+          ...dailyBossState,
+          ratingPoints,
+          wins: dailyBossState.wins + (outcome === "win" ? 1 : 0),
+          draws: dailyBossState.draws + (outcome === "draw" ? 1 : 0),
+          losses: dailyBossState.losses + (outcome === "loss" ? 1 : 0),
+          status: "completed",
+          lastOutcome: outcome,
+          lastCoinsAwarded: coinPayout,
+          lastRpDelta: ratingPoints - dailyBossState.ratingPoints,
+          lastResult: {
+            outcome,
+            playerScore: active.playerScore,
+            botScore: active.botScore,
+            beforeRank,
+            afterRank
+          },
+          active: null
+        };
+        const previousBossRaw = (() => { try { return localStorage.getItem(DAILY_BOSS_STORAGE_KEY); } catch { return null; } })();
+        const previousRewardsRaw = (() => { try { return localStorage.getItem(REWARD_COLLECTION_STORAGE_KEY); } catch { return null; } })();
+        const nextCollection = JSON.parse(JSON.stringify(rewardCollection));
+        nextCollection.coins = Math.min(Number.MAX_SAFE_INTEGER, nextCollection.coins + coinPayout);
+        if (outcome === "win" && !nextCollection.badges.includes("arenaChampion")) {
+          nextCollection.badges.push("arenaChampion");
+        }
+        try {
+          localStorage.setItem(DAILY_BOSS_STORAGE_KEY, JSON.stringify(nextBossState));
+          localStorage.setItem(REWARD_COLLECTION_STORAGE_KEY, JSON.stringify(nextCollection));
+        } catch {
+          try {
+            if (previousBossRaw === null) localStorage.removeItem(DAILY_BOSS_STORAGE_KEY);
+            else localStorage.setItem(DAILY_BOSS_STORAGE_KEY, previousBossRaw);
+            if (previousRewardsRaw === null) localStorage.removeItem(REWARD_COLLECTION_STORAGE_KEY);
+            else localStorage.setItem(REWARD_COLLECTION_STORAGE_KEY, previousRewardsRaw);
+          } catch { /* Best-effort rollback if storage is disabled mid-transaction. */ }
+          const error = document.getElementById("bossArenaError");
+          error.textContent = bossCopy().returnError;
+          error.hidden = false;
+          return;
+        }
+        dailyBossState = nextBossState;
+        rewardCollection = nextCollection;
+        stopBossTimer();
+        updateCoinBalanceDisplays();
+        renderHomeHub();
+        renderRewardCollection();
+        renderRewardsDashboard();
+        updateBossArenaUI();
+        renderBossArena();
+        playCoinCue();
+        spawnCoinPopup(coinPayout, document.getElementById("coinBalanceChip"));
+      }
+
+      function handleBossArenaVisibility() {
+        if (document.visibilityState !== "hidden" ||
+            !views.boss.classList.contains("active") ||
+            dailyBossState.status !== "in-progress" ||
+            !dailyBossState.active || dailyBossState.active.playerLocked) return;
+        // Leaving the app during a duel counts as a missed answer. This is a
+        // fair-play signal only; local browser storage is not server security.
+        lockBossPlayerAnswer(-1, true);
       }
 
       function renderPrivacyContent(target, headingTag) {
@@ -10555,6 +12920,7 @@
           ...PROGRESSION_CATEGORIES.map(categoryProgressStorageKey),
           LAST_PLAYED_STORAGE_KEY, REWARD_COLLECTION_STORAGE_KEY,
           RULES_ACCEPTED_STORAGE_KEY, COIN_SKIPPED_LEVELS_STORAGE_KEY,
+          DAILY_SHARE_STORAGE_KEY, DAILY_LOGIN_STORAGE_KEY, DAILY_BOSS_STORAGE_KEY,
           ACTIVE_QUIZ_SESSION_STORAGE_KEY
         ])];
         let backup = [];
@@ -10570,6 +12936,7 @@
           return;
         }
         stopQuestionTimer();
+        stopBossTimer();
         clearAnswerAdvanceTimeout();
         location.reload();
       }
@@ -10588,6 +12955,7 @@
         updateSoundToggle();
         updateSettingsCopy();
         updateHomeMenuCopy();
+        renderBossArena();
         document.title = currentText.pageTitle;
         document.getElementById("metaDescription").content = currentText.metaDescription;
         document.getElementById("ogTitle").content = currentText.pageTitle;
@@ -10886,10 +13254,26 @@
           updateSoundToggle();
         } else if (event.key === "quiz-orbit-language") {
           setLanguage(readSavedLanguage());
+        } else if (event.key === DAILY_SHARE_STORAGE_KEY) {
+          dailyShareState = readDailyShareState();
+          updateDailyShareUI();
+        } else if (event.key === DAILY_LOGIN_STORAGE_KEY) {
+          dailyLoginState = readDailyLoginState();
+          updateDailyLoginUI();
+        } else if (event.key === DAILY_BOSS_STORAGE_KEY) {
+          dailyBossState = readDailyBossState();
+          updateBossArenaUI();
+          if (views.boss.classList.contains("active")) renderBossArena();
         }
       });
 
       const rulesStartDialog = document.getElementById("rulesStartDialog");
+      const dailyLoginDialog = document.getElementById("dailyLoginDialog");
+      document.getElementById("dailyLoginClaimButton").addEventListener("click", handleDailyLoginClaim);
+      document.getElementById("closeDailyLoginDialogButton").addEventListener("click", () => dailyLoginDialog.close());
+      dailyLoginDialog.addEventListener("click", (event) => {
+        if (event.target === dailyLoginDialog) dailyLoginDialog.close();
+      });
       document.getElementById("openRulesPageButton").addEventListener("click", () => {
         rulesReturnView = activeViewName;
         showView("rules");
@@ -10940,6 +13324,24 @@
         });
         selected.focus({ preventScroll: true });
       });
+      document.getElementById("openBossArenaButton").addEventListener("click", () => {
+        dailyBossState = readDailyBossState();
+        const selector = document.getElementById("bossCategorySelect");
+        if (PROGRESSION_CATEGORIES.includes(selectedCategory) &&
+            !(dailyBossState.lastAttemptDate === utcDayKey() &&
+              dailyBossState.status === "in-progress" && dailyBossState.active)) {
+          selector.value = selectedCategory;
+        }
+        showView("boss");
+      });
+      document.getElementById("bossStartButton").addEventListener("click", () => {
+        void startDailyBossChallenge();
+      });
+      document.getElementById("bossNextButton").addEventListener("click", advanceBossRound);
+      ["bossHomeBackButton", "bossBattleBackButton", "bossResultHomeButton"].forEach((id) => {
+        document.getElementById(id).addEventListener("click", () => showView("welcome"));
+      });
+      document.getElementById("dailyShareButton").addEventListener("click", shareGameForDailyBonus);
       continueJourneyButton.addEventListener("click", () => {
         const target = readLastPlayed();
         if (!target) {
@@ -11003,15 +13405,42 @@
         startQuiz(currentCategory, hasNextLevel ? currentLevel + 1 : currentLevel || 1);
       });
       window.addEventListener("storage", (event) => {
+        if (event.key === DAILY_SHARE_STORAGE_KEY) {
+          dailyShareState = readDailyShareState();
+          updateDailyShareUI();
+          return;
+        }
+        if (event.key === DAILY_LOGIN_STORAGE_KEY) {
+          dailyLoginState = readDailyLoginState();
+          updateDailyLoginUI();
+          return;
+        }
+        if (event.key === DAILY_BOSS_STORAGE_KEY) {
+          dailyBossState = readDailyBossState();
+          updateBossArenaUI();
+          if (views.boss.classList.contains("active")) renderBossArena();
+          return;
+        }
         if (event.key !== null && event.key !== REWARD_COLLECTION_STORAGE_KEY) return;
         syncRewardCollectionFromStorage({ allowEmpty: event.newValue === null });
+        updateBossArenaHomeCopy();
       });
       window.addEventListener("pageshow", () => {
-        if (document.body.dataset.view === "welcome") syncRewardCollectionFromStorage();
+        if (document.body.dataset.view === "welcome") {
+          syncRewardCollectionFromStorage();
+          dailyShareState = readDailyShareState();
+          updateDailyShareUI();
+          dailyBossState = readDailyBossState();
+          updateBossArenaUI();
+          recordDailyLoginLaunch();
+        }
       });
       document.addEventListener("visibilitychange", () => {
         if (!document.hidden && document.body.dataset.view === "welcome") {
           syncRewardCollectionFromStorage();
+          dailyShareState = readDailyShareState();
+          updateDailyShareUI();
+          recordDailyLoginLaunch();
         }
       });
       document.addEventListener("keydown", (event) => {
@@ -11026,6 +13455,8 @@
         }
       });
       setLanguage(currentLanguage);
+      // Run launch accounting after the formatter and all dashboard helpers are initialized.
+      recordDailyLoginLaunch();
       updateStartupProgress(74, 2);
       applyParticlePreference();
       if (location.hash === "#privacy") showView("privacy");

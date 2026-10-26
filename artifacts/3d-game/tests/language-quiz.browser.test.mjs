@@ -200,12 +200,252 @@ try {
   assert.equal(await splashPage.locator("#loadingLabel").innerText(), "Prêt à jouer", "loading copy follows the active language");
   await splashContext.close();
 
+  const shareContext = await browser.newContext({
+    viewport: { width: 390, height: 844 },
+    isMobile: true,
+    hasTouch: true,
+    reducedMotion: "reduce",
+  });
+  await shareContext.addInitScript(() => {
+    window.__shareShouldCancel = false;
+    window.__shareCalls = [];
+    Object.defineProperty(navigator, "share", {
+      configurable: true,
+      value: async (payload) => {
+        window.__shareCalls.push(payload);
+        if (window.__shareShouldCancel) throw new DOMException("Share cancelled", "AbortError");
+      },
+    });
+  });
+  const sharePage = await shareContext.newPage();
+  await loadReadyPage(sharePage);
+  assert.equal(await sharePage.locator("#dailyShareBanner").isVisible(), true);
+  assert.match(await sharePage.locator("#dailyShareBadge").innerText(), /2×.*ACTIVE/i);
+  assert.equal(await sharePage.locator("#dailyShareButton").evaluate((button) => button.getBoundingClientRect().height >= 48), true);
+  for (const viewport of [
+    { width: 280, height: 653 },
+    { width: 390, height: 844 },
+    { width: 844, height: 390 },
+  ]) {
+    await sharePage.setViewportSize(viewport);
+    const shareLayout = await sharePage.evaluate(() => {
+      const banner = document.querySelector("#dailyShareBanner").getBoundingClientRect();
+      const button = document.querySelector("#dailyShareButton").getBoundingClientRect();
+      return {
+        viewportWidth: innerWidth,
+        documentWidth: document.documentElement.scrollWidth,
+        bannerLeft: banner.left,
+        bannerRight: banner.right,
+        buttonHeight: button.height,
+      };
+    });
+    assert.ok(shareLayout.documentWidth <= shareLayout.viewportWidth, "daily share card must not create horizontal scrolling");
+    assert.ok(shareLayout.bannerLeft >= 0 && shareLayout.bannerRight <= shareLayout.viewportWidth, "share card must stay within the viewport");
+    assert.ok(shareLayout.buttonHeight >= 48, "share control must remain touch-sized");
+  }
+  await sharePage.setViewportSize({ width: 390, height: 844 });
+  for (const [language, readyTitle] of [
+    ["en", "Share today to double your daily reward!"],
+    ["bn", "আজ শেয়ার করে দৈনিক পুরস্কার দ্বিগুণ করুন!"],
+    ["hi", "आज शेयर करें और दैनिक इनाम दोगुना पाएँ!"],
+    ["es", "¡Comparte hoy y duplica tu recompensa diaria!"],
+    ["fr", "Partagez aujourd’hui pour doubler votre récompense !"],
+  ]) {
+    await sharePage.selectOption("#languageSelect", language);
+    assert.equal(await sharePage.locator("#dailyShareTitle").innerText(), readyTitle);
+  }
+  await sharePage.selectOption("#languageSelect", "en");
+  await sharePage.evaluate(() => { window.__shareShouldCancel = true; });
+  await sharePage.locator("#dailyShareButton").tap();
+  await sharePage.waitForFunction(() => document.querySelector("#dailyShareFeedback")?.textContent.includes("cancelled"));
+  assert.equal(await sharePage.locator("#coinBalance").innerText(), "0", "cancelled sharing earns no coins");
+  assert.equal(await sharePage.evaluate(() => localStorage.getItem("quizverse-daily-share-state-v1")), null);
+  await sharePage.evaluate(() => { window.__shareShouldCancel = false; });
+  await sharePage.locator("#dailyShareButton").tap();
+  await sharePage.waitForFunction(() => document.querySelector("#coinBalance")?.textContent === "50");
+  const firstShareRecord = await sharePage.evaluate(() => ({
+    share: JSON.parse(localStorage.getItem("quizverse-daily-share-state-v1")),
+    coins: JSON.parse(localStorage.getItem("quiz-orbit-reward-collection")).coins,
+    payload: window.__shareCalls.at(-1),
+  }));
+  assert.equal(firstShareRecord.coins, 50, "the first successful share pays the 25-coin base bonus at 2×");
+  assert.equal(firstShareRecord.share.totalClaims, 1);
+  assert.equal(firstShareRecord.share.lastShareDate, new Date().toISOString().slice(0, 10));
+  assert.ok(firstShareRecord.share.lastShareTimestamp > 0);
+  assert.match(firstShareRecord.payload.url, /^https?:\/\//);
+  assert.match(await sharePage.locator("#dailyShareBadge").innerText(), /CLAIMED TODAY/i);
+  await sharePage.locator("#dailyShareButton").tap();
+  await sharePage.waitForFunction(() => document.querySelector("#dailyShareFeedback")?.textContent.includes("already claimed"));
+  assert.equal(await sharePage.locator("#coinBalance").innerText(), "50", "a second share on the same UTC day cannot duplicate the payout");
+  const streakSeed = await sharePage.evaluate(() => {
+    const collectionKey = "quiz-orbit-reward-collection";
+    const collection = JSON.parse(localStorage.getItem(collectionKey));
+    const yesterday = new Date(Date.now() - 86_400_000);
+    const state = {
+      version: 1,
+      lastShareDate: yesterday.toISOString().slice(0, 10),
+      lastShareTimestamp: yesterday.getTime(),
+      currentStreak: 4,
+      totalClaims: 4,
+    };
+    localStorage.setItem(collectionKey, JSON.stringify({ ...collection, coins: 0 }));
+    localStorage.setItem("quizverse-daily-share-state-v1", JSON.stringify(state));
+    return state;
+  });
+  assert.equal(streakSeed.currentStreak, 4);
+  await reloadReadyPage(sharePage);
+  await sharePage.locator("#dailyShareButton").tap();
+  await sharePage.waitForFunction(() => document.querySelector("#coinBalance")?.textContent === "50");
+  const streakResult = await sharePage.evaluate(() => JSON.parse(localStorage.getItem("quizverse-daily-share-state-v1")));
+  assert.equal(streakResult.currentStreak, 5, "sharing on consecutive UTC days advances the saved streak");
+  await shareContext.close();
+
+  const loginContext = await browser.newContext({
+    viewport: { width: 390, height: 844 },
+    isMobile: true,
+    hasTouch: true,
+    reducedMotion: "reduce",
+  });
+  const loginPage = await loginContext.newPage();
+  loginPage.setDefaultTimeout(10_000);
+  await loadReadyPage(loginPage);
+  assert.equal(await loginPage.locator("#dailyLoginCard").isVisible(), true);
+  assert.equal(await loginPage.locator("#dailyLoginProgress").innerText(), "0/7 days claimed");
+  assert.equal(await loginPage.locator("#dailyLoginClaimButton").evaluate((button) => button.getBoundingClientRect().height >= 48), true);
+  for (const viewport of [
+    { width: 280, height: 653 },
+    { width: 320, height: 720 },
+    { width: 390, height: 844 },
+    { width: 844, height: 390 },
+  ]) {
+    await loginPage.setViewportSize(viewport);
+    const loginLayout = await loginPage.evaluate(() => {
+      const card = document.querySelector("#dailyLoginCard").getBoundingClientRect();
+      const button = document.querySelector("#dailyLoginClaimButton").getBoundingClientRect();
+      return {
+        viewportWidth: innerWidth,
+        documentWidth: document.documentElement.scrollWidth,
+        left: card.left,
+        right: card.right,
+        buttonHeight: button.height,
+      };
+    });
+    assert.ok(loginLayout.documentWidth <= viewport.width, "daily login card must not cause horizontal overflow");
+    assert.ok(loginLayout.left >= 0 && loginLayout.right <= viewport.width, "daily login card must remain inside the viewport");
+    assert.ok(loginLayout.buttonHeight >= 48, "daily login action must remain touch-sized");
+  }
+  await loginPage.setViewportSize({ width: 390, height: 844 });
+  for (const [language, title] of [
+    ["en", "Build your Streak Legend"],
+    ["bn", "স্ট্রিক লেজেন্ড হয়ে উঠুন"],
+    ["hi", "स्ट्रीक लीजेंड बनें"],
+    ["es", "Conviértete en Leyenda de la Racha"],
+    ["fr", "Devenez une légende de série"],
+  ]) {
+    await loginPage.selectOption("#languageSelect", language);
+    assert.equal(await loginPage.locator("#dailyLoginTitle").innerText(), title);
+  }
+  await loginPage.selectOption("#languageSelect", "en");
+  await loginPage.locator("#dailyLoginClaimButton").tap();
+  await loginPage.waitForFunction(() => document.querySelector("#coinBalance")?.textContent === "25");
+  let loginClaim = await loginPage.evaluate(() => ({
+    state: JSON.parse(localStorage.getItem("quizverse-daily-login-state-v1")),
+    coins: JSON.parse(localStorage.getItem("quiz-orbit-reward-collection")).coins,
+    claimDisabled: document.querySelector("#dailyLoginClaimButton").disabled,
+  }));
+  assert.equal(loginClaim.state.currentStreak, 1);
+  assert.equal(loginClaim.state.totalClaims, 1);
+  assert.equal(loginClaim.coins, 25);
+  assert.equal(loginClaim.claimDisabled, true, "a second same-day claim is disabled");
+
+  await loginPage.evaluate(() => {
+    const collectionKey = "quiz-orbit-reward-collection";
+    const collection = JSON.parse(localStorage.getItem(collectionKey));
+    const yesterday = new Date(Date.now() - 86_400_000);
+    const date = yesterday.toISOString().slice(0, 10);
+    const previousState = {
+      version: 1,
+      lastLaunchDate: date,
+      lastLaunchTimestamp: yesterday.getTime(),
+      totalLaunchDays: 6,
+      lastClaimDate: date,
+      lastClaimTimestamp: yesterday.getTime(),
+      currentStreak: 6,
+      totalClaims: 6,
+    };
+    localStorage.setItem(collectionKey, JSON.stringify({ ...collection, coins: 0, badges: [] }));
+    localStorage.setItem("quizverse-daily-login-state-v1", JSON.stringify(previousState));
+  });
+  await reloadReadyPage(loginPage);
+  assert.equal(await loginPage.locator("#dailyLoginProgress").innerText(), "6/7 days claimed");
+  assert.equal(await loginPage.locator("#dailyLoginClaimLabel").innerText(), "Claim 75 coins");
+  assert.equal(await loginPage.locator('[data-login-day="6"]').getAttribute("data-active"), "true");
+  assert.equal(await loginPage.locator('[data-login-day="7"]').getAttribute("data-current"), "true");
+  await loginPage.locator("#dailyLoginClaimButton").tap();
+  await loginPage.waitForFunction(() => document.querySelector("#coinBalance")?.textContent === "75");
+  assert.equal(await loginPage.locator("#dailyLoginDialog").evaluate((dialog) => dialog.open), true);
+  assert.equal(await loginPage.locator("#dailyLoginModalReward").innerText(), "+75 coins");
+  const milestoneState = await loginPage.evaluate(() => ({
+    login: JSON.parse(localStorage.getItem("quizverse-daily-login-state-v1")),
+    collection: JSON.parse(localStorage.getItem("quiz-orbit-reward-collection")),
+  }));
+  assert.equal(milestoneState.login.currentStreak, 7);
+  assert.equal(milestoneState.collection.coins, 75);
+  assert.ok(milestoneState.collection.badges.includes("streakLegend"), "the day-seven badge is persisted");
+  for (const [language, title] of [
+    ["bn", "স্ট্রিক লেজেন্ড"],
+    ["hi", "स्ट्रीक लीजेंड"],
+    ["es", "LEYENDA DE LA RACHA"],
+    ["fr", "LÉGENDE DE SÉRIE"],
+  ]) {
+    await loginPage.selectOption("#languageSelect", language);
+    assert.equal(await loginPage.locator("#dailyLoginModalTitle").innerText(), title);
+  }
+  await loginPage.selectOption("#languageSelect", "en");
+  await loginPage.locator("#closeDailyLoginDialogButton").tap();
+  await reloadReadyPage(loginPage);
+  assert.equal(await loginPage.locator("#coinBalance").innerText(), "75", "reloading on the same day cannot duplicate the claim");
+  assert.equal(await loginPage.locator("#dailyLoginClaimButton").isDisabled(), true);
+
+  await loginPage.evaluate(() => {
+    const collectionKey = "quiz-orbit-reward-collection";
+    const collection = JSON.parse(localStorage.getItem(collectionKey));
+    const twoDaysAgo = new Date(Date.now() - 2 * 86_400_000);
+    const yesterday = new Date(Date.now() - 86_400_000);
+    const date = twoDaysAgo.toISOString().slice(0, 10);
+    const launchDate = yesterday.toISOString().slice(0, 10);
+    localStorage.setItem(collectionKey, JSON.stringify({ ...collection, coins: 0, badges: [] }));
+    localStorage.setItem("quizverse-daily-login-state-v1", JSON.stringify({
+      version: 1,
+      lastLaunchDate: launchDate,
+      lastLaunchTimestamp: yesterday.getTime(),
+      totalLaunchDays: 6,
+      lastClaimDate: date,
+      lastClaimTimestamp: twoDaysAgo.getTime(),
+      currentStreak: 6,
+      totalClaims: 6,
+    }));
+  });
+  await reloadReadyPage(loginPage);
+  assert.equal(await loginPage.locator("#dailyLoginProgress").innerText(), "0/7 days claimed", "a missed claim day resets the streak");
+  assert.equal(await loginPage.locator("#dailyLoginClaimLabel").innerText(), "Claim 25 coins");
+  await loginPage.locator("#dailyLoginClaimButton").tap();
+  await loginPage.waitForFunction(() => document.querySelector("#coinBalance")?.textContent === "25");
+  const missedDayState = await loginPage.evaluate(() => ({
+    login: JSON.parse(localStorage.getItem("quizverse-daily-login-state-v1")),
+    collection: JSON.parse(localStorage.getItem("quiz-orbit-reward-collection")),
+  }));
+  assert.equal(missedDayState.login.currentStreak, 1);
+  assert.equal(missedDayState.collection.coins, 25);
+  assert.ok(!missedDayState.collection.badges.includes("streakLegend"), "a missed day does not grant the milestone badge");
+  await loginContext.close();
+
   const page = await context.newPage();
   page.setDefaultTimeout(10_000);
   const pageErrors = [];
   page.on("pageerror", (error) => pageErrors.push(error.message));
 
-  await page.goto(baseUrl, { waitUntil: "domcontentloaded" });
+  await loadReadyPage(page);
   const searchMetadata = await page.evaluate(() => ({
     title: document.title,
     description: document.querySelector('meta[name="description"]')?.content,
@@ -247,7 +487,7 @@ try {
     }
   });
   const adPage = await adContext.newPage();
-  await adPage.goto(baseUrl, { waitUntil: "domcontentloaded" });
+  await loadReadyPage(adPage);
   assert.equal(await adPage.locator("#homeBannerAdSlot").isVisible(), true);
   await adPage.locator("#startGameButton").click();
   assert.equal(await adPage.locator("#levelMapBannerAdSlot").isVisible(), true);
@@ -351,7 +591,7 @@ try {
     "en",
     "English selection is saved",
   );
-  await page.reload({ waitUntil: "domcontentloaded" });
+  await reloadReadyPage(page);
   assert.equal(await page.locator("html").getAttribute("lang"), "en");
   assert.equal(await page.locator("#welcomeTitle").innerText(), "QuizVerse 3D");
   assert.equal(await page.locator(".topbar .brand").count(), 0, "the shared header has no top-left logo");
@@ -424,7 +664,7 @@ try {
   await page.locator("#homeSoundToggle").tap();
   assert.equal(await page.locator("#soundToggle").getAttribute("aria-pressed"), "true", "the dock sound control syncs with the topbar");
   await page.locator("#soundToggle").tap();
-  await page.reload({ waitUntil: "domcontentloaded" });
+  await reloadReadyPage(page);
   assert.equal(await page.locator("#soundToggle").innerText(), "Game sounds off");
   assert.equal(await page.locator("#soundToggle").getAttribute("aria-pressed"), "false");
   assert.equal(await page.locator(".home-option-group").count(), 3, "the home dock groups actions, information, and controls");
@@ -464,7 +704,7 @@ try {
   assert.equal(await page.locator("#dashboardCategoryFilter option").count(), 6, "collection filter covers every category plus all");
   assert.equal(await page.locator("#dashboardStatusFilter option").count(), 3, "collection can sort by default, unlocked, or locked");
   assert.equal(await page.locator("#trophyGallery .trophy-showcase-card").count(), 3);
-  assert.equal(await page.locator("#badgeGallery .badge-showcase-card").count(), 6);
+  assert.equal(await page.locator("#badgeGallery .badge-showcase-card").count(), 8);
   assert.equal(await page.locator(".collection-tab").count(), 4, "collection has All, Trophies, Badges, and Category Stats tabs");
   assert.equal(await page.locator("#collectionTabAll").getAttribute("aria-selected"), "true");
   await page.locator("#collectionTabAll").press("ArrowRight");
@@ -486,9 +726,9 @@ try {
     "locked badges include their unlock instructions",
   );
   await page.locator("#dashboardCategoryFilter").selectOption("IQ Check");
-  assert.equal(await page.locator("#badgeGallery .badge-showcase-card").count(), 4, "IQ filter shows IQ-specific badges and shared badges");
+  assert.equal(await page.locator("#badgeGallery .badge-showcase-card").count(), 6, "IQ filter shows IQ-specific badges and shared badges");
   await page.locator("#dashboardCategoryFilter").selectOption("Science & Technology");
-  assert.equal(await page.locator("#badgeGallery .badge-showcase-card").count(), 4, "category filter updates the collection gallery");
+  assert.equal(await page.locator("#badgeGallery .badge-showcase-card").count(), 6, "category filter updates the collection gallery");
   await page.locator("#dashboardCategoryFilter").selectOption("all");
   await page.locator("#dashboardStatusFilter").selectOption("locked");
   assert.ok(
@@ -747,7 +987,7 @@ try {
     );
     assert.equal(await page.locator("#iqTimer").isVisible(), true, "the countdown is active in every category");
     assert.equal(await page.locator(".option").first().getAttribute("data-answer"), null);
-    await page.reload({ waitUntil: "domcontentloaded" });
+    await reloadReadyPage(page);
   }
   const lastPlayed = await page.evaluate(() => JSON.parse(localStorage.getItem("quiz-orbit-last-played-v1")));
   assert.deepEqual(
@@ -760,7 +1000,7 @@ try {
   await page.locator("#continueJourneyButton").click();
   assert.equal(await page.locator("#gameView").evaluate((node) => node.classList.contains("active")), true);
   assert.match(await page.locator("#gameCategory").textContent(), /IQ CHECK/i);
-  await page.reload({ waitUntil: "domcontentloaded" });
+  await reloadReadyPage(page);
 
   const progressionContext = await browser.newContext({
     viewport: { width: 390, height: 844 },
@@ -801,12 +1041,12 @@ try {
   });
   const purchasePage = await progressionContext.newPage();
   purchasePage.setDefaultTimeout(10_000);
-  await purchasePage.goto(baseUrl, { waitUntil: "domcontentloaded" });
+  await loadReadyPage(purchasePage);
   await purchasePage.evaluate(() => localStorage.setItem("quiz-orbit-reward-collection", JSON.stringify({
     version: 5,
     coins: 700,
   })));
-  await purchasePage.reload({ waitUntil: "domcontentloaded" });
+  await reloadReadyPage(purchasePage);
   await purchasePage.locator("#startGameButton").click();
   await purchasePage.locator('.level-card[data-level="4"]').click();
   assert.equal(await purchasePage.locator("#levelUnlockDialog").evaluate((node) => node.open), true);
@@ -827,7 +1067,7 @@ try {
     "a skipped but playable stage stays distinct from a completed stage",
   );
   assert.match(await purchasePage.locator("#mapUnlockNotice").innerText(), /Level 4 unlocked/);
-  await purchasePage.reload({ waitUntil: "domcontentloaded" });
+  await reloadReadyPage(purchasePage);
   await purchasePage.locator("#startGameButton").click();
   assert.equal(await purchasePage.locator("#levelGrid .level-card.unlocked").count(), 4, "coin-purchased access persists after reload");
   assert.equal(await purchasePage.locator("#coinBalance").innerText(), "400", "the spent balance persists after reload");
@@ -863,7 +1103,7 @@ try {
   });
   const thresholdPage = await thresholdContext.newPage();
   thresholdPage.setDefaultTimeout(10_000);
-  await thresholdPage.goto(baseUrl, { waitUntil: "domcontentloaded" });
+  await loadReadyPage(thresholdPage);
   await thresholdPage.locator("#startGameButton").click();
   await thresholdPage.locator(".level-card.unlocked").click();
   await acceptRulesBriefingIfOpen(thresholdPage);
@@ -902,7 +1142,7 @@ try {
     "interstitial opportunities are emitted after a cleared level and before the next one",
   );
   await thresholdPage.evaluate(() => localStorage.clear());
-  await thresholdPage.reload({ waitUntil: "domcontentloaded" });
+  await reloadReadyPage(thresholdPage);
   await thresholdPage.locator("#startGameButton").click();
   await thresholdPage.locator(".level-card.unlocked").click();
   await acceptRulesBriefingIfOpen(thresholdPage);
@@ -934,7 +1174,7 @@ try {
       btoa(`2:${category}:${level}:${checksum}`),
     );
   });
-  await page.reload({ waitUntil: "domcontentloaded" });
+  await reloadReadyPage(page);
   await page.locator('.category[data-category="Science & Technology"]').click();
   await page.locator("#startGameButton").click();
   assert.equal(await page.locator("#levelGrid .level-card.completed").count(), 1);
@@ -951,12 +1191,12 @@ try {
   assert.equal(await page.locator("#levelGrid .level-card.unlocked").count(), 1, "science progress does not unlock General Knowledge levels");
   assert.equal(await page.locator("#levelGrid .level-card.locked").count(), 499);
   await page.evaluate((key) => localStorage.removeItem(key), scienceProgressKey);
-  await page.reload({ waitUntil: "domcontentloaded" });
+  await reloadReadyPage(page);
   await page.evaluate(() => localStorage.setItem("quiz-orbit-reward-collection", JSON.stringify({
     version: 5,
     levelResults: [{ category: "Science & Technology", level: 2, stars: 3, coins: 50 }],
   })));
-  await page.reload({ waitUntil: "domcontentloaded" });
+  await reloadReadyPage(page);
   await page.locator('.category[data-category="Science & Technology"]').click();
   await page.locator("#startGameButton").click();
   assert.equal(await page.locator("#levelGrid .level-card.unlocked").count(), 1);
@@ -972,7 +1212,7 @@ try {
   await page.locator("#cancelLevelUnlockButton").click();
   await page.locator("#levelBackButton").click();
   await page.evaluate(() => localStorage.removeItem("quiz-orbit-reward-collection"));
-  await page.reload({ waitUntil: "domcontentloaded" });
+  await reloadReadyPage(page);
 
   await page.locator('.category[data-category="General Knowledge"]').click();
   await page.locator("#startGameButton").click();
@@ -1003,7 +1243,7 @@ try {
   assert.equal(await page.locator(".option").nth(portalCorrectIndex).getAttribute("class").then((value) => value.includes("correct")), true);
   const audioTestPage = await context.newPage();
   audioTestPage.on("pageerror", (error) => pageErrors.push(error.message));
-  await audioTestPage.goto(baseUrl, { waitUntil: "domcontentloaded" });
+  await loadReadyPage(audioTestPage);
   await audioTestPage.locator("#soundToggle").tap();
   await audioTestPage.locator("#startGameButton").tap();
   await audioTestPage.locator(".level-card.unlocked").tap();
@@ -1018,7 +1258,7 @@ try {
 
   const penaltyPage = await context.newPage();
   penaltyPage.on("pageerror", (error) => pageErrors.push(error.message));
-  await penaltyPage.goto(baseUrl, { waitUntil: "domcontentloaded" });
+  await loadReadyPage(penaltyPage);
   await penaltyPage.locator("#startGameButton").tap();
   await penaltyPage.locator(".level-card.unlocked").tap();
   await penaltyPage.setViewportSize({ width: 844, height: 390 });
@@ -1080,12 +1320,12 @@ try {
   );
   await penaltyPage.close();
 
-  await page.reload({ waitUntil: "domcontentloaded" });
+  await reloadReadyPage(page);
   assert.equal(await page.locator("html").getAttribute("lang"), "en");
   assert.equal(await page.locator("#welcomeTitle").innerText(), "QuizVerse 3D");
 
   await page.selectOption("#languageSelect", "bn");
-  await page.reload({ waitUntil: "domcontentloaded" });
+  await reloadReadyPage(page);
   assert.equal(await page.locator("html").getAttribute("lang"), "bn");
   assert.equal(await page.locator("#welcomeTitle").innerText(), "QuizVerse 3D");
   assert.equal(await page.locator("#categoryHeading").innerText(), "মোড বেছে নিন");
@@ -1262,12 +1502,12 @@ try {
   assert.equal(await page.locator('.level-card.completed[data-level="1"] .level-card-coins').innerText(), "+৫০ 🪙");
   assert.equal(await page.locator('.level-card.completed[data-level="1"] .level-card-indicator').innerText(), "🏆");
   await page.locator("#levelBackButton").tap();
-  await page.reload({ waitUntil: "domcontentloaded" });
+  await reloadReadyPage(page);
   assert.match(await page.locator("#collectionTrophies").innerText(), /ট্রফি/);
   assert.match(await page.locator("#collectionBadges").innerText(), /কুইজ মাস্টার/);
 
   await page.evaluate(() => localStorage.setItem("quiz-orbit-reward-collection", "{not valid json"));
-  await page.reload({ waitUntil: "domcontentloaded" });
+  await reloadReadyPage(page);
   assert.equal(await page.locator("#collectionBestPoints").innerText(), "০");
   assert.equal(await page.locator("#collectionBestStreak").innerText(), "০");
   assert.equal(await page.locator("#collectionTrophies").innerText(), "এখনো কিছু নেই");
@@ -1284,7 +1524,7 @@ try {
     Storage.prototype.getItem = storageBlocked;
     Storage.prototype.setItem = storageBlocked;
   });
-  await blockedStoragePage.goto(baseUrl, { waitUntil: "domcontentloaded" });
+  await loadReadyPage(blockedStoragePage);
   assert.equal(await blockedStoragePage.locator("#collectionBestPoints").innerText(), "0");
   await blockedStoragePage.locator("#startGameButton").click();
   assert.equal(await blockedStoragePage.locator("#levelView").evaluate((node) => node.classList.contains("active")), true);
@@ -1299,7 +1539,7 @@ try {
   const lifelinePage = await context.newPage();
   lifelinePage.setDefaultTimeout(10_000);
   lifelinePage.on("pageerror", (error) => pageErrors.push(error.message));
-  await lifelinePage.goto(baseUrl, { waitUntil: "domcontentloaded" });
+  await loadReadyPage(lifelinePage);
   await lifelinePage.evaluate(() => {
     const key = "quiz-orbit-reward-collection";
     const collection = {
@@ -1330,7 +1570,7 @@ try {
     localStorage.setItem(key, JSON.stringify(collection));
     localStorage.setItem("quiz-orbit-answer-sounds-muted", "false");
   });
-  await lifelinePage.reload({ waitUntil: "domcontentloaded" });
+  await reloadReadyPage(lifelinePage);
   const lifelineLocaleCopy = {
     en: ["TACTICAL LIFELINES", "Skip question"],
     bn: ["কৌশলগত লাইফলাইন", "প্রশ্ন বদলান"],
@@ -1492,7 +1732,7 @@ try {
     Object.defineProperty(performance, "now", { value: () => realNow() + window.__timingOffset });
   });
   await stabilityPage.route("**/cdn.jsdelivr.net/**", (route) => route.abort());
-  await stabilityPage.goto(baseUrl, { waitUntil: "domcontentloaded" });
+  await loadReadyPage(stabilityPage);
   await stabilityPage.setViewportSize({ width: 280, height: 653 });
   assert.ok(await stabilityPage.evaluate(() => document.documentElement.scrollWidth <= innerWidth), "the settings entry fits a 280px home header");
   await stabilityPage.locator("#openRulesPageButton").click();
@@ -1517,7 +1757,7 @@ try {
   assert.equal(await stabilityPage.locator("#privacyModalContactLink").getAttribute("href"), "mailto:contact.gamevilla@gmail.com");
   await stabilityPage.locator("#closePrivacyButton").click();
   await stabilityPage.locator("#saveSettingsButton").click();
-  await stabilityPage.reload({ waitUntil: "domcontentloaded" });
+  await reloadReadyPage(stabilityPage);
   await stabilityPage.locator("#openSettingsButton").click();
   assert.equal(await stabilityPage.locator("#settingsSoundEnabled").isChecked(), false, "sound preference survives reload");
   assert.equal(await stabilityPage.locator("#settingsParticlesEnabled").isChecked(), false, "VFX preference survives reload");
@@ -1610,18 +1850,62 @@ try {
   await stabilityPage.locator("#quitButton").click();
   assert.equal(await stabilityPage.evaluate(() => window.__questionIntervals.size), 0);
   await stabilityPage.locator("#levelBackButton").click();
-  await stabilityPage.evaluate(() => localStorage.setItem("unrelated-app-data", "keep"));
+  await stabilityPage.evaluate(() => {
+    localStorage.setItem("unrelated-app-data", "keep");
+    localStorage.setItem("quizverse-daily-share-state-v1", JSON.stringify({
+      version: 1,
+      lastShareDate: new Date().toISOString().slice(0, 10),
+      lastShareTimestamp: Date.now(),
+      currentStreak: 2,
+      totalClaims: 2,
+    }));
+    localStorage.setItem("quizverse-daily-login-state-v1", JSON.stringify({
+      version: 1,
+      lastLaunchDate: new Date().toISOString().slice(0, 10),
+      lastLaunchTimestamp: Date.now(),
+      totalLaunchDays: 1,
+      lastClaimDate: new Date().toISOString().slice(0, 10),
+      lastClaimTimestamp: Date.now(),
+      currentStreak: 1,
+      totalClaims: 1,
+    }));
+    localStorage.setItem("quizverse-daily-boss-state-v1", JSON.stringify({
+      version: 1,
+      ratingPoints: 45,
+      wins: 1,
+      draws: 0,
+      losses: 0,
+      lastAttemptDate: "",
+      status: "ready",
+      lastOutcome: "",
+      lastCoinsAwarded: 0,
+      lastRpDelta: 0,
+      lastResult: null,
+      active: null,
+    }));
+  });
   const savedCoinsBeforeReset = await stabilityPage.locator("#coinBalance").innerText();
   await stabilityPage.locator("#openSettingsButton").click();
   await stabilityPage.locator("#resetProgressButton").click();
   await stabilityPage.locator("#cancelResetProgressButton").click();
   assert.equal(await stabilityPage.locator("#coinBalance").innerText(), savedCoinsBeforeReset, "canceling reset preserves the wallet");
+  assert.notEqual(await stabilityPage.evaluate(() => localStorage.getItem("quizverse-daily-share-state-v1")), null, "canceling reset preserves the share streak");
+  assert.notEqual(await stabilityPage.evaluate(() => localStorage.getItem("quizverse-daily-login-state-v1")), null, "canceling reset preserves the login streak");
+  assert.notEqual(await stabilityPage.evaluate(() => localStorage.getItem("quizverse-daily-boss-state-v1")), null, "canceling reset preserves the daily arena rank");
   await stabilityPage.locator("#resetProgressButton").click();
   await Promise.all([
     stabilityPage.waitForEvent("domcontentloaded"),
     stabilityPage.locator("#confirmResetProgressButton").click(),
   ]);
   assert.equal(await stabilityPage.locator("#coinBalance").innerText(), "0");
+  assert.equal(await stabilityPage.evaluate(() => localStorage.getItem("quizverse-daily-share-state-v1")), null, "confirmed reset clears the local share streak");
+  const resetLoginState = await stabilityPage.evaluate(() =>
+    JSON.parse(localStorage.getItem("quizverse-daily-login-state-v1"))
+  );
+  assert.equal(resetLoginState.currentStreak, 0, "confirmed reset clears the local login streak");
+  assert.equal(resetLoginState.totalClaims, 0, "confirmed reset clears login reward history");
+  assert.equal(resetLoginState.lastClaimDate, "", "a new visit after reset starts without a claimed reward");
+  assert.equal(await stabilityPage.evaluate(() => localStorage.getItem("quizverse-daily-boss-state-v1")), null, "confirmed reset clears daily arena progress");
   assert.equal(await stabilityPage.evaluate(() => localStorage.getItem("unrelated-app-data")), "keep", "reset never clears unrelated storage");
   assert.equal(await stabilityPage.evaluate(() => localStorage.getItem("quiz-orbit-particles-enabled")), "false", "reset preserves visual preferences");
   assert.equal(await stabilityPage.evaluate(() => localStorage.getItem("quiz-orbit-answer-sounds-muted")), "true", "reset preserves sound preferences");
@@ -1637,7 +1921,7 @@ try {
       Storage.prototype[method] = () => { throw new DOMException("Storage blocked", "SecurityError"); };
     }
   });
-  await deniedPage.goto(baseUrl, { waitUntil: "domcontentloaded" });
+  await loadReadyPage(deniedPage);
   await deniedPage.locator("#openSettingsButton").click();
   await deniedPage.locator("#settingsParticlesEnabled").uncheck();
   assert.match(await deniedPage.locator("#settingsStatus").innerText(), /this visit/);
@@ -1653,8 +1937,99 @@ try {
   assert.deepEqual(deniedErrors, []);
   await deniedContext.close();
 
+  const bossContext = await browser.newContext({
+    viewport: { width: 390, height: 844 },
+    isMobile: true,
+    hasTouch: true,
+    reducedMotion: "reduce",
+  });
+  const bossPage = await bossContext.newPage();
+  const bossErrors = [];
+  bossPage.on("pageerror", (error) => bossErrors.push(error.message));
+  await bossPage.addInitScript(() => {
+    const NativeWeakMap = window.WeakMap;
+    window.__arenaTestAnswers = new Map();
+    window.WeakMap = class CapturingWeakMap extends NativeWeakMap {
+      set(key, value) {
+        if (key && typeof key.question?.en === "string") {
+          window.__arenaTestAnswers.set(key.question.en, value);
+        }
+        return super.set(key, value);
+      }
+    };
+    Object.defineProperty(Object.getPrototypeOf(window.crypto), "getRandomValues", {
+      configurable: true,
+      value(array) {
+        array.fill(0);
+        return array;
+      },
+    });
+    Math.random = () => 0.99;
+  });
+  await loadReadyPage(bossPage);
+  await bossPage.locator("#openBossArenaButton").click();
+  assert.equal(await bossPage.locator("#bossArenaView").evaluate((node) => node.classList.contains("active")));
+  await bossPage.locator("#languageSelect").selectOption("es");
+  assert.equal(await bossPage.locator("#bossArenaTitle").innerText(), "Arena del Jefe", "Arena copy localizes to Spanish");
+  await bossPage.locator("#languageSelect").selectOption("en");
+  await bossPage.locator("#bossCategorySelect").selectOption("General Knowledge");
+  await bossPage.locator("#bossStartButton").click();
+  await bossPage.locator("#bossBattlePanel").waitFor({ state: "visible" });
+  assert.equal(await bossPage.locator(".boss-option").count(), 4, "the duel presents four touch-ready choices");
+  assert.ok(
+    await bossPage.locator(".boss-option").first().evaluate((node) => node.getBoundingClientRect().height >= 48),
+    "Boss Arena options meet the mobile touch target size",
+  );
+  const initialBossState = await bossPage.evaluate(() =>
+    JSON.parse(localStorage.getItem("quizverse-daily-boss-state-v1"))
+  );
+  assert.equal(initialBossState.status, "in-progress");
+  assert.equal(initialBossState.active.questionIds.length, 10, "the Arena samples ten unique questions");
+  assert.equal(new Set(initialBossState.active.questionIds).size, 10);
+  const initialBossQuestion = await bossPage.locator("#bossQuestionText").innerText();
+  await reloadReadyPage(bossPage);
+  await bossPage.locator("#openBossArenaButton").click();
+  await bossPage.locator("#bossBattlePanel").waitFor({ state: "visible" });
+  assert.equal(await bossPage.locator("#bossQuestionText").innerText(), initialBossQuestion, "an in-progress daily duel resumes on the same question");
+  assert.equal(await bossPage.locator("#bossRoundLabel").innerText(), "Question 1 of 10 · General Knowledge");
+  for (let questionIndex = 0; questionIndex < 10; questionIndex += 1) {
+    const prompt = await bossPage.locator("#bossQuestionText").innerText();
+    const answerIndex = await bossPage.evaluate((text) => window.__arenaTestAnswers.get(text), prompt);
+    assert.ok(Number.isInteger(answerIndex) && answerIndex >= 0 && answerIndex < 4, "the localized GK question has a concealed runtime answer");
+    await bossPage.locator(".boss-option").nth(answerIndex).click();
+    await bossPage.locator("#bossNextButton").waitFor({ state: "visible", timeout: 9_000 });
+    if (questionIndex < 9) {
+      const previousRoundLabel = await bossPage.locator("#bossRoundLabel").innerText();
+      await bossPage.locator("#bossNextButton").click();
+      await bossPage.waitForFunction(
+        (previous) => document.querySelector("#bossRoundLabel")?.textContent !== previous,
+        previousRoundLabel,
+      );
+    } else {
+      await bossPage.locator("#bossNextButton").click();
+    }
+  }
+  await bossPage.locator("#bossResultPanel").waitFor({ state: "visible" });
+  const completedBossState = await bossPage.evaluate(() =>
+    JSON.parse(localStorage.getItem("quizverse-daily-boss-state-v1"))
+  );
+  assert.equal(completedBossState.status, "completed");
+  assert.equal(completedBossState.lastResult.outcome, "win", "a player score above the simulated rival wins");
+  assert.equal(completedBossState.ratingPoints, 30, "Arena victory adds 30 rating points");
+  assert.equal(completedBossState.wins, 1);
+  assert.equal(completedBossState.lastCoinsAwarded, 100, "Arena victory pays its exclusive coin reward");
+  assert.ok(
+    JSON.parse(await bossPage.evaluate(() => localStorage.getItem("quiz-orbit-reward-collection"))).badges.includes("arenaChampion"),
+    "a first Arena win unlocks the collection badge",
+  );
+  await bossPage.locator("#bossResultHomeButton").click();
+  await bossPage.locator("#openBossArenaButton").click();
+  assert.equal(await bossPage.locator("#bossStartButton").isDisabled(), true, "a completed daily attempt cannot be replayed on the same UTC day");
+  assert.deepEqual(bossErrors, [], `Boss Arena raised browser errors: ${bossErrors.join("; ")}`);
+  await bossContext.close();
+
   assert.deepEqual(pageErrors, [], `The game page raised browser errors: ${pageErrors.join("; ")}`);
-  console.log("Browser check passed: responsive layouts, localized rounds, progression and coins, timer/focus cleanup, four lifelines, Settings/Privacy, confirmed reset, rewards, and storage recovery.");
+  console.log("Browser check passed: responsive layouts, localized rounds, progression/rewards, timer and focus cleanup, Settings/Privacy, storage recovery, and a daily Boss Arena duel with rank, payout, badge, resume, and one-attempt enforcement.");
 } finally {
   await browser?.close();
   server.kill("SIGTERM");
