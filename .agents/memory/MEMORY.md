@@ -6,6 +6,7 @@
 - [Minimal quiz and results UI](minimal-quiz-screen.md) — Keep play uncluttered and results focused on score, accuracy, stars, coin payout, and two clear actions.
 - [Modal timing and local reset](game-modal-timing.md) — Modals stop callbacks, not allotted time; progress resets preserve preferences and unrelated storage.
 - [Full-scroll level roadmap](level-map-design.md) — Show all 500 levels in one touch-scrollable grid with compact category tabs and unambiguous state markers.
+- [Header and back navigation](quiz-navigation-layout.md) — Keep logos out of the top-left shared header; place map and quiz return actions below their main content.
 - [Forgiving coin progression](coin-level-progression.md) — Clear 10-question levels with six correct; each paid progression step costs 100 coins and remains distinct from a quiz clear.
 - [Home coin vault visibility](home-coin-vault.md) — Keep the saved coin balance prominent on Home and visibly responsive to earns, spends, and synced changes.
 - [Quiz category editorial policy](general-knowledge-editorial-policy.md) — Keep each mode within its factual or reasoning domain; date and source current affairs.

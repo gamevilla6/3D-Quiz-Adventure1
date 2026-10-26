@@ -104,7 +104,7 @@
         .loading-orbit { animation-duration: 4s; }
         .loading-screen { transition-duration: .12s; }
       }
-      .topbar { max-width: 1220px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; }
+      .topbar { max-width: 1220px; margin: 0 auto; display: flex; align-items: center; justify-content: flex-end; }
       .brand { min-height: 48px; display: flex; gap: 11px; align-items: center; color: var(--ink); text-decoration: none; font-weight: 730; letter-spacing: -.04em; }
       .brand-mark { width: 34px; height: 34px; display: grid; place-items: center; border-radius: 12px; color: white; background: linear-gradient(145deg, #7198f4, #4d70da); box-shadow: 0 7px 16px rgba(76,120,232,.24); }
       .brand-mark svg { width: 19px; height: 19px; }
@@ -1152,27 +1152,53 @@
       .level-selection { padding: clamp(10px, 2vh, 20px) 0 28px; }
       .level-shell { max-width: 1120px; margin: 0 auto; }
       .level-toolbar {
-        display: grid;
-        grid-template-columns: 48px minmax(0, 1fr) auto;
+        display: flex;
+        justify-content: space-between;
         align-items: center;
         gap: 10px;
         margin: 0 0 12px;
       }
       .level-back-button {
-        display: grid;
-        width: 48px;
-        height: 48px;
-        place-items: center;
+        display: inline-flex;
+        width: auto;
+        min-width: 48px;
+        min-height: 48px;
+        align-items: center;
+        justify-content: center;
+        gap: 9px;
+        padding: 0 16px;
         color: #fff;
         border: 1px solid rgba(255,255,255,.3);
-        border-radius: 15px;
-        background: rgba(20,14,58,.45);
+        border-radius: 16px;
+        background: rgba(20,14,58,.64);
+        box-shadow: 0 10px 25px rgba(4, 5, 20, .18), inset 0 1px rgba(255,255,255,.1);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
         font: inherit;
-        font-size: 24px;
-        font-weight: 800;
+        font-size: 13px;
+        font-weight: 760;
         cursor: pointer;
+        touch-action: manipulation;
+        transition: transform .16s ease, background .16s ease, border-color .16s ease;
       }
-      .level-back-button:hover { background: rgba(80,58,173,.68); }
+      .level-back-button:hover { background: rgba(80,58,173,.78); border-color: rgba(174, 183, 255, .56); }
+      .level-back-button:active { transform: scale(.96); }
+      .level-back-button:focus-visible { outline: 3px solid #8ce8ff; outline-offset: 3px; }
+      .level-bottom-nav {
+        position: sticky;
+        bottom: max(8px, env(safe-area-inset-bottom));
+        z-index: 4;
+        width: fit-content;
+        max-width: 100%;
+        margin: 14px auto 0;
+        padding: 7px;
+        border: 1px solid rgba(190, 197, 255, .22);
+        border-radius: 22px;
+        background: rgba(11, 13, 37, .76);
+        box-shadow: 0 14px 34px rgba(3, 4, 18, .25), inset 0 1px rgba(255,255,255,.08);
+        backdrop-filter: blur(18px);
+        -webkit-backdrop-filter: blur(18px);
+      }
       .level-title { min-width: 0; margin: 0; color: #fff; font-size: clamp(22px, 4vw, 30px); line-height: 1.08; font-weight: 900; letter-spacing: -.035em; }
       .level-count { justify-self: end; max-width: 100%; padding: 8px 11px; color: #33245e; border: 1px solid rgba(255,255,255,.64); border-radius: 99px; background: rgba(255,255,255,.94); font-size: 11px; line-height: 1.15; font-weight: 850; text-align: center; font-variant-numeric: tabular-nums; }
       body[data-view="levels"] .top-note,
@@ -1317,15 +1343,15 @@
         .collection-panel { margin-top: 20px; padding: 15px; }
         .collection-stat { padding: 9px; }
         .game-sidebar .side-card:first-child .streak-hint { grid-column: 1 / -1; }
-        .level-grid { max-height: min(62svh, 620px); }
+        .level-grid { max-height: min(54svh, 620px); }
         .level-category-tabs { margin-right: -2px; }
         .level-unlock-actions { display: grid; grid-template-columns: 1fr 1fr; }
         .level-unlock-actions button { padding: 0 9px; font-size: 12px; }
         .result-actions > button { flex: 1 1 auto; }
       }
       @media (max-width: 390px) {
-        .level-toolbar { grid-template-columns: 48px minmax(0, 1fr); }
-        .level-count { grid-column: 2; justify-self: start; margin-top: -4px; }
+        .level-toolbar { flex-wrap: wrap; gap: 8px; }
+        .level-count { justify-self: start; margin-top: 0; }
       }
       /* Focused quiz HUD: cinematic glass panels, with the existing game controls
          kept in place so scoring, localization, and answer handlers stay unchanged. */
@@ -3585,21 +3611,25 @@
     .level-unlock-actions .level-unlock-confirm { width: 100%; }
     .sp-head { display: grid; grid-template-columns: 48px minmax(0, 1fr); align-items: start; gap: 13px; }
     .sp-icon-button.dialog-back-button { border-radius: 15px; }
-    .quiz-back-row { display: flex; justify-content: flex-start; margin: 0 0 10px; }
     #quitButton {
-      display: grid;
-      width: 48px;
+      display: inline-flex;
+      width: auto;
       min-width: 48px;
       min-height: 48px;
-      place-items: center;
-      padding: 0;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+      padding: 0 16px;
       color: #f0f2ff;
       border: 1px solid rgba(197, 200, 255, .25);
-      border-radius: 14px;
-      background: rgba(255, 255, 255, .07);
-      font-size: 20px;
+      border-radius: 16px;
+      background: rgba(255, 255, 255, .08);
+      font-size: 13px;
+      font-weight: 760;
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
+      touch-action: manipulation;
+      transition: transform .16s ease, background .16s ease, border-color .16s ease;
     }
     @media (prefers-reduced-motion: reduce) {
       .dialog-back-button { transition: none; }
@@ -3627,6 +3657,27 @@
     }
     .native-ad-slot[hidden] { display: none !important; }
     .native-ad-slot > span { pointer-events: none; }
+    .quiz-bottom-nav {
+      display: flex;
+      justify-content: center;
+      margin-top: 16px;
+      padding-top: 13px;
+      border-top: 1px solid rgba(165, 176, 218, .15);
+    }
+    #quitButton:hover { color: #fff; border-color: rgba(197, 200, 255, .44); background: rgba(255, 255, 255, .13); }
+    #quitButton:active { transform: scale(.96); }
+    #quitButton:focus-visible { outline: 3px solid #8ce8ff; outline-offset: 3px; }
+    @media (max-width: 650px) {
+      body[data-view="game"] #quitButton { min-width: 48px; min-height: 48px; padding: 0 16px; font-size: 13px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .level-back-button, #quitButton { transition: none; }
+      .level-back-button:active, #quitButton:active { transform: none; }
+    }
+    /* With the logo removed, all remaining header controls align to the right. */
+    .topbar { display: flex !important; justify-content: flex-end !important; }
+    .topbar > .brand { display: none !important; }
+    .topbar-actions { margin-left: auto; justify-content: flex-end; }
     @media (max-width: 540px) {
       .native-ad-slot { min-height: 58px; margin-top: 18px; }
     }
@@ -3654,12 +3705,6 @@
     <div class="coin-popup-layer" id="coinPopupLayer" aria-hidden="true"></div>
     <div class="app">
       <header class="topbar">
-        <a class="brand" href="#" id="brandHome" aria-label="QuizVerse 3D home">
-          <span class="brand-mark" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none"><path d="M12 3.5v3m0 11v3M3.5 12h3m11 0h3M6 6l2.1 2.1m7.8 7.8L18 18M18 6l-2.1 2.1m-7.8 7.8L6 18" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><circle cx="12" cy="12" r="4.2" stroke="currentColor" stroke-width="1.8"/></svg>
-          </span>
-          <span class="brand-name">QuizVerse 3D</span>
-        </a>
         <div class="topbar-actions">
           <div class="top-note"><span class="live-dot"></span><span id="topNoteText">A small space for curiosity</span></div>
           <div class="coin-balance-chip" id="coinBalanceChip" aria-label="Coin balance">
@@ -3995,10 +4040,6 @@
         <section class="view level-selection" id="levelView" aria-labelledby="levelTitle">
           <div class="level-shell">
             <div class="level-toolbar">
-              <button class="level-back-button" type="button" id="levelBackButton" aria-labelledby="levelBackLabel">
-                <span aria-hidden="true">←</span>
-                <span class="visually-hidden" id="levelBackLabel">Back to subjects</span>
-              </button>
               <h1 class="level-title" id="levelTitle">Choose a level</h1>
               <span class="level-count" id="levelCountLabel" aria-live="polite"></span>
             </div>
@@ -4011,6 +4052,12 @@
               role="complementary" aria-label="Level map advertisement placement" hidden>
               <span>Banner placement · Level Map</span>
             </aside>
+            <nav class="level-bottom-nav" aria-label="Level map navigation">
+              <button class="level-back-button" type="button" id="levelBackButton" aria-labelledby="levelBackLabel">
+                <span aria-hidden="true">←</span>
+                <span id="levelBackLabel">Back to subjects</span>
+              </button>
+            </nav>
             <dialog class="level-unlock-dialog" id="levelUnlockDialog" aria-labelledby="levelUnlockDialogTitle" aria-describedby="levelUnlockDialogBody">
               <div class="level-unlock-header">
                 <button class="dialog-back-button" type="button" id="cancelLevelUnlockButton" aria-label="Not now">
@@ -4097,11 +4144,6 @@
             </aside>
             <article class="quiz-card" id="quizCard">
               <div class="score-popups" id="scorePopups" aria-hidden="true"></div>
-              <div class="quiz-back-row">
-                <button class="text-button" type="button" id="quitButton" aria-labelledby="quitButtonLabel">
-                  <span aria-hidden="true">←</span><span class="visually-hidden" id="quitButtonLabel">Return to level map</span>
-                </button>
-              </div>
               <div class="quiz-meta">
                 <div class="category-tag"><span class="tag-dot"></span><span id="gameCategory">Science</span></div>
                 <div class="question-count" id="questionCount">01 <span aria-hidden="true">/</span> 04</div>
@@ -4117,6 +4159,11 @@
                 <!-- Hidden progression control lets the answer-reveal timer advance rounds without a visible extra button. -->
                 <button class="primary-button" type="button" id="nextButton" disabled hidden>Check answer</button>
               </div>
+              <footer class="quiz-bottom-nav">
+                <button class="text-button" type="button" id="quitButton" aria-labelledby="quitButtonLabel">
+                  <span aria-hidden="true">←</span><span id="quitButtonLabel">Return to level map</span>
+                </button>
+              </footer>
             </article>
           </div>
         </section>
@@ -4342,7 +4389,6 @@
           metaDescription: "Play QuizVerse 3D, a colorful 3D quiz game with general knowledge, category-based trivia, progressive levels, and 2026 current affairs questions.",
           language: "Language",
           topNote: "A small space for curiosity",
-          brandHome: "QuizVerse 3D home",
           loadingScreenLabel: "Loading QuizVerse 3D",
           loadingLabel: "Preparing your next challenge…",
           heroStatsGroup: "Live game statistics",
@@ -4548,7 +4594,6 @@
           metaDescription: "QuizVerse 3D খেলুন—সাধারণ জ্ঞান, বিষয়ভিত্তিক কুইজ, প্রগ্রেসিভ লেভেল এবং ২০২৬ সালের সাম্প্রতিক বিষয় নিয়ে রঙিন 3D কুইজ গেম।",
           language: "ভাষা",
           topNote: "কৌতূহলের জন্য ছোট্ট এক জগৎ",
-          brandHome: "QuizVerse 3D হোম",
           loadingScreenLabel: "QuizVerse 3D লোড হচ্ছে",
           loadingLabel: "আপনার পরের চ্যালেঞ্জ প্রস্তুত হচ্ছে…",
           heroStatsGroup: "গেমের সরাসরি পরিসংখ্যান",
@@ -4754,7 +4799,6 @@
           metaDescription: "QuizVerse 3D खेलें—सामान्य ज्ञान, विषय-आधारित ट्रिविया, प्रगतिशील स्तर और 2026 के समसामयिक प्रश्नों वाला रंगीन 3D क्विज़ गेम।",
           language: "भाषा",
           topNote: "जिज्ञासा के लिए एक छोटी-सी जगह",
-          brandHome: "QuizVerse 3D होम",
           loadingScreenLabel: "QuizVerse 3D लोड हो रहा है",
           loadingLabel: "आपकी अगली चुनौती तैयार हो रही है…",
           heroStatsGroup: "लाइव गेम आँकड़े",
@@ -4960,7 +5004,6 @@
           metaDescription: "Juega a QuizVerse 3D, un colorido juego de preguntas 3D con cultura general, categorías, niveles progresivos y actualidad de 2026.",
           language: "Idioma",
           topNote: "Un pequeño espacio para la curiosidad",
-          brandHome: "Inicio de QuizVerse 3D",
           loadingScreenLabel: "Cargando QuizVerse 3D",
           loadingLabel: "Preparando tu próximo reto…",
           heroStatsGroup: "Estadísticas en vivo",
@@ -5166,7 +5209,6 @@
           metaDescription: "Jouez à QuizVerse 3D, un jeu de quiz 3D coloré avec culture générale, catégories, niveaux progressifs et actualités de 2026.",
           language: "Langue",
           topNote: "Un petit espace pour la curiosité",
-          brandHome: "Accueil de QuizVerse 3D",
           loadingScreenLabel: "Chargement de QuizVerse 3D",
           loadingLabel: "Préparation de votre prochain défi…",
           heroStatsGroup: "Statistiques du jeu en direct",
@@ -10307,13 +10349,13 @@
           `${formatNumber(LEVELS_PER_CATEGORY * PROGRESSION_CATEGORIES.length)}+`;
         document.getElementById("heroStatsTicker").setAttribute("aria-label", currentText.heroStatsGroup);
         document.getElementById("welcomeTitle").innerHTML = currentText.welcomeTitle;
-        document.getElementById("brandHome").setAttribute("aria-label", currentText.brandHome);
         document.getElementById("categoryGrid").setAttribute("aria-label", currentText.categoryGroup);
         document.getElementById("gameView").setAttribute("aria-label", currentText.quizRound);
         document.getElementById("progressTrack").setAttribute("aria-label", currentText.progress);
         document.getElementById("iqTimer").setAttribute("aria-label", currentText.questionTimer);
         document.getElementById("levelGrid").setAttribute("aria-label", currentText.levelSelectTitle);
         document.getElementById("levelCategoryTabs").setAttribute("aria-label", currentText.levelCategoryFilter);
+        document.querySelector(".level-bottom-nav").setAttribute("aria-label", currentText.levelBack);
         document.getElementById("closeRewardsButton").setAttribute("aria-label", currentText.closeRewards);
         optionsElement.setAttribute("aria-label", currentText.answerOptions);
         updateResultActionLabels();
@@ -10614,10 +10656,6 @@
           requestNativeInterstitialOpportunity(currentLevel, currentLevel + 1);
         }
         startQuiz(currentCategory, hasNextLevel ? currentLevel + 1 : currentLevel || 1);
-      });
-      document.getElementById("brandHome").addEventListener("click", (event) => {
-        event.preventDefault();
-        showView("welcome");
       });
       window.addEventListener("storage", (event) => {
         if (event.key !== null && event.key !== REWARD_COLLECTION_STORAGE_KEY) return;

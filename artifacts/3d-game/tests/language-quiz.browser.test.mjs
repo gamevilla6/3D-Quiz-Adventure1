@@ -166,6 +166,22 @@ try {
   await adPage.locator("#startGameButton").click();
   assert.equal(await adPage.locator("#levelMapBannerAdSlot").isVisible(), true);
   assert.equal(await adPage.locator("#homeBannerAdSlot").isVisible(), false);
+  const levelNavigationLayout = await adPage.evaluate(() => {
+    const grid = document.querySelector("#levelGrid").getBoundingClientRect();
+    const back = document.querySelector("#levelBackButton").getBoundingClientRect();
+    return {
+      gridBottom: grid.bottom,
+      backTop: back.top,
+      backHeight: back.height,
+      backDock: Boolean(document.querySelector("#levelBackButton").closest(".level-bottom-nav")),
+      topbarLogoCount: document.querySelectorAll(".topbar .brand").length,
+      horizontalOverflow: document.documentElement.scrollWidth > window.innerWidth,
+    };
+  });
+  assert.ok(levelNavigationLayout.backTop >= levelNavigationLayout.gridBottom, "the level-map back action sits below the roadmap, not in its top-left header");
+  assert.ok(levelNavigationLayout.backHeight >= 48 && levelNavigationLayout.backDock, "the bottom navigation dock is touch-sized");
+  assert.equal(levelNavigationLayout.topbarLogoCount, 0, "the level map header has no top-left logo");
+  assert.equal(levelNavigationLayout.horizontalOverflow, false);
   const bannerEvents = await adPage.evaluate(() => window.__quizVerseAdEvents);
   assert.deepEqual(
     bannerEvents.map((event) => event.placement),
@@ -176,6 +192,15 @@ try {
   await acceptRulesBriefingIfOpen(adPage);
   assert.equal(await adPage.locator("#homeBannerAdSlot").isVisible(), false);
   assert.equal(await adPage.locator("#levelMapBannerAdSlot").isVisible(), false);
+  const quizNavigationLayout = await adPage.evaluate(() => ({
+    backTop: document.querySelector("#quitButton").getBoundingClientRect().top,
+    optionsBottom: document.querySelector("#options").getBoundingClientRect().bottom,
+    backText: document.querySelector("#quitButtonLabel").textContent.trim(),
+    topbarLogoCount: document.querySelectorAll(".topbar .brand").length,
+  }));
+  assert.ok(quizNavigationLayout.backTop >= quizNavigationLayout.optionsBottom, "quiz return navigation is below answers instead of crowding the HUD");
+  assert.match(quizNavigationLayout.backText, /level map/i);
+  assert.equal(quizNavigationLayout.topbarLogoCount, 0, "the gameplay header contains no logo");
   assert.equal(
     (await adPage.evaluate(() => window.__quizVerseAdEvents)).length,
     2,
@@ -243,11 +268,11 @@ try {
   await page.reload({ waitUntil: "domcontentloaded" });
   assert.equal(await page.locator("html").getAttribute("lang"), "en");
   assert.equal(await page.locator("#welcomeTitle").innerText(), "QuizVerse 3D");
-  assert.equal(await page.locator(".brand-name").innerText(), "QuizVerse 3D");
+  assert.equal(await page.locator(".topbar .brand").count(), 0, "the shared header has no top-left logo");
   assert.equal(await page.title(), "QuizVerse 3D: General Knowledge & Trivia");
   assert.match(await page.locator('meta[name="viewport"]').getAttribute("content"), /viewport-fit=cover/);
   const mobileHomeTargets = await page.evaluate(() =>
-    ["#brandHome", "#languageSelect", "#soundToggle", "#startGameButton", "#openRewardsButton", "#homeModesButton", "#openRulesPageButton", "#openPrivacyPageButton", "#openPrivacyModalButton", "#openSettingsHomeButton", "#homeSoundToggle", ".category"]
+    ["#languageSelect", "#soundToggle", "#startGameButton", "#openRewardsButton", "#homeModesButton", "#openRulesPageButton", "#openPrivacyPageButton", "#openPrivacyModalButton", "#openSettingsHomeButton", "#homeSoundToggle", ".category"]
       .map((selector) => {
         const rect = document.querySelector(selector).getBoundingClientRect();
         return { width: rect.width, height: rect.height };
@@ -271,15 +296,14 @@ try {
   assert.match(mobileVaultStyle.blur, /blur\(16px\)/, "the home coin vault uses a glass blur");
   await page.setViewportSize({ width: 320, height: 720 });
   const narrowHeader = await page.evaluate(() => {
-    const brand = document.querySelector("#brandHome").getBoundingClientRect();
     const actions = document.querySelector(".topbar-actions").getBoundingClientRect();
-    return { scrollWidth: document.documentElement.scrollWidth, viewport: innerWidth, brandRight: brand.right, actionsLeft: actions.left };
+    return { scrollWidth: document.documentElement.scrollWidth, viewport: innerWidth, actionsLeft: actions.left, actionsRight: actions.right };
   });
   assert.ok(narrowHeader.scrollWidth <= narrowHeader.viewport, "the home vault and controls do not overflow at 320px");
-  assert.ok(narrowHeader.brandRight <= narrowHeader.actionsLeft + 1, `the brand and home controls do not overlap: ${JSON.stringify(narrowHeader)}`);
+  assert.ok(narrowHeader.actionsRight <= narrowHeader.viewport, `the compact header controls stay in the viewport: ${JSON.stringify(narrowHeader)}`);
   await page.setViewportSize({ width: 280, height: 653 });
   const foldableHomeTargets = await page.evaluate(() => {
-    const selectors = ["#brandHome", "#languageSelect", "#soundToggle", "#startGameButton", "#openRewardsButton", "#homeModesButton", "#openRulesPageButton", "#openPrivacyPageButton", "#openPrivacyModalButton", "#openSettingsHomeButton", "#homeSoundToggle", ".category"];
+    const selectors = ["#languageSelect", "#soundToggle", "#startGameButton", "#openRewardsButton", "#homeModesButton", "#openRulesPageButton", "#openPrivacyPageButton", "#openPrivacyModalButton", "#openSettingsHomeButton", "#homeSoundToggle", ".category"];
     return {
       pageWidth: document.documentElement.scrollWidth,
       viewportWidth: innerWidth,
@@ -287,12 +311,12 @@ try {
         const rect = document.querySelector(selector).getBoundingClientRect();
         return { width: rect.width, height: rect.height };
       }),
-      brandRight: document.querySelector("#brandHome").getBoundingClientRect().right,
       actionsLeft: document.querySelector(".topbar-actions").getBoundingClientRect().left,
+      actionsRight: document.querySelector(".topbar-actions").getBoundingClientRect().right,
     };
   });
   assert.ok(foldableHomeTargets.pageWidth <= foldableHomeTargets.viewportWidth, "the home screen has no overflow at 280px");
-  assert.ok(foldableHomeTargets.brandRight <= foldableHomeTargets.actionsLeft + 1, "the compact brand does not overlap home controls");
+  assert.ok(foldableHomeTargets.actionsRight <= foldableHomeTargets.viewportWidth, "header controls remain inside the viewport");
   assert.ok(
     foldableHomeTargets.targets.every(({ width, height }) => width >= 48 && height >= 48),
     `all home controls remain touch-sized at 280px: ${JSON.stringify(foldableHomeTargets.targets)}`,
@@ -1067,7 +1091,6 @@ try {
         viewportWidth: window.innerWidth,
         pageWidth: document.documentElement.scrollWidth,
         cardWidth: box.width,
-        brand: rect("#brandHome"),
         coin: rect("#coinBalanceChip"),
         language: rect("#languageSelect"),
         soundVisible: getComputedStyle(document.querySelector("#soundToggle")).display !== "none",
@@ -1083,7 +1106,6 @@ try {
     });
     assert.ok(resultBounds.pageWidth <= resultBounds.viewportWidth, `no horizontal overflow at ${width}px`);
     assert.ok(resultBounds.cardWidth <= resultBounds.viewportWidth, `result card fits at ${width}px`);
-    assert.ok(resultBounds.brand.right <= resultBounds.coin.left, `brand and coin counter do not overlap at ${width}px`);
     assert.ok(resultBounds.coin.right <= resultBounds.language.left, `coin counter and language selector do not overlap at ${width}px`);
     assert.equal(resultBounds.soundVisible, false, `the result header stays compact at ${width}px`);
     assert.equal(resultBounds.popupDisplay, "none", `coin popups do not cover the result header at ${width}px`);
