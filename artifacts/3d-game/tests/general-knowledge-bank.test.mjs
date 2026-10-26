@@ -127,4 +127,25 @@ for (const [category, questions] of Object.entries(categoryBanks)) {
     }
   }
 }
+const categoryPoolSource = html.slice(
+  html.indexOf("function getCategoryQuestionPool("),
+  html.indexOf("function selectRoundQuestionIndexes("),
+);
+const categoryPoolEngine = new Function("randomIndex", `
+  ${bankSource}
+  ${categoryScopeSource}
+  const categoryLevels = Object.fromEntries(PROGRESSION_CATEGORIES.map(category => [category, Array.from({length: 500}, (_, i) => ({level: i + 1}))]));
+  const answers = new WeakMap();
+  function storeConcealedAnswer(item, answer) { answers.set(item, answer); return item; }
+  function readConcealedAnswer(item) { return answers.has(item) ? answers.get(item) : item.answer; }
+  let activeQuestionPool = [];
+  ${categoryPoolSource}
+  return category => getCategoryQuestionPool(category, 1);
+`)(randomInt);
+for (const category of ["Science & Technology", "Pop Culture & Movies", "History & Geography"]) {
+  const pool = categoryPoolEngine(category);
+  assert.equal(pool.length, categoryBanks[category].length);
+  assert.ok(pool.every((item) => item.source === "trivia" && !item.id.startsWith("generated-")));
+  assert.deepEqual(pool.map((item) => item.id).sort(), categoryBanks[category].map((item) => item.id).sort());
+}
 console.log("PASS: strict category scopes, 2026 sources, five locales, all 500 GK levels and repeat-free rounds.");

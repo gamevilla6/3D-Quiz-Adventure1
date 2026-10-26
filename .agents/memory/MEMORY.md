@@ -7,4 +7,4 @@
 - [Full-scroll level roadmap](level-map-design.md) — Show all 500 levels in one touch-scrollable grid with compact category tabs and unambiguous state markers.
 - [Forgiving coin progression](coin-level-progression.md) — Clear 10-question levels with six correct; each paid progression step costs 100 coins and remains distinct from a quiz clear.
 - [Home coin vault visibility](home-coin-vault.md) — Keep the saved coin balance prominent on Home and visibly responsive to earns, spends, and synced changes.
-- [Pure GK editorial policy](general-knowledge-editorial-policy.md) — Keep GK factual, not generated arithmetic; verify and date current affairs, distinguishing scheduled from completed events.
+- [Quiz category editorial policy](general-knowledge-editorial-policy.md) — Keep each mode within its factual or reasoning domain; date and source current affairs.

@@ -5942,6 +5942,24 @@
             if (!subject || !allowedSubjects.has(subject)) {
               throw new Error(`Question does not match the ${category} subject filter: ${item.question.en}`);
             }
+            const validTranslations = GK_LANGUAGES.every((language) =>
+              typeof item.question?.[language] === "string" && item.question[language].trim() &&
+              item.options?.[language]?.length === 4 &&
+              item.options[language].every((option) => typeof option === "string" && option.trim()) &&
+              new Set(item.options[language]).size === 4
+            );
+            const validCurrentRecord = item.year === undefined ||
+              (item.year === GK_CONTENT_YEAR && item.reviewedAt === GK_REVIEWED_AT &&
+                item.event && /^\d{4}-\d{2}-\d{2}$/.test(item.eventDate ?? "") &&
+                item.references?.length &&
+                item.references.every((url) => Object.values(GK_SOURCES).includes(url)) &&
+                ["completed", "designated", "scheduled"].includes(item.status) &&
+                (item.status !== "completed" || item.eventDate <= GK_REVIEWED_AT) &&
+                (item.status !== "scheduled" || item.eventDate > GK_REVIEWED_AT));
+            if (!validTranslations || !Number.isInteger(item.answer) || item.answer < 0 ||
+                item.answer > 3 || !validCurrentRecord) {
+              throw new Error(`Invalid localized or unverified ${category} question: ${item.id ?? item.question.en}`);
+            }
             return {
               ...item,
               id: item.id ?? `${category.toLowerCase().replace(/[^a-z0-9]+/g, "-")}-${index}`,
