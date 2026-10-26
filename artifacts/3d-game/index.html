@@ -3522,6 +3522,66 @@
       body[data-view="privacy"] .sound-toggle span { display: none; }
       .topbar-actions { gap: 4px !important; }
     }
+
+    /* Contextual back controls use one shared, thumb-sized glass button style. */
+    .dialog-back-button {
+      display: grid;
+      width: 48px;
+      min-width: 48px;
+      height: 48px;
+      place-items: center;
+      flex: 0 0 48px;
+      padding: 0;
+      color: #f4f6ff;
+      border: 1px solid rgba(180, 198, 255, .28);
+      border-radius: 15px;
+      background: rgba(255, 255, 255, .08);
+      box-shadow: inset 0 1px rgba(255,255,255,.08);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      font: inherit;
+      font-size: 23px;
+      font-weight: 800;
+      cursor: pointer;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
+      transition: transform .16s ease, background .16s ease, border-color .16s ease;
+    }
+    .dialog-back-button:hover { background: rgba(123, 118, 255, .2); border-color: rgba(159, 207, 255, .58); }
+    .dialog-back-button:active { transform: scale(.95); }
+    .dialog-back-button:focus-visible { outline: 3px solid #8ce8ff; outline-offset: 3px; }
+    .rewards-dialog-header { display: grid; grid-template-columns: 48px minmax(0, 1fr); align-items: start; }
+    .rewards-dialog-header .rewards-close-button { width: 48px; height: 48px; font-size: 22px; }
+    .rules-start-heading { display: grid; grid-template-columns: 48px minmax(0, 1fr); align-items: start; gap: 13px; margin-bottom: 12px; }
+    .rules-start-heading > div { min-width: 0; }
+    .rules-start-heading h2 { margin-top: 8px; }
+    .rules-modal-actions { grid-template-columns: minmax(0, 1fr); }
+    .level-unlock-header { display: grid; grid-template-columns: 48px minmax(0, 1fr); align-items: center; gap: 13px; margin-bottom: 12px; }
+    .level-unlock-header h2 { min-width: 0; margin: 0; }
+    .level-unlock-actions { margin-top: 18px; }
+    .level-unlock-actions .level-unlock-confirm { width: 100%; }
+    .sp-head { display: grid; grid-template-columns: 48px minmax(0, 1fr); align-items: start; gap: 13px; }
+    .sp-icon-button.dialog-back-button { border-radius: 15px; }
+    .quiz-back-row { display: flex; justify-content: flex-start; margin: 0 0 10px; }
+    #quitButton {
+      display: grid;
+      width: 48px;
+      min-width: 48px;
+      min-height: 48px;
+      place-items: center;
+      padding: 0;
+      color: #f0f2ff;
+      border: 1px solid rgba(197, 200, 255, .25);
+      border-radius: 14px;
+      background: rgba(255, 255, 255, .07);
+      font-size: 20px;
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .dialog-back-button { transition: none; }
+      .dialog-back-button:active { transform: none; }
+    }
     </style>
   </head>
   <body data-view="welcome">
@@ -3780,11 +3840,13 @@
           <dialog class="rewards-dialog" id="rewardsDialog" aria-labelledby="rewardsDialogTitle" aria-describedby="rewardsDialogDescription">
             <div class="rewards-dialog-shell">
               <header class="rewards-dialog-header">
+                <button class="rewards-close-button dialog-back-button" type="button" id="closeRewardsButton" aria-label="Close rewards dashboard">
+                  <span aria-hidden="true">←</span>
+                </button>
                 <div class="rewards-dialog-heading">
                   <h2 class="rewards-dialog-title" id="rewardsDialogTitle">Your Collection</h2>
                   <p class="rewards-dialog-description" id="rewardsDialogDescription">Your progress, trophies, badges, and game-only IQ estimate.</p>
                 </div>
-                <button class="rewards-close-button" type="button" id="closeRewardsButton" aria-label="Close rewards dashboard"><span aria-hidden="true">×</span></button>
               </header>
               <div class="collection-filter-toolbar" role="region" aria-labelledby="dashboardFiltersTitle">
                 <h3 class="collection-filter-heading" id="dashboardFiltersTitle">Collection filters</h3>
@@ -3890,12 +3952,16 @@
             <p class="map-unlock-notice" id="mapUnlockNotice" role="status" aria-live="polite" hidden></p>
             <div class="level-grid" id="levelGrid" role="group" aria-label="Choose a level"></div>
             <dialog class="level-unlock-dialog" id="levelUnlockDialog" aria-labelledby="levelUnlockDialogTitle" aria-describedby="levelUnlockDialogBody">
-              <h2 id="levelUnlockDialogTitle">Unlock a level</h2>
+              <div class="level-unlock-header">
+                <button class="dialog-back-button" type="button" id="cancelLevelUnlockButton" aria-label="Not now">
+                  <span aria-hidden="true">←</span><span class="visually-hidden" id="cancelLevelUnlockLabel">Not now</span>
+                </button>
+                <h2 id="levelUnlockDialogTitle">Unlock a level</h2>
+              </div>
               <p id="levelUnlockDialogBody"></p>
               <p class="level-unlock-balance" id="levelUnlockBalance"></p>
               <p class="level-unlock-shortfall" id="levelUnlockShortfall" aria-live="polite" hidden></p>
               <div class="level-unlock-actions">
-                <button type="button" id="cancelLevelUnlockButton">Not now</button>
                 <button class="level-unlock-confirm" type="button" id="confirmLevelUnlockButton">Unlock</button>
               </div>
             </dialog>
@@ -3971,8 +4037,12 @@
             </aside>
             <article class="quiz-card" id="quizCard">
               <div class="score-popups" id="scorePopups" aria-hidden="true"></div>
+              <div class="quiz-back-row">
+                <button class="text-button" type="button" id="quitButton" aria-labelledby="quitButtonLabel">
+                  <span aria-hidden="true">←</span><span class="visually-hidden" id="quitButtonLabel">Return to level map</span>
+                </button>
+              </div>
               <div class="quiz-meta">
-                <button class="text-button" type="button" id="quitButton">← <span id="quitButtonLabel">Choose another subject</span></button>
                 <div class="category-tag"><span class="tag-dot"></span><span id="gameCategory">Science</span></div>
                 <div class="question-count" id="questionCount">01 <span aria-hidden="true">/</span> 04</div>
               </div>
@@ -4049,8 +4119,15 @@
         </section>
         <dialog class="rules-start-dialog" id="rulesStartDialog" aria-labelledby="rulesModalTitle" aria-describedby="rulesModalDescription">
           <div class="rules-start-shell">
-            <p class="rules-modal-eyebrow" id="rulesModalEyebrow">MISSION BRIEFING</p>
-            <h2 id="rulesModalTitle">A few rules before you start</h2>
+            <div class="rules-start-heading">
+              <button class="dialog-back-button" type="button" id="cancelRulesStartButton" aria-label="Not now">
+                <span aria-hidden="true">←</span><span class="visually-hidden" id="cancelRulesStartLabel">Not now</span>
+              </button>
+              <div>
+                <p class="rules-modal-eyebrow" id="rulesModalEyebrow">MISSION BRIEFING</p>
+                <h2 id="rulesModalTitle">A few rules before you start</h2>
+              </div>
+            </div>
             <p class="rules-modal-description" id="rulesModalDescription">Everything you need for your first level.</p>
             <ul class="rules-modal-list">
               <li class="rules-modal-item">
@@ -4071,7 +4148,6 @@
               </li>
             </ul>
             <div class="rules-modal-actions">
-              <button class="rules-modal-cancel" type="button" id="cancelRulesStartButton">Not now</button>
               <button class="rules-modal-confirm" type="button" id="confirmRulesStartButton">Got it — let’s play</button>
             </div>
             <!-- Quick privacy access from rules -->
@@ -4099,8 +4175,10 @@
         <!-- Settings dialog (native, focus-contained) -->
         <dialog class="sp-dialog" id="settingsDialog" aria-labelledby="settingsTitle" aria-describedby="settingsDescription">
           <div class="sp-head">
+            <button class="sp-icon-button dialog-back-button" type="button" id="closeSettingsButton" aria-label="Back">
+              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M19 12H5m7-7-7 7 7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
             <div><h2 id="settingsTitle">Settings</h2><p id="settingsDescription">Tune sound, effects and language.</p></div>
-            <button class="sp-icon-button" type="button" id="closeSettingsButton" aria-label="Close settings"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
           </div>
           <div class="sp-body">
             <div class="sp-row"><div><label id="settingsSoundLabel" for="settingsSoundEnabled">Sound effects</label><p id="settingsSoundDescription">Answer and result cues.</p></div><input class="sp-switch" type="checkbox" id="settingsSoundEnabled" role="switch" aria-labelledby="settingsSoundLabel" aria-describedby="settingsSoundDescription"></div>
@@ -4124,8 +4202,10 @@
         <!-- Privacy quick dialog -->
         <dialog class="sp-dialog" id="privacyDialog" aria-labelledby="privacyModalTitle" aria-describedby="privacyModalDescription">
           <div class="sp-head">
+            <button class="sp-icon-button dialog-back-button" type="button" id="closePrivacyButton" aria-label="Back">
+              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M19 12H5m7-7-7 7 7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
             <div><h2 id="privacyModalTitle">Privacy</h2><p id="privacyModalDescription">A short summary.</p></div>
-            <button class="sp-icon-button" type="button" id="closePrivacyButton" aria-label="Close privacy"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
           </div>
           <div class="sp-body"><div id="privacyModalContent"></div><a class="sp-link" href="mailto:contact.gamevilla@gmail.com" id="privacyModalContactLink">contact.gamevilla<wbr>@gmail.com</a></div>
           <div class="sp-foot"><button class="sp-btn sp-btn-primary" type="button" id="privacyFullPageButton">Full privacy page</button></div>
@@ -4304,6 +4384,7 @@
           retryLevel: "Retry level",
           playNextLevel: "Play next level",
           returnLevelMap: "Return to level map",
+          resumeRoundNotice: "Round paused. Choose this level to resume.",
           streak: "Streak",
           streakHint: "3 in a row: 2× · 5: 3×",
           streakCombo: "🔥 {streak} streak · {multiplier}× combo",
@@ -4509,6 +4590,7 @@
           retryLevel: "আবার খেলুন",
           playNextLevel: "পরের লেভেল খেলুন",
           returnLevelMap: "লেভেল ম্যাপে ফিরুন",
+          resumeRoundNotice: "রাউন্ড থামানো হয়েছে। আবার শুরু করতে এই লেভেল বেছে নিন।",
           streak: "ধারাবাহিক সঠিক উত্তর",
           streakHint: "টানা ৩টি: ২× · ৫টি: ৩×",
           streakCombo: "🔥 টানা {streak}টি · {multiplier}× কম্বো",
@@ -4714,6 +4796,7 @@
           retryLevel: "स्तर फिर से खेलें",
           playNextLevel: "अगला स्तर खेलें",
           returnLevelMap: "स्तर मानचित्र पर लौटें",
+          resumeRoundNotice: "राउंड रुका हुआ है। जारी रखने के लिए यही स्तर चुनें।",
           streak: "लगातार सही जवाब",
           streakHint: "लगातार 3: 2× · 5: 3×",
           streakCombo: "🔥 लगातार {streak} · {multiplier}× कॉम्बो",
@@ -4919,6 +5002,7 @@
           retryLevel: "Repetir nivel",
           playNextLevel: "Jugar al siguiente nivel",
           returnLevelMap: "Volver al mapa de niveles",
+          resumeRoundNotice: "Ronda en pausa. Elige este nivel para continuar.",
           streak: "Racha",
           streakHint: "3 seguidas: 2× · 5: 3×",
           streakCombo: "🔥 Racha de {streak} · combo ×{multiplier}",
@@ -5124,6 +5208,7 @@
           retryLevel: "Rejouer le niveau",
           playNextLevel: "Jouer au niveau suivant",
           returnLevelMap: "Retour à la carte des niveaux",
+          resumeRoundNotice: "Manche en pause. Choisissez ce niveau pour reprendre.",
           streak: "Série",
           streakHint: "3 de suite : ×2 · 5 : ×3",
           streakCombo: "🔥 Série de {streak} · combo ×{multiplier}",
@@ -7354,6 +7439,7 @@
           answered = snapshot.answered;
           lastSelected = snapshot.lastSelected;
           clearAnswerAdvanceTimeout();
+          pendingAnswerAdvance = snapshot.answered;
           const now = performance.now();
           const freezeMs = snapshot.freezeRemainingSeconds * 1000;
           timerFreezeRemainingSeconds = snapshot.freezeRemainingSeconds
@@ -7374,7 +7460,8 @@
           progressBar.setAttribute("aria-valuemax", String(roundLength()));
           showView("game");
           renderQuestion(true);
-          resumeQuestionTimer();
+          if (answered) resumePendingAnswerAdvance();
+          else resumeQuestionTimer();
           pausedQuizSnapshot = null;
           try {
             localStorage.removeItem(ACTIVE_QUIZ_SESSION_STORAGE_KEY);
@@ -8680,7 +8767,8 @@
         confirmButton.textContent = currentText.levelUnlockAction.replace("{cost}", formatNumber(cost));
         confirmButton.setAttribute("aria-label", confirmButton.textContent);
         confirmButton.disabled = missing > 0;
-        document.getElementById("cancelLevelUnlockButton").textContent = currentText.levelUnlockCancel;
+        document.getElementById("cancelLevelUnlockLabel").textContent = currentText.levelUnlockCancel;
+        document.getElementById("cancelLevelUnlockButton").setAttribute("aria-label", currentText.levelUnlockCancel);
       }
 
       function requestLevelUnlock(category, level) {
@@ -8741,6 +8829,12 @@
 
       function showView(name) {
         if (!Object.hasOwn(views, name)) return;
+        if (activeViewName === "game" && name !== "game") {
+          if (name === "results") clearActiveQuizSnapshot();
+          else saveActiveQuizSnapshot();
+        } else if (name === "results") {
+          clearActiveQuizSnapshot();
+        }
         if (name !== "game") {
           stopQuestionTimer();
           clearAnswerAdvanceTimeout();
@@ -8765,6 +8859,15 @@
           updateCoinBalanceDisplays();
           renderHomeHub();
         }
+        if (name === "levels") {
+          const savedRound = readActiveQuizSnapshot();
+          const mapNotice = document.getElementById("mapUnlockNotice");
+          if (savedRound && savedRound.category === currentCategory) {
+            mapNotice.textContent = currentText.resumeRoundNotice;
+            mapNotice.hidden = false;
+          }
+        }
+        activeViewName = name;
         window.scrollTo({ top: 0, behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
       }
 
@@ -8775,6 +8878,7 @@
           showView("levels");
           return;
         }
+        const savedRound = readActiveQuizSnapshot();
         if (!rulesAccepted && !bypassRulesBriefing) {
           pendingRulesStart = { category, level };
           const rulesDialog = document.getElementById("rulesStartDialog");
@@ -8784,6 +8888,9 @@
           }
           return;
         }
+        if (savedRound && savedRound.category === category && savedRound.level === level &&
+            restoreActiveQuizSnapshot(savedRound)) return;
+        clearActiveQuizSnapshot();
         stopQuestionTimer();
         clearAnswerAdvanceTimeout();
         setGameModeTheme(category);
@@ -9828,7 +9935,7 @@
           rulesModalLifelinesBody: "modalLifelinesBody",
           rulesModalLimitTitle: "modalLimitTitle",
           rulesModalLimitBody: "modalLimitBody",
-          cancelRulesStartButton: "modalCancel",
+          cancelRulesStartLabel: "modalCancel",
           confirmRulesStartButton: "modalConfirm",
           rulesPageKicker: "pageKicker",
           rulesPageTitle: "pageTitle",
@@ -9849,6 +9956,7 @@
         });
         document.getElementById("openRulesPageButton").setAttribute("aria-label", copy.homeButton);
         document.getElementById("rulesBackButton").setAttribute("aria-label", copy.backHome);
+        document.getElementById("cancelRulesStartButton").setAttribute("aria-label", copy.modalCancel);
         document.getElementById("rulesView").setAttribute("aria-label", copy.pageTitle);
       }
 
@@ -9926,7 +10034,7 @@
         Object.entries(textById).forEach(([id, key]) => { document.getElementById(id).textContent = copy[key]; });
         document.getElementById("openSettingsButton").setAttribute("aria-label", copy.title);
         document.getElementById("openSettingsHomeButton").setAttribute("aria-label", copy.title);
-        document.getElementById("closeSettingsButton").setAttribute("aria-label", copy.save);
+        document.getElementById("closeSettingsButton").setAttribute("aria-label", copy.back);
         document.getElementById("closePrivacyButton").setAttribute("aria-label", copy.back);
         document.getElementById("privacyBackButton").setAttribute("aria-label", copy.back);
         document.getElementById("settingsLanguageLabel").textContent = currentText.language;
@@ -9964,7 +10072,8 @@
         const keys = [...new Set([
           ...PROGRESSION_CATEGORIES.map(categoryProgressStorageKey),
           LAST_PLAYED_STORAGE_KEY, REWARD_COLLECTION_STORAGE_KEY,
-          RULES_ACCEPTED_STORAGE_KEY, COIN_SKIPPED_LEVELS_STORAGE_KEY
+          RULES_ACCEPTED_STORAGE_KEY, COIN_SKIPPED_LEVELS_STORAGE_KEY,
+          ACTIVE_QUIZ_SESSION_STORAGE_KEY
         ])];
         let backup = [];
         try {
@@ -10038,7 +10147,7 @@
           instantAnswersLabel: "instantAnswers",
           justForFunLabel: "justForFun",
           questionKicker: "questionKicker",
-          quitButtonLabel: "chooseAnother",
+          quitButtonLabel: "returnLevelMap",
           scoreLabel: "yourScore",
           scoreCaption: "pointsSoFar",
           liveScoreLabel: "liveScore",
@@ -10197,9 +10306,18 @@
         updateSettingsCopy();
         if (!privacyDialog.open) privacyDialog.showModal();
       }
+      function navigateBackToView(target) {
+        if (target === "game") {
+          if (restoreActiveQuizSnapshot()) return;
+          target = "levels";
+        }
+        if (!Object.hasOwn(views, target)) target = "welcome";
+        showView(target);
+      }
       function openPrivacyPage() {
-        // A full-page navigation is deliberate; the quick modal never switches
-        // views, so closing it returns to the exact underlying rules/settings UI.
+        // Keep the exact underlying screen as the return destination, including
+        // a paused quiz snapshot when privacy is opened during gameplay.
+        privacyReturnView = activeViewName;
         document.querySelectorAll("dialog[open]").forEach((dialog) => dialog.close());
         showView("privacy");
         document.getElementById("privacyTitle").focus({ preventScroll: true });
@@ -10213,7 +10331,7 @@
       ["closeSettingsButton", "saveSettingsButton"].forEach((id) =>
         document.getElementById(id).addEventListener("click", () => settingsDialog.close()));
       document.getElementById("closePrivacyButton").addEventListener("click", () => privacyDialog.close());
-      document.getElementById("privacyBackButton").addEventListener("click", () => showView("welcome"));
+      document.getElementById("privacyBackButton").addEventListener("click", () => navigateBackToView(privacyReturnView));
       document.getElementById("settingsLanguageSelect").addEventListener("change", (event) => {
         setLanguage(event.target.value);
         settingsStatus(readPreference("quiz-orbit-language", "") === currentLanguage ? "saved" : "unsaved");
@@ -10272,8 +10390,11 @@
       });
 
       const rulesStartDialog = document.getElementById("rulesStartDialog");
-      document.getElementById("openRulesPageButton").addEventListener("click", () => showView("rules"));
-      document.getElementById("rulesBackButton").addEventListener("click", () => showView("welcome"));
+      document.getElementById("openRulesPageButton").addEventListener("click", () => {
+        rulesReturnView = activeViewName;
+        showView("rules");
+      });
+      document.getElementById("rulesBackButton").addEventListener("click", () => navigateBackToView(rulesReturnView));
       document.getElementById("cancelRulesStartButton").addEventListener("click", () => {
         pendingRulesStart = null;
         rulesStartDialog.close();
@@ -10342,9 +10463,13 @@
       Object.entries(lifelineButtons).forEach(([id, button]) => {
         button.addEventListener("click", () => activateLifeline(id));
       });
+      function returnQuizToLevelMap() {
+        renderLevelMap(currentCategory);
+        showView("levels");
+        scrollLevelMapTo(currentLevel, "auto");
+      }
       document.getElementById("quitButton").addEventListener("click", () => {
-        stopQuestionTimer();
-        showView("welcome");
+        returnQuizToLevelMap();
       });
       document.getElementById("returnLevelMapButton").addEventListener("click", () => {
         renderLevelMap();
@@ -10374,7 +10499,6 @@
       });
       document.getElementById("brandHome").addEventListener("click", (event) => {
         event.preventDefault();
-        stopQuestionTimer();
         showView("welcome");
       });
       window.addEventListener("storage", (event) => {

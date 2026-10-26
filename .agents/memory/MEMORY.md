@@ -2,6 +2,7 @@
 - [Portal category hover](portal-category-hover.md) — Hover should highlight orbit modes; explicit click/tap or keyboard focus should change the selected category.
 - [Lifeline motion stability](lifeline-animation-stability.md) — Keep idle animation off interactive hitboxes; replay persistent effects immediately after locale rerenders.
 - [Mobile scroll assertions](mobile-scroll-test-quirk.md) — In mobile browser tests, measure actual scrolling before asserting sticky HUD positions; requested offsets may not be reached.
+- [Round resume snapshots](quiz-session-resume.md) — Preserve exact question content and capture timer state before cleanup so randomized rounds and spent lifelines resume faithfully.
 - [Minimal quiz and results UI](minimal-quiz-screen.md) — Keep play uncluttered and results focused on score, accuracy, stars, coin payout, and two clear actions.
 - [Modal timing and local reset](game-modal-timing.md) — Modals stop callbacks, not allotted time; progress resets preserve preferences and unrelated storage.
 - [Full-scroll level roadmap](level-map-design.md) — Show all 500 levels in one touch-scrollable grid with compact category tabs and unambiguous state markers.

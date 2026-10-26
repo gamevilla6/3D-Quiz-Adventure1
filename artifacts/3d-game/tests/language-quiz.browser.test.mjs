@@ -1299,6 +1299,13 @@ try {
   await stabilityPage.goto(baseUrl, { waitUntil: "domcontentloaded" });
   await stabilityPage.setViewportSize({ width: 280, height: 653 });
   assert.ok(await stabilityPage.evaluate(() => document.documentElement.scrollWidth <= innerWidth), "the settings entry fits a 280px home header");
+  await stabilityPage.locator("#openRulesPageButton").click();
+  assert.equal(await stabilityPage.locator("#rulesView").evaluate((node) => node.classList.contains("active")), true);
+  await stabilityPage.locator("#rulesBackButton").click();
+  assert.equal(await stabilityPage.locator("#welcomeView").evaluate((node) => node.classList.contains("active")), true);
+  await stabilityPage.locator("#openSettingsButton").click();
+  await stabilityPage.locator("#closeSettingsButton").click();
+  assert.equal(await stabilityPage.locator("#settingsDialog").evaluate((node) => node.open), false, "the settings back control closes to the same home screen");
   await stabilityPage.locator("#openSettingsButton").click();
   for (const [language, title] of Object.entries({ en: "Settings", bn: "সেটিংস", hi: "सेटिंग्स", es: "Ajustes", fr: "Paramètres" })) {
     await stabilityPage.locator("#settingsLanguageSelect").selectOption(language);
@@ -1374,8 +1381,39 @@ try {
   assert.equal(await stabilityPage.evaluate(() => window.__questionIntervals.size), 0);
   await stabilityPage.evaluate(() => window.dispatchEvent(new PageTransitionEvent("pageshow")));
   assert.equal(await stabilityPage.evaluate(() => window.__questionIntervals.size), 1, "a restored page owns only one countdown");
-  await stabilityPage.locator("#quitButton").evaluate((button) => button.click());
+  await stabilityPage.locator("#quitButton").click();
   assert.equal(await stabilityPage.evaluate(() => window.__questionIntervals.size), 0, "leaving a level clears the countdown");
+  const pausedRound = await stabilityPage.evaluate(() => ({
+    question: document.querySelector("#questionText").textContent,
+    score: document.querySelector("#scoreValue").textContent,
+    snapshot: JSON.parse(localStorage.getItem("quiz-orbit-active-session-v1")),
+  }));
+  assert.ok(pausedRound.snapshot, "leaving a round saves a resumable session");
+  assert.equal(pausedRound.snapshot.currentQuestion >= 0, true);
+  await stabilityPage.locator(".level-card.unlocked").first().click();
+  assert.equal(await stabilityPage.locator("#gameView").evaluate((node) => node.classList.contains("active")), true);
+  assert.equal(await stabilityPage.locator("#questionText").innerText(), pausedRound.question, "the same level resumes on its saved question");
+  assert.equal(await stabilityPage.locator("#scoreValue").innerText(), pausedRound.score, "the saved score is restored");
+  assert.equal(await stabilityPage.evaluate(() => window.__questionIntervals.size), 1, "resuming creates exactly one timer");
+  await stabilityPage.locator('[data-lifeline="fifty"]').click();
+  const pausedLifelineState = await stabilityPage.evaluate(() => ({
+    hidden: [...document.querySelectorAll(".option[hidden]")].map((node) => node.dataset.optionIndex),
+    coins: document.querySelector("#gameCoinBalance").textContent,
+  }));
+  assert.equal(pausedLifelineState.hidden.length, 2, "the paused round keeps its 50/50 state");
+  await stabilityPage.locator("#quitButton").click();
+  assert.equal(await stabilityPage.evaluate(() => window.__questionIntervals.size), 0, "leaving the resumed round also clears its timer");
+  await stabilityPage.locator(".level-card.unlocked").first().click();
+  assert.deepEqual(
+    await stabilityPage.locator(".option[hidden]").evaluateAll((nodes) => nodes.map((node) => node.dataset.optionIndex)),
+    pausedLifelineState.hidden,
+    "resuming preserves exactly the same eliminated options",
+  );
+  assert.equal(await stabilityPage.locator("#gameCoinBalance").innerText(), pausedLifelineState.coins, "resuming does not charge for the restored lifeline again");
+  assert.equal(await stabilityPage.evaluate(() => window.__questionIntervals.size), 1);
+  await stabilityPage.locator("#quitButton").click();
+  assert.equal(await stabilityPage.evaluate(() => window.__questionIntervals.size), 0);
+  await stabilityPage.locator("#levelBackButton").click();
   await stabilityPage.evaluate(() => localStorage.setItem("unrelated-app-data", "keep"));
   const savedCoinsBeforeReset = await stabilityPage.locator("#coinBalance").innerText();
   await stabilityPage.locator("#openSettingsButton").click();
