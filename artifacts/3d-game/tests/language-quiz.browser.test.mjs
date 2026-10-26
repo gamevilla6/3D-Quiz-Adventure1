@@ -49,6 +49,24 @@ async function waitForQuestionAdvance(page, previousQuestion) {
   ), previousQuestion);
 }
 
+async function waitForAppReady(page) {
+  await page.waitForFunction(
+    () => window.__quizVerseAppReady === true,
+    null,
+    { timeout: 12_000 },
+  );
+}
+
+async function loadReadyPage(page) {
+  await page.goto(baseUrl, { waitUntil: "domcontentloaded" });
+  await waitForAppReady(page);
+}
+
+async function reloadReadyPage(page) {
+  await page.reload({ waitUntil: "domcontentloaded" });
+  await waitForAppReady(page);
+}
+
 async function acceptRulesBriefingIfOpen(page) {
   const dialogIsOpen = await page.locator("#rulesStartDialog").evaluate((dialog) => dialog.open);
   if (dialogIsOpen) await page.locator("#confirmRulesStartButton").click();
@@ -114,6 +132,74 @@ try {
       }
     };
   });
+  // Hold the startup overlay for a focused viewport/progress-bar check. The
+  // production dismiss function is replaced only inside this disposable page.
+  const splashContext = await browser.newContext({
+    viewport: { width: 280, height: 653 },
+    isMobile: true,
+    hasTouch: true,
+    reducedMotion: "reduce",
+  });
+  await splashContext.addInitScript(() => {
+    const holdSplash = window.setInterval(() => {
+      if (typeof window.__dismissQuizVerseLoading === "function") {
+        window.__dismissQuizVerseLoading = () => {};
+        window.clearInterval(holdSplash);
+      }
+    }, 0);
+  });
+  const splashPage = await splashContext.newPage();
+  await splashPage.goto(baseUrl, { waitUntil: "domcontentloaded" });
+  const splashInitialState = await splashPage.evaluate(() => ({
+    visible: Boolean(document.querySelector("#loadingScreen") &&
+      !document.querySelector("#loadingScreen").classList.contains("is-hidden")),
+    title: document.querySelector("#loadingScreen h2")?.textContent.trim(),
+    progress: document.querySelector("#loadingPercent")?.textContent.trim(),
+    progressLabel: document.querySelector("#loadingProgressLabel")?.textContent.trim(),
+  }));
+  assert.equal(splashInitialState.visible, true, "the splash remains until startup initialization finishes");
+  assert.equal(splashInitialState.title, "QuizVerse 3D");
+  assert.match(splashInitialState.progress, /^\d+%$/, "the startup percentage is determinate while loading");
+  assert.ok(splashInitialState.progressLabel, "the progress indicator has an accessible label");
+  await splashPage.waitForFunction(
+    () => document.querySelector("#loadingPercent")?.textContent.trim() === "100%",
+    null,
+    { timeout: 8_000 },
+  );
+  for (const [width, height] of [[280, 653], [320, 720], [390, 844], [844, 390], [932, 430]]) {
+    await splashPage.setViewportSize({ width, height });
+    const splashLayout = await splashPage.evaluate(() => {
+      const card = document.querySelector(".loading-screen-card").getBoundingClientRect();
+      const title = document.querySelector("#loadingScreen h2").getBoundingClientRect();
+      const track = document.querySelector(".loading-progress-track").getBoundingClientRect();
+      return {
+        viewportWidth: innerWidth,
+        viewportHeight: innerHeight,
+        pageWidth: document.documentElement.scrollWidth,
+        card: { left: card.left, right: card.right, top: card.top, bottom: card.bottom },
+        titleRight: title.right,
+        track: { left: track.left, right: track.right, width: track.width },
+      };
+    });
+    assert.ok(splashLayout.pageWidth <= width, `splash has no horizontal overflow at ${width}×${height}`);
+    assert.ok(splashLayout.card.left >= 0 && splashLayout.card.right <= width, `splash card fits at ${width}×${height}`);
+    assert.ok(splashLayout.card.top >= 0 && splashLayout.card.bottom <= height, `splash card fits vertically at ${width}×${height}`);
+    assert.ok(splashLayout.titleRight <= splashLayout.card.right, `title remains inside its card at ${width}×${height}`);
+    assert.ok(splashLayout.track.width > 0 && splashLayout.track.left >= splashLayout.card.left && splashLayout.track.right <= splashLayout.card.right);
+  }
+  await splashPage.evaluate(() => window.__setQuizVerseLoadingProgress(43));
+  assert.equal(await splashPage.locator("#loadingPercent").innerText(), "43%");
+  assert.equal(await splashPage.locator('[data-testid="loading-progressbar"]').getAttribute("aria-valuenow"), "43");
+  await splashPage.evaluate(() => window.__setQuizVerseLoadingProgress(140));
+  assert.equal(await splashPage.locator("#loadingPercent").innerText(), "100%", "progress is clamped to its valid range");
+  await splashPage.evaluate(() => {
+    const language = document.querySelector("#languageSelect");
+    language.value = "fr";
+    language.dispatchEvent(new Event("change", { bubbles: true }));
+  });
+  assert.equal(await splashPage.locator("#loadingLabel").innerText(), "Prêt à jouer", "loading copy follows the active language");
+  await splashContext.close();
+
   const page = await context.newPage();
   page.setDefaultTimeout(10_000);
   const pageErrors = [];

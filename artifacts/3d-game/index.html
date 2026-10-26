@@ -76,33 +76,262 @@
         inset: 0;
         display: grid;
         place-items: center;
+        overflow: hidden;
+        isolation: isolate;
+        padding:
+          max(24px, env(safe-area-inset-top))
+          max(20px, env(safe-area-inset-right))
+          max(24px, env(safe-area-inset-bottom))
+          max(20px, env(safe-area-inset-left));
         color: #fff;
         background:
-          radial-gradient(ellipse at 18% 14%, rgba(112, 79, 255, .3), transparent 35%),
-          radial-gradient(ellipse at 86% 80%, rgba(38, 213, 226, .22), transparent 36%),
-          #080b1e;
+          radial-gradient(ellipse at 50% 48%, rgba(21, 76, 117, .24), transparent 48%),
+          linear-gradient(135deg, rgba(5, 11, 27, .90), rgba(7, 16, 37, .83) 52%, rgba(5, 11, 27, .92));
         opacity: 1;
-        transition: opacity .48s ease;
+        transition: opacity .5s ease, visibility .5s ease;
       }
-      .loading-screen.is-hidden { opacity: 0; pointer-events: none; }
-      .loading-screen-card { display: grid; justify-items: center; gap: 17px; text-align: center; }
+      .loading-screen::before,
+      .loading-screen::after {
+        content: "";
+        position: absolute;
+        z-index: -1;
+        pointer-events: none;
+      }
+      .loading-screen::before {
+        inset: -35%;
+        opacity: .46;
+        background:
+          repeating-conic-gradient(from 8deg at 50% 50%, transparent 0deg 11deg, rgba(106, 220, 255, .07) 11.12deg 11.28deg, transparent 11.45deg 22.5deg);
+        mask-image: radial-gradient(ellipse at center, #000 0%, transparent 65%);
+        animation: loadingFieldDrift 34s linear infinite;
+      }
+      .loading-screen::after {
+        inset: 0;
+        opacity: .3;
+        background-image: radial-gradient(circle, rgba(196, 240, 255, .9) 0 1px, transparent 1.5px);
+        background-size: 83px 83px;
+        mask-image: linear-gradient(90deg, transparent, #000 18%, #000 82%, transparent);
+      }
+      .loading-screen.is-hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+      .loading-screen-card {
+        position: relative;
+        width: min(100%, 440px);
+        display: grid;
+        justify-items: center;
+        gap: clamp(15px, 3.5vh, 25px);
+        padding: clamp(23px, 5.3vw, 42px) clamp(17px, 6.2vw, 50px) clamp(25px, 5vw, 40px);
+        text-align: center;
+        border: 1px solid rgba(163, 228, 255, .19);
+        border-radius: clamp(22px, 5vw, 32px);
+        background:
+          linear-gradient(145deg, rgba(17, 37, 66, .73), rgba(8, 19, 41, .73)),
+          rgba(6, 15, 33, .74);
+        box-shadow: 0 34px 100px rgba(0, 0, 0, .35), inset 0 1px 0 rgba(255, 255, 255, .08);
+        -webkit-backdrop-filter: blur(18px);
+        backdrop-filter: blur(18px);
+        animation: loadingCardEnter .72s cubic-bezier(.2, .8, .2, 1) both;
+      }
+      .loading-screen-card::before {
+        content: "";
+        position: absolute;
+        inset: 1px;
+        border-radius: inherit;
+        pointer-events: none;
+        background: linear-gradient(120deg, rgba(103, 225, 255, .08), transparent 36%, transparent 68%, rgba(255, 191, 107, .07));
+      }
+      .loading-emblem {
+        position: relative;
+        width: clamp(106px, 29vw, 142px);
+        aspect-ratio: 1;
+        display: grid;
+        place-items: center;
+        margin-bottom: clamp(0px, .5vh, 5px);
+        filter: drop-shadow(0 12px 28px rgba(29, 205, 231, .18));
+      }
+      .loading-emblem::before,
+      .loading-emblem::after,
       .loading-orbit {
-        width: 60px;
-        height: 60px;
-        border: 2px solid rgba(130, 234, 255, .22);
-        border-top-color: #82eaff;
-        border-right-color: #bd8aff;
+        content: "";
+        position: absolute;
+        inset: 5%;
+        border: 1px solid rgba(115, 224, 255, .28);
         border-radius: 50%;
-        box-shadow: 0 0 24px rgba(110, 137, 255, .18);
-        animation: loadingOrbitSpin 1.25s linear infinite;
       }
-      .loading-screen h2 { margin: 0; color: #fff; font-size: clamp(27px, 5vw, 40px); font-weight: 850; letter-spacing: -.055em; text-shadow: 0 0 18px rgba(122, 221, 255, .3); }
-      .loading-screen h2 span { color: #82eaff; }
-      .loading-screen p { margin: -8px 0 0; color: #c8d1ee; font-size: 11px; font-weight: 650; letter-spacing: .04em; }
+      .loading-emblem::before {
+        transform: rotate(-24deg) scaleY(.48);
+        border-color: rgba(122, 232, 255, .72);
+        box-shadow: 0 0 18px rgba(43, 214, 243, .16);
+        animation: loadingOrbitA 7s ease-in-out infinite;
+      }
+      .loading-emblem::after {
+        transform: rotate(57deg) scaleY(.49);
+        border-color: rgba(255, 191, 107, .64);
+        animation: loadingOrbitB 9s ease-in-out infinite;
+      }
+      .loading-orbit {
+        inset: 17%;
+        border: 1px dashed rgba(192, 226, 255, .28);
+        animation: loadingOrbitSpin 18s linear infinite;
+      }
+      .loading-core {
+        position: relative;
+        width: 57%;
+        aspect-ratio: 1;
+        display: grid;
+        place-items: center;
+        border: 1px solid rgba(194, 248, 255, .66);
+        border-radius: 29% 71% 54% 46% / 42% 38% 62% 58%;
+        color: #f1fcff;
+        background: linear-gradient(145deg, rgba(54, 208, 231, .38), rgba(24, 93, 143, .27) 52%, rgba(255, 187, 104, .26));
+        box-shadow: inset 0 0 24px rgba(183, 249, 255, .17), 0 0 32px rgba(45, 213, 237, .22);
+        animation: loadingCoreMorph 8s ease-in-out infinite alternate;
+      }
+      .loading-core::before {
+        content: "";
+        position: absolute;
+        width: 76%;
+        aspect-ratio: 1;
+        border: 1px solid rgba(245, 253, 255, .42);
+        border-radius: 50%;
+      }
+      .loading-core-mark {
+        position: relative;
+        font-family: ui-serif, Georgia, serif;
+        font-size: clamp(31px, 9vw, 43px);
+        font-weight: 800;
+        line-height: 1;
+        letter-spacing: -.1em;
+        transform: translateX(-.04em);
+        text-shadow: 0 2px 16px rgba(154, 244, 255, .65);
+      }
+      .loading-screen h2 {
+        max-width: 100%;
+        margin: 0;
+        color: #f5fbff;
+        font-size: clamp(27px, 8.2vw, 41px);
+        font-weight: 820;
+        line-height: 1.02;
+        letter-spacing: -.065em;
+        text-wrap: balance;
+        text-shadow: 0 0 28px rgba(105, 222, 250, .2);
+      }
+      .loading-screen h2 span {
+        color: #72e8f0;
+        text-shadow: 0 0 22px rgba(73, 225, 236, .4);
+      }
+      .loading-label {
+        max-width: 100%;
+        min-height: 1.5em;
+        margin: -8px 0 0;
+        color: rgba(224, 238, 250, .78);
+        font-size: clamp(11px, 3vw, 13px);
+        font-weight: 550;
+        line-height: 1.5;
+        letter-spacing: .025em;
+        overflow-wrap: anywhere;
+      }
+      .loading-progress {
+        width: 100%;
+        display: grid;
+        gap: 10px;
+        margin-top: clamp(2px, 1vh, 7px);
+        text-align: left;
+      }
+      .loading-progress-meta {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        color: rgba(197, 220, 238, .7);
+        font-size: 10px;
+        font-weight: 700;
+        line-height: 1;
+        letter-spacing: .12em;
+        text-transform: uppercase;
+      }
+      .loading-progress-meta span { min-width: 0; overflow-wrap: anywhere; }
+      #loadingPercent {
+        flex: 0 0 auto;
+        color: #a7f5f2;
+        font-variant-numeric: tabular-nums;
+        letter-spacing: .04em;
+      }
+      .loading-progress-track {
+        position: relative;
+        width: 100%;
+        height: 7px;
+        overflow: hidden;
+        border: 1px solid rgba(175, 222, 244, .22);
+        border-radius: 999px;
+        background: rgba(1, 9, 23, .72);
+        box-shadow: inset 0 1px 3px rgba(0, 0, 0, .42);
+      }
+      #loadingProgressFill {
+        width: 0%;
+        height: 100%;
+        border-radius: inherit;
+        background: linear-gradient(90deg, #47d8e5, #9bf4e8 68%, #ffd08e);
+        box-shadow: 0 0 16px rgba(80, 223, 233, .55);
+        transition: width .36s cubic-bezier(.2, .7, .25, 1);
+      }
+      .loading-screen-footnote {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        color: rgba(182, 207, 228, .52);
+        font-size: 9px;
+        font-weight: 650;
+        letter-spacing: .2em;
+        text-transform: uppercase;
+      }
+      .loading-screen-footnote::before,
+      .loading-screen-footnote::after {
+        content: "";
+        width: clamp(14px, 6vw, 28px);
+        height: 1px;
+        background: linear-gradient(90deg, transparent, rgba(111, 219, 234, .44));
+      }
+      .loading-screen-footnote::after { transform: rotate(180deg); }
       @keyframes loadingOrbitSpin { to { transform: rotate(360deg); } }
+      @keyframes loadingOrbitA { 50% { transform: rotate(22deg) scaleY(.48); } }
+      @keyframes loadingOrbitB { 50% { transform: rotate(92deg) scaleY(.49); } }
+      @keyframes loadingCoreMorph { to { border-radius: 64% 36% 43% 57% / 58% 56% 44% 42%; } }
+      @keyframes loadingFieldDrift { to { transform: rotate(360deg); } }
+      @keyframes loadingCardEnter { from { opacity: 0; transform: translateY(14px) scale(.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
+      @media (orientation: landscape) and (max-height: 560px) {
+        .loading-screen-card {
+          width: min(100%, 700px);
+          grid-template-columns: minmax(90px, .42fr) minmax(0, 1fr);
+          grid-template-rows: auto auto auto auto;
+          justify-items: start;
+          column-gap: clamp(14px, 4vw, 30px);
+          row-gap: 9px;
+          padding: 17px clamp(20px, 5vw, 42px);
+          text-align: left;
+        }
+        .loading-emblem { grid-column: 1; grid-row: 1 / 5; width: min(23vh, 130px); align-self: center; margin: 0; }
+        .loading-screen h2, .loading-label, .loading-progress, .loading-screen-footnote { grid-column: 2; }
+        .loading-screen h2 { align-self: end; }
+        .loading-label { margin: 0; }
+        .loading-progress { margin-top: 2px; }
+        .loading-screen-footnote { justify-content: flex-start; }
+      }
+      @media (max-width: 350px) {
+        .loading-screen { padding-inline: max(14px, env(safe-area-inset-left)) max(14px, env(safe-area-inset-right)); }
+        .loading-screen-card { gap: 14px; padding-inline: 16px; }
+        .loading-progress-meta { font-size: 9px; letter-spacing: .09em; }
+      }
       @media (prefers-reduced-motion: reduce) {
-        .loading-orbit { animation-duration: 4s; }
-        .loading-screen { transition-duration: .12s; }
+        .loading-screen *,
+        .loading-screen::before,
+        .loading-emblem::before,
+        .loading-emblem::after {
+          animation-duration: .01ms !important;
+          animation-iteration-count: 1 !important;
+          scroll-behavior: auto !important;
+        }
+        .loading-screen, #loadingProgressFill { transition-duration: .01ms; }
       }
       .topbar { max-width: 1220px; margin: 0 auto; display: flex; align-items: center; justify-content: flex-end; }
       .brand { min-height: 48px; display: flex; gap: 11px; align-items: center; color: var(--ink); text-decoration: none; font-weight: 730; letter-spacing: -.04em; }
@@ -3684,20 +3913,66 @@
     </style>
   </head>
   <body data-view="welcome">
-    <div class="loading-screen" id="loadingScreen" role="status" aria-label="Loading QuizVerse 3D">
+    <div class="loading-screen" id="loadingScreen" data-testid="loading-screen" role="status" aria-label="Loading QuizVerse 3D">
       <div class="loading-screen-card">
-        <span class="loading-orbit" aria-hidden="true"></span>
+        <div class="loading-emblem" aria-hidden="true">
+          <span class="loading-orbit"></span>
+          <span class="loading-core"><span class="loading-core-mark">Q</span></span>
+        </div>
         <h2>QuizVerse <span>3D</span></h2>
-        <p id="loadingLabel">Preparing your next challenge…</p>
+        <p class="loading-label" id="loadingLabel">Preparing your next challenge…</p>
+        <div class="loading-progress" data-testid="loading-progress">
+          <div
+            class="loading-progress-track"
+            role="progressbar"
+            aria-labelledby="loadingProgressLabel"
+            aria-valuemin="0"
+            aria-valuemax="100"
+            aria-valuenow="0"
+            aria-valuetext="0%"
+            data-testid="loading-progressbar"
+          >
+            <div id="loadingProgressFill" data-testid="loading-progress-fill"></div>
+          </div>
+          <div class="loading-progress-meta" aria-hidden="true">
+            <span id="loadingProgressLabel">Startup progress</span>
+            <span id="loadingPercent" data-testid="loading-percent">0%</span>
+          </div>
+        </div>
+        <div class="loading-screen-footnote" aria-hidden="true">A world of questions</div>
       </div>
     </div>
     <script>
+      window.__quizVerseLoadingStartedAt = performance.now();
+      window.__setQuizVerseLoadingProgress = (value) => {
+        const progress = Math.max(0, Math.min(100, Math.round(value)));
+        const progressBar = document.querySelector('[data-testid="loading-progressbar"]');
+        const progressFill = document.getElementById("loadingProgressFill");
+        const progressPercent = document.getElementById("loadingPercent");
+        if (progressBar) {
+          progressBar.setAttribute("aria-valuenow", String(progress));
+          progressBar.setAttribute("aria-valuetext", `${progress}%`);
+        }
+        if (progressFill) progressFill.style.width = `${progress}%`;
+        if (progressPercent) progressPercent.textContent = `${progress}%`;
+      };
+      window.__dismissQuizVerseLoading = () => {
+        window.clearTimeout(window.__quizVerseLoadingFailsafe);
+        const loadingScreen = document.getElementById("loadingScreen");
+        if (!loadingScreen || loadingScreen.dataset.dismissed === "true") return;
+        loadingScreen.dataset.dismissed = "true";
+        loadingScreen.setAttribute("aria-hidden", "true");
+        loadingScreen.classList.add("is-hidden");
+        window.setTimeout(() => loadingScreen.remove(), 550);
+      };
       window.__quizVerseLoadingFailsafe = window.setTimeout(() => {
         const loadingScreen = document.getElementById("loadingScreen");
         if (loadingScreen) {
-          loadingScreen.setAttribute("aria-hidden", "true");
-          loadingScreen.classList.add("is-hidden");
-          window.setTimeout(() => loadingScreen.remove(), 520);
+          window.__setQuizVerseLoadingProgress(100);
+          window.__quizVerseAppReady = true;
+          const label = document.getElementById("loadingLabel");
+          if (label) label.textContent = window.__quizVerseLoadingReadyText || "Ready to play";
+          window.__dismissQuizVerseLoading();
         }
       }, 9000);
     </script>
@@ -4391,6 +4666,14 @@
           topNote: "A small space for curiosity",
           loadingScreenLabel: "Loading QuizVerse 3D",
           loadingLabel: "Preparing your next challenge…",
+          loadingStatuses: [
+            "Initializing the quiz engine…",
+            "Loading the 2026 question banks…",
+            "Syncing your coin vault…",
+            "Preparing the 3D scene…",
+            "Ready to play"
+          ],
+          loadingProgressLabel: "Startup progress",
           heroStatsGroup: "Live game statistics",
           heroStatsTitle: "LIVE GAME STATS",
           heroStatCategories: "Active categories",
@@ -4596,6 +4879,14 @@
           topNote: "কৌতূহলের জন্য ছোট্ট এক জগৎ",
           loadingScreenLabel: "QuizVerse 3D লোড হচ্ছে",
           loadingLabel: "আপনার পরের চ্যালেঞ্জ প্রস্তুত হচ্ছে…",
+          loadingStatuses: [
+            "কুইজ ইঞ্জিন চালু হচ্ছে…",
+            "২০২৬ সালের প্রশ্নভান্ডার লোড হচ্ছে…",
+            "কয়েন ভল্ট সিঙ্ক হচ্ছে…",
+            "3D দৃশ্য প্রস্তুত হচ্ছে…",
+            "খেলার জন্য প্রস্তুত"
+          ],
+          loadingProgressLabel: "শুরুর অগ্রগতি",
           heroStatsGroup: "গেমের সরাসরি পরিসংখ্যান",
           heroStatsTitle: "লাইভ গেম ডেটা",
           heroStatCategories: "সক্রিয় বিভাগ",
@@ -4801,6 +5092,14 @@
           topNote: "जिज्ञासा के लिए एक छोटी-सी जगह",
           loadingScreenLabel: "QuizVerse 3D लोड हो रहा है",
           loadingLabel: "आपकी अगली चुनौती तैयार हो रही है…",
+          loadingStatuses: [
+            "क्विज़ इंजन शुरू हो रहा है…",
+            "2026 के प्रश्न बैंक लोड हो रहे हैं…",
+            "कॉइन वॉल्ट सिंक हो रहा है…",
+            "3D दृश्य तैयार हो रहा है…",
+            "खेलने के लिए तैयार"
+          ],
+          loadingProgressLabel: "शुरुआती प्रगति",
           heroStatsGroup: "लाइव गेम आँकड़े",
           heroStatsTitle: "लाइव गेम आँकड़े",
           heroStatCategories: "सक्रिय श्रेणियाँ",
@@ -5006,6 +5305,14 @@
           topNote: "Un pequeño espacio para la curiosidad",
           loadingScreenLabel: "Cargando QuizVerse 3D",
           loadingLabel: "Preparando tu próximo reto…",
+          loadingStatuses: [
+            "Iniciando el motor del cuestionario…",
+            "Cargando preguntas de 2026…",
+            "Sincronizando la reserva de monedas…",
+            "Preparando la escena 3D…",
+            "Todo listo para jugar"
+          ],
+          loadingProgressLabel: "Progreso de inicio",
           heroStatsGroup: "Estadísticas en vivo",
           heroStatsTitle: "DATOS DEL JUEGO",
           heroStatCategories: "Categorías activas",
@@ -5211,6 +5518,14 @@
           topNote: "Un petit espace pour la curiosité",
           loadingScreenLabel: "Chargement de QuizVerse 3D",
           loadingLabel: "Préparation de votre prochain défi…",
+          loadingStatuses: [
+            "Initialisation du moteur de quiz…",
+            "Chargement des questions 2026…",
+            "Synchronisation du coffre de pièces…",
+            "Préparation de la scène 3D…",
+            "Prêt à jouer"
+          ],
+          loadingProgressLabel: "Progression du démarrage",
           heroStatsGroup: "Statistiques du jeu en direct",
           heroStatsTitle: "STATS EN DIRECT",
           heroStatCategories: "Catégories actives",
@@ -6904,6 +7219,25 @@
       }
       let currentLanguage = readSavedLanguage();
       let currentText = translations[currentLanguage];
+      let loadingStatusIndex = 0;
+      function updateStartupProgress(progress, statusIndex = loadingStatusIndex) {
+        loadingStatusIndex = Math.max(0, Math.min(4, Math.floor(statusIndex)));
+        window.__setQuizVerseLoadingProgress(progress);
+        const loadingLabel = document.getElementById("loadingLabel");
+        const statuses = currentText.loadingStatuses;
+        if (loadingLabel) {
+          loadingLabel.textContent = statuses?.[loadingStatusIndex] || currentText.loadingLabel;
+        }
+        const progressLabel = document.getElementById("loadingProgressLabel");
+        if (progressLabel) progressLabel.textContent = currentText.loadingProgressLabel;
+        window.__quizVerseLoadingReadyText = statuses?.[4] || currentText.loadingLabel;
+      }
+      const loadingDelay = (milliseconds) =>
+        new Promise((resolve) => window.setTimeout(resolve, milliseconds));
+      updateStartupProgress(14, 0);
+      await loadingDelay(90);
+      updateStartupProgress(38, 1);
+      await loadingDelay(90);
       let currentCategory = "General Knowledge";
       let selectedCategory = "General Knowledge";
       let portalSelectionIndex = 0;
@@ -6973,6 +7307,8 @@
       let particlesEnabled = readPreference(PARTICLES_STORAGE_KEY, "true") !== "false";
       let syncSceneAnimation = () => {};
       let rewardCollection = readRewardCollection();
+      updateStartupProgress(63, 2);
+      await loadingDelay(90);
       let lastDisplayedCoinBalance = null;
       let coinBalancePulsePending = false;
       // Paid skips are saved separately so skipped stages remain playable, but are not mislabeled as cleared.
@@ -10267,7 +10603,16 @@
         if (loadingScreen) {
           loadingScreen.setAttribute("aria-label", currentText.loadingScreenLabel);
           const loadingLabel = document.getElementById("loadingLabel");
-          if (loadingLabel) loadingLabel.textContent = currentText.loadingLabel;
+          if (loadingLabel) {
+            loadingLabel.textContent =
+              currentText.loadingStatuses?.[loadingStatusIndex] || currentText.loadingLabel;
+          }
+          const loadingProgressLabel = document.getElementById("loadingProgressLabel");
+          if (loadingProgressLabel) {
+            loadingProgressLabel.textContent = currentText.loadingProgressLabel;
+          }
+          window.__quizVerseLoadingReadyText =
+            currentText.loadingStatuses?.[4] || currentText.loadingLabel;
         }
         try {
           localStorage.setItem("quiz-orbit-language", currentLanguage);
@@ -10681,6 +11026,7 @@
         }
       });
       setLanguage(currentLanguage);
+      updateStartupProgress(74, 2);
       applyParticlePreference();
       if (location.hash === "#privacy") showView("privacy");
       else syncNativeBannerPlacement("welcome");
@@ -10689,14 +11035,6 @@
         else if (views.privacy.classList.contains("active")) showView("welcome");
       });
       let heroTaglineInterval = window.setInterval(rotateHeroTagline, 4600);
-      // The quiz is already usable. Never keep its loading overlay waiting for a CDN.
-      const loadingScreen = document.getElementById("loadingScreen");
-      if (loadingScreen) {
-        window.clearTimeout(window.__quizVerseLoadingFailsafe);
-        loadingScreen.setAttribute("aria-hidden", "true");
-        window.requestAnimationFrame(() => loadingScreen.classList.add("is-hidden"));
-        window.setTimeout(() => loadingScreen.remove(), 520);
-      }
       window.addEventListener("pagehide", () => {
         clearQuestionTimer();
         window.clearTimeout(focusLossGraceTimeout);
@@ -10718,6 +11056,7 @@
       });
 
       // A small, low-cost procedural orbit scene; the quiz remains usable if WebGL is unavailable.
+      updateStartupProgress(82, 3);
       const sceneRoot = document.getElementById("scene");
       const isMobileRenderer = window.innerWidth <= 820 ||
         window.matchMedia("(pointer: coarse)").matches;
@@ -11506,6 +11845,7 @@
         });
         if (!particlesEnabled) renderer.render(scene, camera);
         syncSceneAnimation();
+        updateStartupProgress(96, 3);
         // Resize on viewport changes and orientation rotations; visualViewport also
         // catches mobile browser chrome expanding or collapsing the usable canvas.
         const resizeScene = () => {
@@ -11529,6 +11869,16 @@
         document.body.classList.remove("webgl-ready");
         sceneRoot.hidden = true;
       }
+      updateStartupProgress(96, 3);
+      const minimumSplashDuration = 820;
+      const splashElapsed = performance.now() - (window.__quizVerseLoadingStartedAt || performance.now());
+      if (splashElapsed < minimumSplashDuration) {
+        await loadingDelay(minimumSplashDuration - splashElapsed);
+      }
+      updateStartupProgress(100, 4);
+      await new Promise((resolve) => window.requestAnimationFrame(resolve));
+      window.__quizVerseAppReady = true;
+      window.__dismissQuizVerseLoading();
     </script>
   </body>
 </html>
