@@ -10,9 +10,15 @@ export const validationSource = html.slice(
   html.indexOf("const generalKnowledgeBank ="),
   html.indexOf("// Keep maps metadata-only:"),
 );
-export const { bank, year, reviewedAt } = new Function(
-  `${bankSource}\n${validationSource}\nreturn {
-    bank: generalKnowledgeBank, year: GK_CONTENT_YEAR, reviewedAt: GK_REVIEWED_AT
+export const categoryScopeSource = html.slice(
+  html.indexOf("const PROGRESSION_CATEGORIES = ["),
+  html.indexOf("// Prices are centralized"),
+);
+export const { bank, year, reviewedAt, categoryBanks, categorySubjects, categoryAllowlist } = new Function(
+  `${bankSource}\n${validationSource}\n${categoryScopeSource}\nreturn {
+    bank: generalKnowledgeBank, year: GK_CONTENT_YEAR, reviewedAt: GK_REVIEWED_AT,
+    categoryBanks: categoryQuestionBanks, categorySubjects: CATEGORY_QUESTION_SUBJECTS,
+    categoryAllowlist: CATEGORY_TOPIC_ALLOWLISTS
   };`,
 )();
 

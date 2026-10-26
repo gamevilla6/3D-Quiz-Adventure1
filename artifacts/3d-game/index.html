@@ -5196,7 +5196,9 @@
         artemis: "https://www.nasa.gov/mission/artemis-ii",
         rabat: "https://www.unesco.org/en/articles/unesco-names-rabat-world-book-capital-2026",
         cop31: "https://unfccc.int/cop31",
-        water: "https://sdgs.un.org/conferences/water2026"
+        water: "https://www.unwater.org/news/2026-un-water-conference-revised-dates",
+        aiSummit: "https://impact.indiaai.gov.in/about-summit",
+        oscars2026: "https://www.oscars.org/oscars/ceremonies/2026"
       });
       const GK_LANGUAGES = ["en", "bn", "hi", "es", "fr"];
       // Add a fact with a stable ID, subject, difficulty (1–3), correct index
@@ -5514,7 +5516,8 @@
 
       // Curated multilingual trivia anchors each subject; the procedural pool
       // supplies additional numeric challenges for hundreds of replayable levels.
-      const localizedQuizItem = (questions, choices, answer) => ({
+      const localizedQuizItem = (questions, choices, answer, metadata = {}) => ({
+        ...metadata,
         question: Object.fromEntries(["en", "bn", "hi", "es", "fr"].map((language, index) => [language, questions[index]])),
         options: Object.fromEntries(["en", "bn", "hi", "es", "fr"].map((language, index) => [language, choices[index]])),
         answer
@@ -5522,28 +5525,8 @@
       Object.assign(quizData, {
         "Science & Technology": [
           localizedQuizItem(
-            ["Which chemical formula represents water?", "পানির রাসায়নিক সংকেত কোনটি?", "पानी का रासायनिक सूत्र कौन-सा है?", "¿Qué fórmula química representa el agua?", "Quelle formule chimique représente l’eau ?"],
-            [["CO₂", "H₂O", "O₂", "NaCl"], ["CO₂", "H₂O", "O₂", "NaCl"], ["CO₂", "H₂O", "O₂", "NaCl"], ["CO₂", "H₂O", "O₂", "NaCl"], ["CO₂", "H₂O", "O₂", "NaCl"]],
-            1
-          ),
-          localizedQuizItem(
             ["Which star is closest to Earth?", "পৃথিবীর সবচেয়ে কাছের নক্ষত্র কোনটি?", "पृथ्वी के सबसे निकट कौन-सा तारा है?", "¿Qué estrella está más cerca de la Tierra?", "Quelle étoile est la plus proche de la Terre ?"],
             [["The Sun", "Sirius", "Polaris", "Vega"], ["সূর্য", "সিরিয়াস", "পোলারিস", "ভেগা"], ["सूर्य", "सीरियस", "ध्रुवतारा", "वेगा"], ["El Sol", "Sirio", "Polaris", "Vega"], ["Le Soleil", "Sirius", "Polaris", "Véga"]],
-            0
-          ),
-          localizedQuizItem(
-            ["Which molecule carries genetic instructions in living things?", "জীবদেহে বংশগতির নির্দেশ বহন করে কোন অণু?", "जीवों में आनुवंशिक निर्देश कौन-सा अणु वहन करता है?", "¿Qué molécula transporta la información genética de los seres vivos?", "Quelle molécule porte l’information génétique des êtres vivants ?"],
-            [["ATP", "Glucose", "DNA", "Water"], ["এটিপি", "গ্লুকোজ", "ডিএনএ", "পানি"], ["एटीपी", "ग्लूकोज़", "डीएनए", "पानी"], ["ATP", "Glucosa", "ADN", "Agua"], ["ATP", "Glucose", "ADN", "Eau"]],
-            2
-          ),
-          localizedQuizItem(
-            ["What is the process plants use to make food from light?", "আলো ব্যবহার করে উদ্ভিদ খাদ্য তৈরি করে কোন প্রক্রিয়ায়?", "पौधे प्रकाश से भोजन किस प्रक्रिया द्वारा बनाते हैं?", "¿Qué proceso usan las plantas para producir alimento con luz?", "Quel processus les plantes utilisent-elles pour produire de la nourriture grâce à la lumière ?"],
-            [["Evaporation", "Photosynthesis", "Condensation", "Fermentation"], ["বাষ্পীভবন", "সালোকসংশ্লেষণ", "ঘনীভবন", "গাঁজন"], ["वाष्पीकरण", "प्रकाश संश्लेषण", "संघनन", "किण्वन"], ["Evaporación", "Fotosíntesis", "Condensación", "Fermentación"], ["Évaporation", "Photosynthèse", "Condensation", "Fermentation"]],
-            1
-          ),
-          localizedQuizItem(
-            ["Which gas makes up most of Earth's atmosphere?", "পৃথিবীর বায়ুমণ্ডলে সবচেয়ে বেশি কোন গ্যাস রয়েছে?", "पृथ्वी के वायुमंडल में सबसे अधिक कौन-सी गैस है?", "¿Qué gas constituye la mayor parte de la atmósfera terrestre?", "Quel gaz compose la majeure partie de l’atmosphère terrestre ?"],
-            [["Nitrogen", "Oxygen", "Carbon dioxide", "Hydrogen"], ["নাইট্রোজেন", "অক্সিজেন", "কার্বন ডাই-অক্সাইড", "হাইড্রোজেন"], ["नाइट्रोजन", "ऑक्सीजन", "कार्बन डाइऑक्साइड", "हाइड्रोजन"], ["Nitrógeno", "Oxígeno", "Dióxido de carbono", "Hidrógeno"], ["Azote", "Oxygène", "Dioxyde de carbone", "Hydrogène"]],
             0
           ),
           localizedQuizItem(
@@ -5677,6 +5660,51 @@
           )
         ]
       });
+
+      quizData["Science & Technology"].push(
+        localizedQuizItem(
+          ["Which theory explains gravity as the curvature of spacetime?", "স্থান-কালের বক্রতা দিয়ে মহাকর্ষকে কোন তত্ত্ব ব্যাখ্যা করে?", "कौन-सा सिद्धांत गुरुत्वाकर्षण को अंतरिक्ष-समय की वक्रता के रूप में समझाता है?", "¿Qué teoría explica la gravedad como curvatura del espacio-tiempo?", "Quelle théorie explique la gravité par la courbure de l’espace-temps ?"],
+          [["Special relativity", "Quantum electrodynamics", "General relativity", "Classical thermodynamics"], ["বিশেষ আপেক্ষিকতা", "কোয়ান্টাম তড়িৎগতিবিদ্যা", "সাধারণ আপেক্ষিকতা", "ধ্রুপদি তাপগতিবিদ্যা"], ["विशेष सापेक्षता", "क्वांटम विद्युतगतिकी", "सामान्य सापेक्षता", "शास्त्रीय ऊष्मागतिकी"], ["Relatividad especial", "Electrodinámica cuántica", "Relatividad general", "Termodinámica clásica"], ["Relativité restreinte", "Électrodynamique quantique", "Relativité générale", "Thermodynamique classique"]],
+          2
+        ),
+        localizedQuizItem(
+          ["What is the name of a black hole's boundary beyond which light cannot escape?", "কৃষ্ণগহ্বরের কোন সীমানার বাইরে আলো বের হতে পারে না?", "ब्लैक होल की उस सीमा का नाम क्या है जिसके पार प्रकाश बाहर नहीं निकल सकता?", "¿Cómo se llama el límite de un agujero negro más allá del cual la luz no puede escapar?", "Comment s’appelle la limite d’un trou noir au-delà de laquelle la lumière ne peut s’échapper ?"],
+          [["Accretion disk", "Event horizon", "Photosphere", "Magnetosphere"], ["অ্যাক্রিশন ডিস্ক", "ইভেন্ট হরাইজন", "ফোটোস্ফিয়ার", "চৌম্বকমণ্ডল"], ["अभिवृद्धि डिस्क", "क्षितिज घटना", "प्रकाशमंडल", "चुंबकमंडल"], ["Disco de acreción", "Horizonte de sucesos", "Fotosfera", "Magnetosfera"], ["Disque d’accrétion", "Horizon des événements", "Photosphère", "Magnétosphère"]],
+          1
+        ),
+        localizedQuizItem(
+          ["What type of mission was NASA's Artemis II flight in April 2026?", "এপ্রিল ২০২৬-এ নাসার আর্টেমিস II কী ধরনের অভিযান ছিল?", "अप्रैल 2026 में नासा का आर्टेमिस II मिशन किस प्रकार का था?", "¿Qué tipo de misión fue Artemis II de la NASA en abril de 2026?", "Quel type de mission était Artemis II de la NASA en avril 2026 ?"],
+          [["A crewed lunar flyby", "A crewed Moon landing", "An uncrewed Mars orbiter", "An International Space Station resupply"], ["মানুষবাহী চন্দ্র-পরিভ্রমণ", "মানুষবাহী চন্দ্র-অবতরণ", "মানবহীন মঙ্গল-পরিক্রমণ", "আন্তর্জাতিক মহাকাশ স্টেশনে রসদ পাঠানো"], ["चालक-दल सहित चंद्रमा के पास से उड़ान", "चालक-दल सहित चंद्रमा पर उतरना", "मानवरहित मंगल कक्षा मिशन", "अंतरराष्ट्रीय अंतरिक्ष स्टेशन को रसद भेजना"], ["Sobrevuelo lunar tripulado", "Alunizaje tripulado", "Orbitador no tripulado de Marte", "Reabastecimiento de la estación espacial"], ["Survol lunaire habité", "Alunissage habité", "Orbiteur martien sans équipage", "Ravitaillement de la station spatiale"]],
+          0,
+          { id: "science-2026-artemis", subject: "space-exploration", year: 2026, reviewedAt: GK_REVIEWED_AT, event: "artemis-ii", status: "completed", eventDate: "2026-04-10", references: [GK_SOURCES.artemis] }
+        ),
+        localizedQuizItem(
+          ["In which city was the India AI Impact Summit held in February 2026?", "২০২৬ সালের ফেব্রুয়ারিতে ইন্ডিয়া এআই ইমপ্যাক্ট সামিট কোন শহরে অনুষ্ঠিত হয়?", "फ़रवरी 2026 में इंडिया एआई इम्पैक्ट समिट किस शहर में आयोजित हुआ?", "¿En qué ciudad se celebró la Cumbre de Impacto de IA de India en febrero de 2026?", "Dans quelle ville s’est tenu le Sommet indien sur l’impact de l’IA en février 2026 ?"],
+          [["Mumbai", "New Delhi", "Hyderabad", "Chennai"], ["মুম্বাই", "নয়াদিল্লি", "হায়দরাবাদ", "চেন্নাই"], ["मुंबई", "नई दिल्ली", "हैदराबाद", "चेन्नई"], ["Bombay", "Nueva Delhi", "Hyderabad", "Chennai"], ["Mumbai", "New Delhi", "Hyderabad", "Chennai"]],
+          1,
+          { id: "science-2026-ai-summit", subject: "ai", year: 2026, reviewedAt: GK_REVIEWED_AT, event: "india-ai-impact-summit", status: "completed", eventDate: "2026-02-20", references: [GK_SOURCES.aiSummit] }
+        )
+      );
+      quizData["Pop Culture & Movies"].push(localizedQuizItem(
+        ["Which film won Best Picture at the 2026 Academy Awards?", "২০২৬ সালের অ্যাকাডেমি অ্যাওয়ার্ডসে কোন চলচ্চিত্র সেরা ছবির পুরস্কার পায়?", "2026 के अकादमी पुरस्कारों में किस फ़िल्म को सर्वश्रेष्ठ फ़िल्म का पुरस्कार मिला?", "¿Qué película ganó el premio a mejor película en los Óscar de 2026?", "Quel film a remporté le prix du meilleur film aux Oscars 2026 ?"],
+        [["Sinners", "One Battle After Another", "Marty Supreme", "Train Dreams"], ["সিনার্স", "ওয়ান ব্যাটল আফটার অ্যানাদার", "মার্টি সুপ্রিম", "ট্রেন ড্রিমস"], ["सिनर्स", "वन बैटल आफ्टर अनदर", "मार्टी सुप्रीम", "ट्रेन ड्रीम्स"], ["Sinners", "Una batalla tras otra", "Marty Supreme", "Train Dreams"], ["Sinners", "Une bataille après l’autre", "Marty Supreme", "Train Dreams"]],
+        1,
+        { id: "pop-2026-best-picture", subject: "film", year: 2026, reviewedAt: GK_REVIEWED_AT, event: "98th-academy-awards", status: "completed", eventDate: "2026-03-15", references: [GK_SOURCES.oscars2026] }
+      ));
+      quizData["History & Geography"].push(
+        localizedQuizItem(
+          ["According to the UNFCCC schedule, which city is set to host COP31 in November 2026?", "UNFCCC-এর সূচি অনুযায়ী, ২০২৬ সালের নভেম্বরে COP31 কোন শহরে হওয়ার কথা?", "UNFCCC कार्यक्रम के अनुसार नवंबर 2026 में COP31 की मेज़बानी कौन-सा शहर करेगा?", "Según el calendario de la CMNUCC, ¿qué ciudad acogerá la COP31 en noviembre de 2026?", "Selon le calendrier de la CCNUCC, quelle ville doit accueillir la COP31 en novembre 2026 ?"],
+          [["Antalya, Türkiye", "Nairobi, Kenya", "Lima, Peru", "Oslo, Norway"], ["আন্তালিয়া, তুরস্ক", "নাইরোবি, কেনিয়া", "লিমা, পেরু", "অসলো, নরওয়ে"], ["अंताल्या, तुर्किये", "नैरोबी, केन्या", "लीमा, पेरू", "ओस्लो, नॉर्वे"], ["Antalya, Türkiye", "Nairobi, Kenia", "Lima, Perú", "Oslo, Noruega"], ["Antalya, Türkiye", "Nairobi, Kenya", "Lima, Pérou", "Oslo, Norvège"]],
+          0,
+          { id: "history-geo-2026-cop31", subject: "geography", year: 2026, reviewedAt: GK_REVIEWED_AT, event: "cop31", status: "scheduled", eventDate: "2026-11-09", references: [GK_SOURCES.cop31] }
+        ),
+        localizedQuizItem(
+          ["Which city is scheduled to host the UN Water Conference on 8–10 December 2026?", "৮–১০ ডিসেম্বর ২০২৬-এর জাতিসংঘ জল সম্মেলন কোন শহরে হওয়ার কথা?", "8–10 दिसंबर 2026 के संयुक्त राष्ट्र जल सम्मेलन की मेज़बानी कौन-सा शहर करेगा?", "¿Qué ciudad tiene previsto acoger la Conferencia de la ONU sobre el Agua del 8 al 10 de diciembre de 2026?", "Quelle ville doit accueillir la Conférence de l’ONU sur l’eau du 8 au 10 décembre 2026 ?"],
+          [["Dakar, Senegal", "Abu Dhabi, United Arab Emirates", "Geneva, Switzerland", "Marrakesh, Morocco"], ["ডাকার, সেনেগাল", "আবুধাবি, সংযুক্ত আরব আমিরাত", "জেনেভা, সুইজারল্যান্ড", "মারাকেশ, মরক্কো"], ["डकार, सेनेगल", "अबू धाबी, संयुक्त अरब अमीरात", "जिनेवा, स्विट्ज़रलैंड", "माराकेच, मोरक्को"], ["Dakar, Senegal", "Abu Dabi, Emiratos Árabes Unidos", "Ginebra, Suiza", "Marrakech, Marruecos"], ["Dakar, Sénégal", "Abou Dabi, Émirats arabes unis", "Genève, Suisse", "Marrakech, Maroc"]],
+          1,
+          { id: "history-geo-2026-water", subject: "geography", year: 2026, reviewedAt: GK_REVIEWED_AT, event: "water2026", status: "scheduled", eventDate: "2026-12-08", references: [GK_SOURCES.water] }
+        )
+      );
 
       const QUESTIONS_PER_LEVEL = 10;
       const QUESTION_TIME_LIMIT_SECONDS = 15;
@@ -5831,6 +5859,101 @@
         "History & Geography",
         "IQ Check"
       ];
+      // Each category has its own reviewed, subject-tagged bank. The exact
+      // English prompt -> domain map is a fail-closed editorial checklist:
+      // adding an untagged prompt or leaking a topic across modes stops startup.
+      const CATEGORY_TOPIC_ALLOWLISTS = {
+        "Science & Technology": ["physics", "space-exploration", "technology", "ai"],
+        "Pop Culture & Movies": ["film", "music", "gaming", "digital-culture"],
+        "History & Geography": ["history", "geography"]
+      };
+      const CATEGORY_QUESTION_SUBJECTS = {
+        "Science & Technology": {
+          "Which star is closest to Earth?": "space-exploration",
+          "What does CPU stand for?": "technology",
+          "What electric charge does an electron have?": "physics",
+          "Which planet is known as the Red Planet?": "space-exploration",
+          "What does HTML stand for?": "technology",
+          "Can sound travel through a vacuum?": "physics",
+          "Which theory explains gravity as the curvature of spacetime?": "physics",
+          "What is the name of a black hole's boundary beyond which light cannot escape?": "space-exploration",
+          "What type of mission was NASA's Artemis II flight in April 2026?": "space-exploration",
+          "In which city was the India AI Impact Summit held in February 2026?": "ai"
+        },
+        "Pop Culture & Movies": {
+          "Bollywood is primarily based in which Indian city?": "film",
+          "Which awards are widely associated with achievements in music?": "music",
+          "What is another common name for the Academy Awards?": "film",
+          "K-pop music originated in which country?": "music",
+          "In a story, what is a trilogy?": "film",
+          "In video games, what does DLC usually mean?": "gaming",
+          "What does a film storyboard usually show?": "film",
+          "What does a DJ do?": "music",
+          "Online, what does it usually mean when a post goes viral?": "digital-culture",
+          "In a song, what is a chorus?": "music",
+          "Which film won Best Picture at the 2026 Academy Awards?": "film"
+        },
+        "History & Geography": {
+          "The Great Wall is located in which country?": "geography",
+          "What is the capital of Australia?": "geography",
+          "In which city is the Colosseum?": "geography",
+          "The Statue of Liberty was a gift from which country?": "history",
+          "In which year did World War II end?": "history",
+          "The Taj Mahal is in which Indian city?": "geography",
+          "Machu Picchu was built by which civilization?": "history",
+          "Mount Everest is part of which mountain range?": "geography",
+          "The Magna Carta was sealed in which year?": "history",
+          "Which river flows through Cairo?": "geography",
+          "According to the UNFCCC schedule, which city is set to host COP31 in November 2026?": "geography",
+          "Which city is scheduled to host the UN Water Conference on 8–10 December 2026?": "geography"
+        },
+        "IQ Check": {
+          "What number comes next: 2, 4, 8, 16, ...?": "logic",
+          "Which number completes the square pattern: 1, 4, 9, 16, ...?": "logic",
+          "What letter comes next: A, C, F, J, O, ...?": "logic",
+          "Which number does not belong with the prime numbers: 2, 3, 5, 9?": "logic",
+          "Five machines make five toys in five minutes. How long do 100 machines need to make 100 toys?": "logic",
+          "All Nors are Veks. All Veks are Lums. What must all Nors be?": "logic",
+          "What number completes the pattern: 1, 1, 2, 3, 5, 8, ...?": "logic",
+          "What comes next: 4, 7, 13, 25, 49, ...?": "logic",
+          "A glove is worn on a hand. What is worn on a foot?": "logic",
+          "Ava is taller than Ben. Ben is taller than Chi. Who is the shortest?": "logic",
+          "What is the smaller angle between the clock hands at exactly 3:00?": "logic",
+          "What shape completes the repeating pattern: triangle, circle, circle, triangle, circle, circle, ...?": "logic"
+        }
+      };
+      const CATEGORY_EXCLUDED_QUESTION_PROMPTS = {
+        "Science & Technology": new Set([
+          "Which chemical formula represents water?",
+          "Which molecule carries genetic instructions in living things?",
+          "What is the process plants use to make food from light?",
+          "Which gas makes up most of Earth's atmosphere?"
+        ])
+      };
+      const categoryQuestionBanks = Object.fromEntries(PROGRESSION_CATEGORIES
+        .filter((category) => category !== "General Knowledge")
+        .map((category) => {
+          const subjects = CATEGORY_QUESTION_SUBJECTS[category] ?? {};
+          const allowedSubjects = new Set(CATEGORY_TOPIC_ALLOWLISTS[category] ?? ["logic"]);
+          const excludedPrompts = CATEGORY_EXCLUDED_QUESTION_PROMPTS[category] ?? new Set();
+          const rawBank = quizData[category] ?? [];
+          const bank = rawBank.filter((item) => !excludedPrompts.has(item.question.en)).map((item, index) => {
+            const subject = subjects[item.question.en];
+            if (!subject || !allowedSubjects.has(subject)) {
+              throw new Error(`Question does not match the ${category} subject filter: ${item.question.en}`);
+            }
+            return {
+              ...item,
+              id: item.id ?? `${category.toLowerCase().replace(/[^a-z0-9]+/g, "-")}-${index}`,
+              source: "trivia",
+              subject
+            };
+          });
+          if (new Set(bank.map((item) => item.id)).size !== bank.length) {
+            throw new Error(`Duplicate question IDs in the ${category} question bank.`);
+          }
+          return [category, bank];
+        }));
       const GENERAL_KNOWLEDGE_LEVEL_COUNT = LEVELS_PER_CATEGORY;
       const CATEGORY_TEMPLATE_COUNT = 10;
       const CATEGORY_VARIANTS_PER_TEMPLATE = 100;
@@ -7110,6 +7233,9 @@
       Object.values(quizData).forEach((questionBank) => {
         questionBank.forEach(concealQuestionAnswer);
       });
+      Object.values(categoryQuestionBanks).forEach((questionBank) =>
+        questionBank.forEach(concealQuestionAnswer)
+      );
 
       const unitConversionQuestionTemplates = {
         en: "Convert {amount} {from} to {to}.",
@@ -7671,12 +7797,12 @@
         if (category === "IQ Check") {
           return makeGeneratedIQQuestion(level, family, instance);
         }
-        return makeGeneratedThemedQuestion(category, level, family, instance);
+        throw new Error(`Category ${category} must use its subject-specific reviewed bank.`);
       }
 
-      // GK uses ONLY authored timeless facts and verified 2026 records.
-      // The finite bank is shared across 500 progression nodes, not falsely
-      // advertised as 5,000 unique facts. Append records to expand each cycle.
+      // Every non-IQ category draws ONLY from its own validated, subject-tagged
+      // bank. GK draws ONLY reviewed facts/current affairs. Only IQ uses
+      // procedural reasoning questions. All finite banks are shuffled per level.
       function getCategoryQuestionPool(category, level) {
         if (!PROGRESSION_CATEGORIES.includes(category) ||
             !Number.isInteger(level) || level < 1 || level > LEVELS_PER_CATEGORY) {
@@ -7693,34 +7819,30 @@
             }, readConcealedAnswer(item))
           );
         }
-        // Other categories keep their existing generated and curated pools.
+        const authored = (categoryQuestionBanks[category] ?? []).map((item) =>
+          storeConcealedAnswer({
+            id: item.id, source: item.source, subject: item.subject,
+            year: item.year, reviewedAt: item.reviewedAt, event: item.event,
+            status: item.status, eventDate: item.eventDate, references: item.references,
+            question: item.question, options: item.options
+          }, readConcealedAnswer(item))
+        );
+        if (category !== "IQ Check") return authored;
+
         const candidates = [];
-        const variantsPerTemplate = CATEGORY_VARIANTS_PER_TEMPLATE;
-        const parameterSpace = CATEGORY_PARAMETER_SPACE;
         for (let family = 0; family < CATEGORY_TEMPLATE_COUNT; family += 1) {
-          const variants = Array.from({ length: parameterSpace }, (_, index) => index);
-          // Partial Fisher–Yates samples without replacement and cannot loop
-          // forever if a browser's random source returns a repeated value.
-          for (let index = 0; index < variantsPerTemplate; index += 1) {
-            const swapIndex = index + randomIndex(parameterSpace - index);
+          const variants = Array.from({ length: CATEGORY_PARAMETER_SPACE }, (_, index) => index);
+          // Partial Fisher–Yates produces a repeat-free sample of authored
+          // logic-pattern types; numeric reasoning stays confined to IQ Check.
+          for (let index = 0; index < CATEGORY_VARIANTS_PER_TEMPLATE; index += 1) {
+            const swapIndex = index + randomIndex(CATEGORY_PARAMETER_SPACE - index);
             [variants[index], variants[swapIndex]] = [variants[swapIndex], variants[index]];
-            const instance = variants[index];
-            const generated = makeGeneratedCategoryQuestion(category, level, family, instance);
+            const generated = makeGeneratedIQQuestion(level, family, variants[index]);
             generated.source = "generated";
             candidates.push(concealQuestionAnswer(generated));
           }
         }
-        const slug = category.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
-        (quizData[category] || []).forEach((bankItem, index) => {
-          const triviaItem = {
-            id: `trivia-${slug}-${index}`,
-            source: "trivia",
-            question: bankItem.question,
-            options: bankItem.options
-          };
-          candidates.push(storeConcealedAnswer(triviaItem, readConcealedAnswer(bankItem)));
-        });
-        return candidates;
+        return [...candidates, ...authored];
       }
 
       // Select a shuffled round without replacement within this session.
@@ -7735,9 +7857,9 @@
         let indexes = allPoolIndexes.filter((index) =>
           !sessionUsedQuestionIds.has(activeQuestionPool[index].id)
         );
-        // Carry a partial GK tail into the next draw so no authored facts get
-        // discarded when the bank size is not a multiple of ten.
-        const carriedGKIndexes = category === "General Knowledge" && indexes.length < QUESTIONS_PER_LEVEL
+        // Carry partial factual tails into the next draw so no authored record
+        // gets discarded when a category pool size is not a multiple of ten.
+        const carriedGKIndexes = category !== "IQ Check" && indexes.length < QUESTIONS_PER_LEVEL
           ? [...indexes] : [];
         if (indexes.length < QUESTIONS_PER_LEVEL) {
           // Start a new cycle only after this category's session pool is exhausted.
@@ -7751,10 +7873,9 @@
           }
           return items;
         };
-        if (category === "General Knowledge") {
-          // Prefer two unused 2026 facts from different events, then timeless
-          // GK. If news entries are exhausted, use other unused facts. Recycle
-          // only after fewer than ten unused records remain; never within a round.
+        if (category !== "IQ Check") {
+          // Prefer two unused 2026 facts from different events when available,
+          // then the category's other authored questions. Never cross bank boundaries.
           const current = shuffle(indexes.filter((index) => activeQuestionPool[index].kind === "current-affairs"));
           const timeless = shuffle(indexes.filter((index) => activeQuestionPool[index].kind === "timeless"));
           const selected = [...carriedGKIndexes];

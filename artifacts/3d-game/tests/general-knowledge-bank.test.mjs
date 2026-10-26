@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { randomInt } from "node:crypto";
-import { bank, bankSource, html, reviewedAt, validationSource, year } from "./gk-bank.fixture.mjs";
+import { bank, bankSource, categoryAllowlist, categoryBanks, categoryScopeSource, html, reviewedAt, validationSource, year } from "./gk-bank.fixture.mjs";
 
 assert.equal(year, 2026);
 assert.equal(bank.length, 52);
@@ -103,4 +103,28 @@ for (let level = 1; level <= 500; level += 1) {
 }
 assert.throws(() => engine.pool(0), RangeError);
 assert.throws(() => engine.pool(501), RangeError);
-console.log("PASS: 52 authored GK facts, 10 sourced 2026 facts, five locales, all 500 levels and repeat-free rounds.");
+assert.equal(categoryBanks["Science & Technology"].length, 10);
+assert.equal(categoryBanks["Pop Culture & Movies"].length, 11);
+assert.equal(categoryBanks["History & Geography"].length, 12);
+assert.ok(!categoryBanks["Science & Technology"].some((item) =>
+  /water|genetic|plants|atmosphere/i.test(item.question.en),
+), "Science & Technology excludes chemistry/biology questions outside its physics, space, technology and AI scope");
+assert.ok(categoryBanks["Science & Technology"].some((item) => item.year === 2026 && item.subject === "ai"));
+assert.ok(categoryBanks["Science & Technology"].some((item) => item.year === 2026 && item.subject === "space-exploration"));
+assert.ok(categoryBanks["Pop Culture & Movies"].some((item) =>
+  item.id === "pop-2026-best-picture" && item.options.en[item.answer] === "One Battle After Another",
+));
+assert.ok(categoryBanks["History & Geography"].some((item) => item.status === "scheduled" && item.event === "cop31"));
+assert.ok(categoryBanks["History & Geography"].some((item) => item.status === "scheduled" && item.event === "water2026"));
+for (const [category, questions] of Object.entries(categoryBanks)) {
+  const allowed = new Set(categoryAllowlist[category] ?? ["logic"]);
+  assert.equal(new Set(questions.map((item) => item.id)).size, questions.length);
+  for (const item of questions) {
+    assert.ok(allowed.has(item.subject), `${category}: ${item.question.en} stays within its category`);
+    for (const language of ["en", "bn", "hi", "es", "fr"]) {
+      assert.equal(item.options[language].length, 4);
+      assert.ok(item.options[language][item.answer]);
+    }
+  }
+}
+console.log("PASS: strict category scopes, 2026 sources, five locales, all 500 GK levels and repeat-free rounds.");
