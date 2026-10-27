@@ -1968,7 +1968,10 @@ try {
   });
   await loadReadyPage(bossPage);
   await bossPage.locator("#openBossArenaButton").click();
-  assert.equal(await bossPage.locator("#bossArenaView").evaluate((node) => node.classList.contains("active")));
+  assert.ok(
+    await bossPage.locator("#bossArenaView").evaluate((node) => node.classList.contains("active")),
+    "opening the Boss Arena switches to its dedicated view",
+  );
   await bossPage.locator("#languageSelect").selectOption("es");
   assert.equal(await bossPage.locator("#bossArenaTitle").innerText(), "Arena del Jefe", "Arena copy localizes to Spanish");
   await bossPage.locator("#languageSelect").selectOption("en");
@@ -1986,13 +1989,41 @@ try {
   assert.equal(initialBossState.status, "in-progress");
   assert.equal(initialBossState.active.questionIds.length, 10, "the Arena samples ten unique questions");
   assert.equal(new Set(initialBossState.active.questionIds).size, 10);
+  const prepareBossTestQuestion = async () => {
+    await bossPage.evaluate(() => {
+      const key = "quizverse-daily-boss-state-v1";
+      const state = JSON.parse(localStorage.getItem(key));
+      state.active.deadlineAt = Date.now() + 60_000;
+      state.active.botAnswerAt = Date.now() + 150;
+      const newValue = JSON.stringify(state);
+      localStorage.setItem(key, newValue);
+      window.dispatchEvent(new StorageEvent("storage", {
+        key,
+        newValue,
+        storageArea: localStorage,
+      }));
+    });
+    await bossPage.waitForFunction(() => {
+      const state = JSON.parse(localStorage.getItem("quizverse-daily-boss-state-v1"));
+      return state?.active?.botLocked === true;
+    }, null, { timeout: 3_000 });
+  };
+  await prepareBossTestQuestion();
   const initialBossQuestion = await bossPage.locator("#bossQuestionText").innerText();
   await reloadReadyPage(bossPage);
   await bossPage.locator("#openBossArenaButton").click();
   await bossPage.locator("#bossBattlePanel").waitFor({ state: "visible" });
   assert.equal(await bossPage.locator("#bossQuestionText").innerText(), initialBossQuestion, "an in-progress daily duel resumes on the same question");
   assert.equal(await bossPage.locator("#bossRoundLabel").innerText(), "Question 1 of 10 · General Knowledge");
-  for (let questionIndex = 0; questionIndex < 10; questionIndex += 1) {
+  const reloadPenalty = await bossPage.evaluate(() =>
+    JSON.parse(localStorage.getItem("quizverse-daily-boss-state-v1")).active
+  );
+  assert.equal(reloadPenalty.playerChoice, -1, "reloading during an active duel records a missed answer as a fair-play penalty");
+  assert.equal(reloadPenalty.roundResolved, true, "the rival's locked answer resolves the interrupted round");
+  await bossPage.locator("#bossNextButton").click();
+  await bossPage.waitForFunction(() => document.querySelector("#bossRoundLabel")?.textContent.includes("Question 2"));
+  for (let questionIndex = 1; questionIndex < 10; questionIndex += 1) {
+    await prepareBossTestQuestion();
     const prompt = await bossPage.locator("#bossQuestionText").innerText();
     const answerIndex = await bossPage.evaluate((text) => window.__arenaTestAnswers.get(text), prompt);
     assert.ok(Number.isInteger(answerIndex) && answerIndex >= 0 && answerIndex < 4, "the localized GK question has a concealed runtime answer");

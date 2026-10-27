@@ -8480,13 +8480,17 @@
           let lastResult = null;
           if (saved.lastResult && ["win", "draw", "loss"].includes(saved.lastResult.outcome) &&
               validCount(saved.lastResult.playerScore) && saved.lastResult.playerScore <= DAILY_BOSS_QUESTION_COUNT &&
-              validCount(saved.lastResult.botScore) && saved.lastResult.botScore <= DAILY_BOSS_QUESTION_COUNT) {
+              validCount(saved.lastResult.botScore) && saved.lastResult.botScore <= DAILY_BOSS_QUESTION_COUNT &&
+              Number.isInteger(saved.lastResult.beforeRank) &&
+              saved.lastResult.beforeRank >= 0 && saved.lastResult.beforeRank < DAILY_BOSS_RANKS.length &&
+              Number.isInteger(saved.lastResult.afterRank) &&
+              saved.lastResult.afterRank >= 0 && saved.lastResult.afterRank < DAILY_BOSS_RANKS.length) {
             lastResult = {
               outcome: saved.lastResult.outcome,
               playerScore: saved.lastResult.playerScore,
               botScore: saved.lastResult.botScore,
-              beforeRank: Math.max(0, Math.min(DAILY_BOSS_RANKS.length - 1, saved.lastResult.beforeRank)),
-              afterRank: Math.max(0, Math.min(DAILY_BOSS_RANKS.length - 1, saved.lastResult.afterRank))
+              beforeRank: saved.lastResult.beforeRank,
+              afterRank: saved.lastResult.afterRank
             };
           }
           return {
@@ -12927,6 +12931,9 @@
         try {
           backup = keys.map((key) => [key, localStorage.getItem(key)]);
           keys.forEach((key) => localStorage.removeItem(key));
+          // Keep a canonical empty login record so reset UI and other tabs
+          // can distinguish a deliberate reset from an uninitialized save.
+          localStorage.setItem(DAILY_LOGIN_STORAGE_KEY, JSON.stringify(emptyDailyLoginState()));
           localStorage.setItem(RESET_SIGNAL_STORAGE_KEY, `${Date.now()}-${Math.random()}`);
         } catch {
           for (const [key, value] of backup) {
