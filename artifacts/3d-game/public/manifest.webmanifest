@@ -3,8 +3,8 @@
   "short_name": "QuizVerse 3D",
   "description": "A colorful 3D quiz game with general knowledge, category-specific trivia, progressive levels, and 2026 current affairs questions.",
   "lang": "en",
-  "start_url": "/",
-  "scope": "/",
+  "start_url": "./",
+  "scope": "./",
   "display": "standalone",
   "orientation": "any",
   "background_color": "#090b1e",
@@ -12,7 +12,7 @@
   "categories": ["games", "education"],
   "icons": [
     {
-      "src": "/favicon.svg",
+      "src": "./favicon.svg",
       "sizes": "any",
       "type": "image/svg+xml",
       "purpose": "any maskable"

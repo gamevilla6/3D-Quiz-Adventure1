@@ -1,0 +1,45 @@
+name: Deploy QuizVerse 3D to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: github-pages
+  cancel-in-progress: true
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Prepare single-file site
+        run: |
+          mkdir -p _site
+          cp artifacts/3d-game/index.html _site/index.html
+          cp artifacts/3d-game/public/manifest.webmanifest _site/manifest.webmanifest
+          cp artifacts/3d-game/public/favicon.svg _site/favicon.svg
+          cp artifacts/3d-game/public/robots.txt _site/robots.txt
+          touch _site/.nojekyll
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

@@ -460,7 +460,15 @@ try {
   }));
   assert.match(searchMetadata.title, /General Knowledge.*Trivia/i);
   assert.match(searchMetadata.description, /2026 current affairs/i);
-  assert.equal(searchMetadata.manifest, "/manifest.webmanifest");
+  assert.equal(searchMetadata.manifest, "./manifest.webmanifest");
+  assert.equal(
+    new URL(
+      searchMetadata.manifest,
+      "https://gamevilla6.github.io/3D-Quiz-Adventure1/",
+    ).pathname,
+    "/3D-Quiz-Adventure1/manifest.webmanifest",
+    "the web manifest resolves inside a GitHub Pages project path",
+  );
   assert.equal(searchMetadata.schema["@type"], "VideoGame");
   assert.equal(searchMetadata.schema.operatingSystem, "Web Browser");
   assert.deepEqual(searchMetadata.bannerSlots, [
