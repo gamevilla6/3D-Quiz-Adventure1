@@ -2016,8 +2016,163 @@ try {
   assert.deepEqual(bossErrors, [], `Boss Arena raised browser errors: ${bossErrors.join("; ")}`);
   await bossContext.close();
 
+  const nightBlitzContext = await browser.newContext({
+    viewport: { width: 320, height: 720 },
+    isMobile: true,
+    hasTouch: true,
+    reducedMotion: "reduce",
+    timezoneId: "UTC",
+  });
+  const nightBlitzPage = await nightBlitzContext.newPage();
+  const nightBlitzErrors = [];
+  nightBlitzPage.on("pageerror", (error) => nightBlitzErrors.push(error.message));
+  await nightBlitzPage.addInitScript((initialTime) => {
+    const NativeDate = window.Date;
+    let fixedNow = Number(sessionStorage.getItem("__nightBlitzTestNow")) || initialTime;
+    class TestDate extends NativeDate {
+      constructor(...args) {
+        super(...(args.length ? args : [fixedNow]));
+      }
+      static now() {
+        return fixedNow;
+      }
+      static advance(milliseconds) {
+        fixedNow += milliseconds;
+        sessionStorage.setItem("__nightBlitzTestNow", String(fixedNow));
+      }
+    }
+    window.Date = TestDate;
+    Object.defineProperty(Object.getPrototypeOf(window.crypto), "getRandomValues", {
+      configurable: true,
+      value(array) {
+        array.fill(0);
+        return array;
+      },
+    });
+    Math.random = () => 0.99;
+    const NativeWeakMap = window.WeakMap;
+    window.__nightBlitzTestAnswers = new Map();
+    window.WeakMap = class CapturingWeakMap extends NativeWeakMap {
+      set(question, encodedAnswer) {
+        if (question && typeof question.question?.en === "string") {
+          Object.values(question.question).forEach((prompt) => {
+            window.__nightBlitzTestAnswers.set(prompt, encodedAnswer);
+          });
+        }
+        return super.set(question, encodedAnswer);
+      }
+    };
+  }, Date.UTC(2026, 5, 11, 20, 59, 30));
+  await loadReadyPage(nightBlitzPage);
+  const blitzCoinsBefore = await nightBlitzPage.evaluate(() =>
+    JSON.parse(localStorage.getItem("quiz-orbit-reward-collection") || '{"coins":0}').coins
+  );
+  await nightBlitzPage.locator("#openNightBlitzButton").click();
+  assert.equal(await nightBlitzPage.locator("#nightBlitzStartButton").isDisabled(), true,
+    "Night Prime stays locked before 9 PM local time");
+  assert.match(await nightBlitzPage.locator("#nightBlitzStatus").innerText(), /00:00:30/,
+    "the event screen shows a local-time countdown");
+  assert.equal(await nightBlitzPage.locator("#nightBlitzOptions .night-blitz-option").count(), 0,
+    "players cannot enter the round before the daily window");
+  await nightBlitzPage.evaluate(() => Date.advance(30_000));
+  await nightBlitzPage.waitForFunction(
+    () => document.querySelector("#nightBlitzStartButton")?.disabled === false,
+    null,
+    { timeout: 3_000 },
+  );
+  await nightBlitzPage.locator("#languageSelect").selectOption("es");
+  assert.equal(await nightBlitzPage.locator("#nightBlitzTitle").innerText(), "Ráfaga Prime Nocturna",
+    "the Night Prime page localizes to Spanish");
+  await nightBlitzPage.locator("#languageSelect").selectOption("en");
+  await nightBlitzPage.locator("#nightBlitzCategorySelect").selectOption("General Knowledge");
+  await nightBlitzPage.locator("#nightBlitzStartButton").click();
+  await nightBlitzPage.locator("#nightBlitzRoundPanel").waitFor({ state: "visible" });
+  const startedBlitzState = await nightBlitzPage.evaluate(() =>
+    JSON.parse(localStorage.getItem("quizverse-night-prime-blitz-v1"))
+  );
+  assert.equal(startedBlitzState.status, "in-progress");
+  assert.equal(startedBlitzState.active.questionIds.length, 5, "Night Prime selects five questions");
+  assert.equal(new Set(startedBlitzState.active.questionIds).size, 5, "Night Prime questions are unique");
+  assert.equal(startedBlitzState.active.category, "General Knowledge", "the chosen mode is retained");
+  assert.equal(await nightBlitzPage.locator("#nightBlitzOptions .night-blitz-option").count(), 4);
+  assert.ok(
+    await nightBlitzPage.locator("#nightBlitzOptions .night-blitz-option").first()
+      .evaluate((node) => node.getBoundingClientRect().height >= 50),
+    "Night Prime answers keep touch-sized targets on a 320px viewport",
+  );
+  const firstBlitzQuestion = await nightBlitzPage.locator("#nightBlitzQuestionText").innerText();
+  const firstBlitzDeadline = startedBlitzState.active.deadlineAt;
+  await nightBlitzPage.evaluate(() => Date.advance(2_000));
+  await nightBlitzPage.waitForFunction(
+    () => document.querySelector("#nightBlitzClock")?.textContent.includes("13"),
+    null,
+    { timeout: 3_000 },
+  );
+  await nightBlitzPage.locator("#languageSelect").selectOption("fr");
+  assert.equal(await nightBlitzPage.locator("#nightBlitzQuestionLabel").innerText(),
+    "Question 1 sur 5 · Connaissances générales", "the active round localizes without restarting");
+  assert.equal(
+    await nightBlitzPage.evaluate(() =>
+      JSON.parse(localStorage.getItem("quizverse-night-prime-blitz-v1")).active.deadlineAt
+    ),
+    firstBlitzDeadline,
+    "changing language leaves the countdown deadline unchanged",
+  );
+  await nightBlitzPage.locator("#languageSelect").selectOption("en");
+  await reloadReadyPage(nightBlitzPage);
+  await nightBlitzPage.locator("#openNightBlitzButton").click();
+  await nightBlitzPage.locator("#nightBlitzRoundPanel").waitFor({ state: "visible" });
+  assert.equal(await nightBlitzPage.locator("#nightBlitzQuestionText").innerText(), firstBlitzQuestion,
+    "reloading resumes the same saved question");
+  for (let questionIndex = 0; questionIndex < 5; questionIndex += 1) {
+    if (questionIndex > 0) {
+      await nightBlitzPage.waitForFunction(
+        (expected) => document.querySelector("#nightBlitzQuestionLabel")?.textContent.includes(`Question ${expected}`),
+        questionIndex + 1,
+      );
+    }
+    const prompt = await nightBlitzPage.locator("#nightBlitzQuestionText").innerText();
+    const answerIndex = await nightBlitzPage.evaluate(
+      (questionText) => window.__nightBlitzTestAnswers.get(questionText),
+      prompt,
+    );
+    assert.ok(Number.isInteger(answerIndex) && answerIndex >= 0 && answerIndex < 4,
+      "the current localized question has a concealed answer index");
+    await nightBlitzPage.locator("#nightBlitzOptions .night-blitz-option").nth(answerIndex).click();
+    await nightBlitzPage.locator("#nightBlitzNextButton").waitFor({ state: "visible" });
+    await nightBlitzPage.locator("#nightBlitzNextButton").click();
+  }
+  await nightBlitzPage.locator("#nightBlitzResultPanel").waitFor({ state: "visible" });
+  const completedBlitzState = await nightBlitzPage.evaluate(() =>
+    JSON.parse(localStorage.getItem("quizverse-night-prime-blitz-v1"))
+  );
+  assert.equal(completedBlitzState.status, "completed");
+  assert.equal(completedBlitzState.result.correct, 5);
+  assert.equal(completedBlitzState.result.coins, 45, "five correct answers earn 25 coins and the 20-coin clear bonus");
+  const blitzCoinsAfter = await nightBlitzPage.evaluate(() =>
+    JSON.parse(localStorage.getItem("quiz-orbit-reward-collection")).coins
+  );
+  assert.equal(blitzCoinsAfter - blitzCoinsBefore, 45, "the result pays coins once to the shared vault");
+  assert.equal(await nightBlitzPage.locator("#nightBlitzResultCorrect").innerText(), "5 / 5");
+  await nightBlitzPage.locator("#nightBlitzResultHomeButton").click();
+  await nightBlitzPage.locator("#openNightBlitzButton").click();
+  assert.equal(await nightBlitzPage.locator("#nightBlitzStartButton").isDisabled(), true,
+    "a completed attempt cannot be replayed on the same local date");
+  await nightBlitzPage.setViewportSize({ width: 280, height: 640 });
+  const blitzNarrowLayout = await nightBlitzPage.evaluate(() => ({
+    scrollWidth: document.documentElement.scrollWidth,
+    viewportWidth: document.documentElement.clientWidth,
+    cardWidth: document.querySelector("#nightBlitzView .boss-arena-shell").getBoundingClientRect().width,
+  }));
+  assert.ok(blitzNarrowLayout.scrollWidth <= blitzNarrowLayout.viewportWidth,
+    "Night Prime has no horizontal overflow on a narrow phone");
+  assert.ok(blitzNarrowLayout.cardWidth <= blitzNarrowLayout.viewportWidth,
+    "Night Prime card fits the narrow phone viewport");
+  assert.deepEqual(nightBlitzErrors, [], `Night Prime raised browser errors: ${nightBlitzErrors.join("; ")}`);
+  await nightBlitzContext.close();
+
   assert.deepEqual(pageErrors, [], `The game page raised browser errors: ${pageErrors.join("; ")}`);
-  console.log("Browser check passed: responsive layouts, localized rounds, progression/rewards, timer and focus cleanup, Settings/Privacy, storage recovery, and a daily Boss Arena duel with rank, payout, badge, resume, and one-attempt enforcement.");
+  console.log("Browser check passed: responsive layouts, localized rounds, progression/rewards, timer and focus cleanup, Settings/Privacy, storage recovery, Daily Boss, and 9 PM Night Prime scheduling, resume, countdown, payout, mobile fit, and one-attempt enforcement.");
 } finally {
   await browser?.close();
   server.kill("SIGTERM");

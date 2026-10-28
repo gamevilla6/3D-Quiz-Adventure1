@@ -3688,6 +3688,12 @@
     .home-option-icon.privacy-icon { color: #84edc7; border-color: rgba(106, 236, 189, .2); background: rgba(46, 151, 123, .15); }
     .home-option-icon.settings-icon { color: #ffca84; border-color: rgba(255, 195, 123, .2); background: rgba(167, 109, 42, .16); }
     .home-option-icon.sound-icon { color: #8feaff; }
+    .home-option-icon.night-blitz-home-icon {
+      color: #ffe5a0;
+      border-color: rgba(255, 215, 126, .34);
+      background: linear-gradient(145deg, rgba(183, 115, 53, .24), rgba(103, 78, 174, .2));
+      box-shadow: inset 0 0 18px rgba(255, 213, 123, .07), 0 0 16px rgba(241, 184, 88, .08);
+    }
     .home-option-copy { display: grid; min-width: 0; gap: 3px; }
     .home-option-copy strong { color: #f5f6ff; font-size: 11px; font-weight: 820; line-height: 1.3; overflow-wrap: anywhere; }
     .home-option-copy small { color: #b4c0dc; font-size: 9px; font-weight: 550; line-height: 1.4; overflow-wrap: anywhere; }
@@ -4327,11 +4333,48 @@
     .boss-final-score b { color: #8290af; font-size: 12px; }
     .boss-reward-line { color: #ffe3a0 !important; font-size: 15px !important; font-weight: 900; }
     .boss-arena-panel .boss-arena-nav { margin-top: 15px; }
+    .night-blitz-home-card { border-color: rgba(239, 194, 109, .24); }
+    .night-blitz-home-card:hover { border-color: rgba(255, 216, 135, .56); }
+    .night-blitz-intro > h2 { margin: 0 0 10px; color: #fff1c3; font-size: clamp(18px, 3vw, 24px); }
+    .night-blitz-rules { margin: 7px 0 15px; color: #c9d4e9; font-size: 11px; line-height: 1.6; }
+    .night-blitz-score-line {
+      display: flex;
+      min-width: 0;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin: 0 0 13px;
+      color: #cad6ed;
+      font-size: 11px;
+      font-weight: 800;
+    }
+    .night-blitz-score-line strong {
+      color: #ffe6a2;
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+    }
+    .night-blitz-result-score {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin: 16px 0;
+      padding: 13px 15px;
+      color: #d2ddf1;
+      border: 1px solid rgba(255, 211, 123, .2);
+      border-radius: 14px;
+      background: rgba(255, 255, 255, .045);
+      font-size: 12px;
+      font-weight: 800;
+    }
+    .night-blitz-result-score strong { color: #fff0bf; font-size: 20px; font-variant-numeric: tabular-nums; }
+    .night-blitz-result .boss-primary-button { width: min(100%, 360px); }
     @media (max-width: 520px) {
       .boss-arena-shell { border-radius: 20px; }
       .boss-options { grid-template-columns: minmax(0, 1fr); gap: 8px; }
       .boss-option { min-height: 52px; }
       .boss-final-score { gap: 7px; padding: 12px 8px; }
+      .night-blitz-result-score { align-items: flex-start; flex-direction: column; }
     }
     @media (prefers-reduced-motion: reduce) {
       .boss-primary-button, .boss-secondary-button, .boss-next-button, .boss-score-fill, .boss-clock-fill { transition: none !important; }
@@ -4591,6 +4634,11 @@
                     <span class="home-option-icon boss-home-icon" aria-hidden="true">⚔</span>
                     <span class="home-option-copy"><strong id="bossHomeTitle">Daily Boss Arena</strong><small id="bossHomeDescription">Bronze · 0 RP · one duel each day</small></span>
                     <span class="home-option-arrow" id="bossHomeRankIcon" aria-hidden="true">↗</span>
+                  </button>
+                  <button class="home-option-card night-blitz-home-card" type="button" id="openNightBlitzButton" data-testid="open-night-blitz">
+                    <span class="home-option-icon night-blitz-home-icon" aria-hidden="true">🌙</span>
+                    <span class="home-option-copy"><strong id="nightBlitzHomeTitle" data-testid="text-night-blitz-home-title">Night Prime Blitz</strong><small id="nightBlitzHomeDescription" data-testid="text-night-blitz-home-status">Available daily from 9 PM local time.</small></span>
+                    <span class="home-option-arrow" aria-hidden="true">↗</span>
                   </button>
                   <button class="home-option-card continue-journey-button" type="button" id="continueJourneyButton" data-testid="continue-journey" hidden>
                     <span class="home-option-icon continue-icon" aria-hidden="true">↗</span>
@@ -4889,6 +4937,70 @@
               <p class="boss-reward-line" id="bossResultReward"></p>
               <p id="bossResultRankChange"></p>
               <button class="boss-primary-button" type="button" id="bossResultHomeButton">Return to Home</button>
+            </section>
+          </div>
+        </section>
+
+        <section class="view boss-arena-view night-blitz-view" id="nightBlitzView" aria-labelledby="nightBlitzTitle">
+          <div class="boss-arena-shell">
+            <header class="boss-arena-heading">
+              <p class="boss-arena-kicker" id="nightBlitzKicker">NIGHT PRIME EVENT</p>
+              <h1 id="nightBlitzTitle">Night Prime Blitz</h1>
+              <p id="nightBlitzDescription">Five fast questions, available nightly from 9 PM to midnight in your local time.</p>
+            </header>
+            <section class="boss-arena-panel night-blitz-intro" id="nightBlitzIntroPanel" aria-labelledby="nightBlitzScheduleTitle">
+              <h2 id="nightBlitzScheduleTitle">Tonight’s challenge</h2>
+              <p class="boss-daily-status" id="nightBlitzStatus" data-testid="status-night-blitz" role="status" aria-live="polite"></p>
+              <p class="night-blitz-rules" id="nightBlitzRules"></p>
+              <p class="boss-daily-status boss-arena-error" id="nightBlitzError" role="alert" hidden></p>
+              <div class="boss-arena-form">
+                <label for="nightBlitzCategorySelect" id="nightBlitzCategoryLabel">Question category</label>
+                <select class="boss-category-select" id="nightBlitzCategorySelect" data-testid="select-night-blitz-category">
+                  <option value="General Knowledge">General Knowledge</option>
+                  <option value="Science &amp; Technology">Science &amp; Technology</option>
+                  <option value="Pop Culture &amp; Movies">Pop Culture &amp; Movies</option>
+                  <option value="History &amp; Geography">History &amp; Geography</option>
+                  <option value="IQ Check">IQ Check</option>
+                </select>
+                <button class="boss-primary-button" type="button" id="nightBlitzStartButton" data-testid="button-start-night-blitz">Start tonight’s Blitz</button>
+              </div>
+              <nav class="boss-arena-nav" aria-label="Night Prime Blitz navigation">
+                <button class="boss-secondary-button" type="button" id="nightBlitzHomeBackButton" data-testid="button-night-blitz-back">← Back to Home</button>
+              </nav>
+            </section>
+            <section class="boss-arena-panel night-blitz-round" id="nightBlitzRoundPanel" aria-label="Night Prime Blitz questions" hidden>
+              <div class="boss-battle-header">
+                <span class="boss-round-label" id="nightBlitzQuestionLabel" data-testid="text-night-blitz-question-count">Question 1 of 5</span>
+                <span class="boss-clock" id="nightBlitzClock" data-testid="text-night-blitz-timer">15 s</span>
+              </div>
+              <div class="boss-clock-track" id="nightBlitzClockTrack" role="progressbar" aria-label="Time remaining" aria-valuemin="0" aria-valuemax="15" aria-valuenow="15">
+                <span class="boss-clock-fill" id="nightBlitzClockFill"></span>
+              </div>
+              <div class="night-blitz-score-line">
+                <span id="nightBlitzCategoryInRound">General Knowledge</span>
+                <strong id="nightBlitzScore" data-testid="text-night-blitz-score">0 / 5</strong>
+              </div>
+              <h2 class="boss-question-card" id="nightBlitzQuestionText" data-testid="text-night-blitz-question"></h2>
+              <div class="boss-options" id="nightBlitzOptions" data-testid="options-night-blitz" role="group" aria-label="Night Prime Blitz answer options"></div>
+              <p class="boss-round-feedback" id="nightBlitzFeedback" data-testid="status-night-blitz-feedback" role="status" aria-live="polite"></p>
+              <button class="boss-next-button" type="button" id="nightBlitzNextButton" data-testid="button-next-night-blitz" hidden>Next question</button>
+              <p class="boss-daily-status boss-arena-error" id="nightBlitzRoundError" role="alert" hidden></p>
+              <nav class="boss-arena-nav" aria-label="Active Night Prime Blitz navigation">
+                <button class="boss-secondary-button" type="button" id="nightBlitzRoundBackButton" data-testid="button-pause-night-blitz">Pause &amp; Return Home</button>
+              </nav>
+            </section>
+            <section class="boss-arena-panel boss-final-result night-blitz-result" id="nightBlitzResultPanel" aria-labelledby="nightBlitzResultTitle" hidden>
+              <div class="boss-result-emblem" aria-hidden="true">🌙</div>
+              <p class="boss-arena-kicker" id="nightBlitzResultKicker">NIGHT PRIME COMPLETE</p>
+              <h2 id="nightBlitzResultTitle">Blitz complete</h2>
+              <p id="nightBlitzResultDescription"></p>
+              <div class="night-blitz-result-score">
+                <span id="nightBlitzResultCorrectLabel">Correct answers</span>
+              <strong id="nightBlitzResultCorrect" data-testid="text-night-blitz-result-correct">0 / 5</strong>
+              </div>
+              <p class="boss-reward-line" id="nightBlitzResultReward" data-testid="text-night-blitz-result-reward"></p>
+              <p class="night-blitz-rules" id="nightBlitzResultRules"></p>
+              <button class="boss-primary-button" type="button" id="nightBlitzResultHomeButton" data-testid="button-night-blitz-result-home">Return to Home</button>
             </section>
           </div>
         </section>
@@ -6425,6 +6537,204 @@
         }
       };
 
+      const nightBlitzTranslations = {
+        en: {
+          homeTitle: "Night Prime Blitz",
+          homeCountdown: "Starts in {countdown} · opens at 9 PM local time",
+          homeOpen: "Open now · 5 questions · one attempt",
+          homeResume: "Resume tonight’s Blitz · {answered}/5 answered",
+          homeUsed: "Completed today · {correct}/5 correct · +{coins} coins",
+          kicker: "NIGHT PRIME EVENT",
+          title: "Night Prime Blitz",
+          description: "Five fast questions. Play once each day from 9 PM to midnight in your local time.",
+          scheduleTitle: "Tonight’s challenge",
+          rules: "5 questions · 15 seconds each · 5 coins per correct answer, plus 20 coins for 4 or more correct.",
+          categoryLabel: "Question category",
+          statusCountdown: "Opens in {countdown}. The Blitz runs from 9 PM until midnight local time.",
+          statusOpen: "It’s Blitz time. You have one attempt before midnight.",
+          statusResume: "Your attempt is saved. Continue where you left off.",
+          statusUsed: "Today’s attempt is complete. The next Blitz opens at 9 PM tomorrow.",
+          start: "Start tonight’s Blitz",
+          resume: "Resume tonight’s Blitz",
+          usedButton: "Completed today",
+          back: "← Back to Home",
+          pauseReturn: "Pause & Return Home",
+          question: "Question {current} of 5 · {category}",
+          score: "{correct} / 5 correct",
+          choose: "Choose an answer.",
+          correct: "Correct!",
+          wrong: "Not quite. Correct answer: {answer}.",
+          timeout: "Time’s up. No point for this question.",
+          next: "Next question",
+          finish: "See your result",
+          storageError: "Could not save the Blitz. Check browser storage and try again.",
+          poolError: "This category does not have five available questions.",
+          resultKicker: "NIGHT PRIME COMPLETE",
+          resultTitle: "Blitz complete",
+          resultDescription: "You answered {correct} of 5 correctly in {category}.",
+          correctAnswers: "Correct answers",
+          reward: "+{coins} coins added to your vault",
+          resultRules: "The next Blitz opens at 9 PM local time.",
+          resultHome: "Return to Home"
+        },
+        bn: {
+          homeTitle: "নাইট প্রাইম ব্লিটজ",
+          homeCountdown: "শুরু হতে {countdown} বাকি · স্থানীয় সময় রাত ৯টায় খুলবে",
+          homeOpen: "এখন খোলা · ৫টি প্রশ্ন · একবারের চেষ্টা",
+          homeResume: "আজকের ব্লিটজ চালিয়ে যান · {answered}/৫টি উত্তর",
+          homeUsed: "আজ সম্পন্ন · {correct}/৫টি সঠিক · +{coins} কয়েন",
+          kicker: "নাইট প্রাইম ইভেন্ট",
+          title: "নাইট প্রাইম ব্লিটজ",
+          description: "দ্রুত পাঁচটি প্রশ্ন। স্থানীয় সময় রাত ৯টা থেকে ১২টার মধ্যে দিনে একবার খেলুন।",
+          scheduleTitle: "আজ রাতের চ্যালেঞ্জ",
+          rules: "৫টি প্রশ্ন · প্রতিটির জন্য ১৫ সেকেন্ড · প্রতিটি সঠিক উত্তরে ৫ কয়েন, ৪টি বা তার বেশি সঠিক হলে আরও ২০ কয়েন।",
+          categoryLabel: "প্রশ্নের বিভাগ",
+          statusCountdown: "শুরু হতে {countdown} বাকি। ব্লিটজ স্থানীয় সময় রাত ৯টা থেকে ১২টা পর্যন্ত চলে।",
+          statusOpen: "ব্লিটজের সময় হয়েছে। রাত ১২টার আগে একবার চেষ্টা করতে পারবেন।",
+          statusResume: "আপনার চেষ্টা সংরক্ষিত আছে। যেখানে থেমেছেন সেখান থেকে চালিয়ে যান।",
+          statusUsed: "আজকের চেষ্টা সম্পন্ন। পরের ব্লিটজ আগামীকাল স্থানীয় সময় রাত ৯টায় খুলবে।",
+          start: "আজ রাতের ব্লিটজ শুরু করুন",
+          resume: "আজ রাতের ব্লিটজ চালিয়ে যান",
+          usedButton: "আজ সম্পন্ন",
+          back: "← হোমে ফিরুন",
+          pauseReturn: "বিরতি দিয়ে হোমে ফিরুন",
+          question: "৫টির মধ্যে প্রশ্ন {current} · {category}",
+          score: "{correct}/৫টি সঠিক",
+          choose: "একটি উত্তর বেছে নিন।",
+          correct: "সঠিক!",
+          wrong: "সঠিক হয়নি। সঠিক উত্তর: {answer}।",
+          timeout: "সময় শেষ। এই প্রশ্নে কোনো পয়েন্ট নেই।",
+          next: "পরের প্রশ্ন",
+          finish: "ফলাফল দেখুন",
+          storageError: "ব্লিটজ সংরক্ষণ করা যায়নি। ব্রাউজার স্টোরেজ পরীক্ষা করে আবার চেষ্টা করুন।",
+          poolError: "এই বিভাগে পাঁচটি প্রশ্ন পাওয়া যায়নি।",
+          resultKicker: "নাইট প্রাইম সম্পন্ন",
+          resultTitle: "ব্লিটজ সম্পন্ন",
+          resultDescription: "{category} বিভাগে ৫টির মধ্যে {correct}টি সঠিক উত্তর দিয়েছেন।",
+          correctAnswers: "সঠিক উত্তর",
+          reward: "আপনার ভাণ্ডারে +{coins} কয়েন যোগ হয়েছে",
+          resultRules: "পরের ব্লিটজ স্থানীয় সময় রাত ৯টায় খুলবে।",
+          resultHome: "হোমে ফিরুন"
+        },
+        hi: {
+          homeTitle: "नाइट प्राइम ब्लिट्ज़",
+          homeCountdown: "शुरू होने में {countdown} · स्थानीय समय रात 9 बजे खुलेगा",
+          homeOpen: "अभी उपलब्ध · 5 सवाल · एक प्रयास",
+          homeResume: "आज का ब्लिट्ज़ जारी रखें · {answered}/5 जवाब दिए",
+          homeUsed: "आज पूरा · {correct}/5 सही · +{coins} कॉइन",
+          kicker: "नाइट प्राइम इवेंट",
+          title: "नाइट प्राइम ब्लिट्ज़",
+          description: "पाँच तेज़ सवाल। स्थानीय समय रात 9 बजे से आधी रात तक रोज़ एक बार खेलें।",
+          scheduleTitle: "आज रात की चुनौती",
+          rules: "5 सवाल · हर सवाल के लिए 15 सेकंड · हर सही जवाब पर 5 कॉइन, 4 या अधिक सही होने पर 20 अतिरिक्त कॉइन।",
+          categoryLabel: "सवालों की श्रेणी",
+          statusCountdown: "शुरू होने में {countdown}। ब्लिट्ज़ स्थानीय समय रात 9 बजे से आधी रात तक चलता है।",
+          statusOpen: "ब्लिट्ज़ शुरू है। आधी रात से पहले एक प्रयास उपलब्ध है।",
+          statusResume: "आपका प्रयास सेव है। जहाँ रुके थे, वहीं से जारी रखें।",
+          statusUsed: "आज का प्रयास पूरा हुआ। अगला ब्लिट्ज़ कल स्थानीय समय रात 9 बजे खुलेगा।",
+          start: "आज रात का ब्लिट्ज़ शुरू करें",
+          resume: "आज रात का ब्लिट्ज़ जारी रखें",
+          usedButton: "आज पूरा हुआ",
+          back: "← होम पर लौटें",
+          pauseReturn: "रोकें और होम पर लौटें",
+          question: "5 में से सवाल {current} · {category}",
+          score: "{correct} / 5 सही",
+          choose: "एक जवाब चुनें।",
+          correct: "सही!",
+          wrong: "सही नहीं। सही जवाब: {answer}।",
+          timeout: "समय समाप्त। इस सवाल के लिए अंक नहीं।",
+          next: "अगला सवाल",
+          finish: "नतीजा देखें",
+          storageError: "ब्लिट्ज़ सेव नहीं हुआ। ब्राउज़र स्टोरेज जाँचकर फिर कोशिश करें।",
+          poolError: "इस श्रेणी में पाँच उपलब्ध सवाल नहीं हैं।",
+          resultKicker: "नाइट प्राइम पूरा",
+          resultTitle: "ब्लिट्ज़ पूरा",
+          resultDescription: "{category} में आपने 5 में से {correct} सवाल सही किए।",
+          correctAnswers: "सही जवाब",
+          reward: "आपके वॉल्ट में +{coins} कॉइन जोड़े गए",
+          resultRules: "अगला ब्लिट्ज़ स्थानीय समय रात 9 बजे खुलेगा।",
+          resultHome: "होम पर लौटें"
+        },
+        es: {
+          homeTitle: "Ráfaga Prime Nocturna",
+          homeCountdown: "Empieza en {countdown} · abre a las 21:00, hora local",
+          homeOpen: "Disponible · 5 preguntas · un intento",
+          homeResume: "Reanuda la ráfaga de hoy · {answered}/5 respondidas",
+          homeUsed: "Completada hoy · {correct}/5 correctas · +{coins} monedas",
+          kicker: "EVENTO PRIME NOCTURNO",
+          title: "Ráfaga Prime Nocturna",
+          description: "Cinco preguntas rápidas. Juega una vez al día de 21:00 a medianoche, según tu hora local.",
+          scheduleTitle: "El reto de esta noche",
+          rules: "5 preguntas · 15 segundos cada una · 5 monedas por acierto y 20 extra con 4 aciertos o más.",
+          categoryLabel: "Categoría de preguntas",
+          statusCountdown: "Empieza en {countdown}. La ráfaga está disponible de 21:00 a medianoche, hora local.",
+          statusOpen: "La ráfaga está abierta. Tienes un intento antes de medianoche.",
+          statusResume: "Tu intento está guardado. Continúa donde lo dejaste.",
+          statusUsed: "Ya completaste el intento de hoy. La próxima ráfaga abre mañana a las 21:00.",
+          start: "Empezar la ráfaga de hoy",
+          resume: "Reanudar la ráfaga de hoy",
+          usedButton: "Completada hoy",
+          back: "← Volver al inicio",
+          pauseReturn: "Pausar y volver al inicio",
+          question: "Pregunta {current} de 5 · {category}",
+          score: "{correct} / 5 correctas",
+          choose: "Elige una respuesta.",
+          correct: "¡Correcto!",
+          wrong: "No exactamente. Respuesta correcta: {answer}.",
+          timeout: "Se acabó el tiempo. Sin punto en esta pregunta.",
+          next: "Siguiente pregunta",
+          finish: "Ver resultado",
+          storageError: "No se pudo guardar la ráfaga. Revisa el almacenamiento del navegador e inténtalo de nuevo.",
+          poolError: "Esta categoría no tiene cinco preguntas disponibles.",
+          resultKicker: "PRIME NOCTURNA COMPLETADA",
+          resultTitle: "Ráfaga completada",
+          resultDescription: "Acertaste {correct} de 5 en {category}.",
+          correctAnswers: "Respuestas correctas",
+          reward: "+{coins} monedas añadidas a tu bóveda",
+          resultRules: "La próxima ráfaga abre mañana a las 21:00, hora local.",
+          resultHome: "Volver al inicio"
+        },
+        fr: {
+          homeTitle: "Blitz Prime Nocturne",
+          homeCountdown: "Début dans {countdown} · ouverture à 21 h, heure locale",
+          homeOpen: "Ouvert · 5 questions · une tentative",
+          homeResume: "Reprendre le Blitz de ce soir · {answered}/5 réponses",
+          homeUsed: "Terminé aujourd’hui · {correct}/5 bonnes réponses · +{coins} pièces",
+          kicker: "ÉVÉNEMENT PRIME NOCTURNE",
+          title: "Blitz Prime Nocturne",
+          description: "Cinq questions rapides. Jouez une fois par jour de 21 h à minuit, à l’heure locale.",
+          scheduleTitle: "Le défi de ce soir",
+          rules: "5 questions · 15 secondes chacune · 5 pièces par bonne réponse et 20 pièces bonus à partir de 4 bonnes réponses.",
+          categoryLabel: "Catégorie des questions",
+          statusCountdown: "Début dans {countdown}. Le Blitz est ouvert de 21 h à minuit, heure locale.",
+          statusOpen: "Le Blitz est ouvert. Une tentative est disponible avant minuit.",
+          statusResume: "Votre tentative est enregistrée. Reprenez où vous en étiez.",
+          statusUsed: "Votre tentative du jour est terminée. Le prochain Blitz ouvre demain à 21 h.",
+          start: "Lancer le Blitz de ce soir",
+          resume: "Reprendre le Blitz de ce soir",
+          usedButton: "Terminé aujourd’hui",
+          back: "← Retour à l’accueil",
+          pauseReturn: "Mettre en pause et revenir",
+          question: "Question {current} sur 5 · {category}",
+          score: "{correct} / 5 bonnes réponses",
+          choose: "Choisissez une réponse.",
+          correct: "Correct !",
+          wrong: "Pas tout à fait. Bonne réponse : {answer}.",
+          timeout: "Temps écoulé. Aucun point pour cette question.",
+          next: "Question suivante",
+          finish: "Voir le résultat",
+          storageError: "Impossible d’enregistrer le Blitz. Vérifiez le stockage du navigateur puis réessayez.",
+          poolError: "Cette catégorie ne contient pas cinq questions disponibles.",
+          resultKicker: "PRIME NOCTURNE TERMINÉ",
+          resultTitle: "Blitz terminé",
+          resultDescription: "Vous avez répondu correctement à {correct} questions sur 5 en {category}.",
+          correctAnswers: "Bonnes réponses",
+          reward: "+{coins} pièces ajoutées à votre coffre",
+          resultRules: "Le prochain Blitz ouvre demain à 21 h, heure locale.",
+          resultHome: "Retour à l’accueil"
+        }
+      };
+
       const dailyLoginTranslations = {
         en: {
           kicker: "DAILY LOGIN STREAK",
@@ -7911,6 +8221,14 @@
       const DAILY_BOSS_LOCK_KEY = `${DAILY_BOSS_STORAGE_KEY}:start-lock`;
       const DAILY_BOSS_QUESTION_COUNT = 10;
       const DAILY_BOSS_TIME_LIMIT_MS = 12_000;
+      const NIGHT_BLITZ_STORAGE_KEY = "quizverse-night-prime-blitz-v1";
+      const NIGHT_BLITZ_LOCK_KEY = `${NIGHT_BLITZ_STORAGE_KEY}:attempt-lock`;
+      const NIGHT_BLITZ_QUESTION_COUNT = 5;
+      const NIGHT_BLITZ_START_HOUR = 21;
+      const NIGHT_BLITZ_TIME_LIMIT_MS = 15_000;
+      const NIGHT_BLITZ_COINS_PER_CORRECT = 5;
+      const NIGHT_BLITZ_CLEAR_THRESHOLD = 4;
+      const NIGHT_BLITZ_CLEAR_BONUS = 20;
       const DAILY_BOSS_RANKS = Object.freeze([
         { minimum: 0, nameIndex: 0 },
         { minimum: 100, nameIndex: 1 },
@@ -8101,6 +8419,16 @@
         return Number.isFinite(date.getTime()) ? date.toISOString().slice(0, 10) : "";
       }
 
+      function localDayKey(timestamp = Date.now()) {
+        const date = new Date(timestamp);
+        if (!Number.isFinite(date.getTime())) return "";
+        return [
+          date.getFullYear(),
+          String(date.getMonth() + 1).padStart(2, "0"),
+          String(date.getDate()).padStart(2, "0")
+        ].join("-");
+      }
+
       function emptyDailyLoginState() {
         return {
           version: 1,
@@ -8268,6 +8596,90 @@
         }
       }
 
+      function emptyNightBlitzState() {
+        return { version: 1, lastAttemptDate: "", status: "ready", active: null, result: null };
+      }
+
+      function validLocalDayKey(value, allowEmpty = false) {
+        if (allowEmpty && value === "") return true;
+        if (typeof value !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
+        const parsed = new Date(`${value}T00:00:00.000Z`);
+        return Number.isFinite(parsed.getTime()) && parsed.toISOString().slice(0, 10) === value;
+      }
+
+      function readNightBlitzState() {
+        try {
+          const saved = JSON.parse(localStorage.getItem(NIGHT_BLITZ_STORAGE_KEY) || "null");
+          const validStatuses = ["ready", "in-progress", "completed"];
+          if (!saved || saved.version !== 1 ||
+              !validLocalDayKey(saved.lastAttemptDate, true) ||
+              !validStatuses.includes(saved.status)) return emptyNightBlitzState();
+
+          let active = null;
+          if (saved.status === "in-progress") {
+            const source = saved.active;
+            const validActive = source &&
+              validLocalDayKey(source.date) &&
+              source.date === saved.lastAttemptDate &&
+              PROGRESSION_CATEGORIES.includes(source.category) &&
+              Array.isArray(source.questionIds) &&
+              source.questionIds.length === NIGHT_BLITZ_QUESTION_COUNT &&
+              source.questionIds.every((id) => typeof id === "string" && id.length > 0 && id.length <= 160) &&
+              new Set(source.questionIds).size === NIGHT_BLITZ_QUESTION_COUNT &&
+              Number.isInteger(source.currentIndex) &&
+              source.currentIndex >= 0 && source.currentIndex < NIGHT_BLITZ_QUESTION_COUNT &&
+              Array.isArray(source.answers) &&
+              source.answers.length === NIGHT_BLITZ_QUESTION_COUNT &&
+              source.answers.every((answer) => answer === null ||
+                Number.isInteger(answer) && answer >= -1 && answer <= 3) &&
+              Number.isSafeInteger(source.deadlineAt) && source.deadlineAt > 0 &&
+              source.deadlineAt <= Date.now() + 60_000;
+            if (!validActive) return emptyNightBlitzState();
+            active = {
+              date: source.date,
+              category: source.category,
+              questionIds: [...source.questionIds],
+              currentIndex: source.currentIndex,
+              answers: [...source.answers],
+              deadlineAt: source.deadlineAt
+            };
+          }
+
+          let result = null;
+          if (saved.status === "completed") {
+            const source = saved.result;
+            if (!source ||
+                !validLocalDayKey(source.date) ||
+                source.date !== saved.lastAttemptDate ||
+                !PROGRESSION_CATEGORIES.includes(source.category) ||
+                !Number.isSafeInteger(source.correct) ||
+                source.correct < 0 || source.correct > NIGHT_BLITZ_QUESTION_COUNT ||
+                !Number.isSafeInteger(source.coins) ||
+                source.coins < 0 || source.coins > NIGHT_BLITZ_QUESTION_COUNT * NIGHT_BLITZ_COINS_PER_CORRECT + NIGHT_BLITZ_CLEAR_BONUS) {
+              return emptyNightBlitzState();
+            }
+            result = {
+              date: source.date,
+              category: source.category,
+              correct: source.correct,
+              coins: source.coins
+            };
+          }
+          if (saved.status === "ready" && (saved.active || saved.result)) return emptyNightBlitzState();
+          if (saved.status === "in-progress" && saved.result) return emptyNightBlitzState();
+          if (saved.status === "completed" && saved.active) return emptyNightBlitzState();
+          return {
+            version: 1,
+            lastAttemptDate: saved.lastAttemptDate,
+            status: saved.status,
+            active,
+            result
+          };
+        } catch {
+          return emptyNightBlitzState();
+        }
+      }
+
       function readAnswerSoundsMuted() {
         try {
           return localStorage.getItem(ANSWER_SOUND_STORAGE_KEY) === "true";
@@ -8282,6 +8694,7 @@
         privacy: document.getElementById("privacyView"),
         levels: document.getElementById("levelView"),
         boss: document.getElementById("bossArenaView"),
+        nightBlitz: document.getElementById("nightBlitzView"),
         game: document.getElementById("gameView"),
         results: document.getElementById("resultsView")
       };
@@ -8406,8 +8819,11 @@
       let dailyLoginFeedbackCoins = 0;
       let dailyLoginInProgress = false;
       let dailyBossState = readDailyBossState();
+      let nightBlitzState = readNightBlitzState();
       let bossRoundQuestions = [];
       let bossTimerInterval = null;
+      let nightBlitzInterval = null;
+      let nightBlitzBusy = false;
       updateStartupProgress(63, 2);
       await loadingDelay(90);
       let lastDisplayedCoinBalance = null;
@@ -10383,6 +10799,7 @@
           lifelineEffectTimeouts.clear();
         }
         if (name !== "boss") stopBossTimer();
+        if (name !== "nightBlitz") stopNightBlitzClock();
         document.getElementById("iqTimer").hidden = name !== "game";
         document.body.dataset.view = name;
         Object.values(views).forEach((view) => view.classList.remove("active"));
@@ -10413,6 +10830,14 @@
           if (dailyBossState.status === "in-progress" && dailyBossState.lastAttemptDate === utcDayKey()) {
             startBossTimer();
           }
+        }
+        if (name === "nightBlitz") {
+          nightBlitzState = readNightBlitzState();
+          updateNightBlitzUI();
+          syncNightBlitzClock();
+        } else if (name === "welcome") {
+          updateNightBlitzHomeCopy();
+          syncNightBlitzClock();
         }
         syncNativeBannerPlacement(name);
         window.scrollTo({ top: 0, behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
@@ -10724,6 +11149,7 @@
         }
       });
       document.addEventListener("visibilitychange", handleBossArenaVisibility);
+      document.addEventListener("visibilitychange", handleNightBlitzVisibility);
       window.addEventListener("blur", () => {
         if (!views.game.classList.contains("active") || answered || document.activeElement?.tagName === "SELECT") return;
         window.clearTimeout(focusLossGraceTimeout);
@@ -11593,6 +12019,7 @@
         );
         updateDailyLoginUI();
         updateBossArenaHomeCopy();
+        updateNightBlitzHomeCopy();
       }
 
       function utcDaysBetween(newerDay, olderDay) {
@@ -12021,6 +12448,497 @@
         document.getElementById("bossBattleBackButton").textContent = copy.pauseReturn;
         if (completedToday) updateBossResultPanel();
         updateBossArenaHomeCopy();
+      }
+
+      function nightBlitzCopy() {
+        return nightBlitzTranslations[currentLanguage] || nightBlitzTranslations.en;
+      }
+
+      function nextNightBlitzStartAt(now = new Date()) {
+        const next = new Date(now.getTime());
+        next.setHours(NIGHT_BLITZ_START_HOUR, 0, 0, 0);
+        if (now.getHours() >= NIGHT_BLITZ_START_HOUR) next.setDate(next.getDate() + 1);
+        return next.getTime();
+      }
+
+      function isNightBlitzWindowOpen(now = new Date()) {
+        return now.getHours() >= NIGHT_BLITZ_START_HOUR;
+      }
+
+      function formatNightBlitzCountdown(milliseconds) {
+        const totalSeconds = Math.max(0, Math.ceil(milliseconds / 1000));
+        const hours = Math.floor(totalSeconds / 3600);
+        const minutes = Math.floor((totalSeconds % 3600) / 60);
+        const seconds = totalSeconds % 60;
+        const pad = (value) => formatNumber(value).padStart(2, "0");
+        return `${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
+      }
+
+      function updateNightBlitzHomeCopy() {
+        const button = document.getElementById("openNightBlitzButton");
+        const title = document.getElementById("nightBlitzHomeTitle");
+        const description = document.getElementById("nightBlitzHomeDescription");
+        if (!button || !title || !description) return;
+        const copy = nightBlitzCopy();
+        const today = localDayKey();
+        const active = nightBlitzState.status === "in-progress" && nightBlitzState.active;
+        const completedToday = nightBlitzState.status === "completed" &&
+          nightBlitzState.lastAttemptDate === today && nightBlitzState.result;
+        title.textContent = copy.homeTitle;
+        if (active) {
+          const answered = nightBlitzState.active.answers.filter((answer) => answer !== null).length;
+          description.textContent = copy.homeResume.replace("{answered}", formatNumber(answered));
+        } else if (completedToday) {
+          description.textContent = copy.homeUsed
+            .replace("{correct}", formatNumber(completedToday.correct))
+            .replace("{coins}", formatNumber(completedToday.coins));
+        } else if (isNightBlitzWindowOpen()) {
+          description.textContent = copy.homeOpen;
+        } else {
+          description.textContent = copy.homeCountdown.replace(
+            "{countdown}",
+            formatNightBlitzCountdown(nextNightBlitzStartAt() - Date.now())
+          );
+        }
+        button.setAttribute("aria-label", `${copy.homeTitle}. ${description.textContent}`);
+      }
+
+      function updateNightBlitzResultPanel() {
+        const result = nightBlitzState.result;
+        if (!result) return;
+        const copy = nightBlitzCopy();
+        document.getElementById("nightBlitzResultKicker").textContent = copy.resultKicker;
+        document.getElementById("nightBlitzResultTitle").textContent = copy.resultTitle;
+        document.getElementById("nightBlitzResultDescription").textContent = copy.resultDescription
+          .replace("{correct}", formatNumber(result.correct))
+          .replace("{category}", categoryName(result.category));
+        document.getElementById("nightBlitzResultCorrectLabel").textContent = copy.correctAnswers;
+        document.getElementById("nightBlitzResultCorrect").textContent =
+          `${formatNumber(result.correct)} / ${formatNumber(NIGHT_BLITZ_QUESTION_COUNT)}`;
+        document.getElementById("nightBlitzResultReward").textContent = copy.reward
+          .replace("{coins}", formatNumber(result.coins));
+        document.getElementById("nightBlitzResultRules").textContent = copy.resultRules;
+        document.getElementById("nightBlitzResultHomeButton").textContent = copy.resultHome;
+      }
+
+      function updateNightBlitzUI() {
+        const copy = nightBlitzCopy();
+        const today = localDayKey();
+        const active = nightBlitzState.status === "in-progress" && Boolean(nightBlitzState.active);
+        const completedToday = nightBlitzState.status === "completed" &&
+          nightBlitzState.lastAttemptDate === today && Boolean(nightBlitzState.result);
+        const open = isNightBlitzWindowOpen();
+        const categorySelect = document.getElementById("nightBlitzCategorySelect");
+        if (!categorySelect) return;
+        [...categorySelect.options].forEach((option) => {
+          option.textContent = categoryName(option.value);
+        });
+        if (active) categorySelect.value = nightBlitzState.active.category;
+        else if (!PROGRESSION_CATEGORIES.includes(categorySelect.value)) {
+          categorySelect.value = PROGRESSION_CATEGORIES.includes(selectedCategory)
+            ? selectedCategory
+            : PROGRESSION_CATEGORIES[0];
+        }
+        categorySelect.disabled = active;
+        document.getElementById("nightBlitzKicker").textContent = copy.kicker;
+        document.getElementById("nightBlitzTitle").textContent = copy.title;
+        document.getElementById("nightBlitzDescription").textContent = copy.description;
+        document.getElementById("nightBlitzScheduleTitle").textContent = copy.scheduleTitle;
+        document.getElementById("nightBlitzCategoryLabel").textContent = copy.categoryLabel;
+        document.getElementById("nightBlitzRules").textContent = copy.rules;
+        document.getElementById("nightBlitzHomeBackButton").textContent = copy.back;
+        document.getElementById("nightBlitzRoundBackButton").textContent = copy.pauseReturn;
+        const status = active
+          ? copy.statusResume
+          : completedToday
+            ? copy.statusUsed
+            : open
+              ? copy.statusOpen
+              : copy.statusCountdown.replace(
+                "{countdown}",
+                formatNightBlitzCountdown(nextNightBlitzStartAt() - Date.now())
+              );
+        const statusElement = document.getElementById("nightBlitzStatus");
+        statusElement.textContent = status;
+        statusElement.dataset.state = completedToday ? "locked" : open ? "ready" : "waiting";
+        const startButton = document.getElementById("nightBlitzStartButton");
+        startButton.textContent = active
+          ? copy.resume
+          : completedToday ? copy.usedButton : copy.start;
+        startButton.disabled = nightBlitzBusy || completedToday || (!active && !open);
+        document.getElementById("nightBlitzIntroPanel").hidden = active || completedToday;
+        document.getElementById("nightBlitzRoundPanel").hidden = !active;
+        document.getElementById("nightBlitzResultPanel").hidden = !completedToday;
+        if (completedToday) updateNightBlitzResultPanel();
+        updateNightBlitzHomeCopy();
+        if (active && activeViewName === "nightBlitz") renderNightBlitz();
+      }
+
+      function saveNightBlitzState(nextState) {
+        try {
+          localStorage.setItem(NIGHT_BLITZ_STORAGE_KEY, JSON.stringify(nextState));
+          nightBlitzState = nextState;
+          return true;
+        } catch {
+          return false;
+        }
+      }
+
+      async function withNightBlitzLock(callback) {
+        if (navigator.locks?.request) {
+          try {
+            return await navigator.locks.request(
+              NIGHT_BLITZ_LOCK_KEY,
+              { mode: "exclusive" },
+              callback
+            );
+          } catch {
+            return { status: "storage" };
+          }
+        }
+        const owner = `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+        try {
+          const existing = JSON.parse(localStorage.getItem(NIGHT_BLITZ_LOCK_KEY) || "null");
+          if (existing && Number.isFinite(existing.expiresAt) && existing.expiresAt > Date.now()) {
+            return { status: "busy" };
+          }
+          localStorage.setItem(NIGHT_BLITZ_LOCK_KEY, JSON.stringify({
+            owner,
+            expiresAt: Date.now() + 8_000
+          }));
+          const acquired = JSON.parse(localStorage.getItem(NIGHT_BLITZ_LOCK_KEY) || "null");
+          if (acquired?.owner !== owner) return { status: "busy" };
+          try {
+            return await callback();
+          } finally {
+            const current = JSON.parse(localStorage.getItem(NIGHT_BLITZ_LOCK_KEY) || "null");
+            if (current?.owner === owner) localStorage.removeItem(NIGHT_BLITZ_LOCK_KEY);
+          }
+        } catch {
+          return { status: "storage" };
+        }
+      }
+
+      function nightBlitzQuestionObjects(active = nightBlitzState.active) {
+        if (!active) return [];
+        const pool = getCategoryQuestionPool(active.category, 1);
+        const byId = new Map(pool.map((question) => [question.id, question]));
+        const restored = active.questionIds.map((id) => {
+          const existing = byId.get(id);
+          if (existing || active.category !== "IQ Check") return existing;
+          const generatedId = /^generated-iq-check-(\d+)-(\d+)$/.exec(id);
+          if (!generatedId) return undefined;
+          const family = Number(generatedId[1]);
+          const instance = Number(generatedId[2]);
+          if (family >= CATEGORY_TEMPLATE_COUNT || instance >= CATEGORY_PARAMETER_SPACE) return undefined;
+          return concealQuestionAnswer(makeGeneratedIQQuestion(1, family, instance));
+        });
+        return restored.some((question) => !question) ? [] : restored;
+      }
+
+      function countNightBlitzCorrect(active = nightBlitzState.active, questions = nightBlitzQuestionObjects(active)) {
+        if (!active || questions.length !== NIGHT_BLITZ_QUESTION_COUNT) return 0;
+        return active.answers.reduce((count, answer, index) =>
+          count + (answer !== null && answer >= 0 && answer === readConcealedAnswer(questions[index]) ? 1 : 0), 0);
+      }
+
+      function renderNightBlitz() {
+        const active = nightBlitzState.active;
+        if (!active) return;
+        const questions = nightBlitzQuestionObjects(active);
+        if (questions.length !== NIGHT_BLITZ_QUESTION_COUNT) {
+          const error = document.getElementById("nightBlitzRoundError");
+          error.textContent = nightBlitzCopy().poolError;
+          error.hidden = false;
+          stopNightBlitzClock();
+          return;
+        }
+        const copy = nightBlitzCopy();
+        const question = questions[active.currentIndex];
+        const prompt = question.question[currentLanguage] || question.question.en;
+        const options = question.options[currentLanguage] || question.options.en;
+        const answer = active.answers[active.currentIndex];
+        const correctIndex = readConcealedAnswer(question);
+        document.getElementById("nightBlitzQuestionLabel").textContent = copy.question
+          .replace("{current}", formatNumber(active.currentIndex + 1))
+          .replace("{category}", categoryName(active.category));
+        document.getElementById("nightBlitzCategoryInRound").textContent = categoryName(active.category);
+        document.getElementById("nightBlitzScore").textContent = copy.score
+          .replace("{correct}", formatNumber(countNightBlitzCorrect(active, questions)));
+        const questionText = document.getElementById("nightBlitzQuestionText");
+        questionText.textContent = prompt;
+        const optionContainer = document.getElementById("nightBlitzOptions");
+        optionContainer.setAttribute("aria-label", prompt);
+        optionContainer.replaceChildren();
+        options.forEach((optionText, index) => {
+          const option = document.createElement("button");
+          option.type = "button";
+          option.className = "boss-option night-blitz-option";
+          option.dataset.testid = `night-blitz-option-${index}`;
+          option.textContent = optionText;
+          option.disabled = answer !== null;
+          option.setAttribute("aria-label", optionText);
+          if (answer !== null && index === correctIndex) option.classList.add("is-correct");
+          if (answer !== null && answer === index && index !== correctIndex) option.classList.add("is-wrong");
+          option.addEventListener("click", () => submitNightBlitzAnswer(index, false), { once: true });
+          optionContainer.append(option);
+        });
+        const feedback = answer === null
+          ? copy.choose
+          : answer === -1
+            ? copy.timeout
+            : answer === correctIndex
+              ? copy.correct
+              : copy.wrong.replace("{answer}", options[correctIndex] || "");
+        document.getElementById("nightBlitzFeedback").textContent = feedback;
+        const nextButton = document.getElementById("nightBlitzNextButton");
+        nextButton.textContent = active.currentIndex === NIGHT_BLITZ_QUESTION_COUNT - 1
+          ? copy.finish
+          : copy.next;
+        nextButton.hidden = answer === null;
+        nextButton.disabled = nightBlitzBusy;
+        document.getElementById("nightBlitzRoundError").hidden = true;
+        updateNightBlitzClock();
+      }
+
+      function updateNightBlitzClock() {
+        const active = nightBlitzState.active;
+        if (!active) return;
+        const answer = active.answers[active.currentIndex];
+        const remaining = answer === null ? Math.max(0, active.deadlineAt - Date.now()) : 0;
+        const seconds = answer === null ? Math.ceil(remaining / 1000) : 0;
+        const fraction = answer === null
+          ? Math.max(0, Math.min(1, remaining / NIGHT_BLITZ_TIME_LIMIT_MS))
+          : 0;
+        const clock = document.getElementById("nightBlitzClock");
+        clock.textContent = `${formatNumber(seconds)} s`;
+        const track = document.getElementById("nightBlitzClockTrack");
+        document.getElementById("nightBlitzClockFill").style.width = `${fraction * 100}%`;
+        track.classList.toggle("is-urgent", seconds <= 5 && answer === null);
+        track.setAttribute("aria-valuenow", String(seconds));
+        track.setAttribute("aria-valuetext", `${formatNumber(seconds)} s`);
+      }
+
+      function stopNightBlitzClock() {
+        if (nightBlitzInterval !== null) {
+          window.clearInterval(nightBlitzInterval);
+          nightBlitzInterval = null;
+        }
+      }
+
+      function syncNightBlitzClock() {
+        stopNightBlitzClock();
+        if (document.visibilityState === "hidden" ||
+            !["welcome", "nightBlitz"].includes(activeViewName)) return;
+        let lastSecond = -1;
+        nightBlitzInterval = window.setInterval(() => {
+          if (document.visibilityState === "hidden") return;
+          const second = Math.floor(Date.now() / 1000);
+          if (activeViewName === "nightBlitz" &&
+              nightBlitzState.status === "in-progress" &&
+              nightBlitzState.active) {
+            updateNightBlitzClock();
+            if (nightBlitzState.active.answers[nightBlitzState.active.currentIndex] === null &&
+                nightBlitzState.active.deadlineAt <= Date.now()) {
+              submitNightBlitzAnswer(-1, true);
+            }
+          } else if (second !== lastSecond) {
+            if (activeViewName === "welcome") updateNightBlitzHomeCopy();
+            if (activeViewName === "nightBlitz") updateNightBlitzUI();
+          }
+          lastSecond = second;
+        }, 200);
+      }
+
+      function handleNightBlitzVisibility() {
+        if (document.visibilityState === "hidden") {
+          const active = nightBlitzState.active;
+          if (views.nightBlitz.classList.contains("active") &&
+              active && active.answers[active.currentIndex] === null) {
+            submitNightBlitzAnswer(-1, true);
+          }
+          stopNightBlitzClock();
+          return;
+        }
+        if (activeViewName === "nightBlitz" || activeViewName === "welcome") {
+          syncNightBlitzClock();
+          if (activeViewName === "nightBlitz") updateNightBlitzUI();
+          else updateNightBlitzHomeCopy();
+        }
+      }
+
+      async function startNightBlitzChallenge() {
+        if (nightBlitzBusy) return;
+        nightBlitzBusy = true;
+        updateNightBlitzUI();
+        const category = PROGRESSION_CATEGORIES.includes(
+          document.getElementById("nightBlitzCategorySelect").value
+        ) ? document.getElementById("nightBlitzCategorySelect").value : PROGRESSION_CATEGORIES[0];
+        const outcome = await withNightBlitzLock(() => {
+          const latest = readNightBlitzState();
+          nightBlitzState = latest;
+          if (latest.status === "in-progress" && latest.active) return { status: "resume" };
+          const today = localDayKey();
+          if (latest.lastAttemptDate === today) return { status: "used" };
+          if (!isNightBlitzWindowOpen()) return { status: "too-early" };
+          const pool = getCategoryQuestionPool(category, 1);
+          if (pool.length < NIGHT_BLITZ_QUESTION_COUNT) return { status: "pool" };
+          const shuffled = [...pool];
+          for (let index = shuffled.length - 1; index > 0; index -= 1) {
+            const swapIndex = randomIndex(index + 1);
+            [shuffled[index], shuffled[swapIndex]] = [shuffled[swapIndex], shuffled[index]];
+          }
+          const nextActive = {
+            date: today,
+            category,
+            questionIds: shuffled.slice(0, NIGHT_BLITZ_QUESTION_COUNT).map((question) => question.id),
+            currentIndex: 0,
+            answers: Array(NIGHT_BLITZ_QUESTION_COUNT).fill(null),
+            deadlineAt: Date.now() + NIGHT_BLITZ_TIME_LIMIT_MS
+          };
+          const nextState = {
+            version: 1,
+            lastAttemptDate: today,
+            status: "in-progress",
+            active: nextActive,
+            result: null
+          };
+          return saveNightBlitzState(nextState) ? { status: "started" } : { status: "storage" };
+        });
+        nightBlitzBusy = false;
+        if (outcome?.status === "storage" || outcome?.status === "busy") {
+          document.getElementById("nightBlitzError").textContent = nightBlitzCopy().storageError;
+          document.getElementById("nightBlitzError").hidden = false;
+        } else if (outcome?.status === "pool") {
+          document.getElementById("nightBlitzError").textContent = nightBlitzCopy().poolError;
+          document.getElementById("nightBlitzError").hidden = false;
+        } else if (outcome?.status === "too-early") {
+          document.getElementById("nightBlitzError").textContent = nightBlitzCopy().statusCountdown
+            .replace("{countdown}", formatNightBlitzCountdown(nextNightBlitzStartAt() - Date.now()));
+          document.getElementById("nightBlitzError").hidden = false;
+        }
+        if (outcome?.status === "started" || outcome?.status === "resume") {
+          nightBlitzState = readNightBlitzState();
+          document.getElementById("nightBlitzError").hidden = true;
+          syncNightBlitzClock();
+        } else {
+          nightBlitzState = readNightBlitzState();
+        }
+        updateNightBlitzUI();
+      }
+
+      function submitNightBlitzAnswer(choice, timedOut = false) {
+        const active = nightBlitzState.active;
+        if (!active || active.answers[active.currentIndex] !== null) return;
+        const now = Date.now();
+        const answer = timedOut || now >= active.deadlineAt
+          ? -1
+          : Number.isInteger(choice) && choice >= 0 && choice <= 3 ? choice : -1;
+        const answers = [...active.answers];
+        answers[active.currentIndex] = answer;
+        const nextState = { ...nightBlitzState, active: { ...active, answers } };
+        if (!saveNightBlitzState(nextState)) {
+          const error = document.getElementById("nightBlitzRoundError");
+          error.textContent = nightBlitzCopy().storageError;
+          error.hidden = false;
+          return;
+        }
+        updateNightBlitzUI();
+      }
+
+      async function advanceNightBlitzQuestion() {
+        if (nightBlitzBusy) return;
+        const active = nightBlitzState.active;
+        if (!active || active.answers[active.currentIndex] === null) return;
+        if (active.currentIndex === NIGHT_BLITZ_QUESTION_COUNT - 1) {
+          await finishNightBlitzChallenge();
+          return;
+        }
+        const nextActive = {
+          ...active,
+          currentIndex: active.currentIndex + 1,
+          deadlineAt: Date.now() + NIGHT_BLITZ_TIME_LIMIT_MS
+        };
+        if (!saveNightBlitzState({ ...nightBlitzState, active: nextActive })) {
+          const error = document.getElementById("nightBlitzRoundError");
+          error.textContent = nightBlitzCopy().storageError;
+          error.hidden = false;
+          return;
+        }
+        updateNightBlitzUI();
+        syncNightBlitzClock();
+      }
+
+      async function finishNightBlitzChallenge() {
+        if (nightBlitzBusy) return;
+        nightBlitzBusy = true;
+        updateNightBlitzUI();
+        const outcome = await withNightBlitzLock(() => {
+          const latest = readNightBlitzState();
+          const active = latest.active;
+          if (latest.status === "completed") return { status: "already-completed" };
+          if (latest.status !== "in-progress" || !active ||
+              active.currentIndex !== NIGHT_BLITZ_QUESTION_COUNT - 1 ||
+              active.answers.some((answer) => answer === null)) return { status: "incomplete" };
+          const questions = nightBlitzQuestionObjects(active);
+          if (questions.length !== NIGHT_BLITZ_QUESTION_COUNT) return { status: "pool" };
+          const correct = countNightBlitzCorrect(active, questions);
+          const coins = correct * NIGHT_BLITZ_COINS_PER_CORRECT +
+            (correct >= NIGHT_BLITZ_CLEAR_THRESHOLD ? NIGHT_BLITZ_CLEAR_BONUS : 0);
+          const result = { date: active.date, category: active.category, correct, coins };
+          const nextState = {
+            version: 1,
+            lastAttemptDate: active.date,
+            status: "completed",
+            active: null,
+            result
+          };
+          const previousBlitzRaw = localStorage.getItem(NIGHT_BLITZ_STORAGE_KEY);
+          const previousCollectionRaw = localStorage.getItem(REWARD_COLLECTION_STORAGE_KEY);
+          const nextCollection = readRewardCollection();
+          nextCollection.coins = Math.min(Number.MAX_SAFE_INTEGER, nextCollection.coins + coins);
+          try {
+            // Persist the completion receipt and wallet update together; on a
+            // storage failure, restore both records so a retry cannot double-pay.
+            localStorage.setItem(NIGHT_BLITZ_STORAGE_KEY, JSON.stringify(nextState));
+            localStorage.setItem(REWARD_COLLECTION_STORAGE_KEY, JSON.stringify(nextCollection));
+          } catch {
+            try {
+              if (previousBlitzRaw === null) localStorage.removeItem(NIGHT_BLITZ_STORAGE_KEY);
+              else localStorage.setItem(NIGHT_BLITZ_STORAGE_KEY, previousBlitzRaw);
+              if (previousCollectionRaw === null) localStorage.removeItem(REWARD_COLLECTION_STORAGE_KEY);
+              else localStorage.setItem(REWARD_COLLECTION_STORAGE_KEY, previousCollectionRaw);
+            } catch { /* Best-effort rollback for disabled or full storage. */ }
+            return { status: "storage" };
+          }
+          return { status: "completed", state: nextState, collection: nextCollection };
+        });
+        nightBlitzBusy = false;
+        if (outcome?.status === "completed") {
+          nightBlitzState = outcome.state;
+          rewardCollection = outcome.collection;
+          stopNightBlitzClock();
+          updateCoinBalanceDisplays();
+          renderHomeHub();
+          renderRewardCollection();
+          renderRewardsDashboard();
+          updateNightBlitzUI();
+          if (outcome.state.result.coins > 0) {
+            playCoinCue();
+            spawnCoinPopup(outcome.state.result.coins, document.getElementById("coinBalanceChip"));
+          }
+        } else if (outcome?.status === "storage" || outcome?.status === "pool") {
+          const error = document.getElementById("nightBlitzRoundError");
+          error.textContent = outcome.status === "pool"
+            ? nightBlitzCopy().poolError
+            : nightBlitzCopy().storageError;
+          error.hidden = false;
+          nightBlitzState = readNightBlitzState();
+          updateNightBlitzUI();
+        } else {
+          nightBlitzState = readNightBlitzState();
+          updateNightBlitzUI();
+        }
       }
 
       function bossQuestionObjectsForActive() {
@@ -12504,6 +13422,7 @@
           LAST_PLAYED_STORAGE_KEY, REWARD_COLLECTION_STORAGE_KEY,
           RULES_ACCEPTED_STORAGE_KEY, COIN_SKIPPED_LEVELS_STORAGE_KEY,
           ...RETIRED_DAILY_SHARE_STORAGE_KEYS, DAILY_LOGIN_STORAGE_KEY, DAILY_BOSS_STORAGE_KEY,
+          NIGHT_BLITZ_STORAGE_KEY, NIGHT_BLITZ_LOCK_KEY,
           ACTIVE_QUIZ_SESSION_STORAGE_KEY
         ])];
         let backup = [];
@@ -12523,6 +13442,7 @@
         }
         stopQuestionTimer();
         stopBossTimer();
+        stopNightBlitzClock();
         clearAnswerAdvanceTimeout();
         location.reload();
       }
@@ -12542,6 +13462,7 @@
         updateSettingsCopy();
         updateHomeMenuCopy();
         renderBossArena();
+        updateNightBlitzUI();
         document.title = currentText.pageTitle;
         document.getElementById("metaDescription").content = currentText.metaDescription;
         document.getElementById("ogTitle").content = currentText.pageTitle;
@@ -12917,6 +13838,23 @@
         }
         showView("boss");
       });
+      document.getElementById("openNightBlitzButton").addEventListener("click", () => {
+        nightBlitzState = readNightBlitzState();
+        updateNightBlitzHomeCopy();
+        showView("nightBlitz");
+      });
+      document.getElementById("nightBlitzCategorySelect").addEventListener("change", () => {
+        document.getElementById("nightBlitzError").hidden = true;
+      });
+      document.getElementById("nightBlitzStartButton").addEventListener("click", () => {
+        void startNightBlitzChallenge();
+      });
+      document.getElementById("nightBlitzNextButton").addEventListener("click", () => {
+        void advanceNightBlitzQuestion();
+      });
+      ["nightBlitzHomeBackButton", "nightBlitzRoundBackButton", "nightBlitzResultHomeButton"].forEach((id) => {
+        document.getElementById(id).addEventListener("click", () => showView("welcome"));
+      });
       document.getElementById("bossStartButton").addEventListener("click", () => {
         void startDailyBossChallenge();
       });
@@ -12998,11 +13936,26 @@
           if (views.boss.classList.contains("active")) renderBossArena();
           return;
         }
+        if (event.key === NIGHT_BLITZ_STORAGE_KEY) {
+          nightBlitzState = readNightBlitzState();
+          updateNightBlitzHomeCopy();
+          if (views.nightBlitz.classList.contains("active")) updateNightBlitzUI();
+          return;
+        }
         if (event.key !== null && event.key !== REWARD_COLLECTION_STORAGE_KEY) return;
         syncRewardCollectionFromStorage({ allowEmpty: event.newValue === null });
         updateBossArenaHomeCopy();
+        updateNightBlitzHomeCopy();
       });
       window.addEventListener("pageshow", () => {
+        nightBlitzState = readNightBlitzState();
+        if (views.nightBlitz.classList.contains("active")) {
+          updateNightBlitzUI();
+          syncNightBlitzClock();
+        } else if (views.welcome.classList.contains("active")) {
+          updateNightBlitzHomeCopy();
+          syncNightBlitzClock();
+        }
         if (document.body.dataset.view === "welcome") {
           syncRewardCollectionFromStorage();
           dailyBossState = readDailyBossState();
@@ -13013,6 +13966,8 @@
       document.addEventListener("visibilitychange", () => {
         if (!document.hidden && document.body.dataset.view === "welcome") {
           syncRewardCollectionFromStorage();
+          nightBlitzState = readNightBlitzState();
+          updateNightBlitzHomeCopy();
           recordDailyLoginLaunch();
         }
       });
@@ -13041,6 +13996,7 @@
       let heroTaglineInterval = window.setInterval(rotateHeroTagline, 4600);
       window.addEventListener("pagehide", () => {
         clearQuestionTimer();
+        stopNightBlitzClock();
         window.clearTimeout(focusLossGraceTimeout);
         window.clearTimeout(lifelineTypingTimeout);
         window.clearTimeout(heroTaglineSwapTimeout);
@@ -13055,6 +14011,7 @@
       });
       window.addEventListener("pageshow", () => {
         if (heroTaglineInterval === null) heroTaglineInterval = window.setInterval(rotateHeroTagline, 4600);
+        if (activeViewName === "welcome" || activeViewName === "nightBlitz") syncNightBlitzClock();
         resumeQuestionTimer();
         resumePendingAnswerAdvance();
       });
