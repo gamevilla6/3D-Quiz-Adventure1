@@ -3717,103 +3717,6 @@
       .home-option-orbit { flex-basis: 44px; width: 44px; height: 44px; }
       .home-option-hub { border-radius: 20px; }
     }
-    .daily-share-banner {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) auto;
-      align-items: center;
-      gap: 14px 20px;
-      width: min(100%, 1160px);
-      min-width: 0;
-      margin: clamp(16px, 2.5vw, 24px) auto 0;
-      padding: clamp(14px, 2.6vw, 22px);
-      border: 1px solid rgba(255, 211, 119, .34);
-      border-radius: 20px;
-      background:
-        radial-gradient(ellipse at 0 0, rgba(255, 192, 73, .17), transparent 55%),
-        linear-gradient(125deg, rgba(47, 36, 48, .86), rgba(19, 24, 50, .9));
-      box-shadow: 0 14px 38px rgba(0, 0, 0, .2), inset 0 1px rgba(255, 241, 204, .08);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-    }
-    .daily-share-copy { display: grid; min-width: 0; gap: 5px; }
-    .daily-share-badge {
-      width: fit-content;
-      max-width: 100%;
-      padding: 5px 9px;
-      color: #3a2711;
-      border: 1px solid rgba(255, 236, 172, .72);
-      border-radius: 999px;
-      background: linear-gradient(110deg, #ffe888, #ffbf65);
-      box-shadow: 0 0 18px rgba(255, 194, 85, .22);
-      font-size: 9px;
-      font-weight: 900;
-      letter-spacing: .08em;
-      line-height: 1.3;
-      text-transform: uppercase;
-      overflow-wrap: anywhere;
-    }
-    .daily-share-copy h2 {
-      margin: 2px 0 0;
-      color: #fff8e4;
-      font-size: clamp(16px, 2.2vw, 21px);
-      font-weight: 850;
-      line-height: 1.25;
-      overflow-wrap: anywhere;
-    }
-    .daily-share-copy p {
-      margin: 0;
-      color: #e2d5c5;
-      font-size: 12px;
-      line-height: 1.45;
-      overflow-wrap: anywhere;
-    }
-    .daily-share-streak { color: #ffd987 !important; font-weight: 750; }
-    .daily-share-button {
-      display: inline-flex;
-      min-width: min(100%, 190px);
-      min-height: 52px;
-      align-items: center;
-      justify-content: center;
-      gap: 9px;
-      padding: 10px 16px;
-      color: #2e2115;
-      border: 1px solid rgba(255, 241, 192, .74);
-      border-radius: 15px;
-      background: linear-gradient(115deg, #ffe17f, #ffb45d);
-      box-shadow: 0 8px 22px rgba(255, 182, 77, .16), inset 0 1px rgba(255, 255, 255, .58);
-      font: inherit;
-      font-size: 12px;
-      font-weight: 850;
-      line-height: 1.25;
-      text-align: center;
-      cursor: pointer;
-      touch-action: manipulation;
-      -webkit-tap-highlight-color: transparent;
-      transition: transform .18s ease, filter .18s ease, box-shadow .18s ease;
-    }
-    .daily-share-button svg { flex: 0 0 19px; width: 19px; height: 19px; }
-    .daily-share-button:hover { filter: brightness(1.06); transform: translateY(-1px); }
-    .daily-share-button:active { transform: scale(.96); }
-    .daily-share-button:focus-visible { outline: 3px solid #8ce8ff; outline-offset: 3px; }
-    .daily-share-button:disabled { cursor: wait; filter: saturate(.65); opacity: .82; }
-    .daily-share-feedback {
-      grid-column: 1 / -1;
-      min-height: 1.2em;
-      margin: 0;
-      color: #cfe7e6;
-      font-size: 11px;
-      line-height: 1.4;
-      overflow-wrap: anywhere;
-    }
-    .daily-share-feedback:empty { display: none; }
-    @media (max-width: 650px) {
-      .daily-share-banner { grid-template-columns: minmax(0, 1fr); }
-      .daily-share-button { width: 100%; }
-    }
-    @media (prefers-reduced-motion: reduce) {
-      .daily-share-button { transition: none; }
-      .daily-share-button:hover,.daily-share-button:active { transform: none; }
-    }
     .daily-login-card {
       display: grid;
       gap: 14px;
@@ -4638,19 +4541,6 @@
             <button class="primary-button start-button" type="button" id="startGameButton"><span id="startGameLabel">Start game</span> <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M4.2 10h11.6m-4.5-4.5 4.5 4.5-4.5 4.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
             <div class="start-hint" id="startHint" aria-live="polite">Choose a subject to begin your orbit.</div>
           </div>
-          <section class="daily-share-banner" id="dailyShareBanner" aria-labelledby="dailyShareTitle">
-            <div class="daily-share-copy">
-              <span class="daily-share-badge" id="dailyShareBadge">2× BONUS ACTIVE 🔥</span>
-              <h2 id="dailyShareTitle">Share today to double your daily reward!</h2>
-              <p id="dailyShareDescription">One successful share earns 50 coins (25 base × 2).</p>
-              <p class="daily-share-streak" id="dailyShareStreak">Share streak: 0 days</p>
-            </div>
-            <button class="daily-share-button" type="button" id="dailyShareButton" data-testid="daily-share-button">
-              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="18" cy="5" r="2.5" stroke="currentColor" stroke-width="1.8"/><circle cx="6" cy="12" r="2.5" stroke="currentColor" stroke-width="1.8"/><circle cx="18" cy="19" r="2.5" stroke="currentColor" stroke-width="1.8"/><path d="m8.2 10.8 7.5-4.4m-7.5 6.8 7.5 4.4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
-              <span id="dailyShareButtonLabel">Share &amp; earn 50 coins</span>
-            </button>
-            <p class="daily-share-feedback" id="dailyShareFeedback" role="status" aria-live="polite"></p>
-          </section>
           <section class="daily-login-card" id="dailyLoginCard" aria-labelledby="dailyLoginTitle">
             <header class="daily-login-heading">
               <div class="daily-login-copy">
@@ -5268,18 +5158,18 @@
       // Contact links are ordinary mailto links, not a form that uploads game data.
       const settingsLocaleKeys = ["title", "description", "sound", "soundDescription", "particles", "particlesDescription", "reset", "warning", "cancel", "confirm", "save", "privacy", "summary", "fullPolicy", "back", "saved", "unsaved", "resetFailed", "privacyDescription", "notice"];
       const settingsLocaleRows = {
-        en: ["Settings", "Make this universe work for your device.", "Sound effects", "Synthetic answer, timer, and coin sounds.", "Background visual effects", "Turn off animated 3D backgrounds to reduce GPU use.", "Reset game progress", "Permanently erase coins, levels, trophies, badges, daily share and login streaks, and game statistics on this browser. Language, sound and visual preferences stay. This cannot be undone.", "Cancel", "Erase game progress", "Save & close", "Privacy Policy", "Quick privacy view", "Read full policy", "Back to Home", "Preference saved on this browser.", "Applied for this visit. Browser storage is unavailable.", "Reset could not finish because browser storage is unavailable. Check browser site-data settings before trying again.", "How this browser game uses storage and protects fair play.", "This notice describes this browser build. It is informational, not legal advice or a certification of GDPR or store-policy compliance."],
-        bn: ["সেটিংস", "আপনার ডিভাইসের উপযোগী করে গেমটি সাজান।", "সাউন্ড ইফেক্ট", "কৃত্রিমভাবে তৈরি উত্তর, টাইমার ও কয়েনের শব্দ।", "পটভূমির ভিজ্যুয়াল ইফেক্ট", "GPU-এর ব্যবহার কমাতে অ্যানিমেটেড 3D পটভূমি বন্ধ করুন।", "গেমের অগ্রগতি মুছুন", "এই ব্রাউজারের কয়েন, লেভেল, ট্রফি, ব্যাজ, দৈনিক শেয়ার ও লগইন ধারাবাহিকতা এবং গেমের পরিসংখ্যান স্থায়ীভাবে মুছে যাবে। ভাষা, শব্দ ও ভিজ্যুয়াল পছন্দ থাকবে। এটি ফেরানো যাবে না।", "বাতিল", "অগ্রগতি মুছে ফেলুন", "সংরক্ষণ করে বন্ধ করুন", "গোপনীয়তা নীতি", "গোপনীয়তার সংক্ষিপ্ত বিবরণ", "সম্পূর্ণ নীতি পড়ুন", "হোমে ফিরুন", "পছন্দ এই ব্রাউজারে সংরক্ষিত হয়েছে।", "এই ভিজিটের জন্য প্রযোজ্য। ব্রাউজার স্টোরেজ ব্যবহার করা যাচ্ছে না।", "ব্রাউজার স্টোরেজ ব্যবহার করা যাচ্ছে না বলে রিসেট সম্পূর্ণ হয়নি। আবার চেষ্টা করার আগে ব্রাউজারের সাইট ডেটা সেটিংস দেখুন।", "এই ব্রাউজার গেম কীভাবে ডেটা রাখে ও ন্যায্য খেলা নিশ্চিত করে।", "এই বিজ্ঞপ্তি বর্তমান ব্রাউজার সংস্করণের বিবরণ। এটি তথ্যের জন্য; আইনি পরামর্শ বা GDPR বা স্টোর নীতির সনদ নয়।"],
-        hi: ["सेटिंग्स", "अपने डिवाइस के अनुसार गेम सेट करें।", "ध्वनि प्रभाव", "कृत्रिम उत्तर, टाइमर और सिक्कों की आवाज़ें।", "पृष्ठभूमि दृश्य प्रभाव", "GPU का उपयोग घटाने के लिए एनिमेटेड 3D पृष्ठभूमि बंद करें।", "गेम प्रगति रीसेट करें", "इस ब्राउज़र के सिक्के, स्तर, ट्रॉफियाँ, बैज, दैनिक शेयर और लॉगिन स्ट्रीक तथा आँकड़े स्थायी रूप से मिटेंगे। भाषा, ध्वनि और दृश्य प्राथमिकताएँ बनी रहेंगी। इसे वापस नहीं किया जा सकता।", "रद्द करें", "गेम प्रगति मिटाएँ", "सहेजें और बंद करें", "गोपनीयता नीति", "गोपनीयता का संक्षिप्त विवरण", "पूरी नीति पढ़ें", "होम पर लौटें", "प्राथमिकता इस ब्राउज़र में सहेजी गई।", "इस विज़िट के लिए लागू। ब्राउज़र स्टोरेज उपलब्ध नहीं है।", "ब्राउज़र स्टोरेज उपलब्ध न होने से रीसेट पूरा नहीं हुआ। दोबारा कोशिश से पहले साइट डेटा सेटिंग्स जाँचें।", "यह ब्राउज़र गेम स्टोरेज और निष्पक्ष खेल को कैसे संभालता है।", "यह सूचना वर्तमान ब्राउज़र संस्करण का वर्णन करती है। यह जानकारी है, कानूनी सलाह या GDPR अथवा स्टोर नीति अनुपालन का प्रमाण नहीं।"],
-        es: ["Ajustes", "Adapta este universo a tu dispositivo.", "Efectos de sonido", "Sonidos sintéticos de respuestas, reloj y monedas.", "Efectos visuales de fondo", "Desactiva los fondos 3D animados para reducir el uso de GPU.", "Restablecer progreso", "Borra permanentemente monedas, niveles, trofeos, insignias, las rachas diarias de compartir e iniciar sesión y las estadísticas de este navegador. Se conservan idioma, sonido y efectos. No se puede deshacer.", "Cancelar", "Borrar progreso", "Guardar y cerrar", "Política de privacidad", "Vista rápida de privacidad", "Leer la política completa", "Volver al inicio", "Preferencia guardada en este navegador.", "Aplicado durante esta visita. El almacenamiento no está disponible.", "No se pudo completar el borrado porque el almacenamiento no está disponible. Revisa los datos del sitio en el navegador.", "Cómo este juego usa el almacenamiento y comprueba el juego limpio.", "Este aviso describe esta versión del navegador. Es informativo, no asesoramiento legal ni una certificación de cumplimiento del RGPD o de las políticas de las tiendas."],
-        fr: ["Paramètres", "Adaptez cet univers à votre appareil.", "Effets sonores", "Sons synthétiques de réponses, du minuteur et des pièces.", "Effets visuels en arrière-plan", "Désactivez les fonds 3D animés pour réduire l’utilisation du GPU.", "Réinitialiser la progression", "Efface définitivement les pièces, niveaux, trophées, badges, les séries quotidiennes de partage et de connexion, ainsi que les statistiques de ce navigateur. La langue, le son et les effets sont conservés. Cette action est irréversible.", "Annuler", "Effacer la progression", "Enregistrer et fermer", "Politique de confidentialité", "Aperçu de confidentialité", "Lire la politique complète", "Retour à l’accueil", "Préférence enregistrée dans ce navigateur.", "Appliqué pour cette visite. Le stockage est indisponible.", "La réinitialisation a échoué car le stockage est indisponible. Vérifiez les données du site dans votre navigateur.", "Comment ce jeu utilise le stockage et contrôle le jeu équitable.", "Cet avis décrit cette version pour navigateur. Il est informatif et ne constitue ni un conseil juridique ni une certification de conformité au RGPD ou aux politiques des boutiques."]
+        en: ["Settings", "Make this universe work for your device.", "Sound effects", "Synthetic answer, timer, and coin sounds.", "Background visual effects", "Turn off animated 3D backgrounds to reduce GPU use.", "Reset game progress", "Permanently erase coins, levels, trophies, badges, daily login streaks, and game statistics on this browser. Language, sound and visual preferences stay. This cannot be undone.", "Cancel", "Erase game progress", "Save & close", "Privacy Policy", "Quick privacy view", "Read full policy", "Back to Home", "Preference saved on this browser.", "Applied for this visit. Browser storage is unavailable.", "Reset could not finish because browser storage is unavailable. Check browser site-data settings before trying again.", "How this browser game uses storage and protects fair play.", "This notice describes this browser build. It is informational, not legal advice or a certification of GDPR or store-policy compliance."],
+        bn: ["সেটিংস", "আপনার ডিভাইসের উপযোগী করে গেমটি সাজান।", "সাউন্ড ইফেক্ট", "কৃত্রিমভাবে তৈরি উত্তর, টাইমার ও কয়েনের শব্দ।", "পটভূমির ভিজ্যুয়াল ইফেক্ট", "GPU-এর ব্যবহার কমাতে অ্যানিমেটেড 3D পটভূমি বন্ধ করুন।", "গেমের অগ্রগতি মুছুন", "এই ব্রাউজারের কয়েন, লেভেল, ট্রফি, ব্যাজ, দৈনিক লগইন ধারাবাহিকতা এবং গেমের পরিসংখ্যান স্থায়ীভাবে মুছে যাবে। ভাষা, শব্দ ও ভিজ্যুয়াল পছন্দ থাকবে। এটি ফেরানো যাবে না।", "বাতিল", "অগ্রগতি মুছে ফেলুন", "সংরক্ষণ করে বন্ধ করুন", "গোপনীয়তা নীতি", "গোপনীয়তার সংক্ষিপ্ত বিবরণ", "সম্পূর্ণ নীতি পড়ুন", "হোমে ফিরুন", "পছন্দ এই ব্রাউজারে সংরক্ষিত হয়েছে।", "এই ভিজিটের জন্য প্রযোজ্য। ব্রাউজার স্টোরেজ ব্যবহার করা যাচ্ছে না।", "ব্রাউজার স্টোরেজ ব্যবহার করা যাচ্ছে না বলে রিসেট সম্পূর্ণ হয়নি। আবার চেষ্টা করার আগে ব্রাউজারের সাইট ডেটা সেটিংস দেখুন।", "এই ব্রাউজার গেম কীভাবে ডেটা রাখে ও ন্যায্য খেলা নিশ্চিত করে।", "এই বিজ্ঞপ্তি বর্তমান ব্রাউজার সংস্করণের বিবরণ। এটি তথ্যের জন্য; আইনি পরামর্শ বা GDPR বা স্টোর নীতির সনদ নয়।"],
+        hi: ["सेटिंग्स", "अपने डिवाइस के अनुसार गेम सेट करें।", "ध्वनि प्रभाव", "कृत्रिम उत्तर, टाइमर और सिक्कों की आवाज़ें।", "पृष्ठभूमि दृश्य प्रभाव", "GPU का उपयोग घटाने के लिए एनिमेटेड 3D पृष्ठभूमि बंद करें।", "गेम प्रगति रीसेट करें", "इस ब्राउज़र के सिक्के, स्तर, ट्रॉफियाँ, बैज, दैनिक लॉगिन स्ट्रीक और आँकड़े स्थायी रूप से मिटेंगे। भाषा, ध्वनि और दृश्य प्राथमिकताएँ बनी रहेंगी। इसे वापस नहीं किया जा सकता।", "रद्द करें", "गेम प्रगति मिटाएँ", "सहेजें और बंद करें", "गोपनीयता नीति", "गोपनीयता का संक्षिप्त विवरण", "पूरी नीति पढ़ें", "होम पर लौटें", "प्राथमिकता इस ब्राउज़र में सहेजी गई।", "इस विज़िट के लिए लागू। ब्राउज़र स्टोरेज उपलब्ध नहीं है।", "ब्राउज़र स्टोरेज उपलब्ध न होने से रीसेट पूरा नहीं हुआ। दोबारा कोशिश से पहले साइट डेटा सेटिंग्स जाँचें।", "यह ब्राउज़र गेम स्टोरेज और निष्पक्ष खेल को कैसे संभालता है।", "यह सूचना वर्तमान ब्राउज़र संस्करण का वर्णन करती है। यह जानकारी है, कानूनी सलाह या GDPR अथवा स्टोर नीति अनुपालन का प्रमाण नहीं।"],
+        es: ["Ajustes", "Adapta este universo a tu dispositivo.", "Efectos de sonido", "Sonidos sintéticos de respuestas, reloj y monedas.", "Efectos visuales de fondo", "Desactiva los fondos 3D animados para reducir el uso de GPU.", "Restablecer progreso", "Borra permanentemente monedas, niveles, trofeos, insignias, las rachas diarias de inicio de sesión y las estadísticas de este navegador. Se conservan idioma, sonido y efectos. No se puede deshacer.", "Cancelar", "Borrar progreso", "Guardar y cerrar", "Política de privacidad", "Vista rápida de privacidad", "Leer la política completa", "Volver al inicio", "Preferencia guardada en este navegador.", "Aplicado durante esta visita. El almacenamiento no está disponible.", "No se pudo completar el borrado porque el almacenamiento no está disponible. Revisa los datos del sitio en el navegador.", "Cómo este juego usa el almacenamiento y comprueba el juego limpio.", "Este aviso describe esta versión del navegador. Es informativo, no asesoramiento legal ni una certificación de cumplimiento del RGPD o de las políticas de las tiendas."],
+        fr: ["Paramètres", "Adaptez cet univers à votre appareil.", "Effets sonores", "Sons synthétiques de réponses, du minuteur et des pièces.", "Effets visuels en arrière-plan", "Désactivez les fonds 3D animés pour réduire l’utilisation du GPU.", "Réinitialiser la progression", "Efface définitivement les pièces, niveaux, trophées, badges, les séries quotidiennes de connexion, ainsi que les statistiques de ce navigateur. La langue, le son et les effets sont conservés. Cette action est irréversible.", "Annuler", "Effacer la progression", "Enregistrer et fermer", "Politique de confidentialité", "Aperçu de confidentialité", "Lire la politique complète", "Retour à l’accueil", "Préférence enregistrée dans ce navigateur.", "Appliqué pour cette visite. Le stockage est indisponible.", "La réinitialisation a échoué car le stockage est indisponible. Vérifiez les données du site dans votre navigateur.", "Comment ce jeu utilise le stockage et contrôle le jeu équitable.", "Cet avis décrit cette version pour navigateur. Il est informatif et ne constitue ni un conseil juridique ni une certification de conformité au RGPD ou aux politiques des boutiques."]
       };
       const settingsCopy = Object.fromEntries(Object.entries(settingsLocaleRows).map(([locale, row]) => [locale,
         Object.fromEntries(settingsLocaleKeys.map((key, index) => [key, row[index]]))
       ]));
       const privacySections = {
         en: [
-          ["Data stored on your device", "QuizVerse 3D stores game progress, unlocked and coin-skipped levels, coin balances, trophies, badges, scores, accuracy, last-played level, preferences, daily share bonus date/streak/claim count/timestamp, and daily login launch and claim dates, current streak, claim count, and timestamp in this browser's localStorage. The game does not ask for an account, location, contacts, camera, microphone, or sensitive personal information. If you choose Share, the browser/OS share sheet receives QuizVerse's title, invitation text, and page URL so you can select an app; that app may process it under its own policy. The game does not identify recipients or upload your saved game."],
+          ["Data stored on your device", "QuizVerse 3D stores game progress, unlocked and coin-skipped levels, coin balances, trophies, badges, scores, accuracy, last-played level, preferences, and daily login launch and claim dates, current streak, claim count, and timestamp in this browser's localStorage. The game does not ask for an account, location, contacts, camera, microphone, or sensitive personal information. Saved game data remains on this browser and is not sent to the developer by the game."],
           ["Fair-play checks", "During an active round, the Page Visibility API and window focus events detect leaving the game. The current question may be submitted as incorrect. These checks do not read other tabs, browsing history, screen contents or other applications. Question order and timing are handled in memory. Client-side checks discourage casual cheating; they are not tamper-proof security."],
           ["Cookies, retention and your control", "The game code does not set tracking cookies. Local saves remain until you reset progress in Settings or clear this site's browser data. Reset erases game progress and rewards but keeps language, sound and visual preferences. Clear site data to remove those too. Blocking storage allows temporary play, but changes may not survive closing the page. Local storage is not encrypted by the game and is not a cloud backup."],
           ["External resources and hosting", "The optional Three.js library is delivered by jsDelivr. Loading it sends ordinary network information, such as your IP address and browser request details, to that CDN. The website host may process connection logs to serve and protect the site. Those providers have their own privacy practices. No game-data upload, ad SDK or payment SDK is implemented in this browser build."],
@@ -5287,7 +5177,7 @@
           ["Scope and updates", "This notice covers this browser version of QuizVerse 3D, updated 26 October 2026. Any future accounts, ads, payments or online analytics require a revised notice and any necessary choices before activation. The publishing operator's legal identity, target audience and jurisdiction must be confirmed before a store submission. Three.js is open-source software under the MIT license, not a claim that third-party software has no copyright."]
         ],
         bn: [
-          ["আপনার ডিভাইসে রাখা তথ্য", "QuizVerse 3D এই ব্রাউজারের localStorage-এ অগ্রগতি, আনলক ও কয়েনে এড়ানো লেভেল, কয়েন, ট্রফি, ব্যাজ, স্কোর, নির্ভুলতা, শেষ খেলা লেভেল, পছন্দ, দৈনিক শেয়ার বোনাসের UTC তারিখ, ধারাবাহিকতা, দাবি সংখ্যা ও সময়চিহ্ন এবং দৈনিক লগইন চালু/দাবির তারিখ, বর্তমান ধারাবাহিকতা ও দাবি সংখ্যা রাখে। গেমটি অ্যাকাউন্ট, অবস্থান, পরিচিতি, ক্যামেরা, মাইক্রোফোন বা সংবেদনশীল ব্যক্তিগত তথ্য চায় না। Share বেছে নিলে ব্রাউজার/সিস্টেম শেয়ার শিটে QuizVerse-এর শিরোনাম, আমন্ত্রণ বার্তা ও পৃষ্ঠার URL যায়; নির্বাচিত অ্যাপ তার নিজস্ব নীতি অনুযায়ী তা ব্যবহার করতে পারে। গেম প্রাপককে শনাক্ত করে না বা সেভ আপলোড করে না।"],
+          ["আপনার ডিভাইসে রাখা তথ্য", "QuizVerse 3D এই ব্রাউজারের localStorage-এ অগ্রগতি, আনলক ও কয়েনে এড়ানো লেভেল, কয়েন, ট্রফি, ব্যাজ, স্কোর, নির্ভুলতা, শেষ খেলা লেভেল, পছন্দ এবং দৈনিক লগইন চালু ও পুরস্কার দাবির তারিখ, বর্তমান ধারাবাহিকতা, দাবি সংখ্যা ও সময়চিহ্ন রাখে। গেমটি অ্যাকাউন্ট, অবস্থান, পরিচিতি, ক্যামেরা, মাইক্রোফোন বা সংবেদনশীল ব্যক্তিগত তথ্য চায় না। সংরক্ষিত গেম ডেটা এই ব্রাউজারেই থাকে; গেমটি তা ডেভেলপারের কাছে পাঠায় না।"],
           ["ন্যায্য খেলার পরীক্ষা", "সক্রিয় রাউন্ডে Page Visibility API ও উইন্ডোর ফোকাস পরিবর্তনের মাধ্যমে গেম ছেড়ে যাওয়া শনাক্ত হয়। বর্তমান প্রশ্ন ভুল হিসেবে জমা হতে পারে। অন্য ট্যাব, ব্রাউজিং ইতিহাস, স্ক্রিন বা অন্য অ্যাপ পড়া হয় না। প্রশ্নের ক্রম ও সময় মেমরিতে পরিচালিত হয়। ব্রাউজারভিত্তিক পরীক্ষা সাধারণ প্রতারণা কমায়, সম্পূর্ণ সুরক্ষা নয়।"],
           ["কুকি, সংরক্ষণ ও নিয়ন্ত্রণ", "গেমের কোড ট্র্যাকিং কুকি সেট করে না। সেটিংস থেকে রিসেট বা ব্রাউজারের সাইট ডেটা মুছলে সেভ মুছে যায়। রিসেটে অগ্রগতি ও পুরস্কার মুছে যায়, ভাষা, শব্দ ও ভিজ্যুয়াল পছন্দ থাকে। সেগুলিও মুছতে সাইট ডেটা মুছুন। স্টোরেজ বন্ধ থাকলে সাময়িকভাবে খেলা যায়, কিন্তু পরিবর্তন নাও থাকতে পারে। গেম localStorage এনক্রিপ্ট করে না; এটি ক্লাউড ব্যাকআপ নয়।"],
           ["বাহ্যিক রিসোর্স ও হোস্টিং", "ঐচ্ছিক Three.js লাইব্রেরি jsDelivr থেকে আসে। এটি লোড করলে IP ঠিকানা ও ব্রাউজারের অনুরোধের মতো সাধারণ নেটওয়ার্ক তথ্য CDN পায়। সাইট পরিবেশন ও সুরক্ষার জন্য হোস্ট সংযোগের লগ রাখতে পারে। তাদের নিজস্ব গোপনীয়তা নীতি আছে। এই ব্রাউজার সংস্করণে গেম ডেটা আপলোড, বিজ্ঞাপন SDK বা পেমেন্ট SDK নেই।"],
@@ -5295,7 +5185,7 @@
           ["পরিসর ও পরিবর্তন", "এই নীতি QuizVerse 3D-এর ব্রাউজার সংস্করণের জন্য; হালনাগাদ ২৬ অক্টোবর ২০২৬। ভবিষ্যতে অ্যাকাউন্ট, বিজ্ঞাপন, পেমেন্ট বা অনলাইন বিশ্লেষণ যোগ করার আগে নীতি ও প্রয়োজনীয় পছন্দ হালনাগাদ করতে হবে। স্টোরে প্রকাশের আগে প্রকাশকের আইনি পরিচয়, লক্ষ্য বয়স ও এখতিয়ার নিশ্চিত করতে হবে। Three.js MIT লাইসেন্সের ওপেন-সোর্স সফটওয়্যার; এর অর্থ কপিরাইট নেই নয়।"]
         ],
         hi: [
-          ["डिवाइस पर सहेजा गया डेटा", "QuizVerse 3D प्रगति, खुले व सिक्कों से छोड़े स्तर, सिक्के, ट्रॉफियाँ, बैज, स्कोर, सटीकता, अंतिम स्तर, प्राथमिकताएँ, दैनिक शेयर बोनस की UTC तारीख/स्ट्रीक/दावे/समय-चिह्न और दैनिक लॉगिन की शुरुआत व दावा तारीखें, वर्तमान स्ट्रीक, दावे की संख्या व समय-चिह्न इस ब्राउज़र के localStorage में रखता है। गेम खाता, स्थान, संपर्क, कैमरा, माइक्रोफ़ोन या संवेदनशील जानकारी नहीं माँगता। Share चुनने पर ब्राउज़र/OS शेयर शीट को QuizVerse का शीर्षक, आमंत्रण संदेश और पेज URL दिया जाता है ताकि आप ऐप चुन सकें; वह ऐप अपनी नीति के अनुसार इसे संसाधित कर सकता है। गेम प्राप्तकर्ताओं की पहचान या सेव अपलोड नहीं करता।"],
+          ["डिवाइस पर सहेजा गया डेटा", "QuizVerse 3D इस ब्राउज़र के localStorage में प्रगति, खुले व सिक्कों से छोड़े स्तर, सिक्के, ट्रॉफियाँ, बैज, स्कोर, सटीकता, अंतिम स्तर, प्राथमिकताएँ और दैनिक लॉगिन व पुरस्कार दावे की तारीखें, वर्तमान स्ट्रीक, दावों की संख्या व समय-चिह्न रखता है। गेम खाता, स्थान, संपर्क, कैमरा, माइक्रोफ़ोन या संवेदनशील जानकारी नहीं माँगता। सहेजा गया गेम डेटा इसी ब्राउज़र में रहता है और गेम इसे डेवलपर को नहीं भेजता।"],
           ["निष्पक्ष खेल जाँच", "सक्रिय राउंड में Page Visibility API और विंडो फ़ोकस घटनाएँ गेम छोड़ने का पता लगाती हैं। वर्तमान प्रश्न गलत के रूप में जमा हो सकता है। ये अन्य टैब, इतिहास, स्क्रीन या दूसरे ऐप नहीं पढ़ते। प्रश्न क्रम और समय मेमोरी में रहते हैं। क्लाइंट जाँच सामान्य धोखाधड़ी रोकने में मदद करती है, छेड़छाड़ से पूर्ण सुरक्षा नहीं देती।"],
           ["कुकी, अवधि और नियंत्रण", "गेम कोड ट्रैकिंग कुकी नहीं बनाता। सेव तब तक रहते हैं जब तक सेटिंग्स में प्रगति रीसेट या साइट डेटा साफ नहीं होता। रीसेट प्रगति व पुरस्कार मिटाता है लेकिन भाषा, ध्वनि व दृश्य प्राथमिकताएँ रखता है। इन्हें मिटाने के लिए साइट डेटा साफ करें। स्टोरेज बंद होने पर अस्थायी खेल संभव है पर बदलाव नहीं टिक सकते। गेम स्थानीय स्टोरेज एन्क्रिप्ट नहीं करता; यह क्लाउड बैकअप नहीं है।"],
           ["बाहरी संसाधन और होस्टिंग", "वैकल्पिक Three.js लाइब्रेरी jsDelivr से आती है। इसे लोड करते समय IP और ब्राउज़र अनुरोध जैसी सामान्य नेटवर्क जानकारी CDN को जाती है। साइट होस्ट सेवा और सुरक्षा हेतु कनेक्शन लॉग रख सकता है। इन प्रदाताओं की अपनी गोपनीयता प्रथाएँ हैं। इस संस्करण में गेम डेटा अपलोड, विज्ञापन SDK या भुगतान SDK नहीं है।"],
@@ -5303,7 +5193,7 @@
           ["दायरा और बदलाव", "यह सूचना QuizVerse 3D के ब्राउज़र संस्करण की है; अद्यतन 26 अक्टूबर 2026। भविष्य में खाते, विज्ञापन, भुगतान या ऑनलाइन विश्लेषण जोड़ने से पहले सूचना और आवश्यक विकल्प बदलने होंगे। स्टोर प्रकाशन से पहले प्रकाशक की कानूनी पहचान, लक्षित आयु व क्षेत्राधिकार निश्चित करना होगा। Three.js MIT लाइसेंस वाला ओपन-सोर्स सॉफ़्टवेयर है; इसका अर्थ कॉपीराइट का अभाव नहीं है।"]
         ],
         es: [
-          ["Datos guardados en tu dispositivo", "QuizVerse 3D guarda progreso, niveles abiertos u omitidos con monedas, saldo, trofeos, insignias, puntuaciones, precisión, último nivel, preferencias, fecha UTC/racha/recuento/marca temporal del bono por compartir y fechas de inicio y reclamo de inicio diario, racha actual, número de reclamos y marca temporal en el localStorage de este navegador. No solicita cuenta, ubicación, contactos, cámara, micrófono ni datos sensibles. Si eliges Compartir, la hoja del navegador o sistema recibe el título, texto de invitación y URL de QuizVerse para que elijas una aplicación; esa aplicación puede tratarlo según su propia política. El juego no identifica a los destinatarios ni sube tus partidas."],
+          ["Datos guardados en tu dispositivo", "QuizVerse 3D guarda progreso, niveles abiertos u omitidos con monedas, saldo, trofeos, insignias, puntuaciones, precisión, último nivel, preferencias y fechas de inicio de sesión y reclamo diario, racha actual, número de reclamos y marca temporal en el localStorage de este navegador. No solicita cuenta, ubicación, contactos, cámara, micrófono ni datos sensibles. Los datos guardados permanecen en este navegador y el juego no los envía al desarrollador."],
           ["Comprobaciones de juego limpio", "Durante una ronda, Page Visibility API y los eventos de foco detectan si abandonas el juego. La pregunta actual puede enviarse como incorrecta. No leen otras pestañas, historial, pantalla ni otras aplicaciones. El orden y los tiempos se gestionan en memoria. Las comprobaciones del cliente dificultan las trampas casuales, pero no son inviolables."],
           ["Cookies, conservación y control", "El juego no establece cookies de rastreo. Los datos permanecen hasta restablecer el progreso en Ajustes o borrar los datos del sitio. El restablecimiento conserva idioma, sonido y efectos; borra los datos del sitio para eliminarlos también. Si bloqueas el almacenamiento, puedes jugar temporalmente sin garantía de conservar los cambios. El juego no cifra localStorage ni ofrece copia en la nube."],
           ["Recursos externos y alojamiento", "La biblioteca opcional Three.js se obtiene de jsDelivr. Al cargarla, el CDN recibe datos de red habituales, como IP y detalles de la solicitud. El proveedor de alojamiento puede procesar registros de conexión para servir y proteger el sitio. Estos proveedores tienen sus propias prácticas. Esta versión no incluye subidas de datos del juego, SDK publicitario ni SDK de pagos."],
@@ -5311,7 +5201,7 @@
           ["Alcance y cambios", "Aviso para la versión de navegador de QuizVerse 3D, actualizado el 26 de octubre de 2026. Cuentas, anuncios, pagos o análisis en línea futuros requieren un aviso revisado y las opciones necesarias antes de activarse. Deben confirmarse la identidad legal del editor, público y jurisdicción antes de publicar en una tienda. Three.js es software de código abierto con licencia MIT, no software sin derechos de autor."]
         ],
         fr: [
-          ["Données conservées sur votre appareil", "QuizVerse 3D conserve progression, niveaux débloqués ou passés avec des pièces, solde, trophées, badges, scores, précision, dernier niveau, préférences, date UTC/série/nombre de gains/horodatage du partage quotidien, ainsi que dates de lancement et de réclamation quotidiennes, série actuelle, nombre de gains et horodatage dans le localStorage de ce navigateur. Le jeu ne demande ni compte, localisation, contacts, caméra, microphone ni données sensibles. Si vous choisissez Partager, la feuille de partage du navigateur ou du système reçoit le titre, le texte d’invitation et l’URL de QuizVerse afin que vous choisissiez une application ; celle-ci peut les traiter selon sa propre politique. Le jeu n’identifie pas les destinataires et ne téléverse pas vos sauvegardes."],
+          ["Données conservées sur votre appareil", "QuizVerse 3D conserve la progression, les niveaux débloqués ou passés avec des pièces, le solde, les trophées, les badges, les scores, la précision, le dernier niveau, les préférences, ainsi que les dates de lancement et de réclamation quotidiennes, la série actuelle, le nombre de réclamations et l’horodatage dans le localStorage de ce navigateur. Le jeu ne demande ni compte, localisation, contacts, caméra, microphone ni données sensibles. Les données de jeu restent dans ce navigateur et ne sont pas envoyées au développeur par le jeu."],
           ["Contrôles de jeu équitable", "Pendant une manche, Page Visibility API et les événements de focus détectent que vous quittez le jeu. La question active peut être envoyée comme incorrecte. Ces contrôles ne lisent ni autres onglets, historique, écran ni autres applications. L’ordre et les délais sont gérés en mémoire. Les contrôles côté client découragent la triche occasionnelle mais ne sont pas inviolables."],
           ["Cookies, conservation et contrôle", "Le jeu ne crée pas de cookies de suivi. Les sauvegardes restent jusqu’à une réinitialisation dans Paramètres ou l’effacement des données du site. La réinitialisation conserve langue, son et effets ; effacez les données du site pour les supprimer aussi. Si le stockage est bloqué, le jeu reste temporairement utilisable mais les changements peuvent être perdus. Le jeu ne chiffre pas localStorage et ne fournit pas de sauvegarde cloud."],
           ["Ressources externes et hébergement", "La bibliothèque optionnelle Three.js est fournie par jsDelivr. Son chargement transmet au CDN des informations réseau ordinaires, telles que l’adresse IP et les détails de requête. L’hébergeur peut traiter des journaux de connexion pour servir et protéger le site. Ces fournisseurs ont leurs propres pratiques. Cette version ne comprend ni téléversement de partie, ni SDK publicitaire ou de paiement."],
@@ -6476,23 +6366,6 @@
           privacySummaryDescription: "Open a short summary without leaving.",
           settingsDescription: "Language, visual effects, and progress controls.",
           soundDescription: "Toggle answer and reward sounds.",
-          dailyReadyBadge: "2× BONUS ACTIVE 🔥",
-          dailyClaimedBadge: "2× CLAIMED TODAY",
-          dailyReadyTitle: "Share today to double your daily reward!",
-          dailyClaimedTitle: "Today's double share bonus is claimed",
-          dailyReadyDescription: "Share QuizVerse once today to earn 50 coins (25 base × 2).",
-          dailyClaimedDescription: "Today's 50-coin bonus is in your vault.",
-          dailyStreak: "{count}-day share streak",
-          dailyShareButton: "Share & earn {coins} coins",
-          dailyShareAgainButton: "Share QuizVerse",
-          dailyCopyButton: "Copy invite link",
-          dailyFeedbackClaimed: "Bonus claimed: +{coins} coins.",
-          dailyFeedbackAlready: "Today's share bonus is already claimed.",
-          dailyFeedbackCanceled: "Share cancelled; no coins were added.",
-          dailyFeedbackError: "Couldn't complete sharing. Please try again.",
-          dailyFeedbackCopied: "Invite link copied. Use the native share sheet to earn coins.",
-          dailyFeedbackStorage: "Share completed, but storage failed; no coins were added.",
-          dailyFeedbackClock: "Your device date is earlier than your last share; no bonus was added."
         },
         bn: {
           kicker: "নেভিগেশন ডেক", title: "সবকিছু এক জায়গায়",
@@ -6507,23 +6380,6 @@
           privacySummaryDescription: "এই পৃষ্ঠা না ছেড়েই সংক্ষিপ্তসার দেখুন।",
           settingsDescription: "ভাষা, ভিজ্যুয়াল এফেক্ট ও অগ্রগতির নিয়ন্ত্রণ।",
           soundDescription: "উত্তর ও পুরস্কারের শব্দ চালু বা বন্ধ করুন।",
-          dailyReadyBadge: "২× বোনাস চালু 🔥",
-          dailyClaimedBadge: "আজকের ২× বোনাস নেওয়া হয়েছে",
-          dailyReadyTitle: "আজ শেয়ার করে দৈনিক পুরস্কার দ্বিগুণ করুন!",
-          dailyClaimedTitle: "আজকের দ্বিগুণ শেয়ার বোনাস নেওয়া হয়েছে",
-          dailyReadyDescription: "আজ QuizVerse শেয়ার করে ৫০ কয়েন পান (২৫ × ২)।",
-          dailyClaimedDescription: "আজকের ৫০ কয়েন আপনার ভল্টে যোগ হয়েছে।",
-          dailyStreak: "{count} দিনের শেয়ার ধারাবাহিকতা",
-          dailyShareButton: "শেয়ার করুন ও {coins} কয়েন পান",
-          dailyShareAgainButton: "QuizVerse শেয়ার করুন",
-          dailyCopyButton: "আমন্ত্রণ লিংক কপি করুন",
-          dailyFeedbackClaimed: "বোনাস পেয়েছেন: +{coins} কয়েন।",
-          dailyFeedbackAlready: "আজকের শেয়ার বোনাস ইতিমধ্যে নেওয়া হয়েছে।",
-          dailyFeedbackCanceled: "শেয়ার বাতিল হয়েছে; কোনো কয়েন যোগ হয়নি।",
-          dailyFeedbackError: "শেয়ার করা যায়নি। আবার চেষ্টা করুন।",
-          dailyFeedbackCopied: "আমন্ত্রণ লিংক কপি হয়েছে। কয়েন পেতে শেয়ার শিট ব্যবহার করুন।",
-          dailyFeedbackStorage: "শেয়ার হয়েছে, কিন্তু স্টোরেজে সমস্যা; কয়েন যোগ হয়নি।",
-          dailyFeedbackClock: "ডিভাইসের তারিখ শেষ শেয়ারের আগের; বোনাস যোগ হয়নি।"
         },
         hi: {
           kicker: "नेविगेशन डेक", title: "सब कुछ एक जगह",
@@ -6538,23 +6394,6 @@
           privacySummaryDescription: "यह पेज छोड़े बिना संक्षिप्त जानकारी खोलें।",
           settingsDescription: "भाषा, दृश्य प्रभाव और प्रगति नियंत्रण।",
           soundDescription: "जवाब और इनाम की आवाज़ चालू या बंद करें।",
-          dailyReadyBadge: "2× बोनस चालू 🔥",
-          dailyClaimedBadge: "आज का 2× बोनस मिल गया",
-          dailyReadyTitle: "आज शेयर करें और दैनिक इनाम दोगुना पाएँ!",
-          dailyClaimedTitle: "आज का दोगुना शेयर बोनस मिल गया",
-          dailyReadyDescription: "आज QuizVerse शेयर करें और 50 कॉइन पाएँ (25 × 2)।",
-          dailyClaimedDescription: "आज के 50 कॉइन आपके वॉल्ट में जोड़ दिए गए।",
-          dailyStreak: "{count} दिन की शेयर स्ट्रीक",
-          dailyShareButton: "शेयर करें और {coins} कॉइन पाएँ",
-          dailyShareAgainButton: "QuizVerse शेयर करें",
-          dailyCopyButton: "आमंत्रण लिंक कॉपी करें",
-          dailyFeedbackClaimed: "बोनस मिला: +{coins} कॉइन।",
-          dailyFeedbackAlready: "आज का शेयर बोनस पहले ही मिल चुका है।",
-          dailyFeedbackCanceled: "शेयर रद्द हुआ; कोई कॉइन नहीं जोड़ा गया।",
-          dailyFeedbackError: "शेयर पूरा नहीं हो सका। फिर कोशिश करें।",
-          dailyFeedbackCopied: "आमंत्रण लिंक कॉपी हुआ। कॉइन के लिए शेयर शीट से साझा करें।",
-          dailyFeedbackStorage: "शेयर हुआ, लेकिन स्टोरेज नहीं चला; कॉइन नहीं जोड़े गए।",
-          dailyFeedbackClock: "डिवाइस की तारीख आपके पिछले शेयर से पहले है; बोनस नहीं मिला।"
         },
         es: {
           kicker: "CENTRO DE NAVEGACIÓN", title: "Todo en un solo lugar",
@@ -6569,23 +6408,6 @@
           privacySummaryDescription: "Abre un resumen sin salir de esta pantalla.",
           settingsDescription: "Idioma, efectos visuales y controles de progreso.",
           soundDescription: "Activa o desactiva los sonidos de respuestas y premios.",
-          dailyReadyBadge: "BONO 2× ACTIVO 🔥",
-          dailyClaimedBadge: "BONO 2× COBRADO HOY",
-          dailyReadyTitle: "¡Comparte hoy y duplica tu recompensa diaria!",
-          dailyClaimedTitle: "Ya cobraste el bono doble de hoy",
-          dailyReadyDescription: "Comparte QuizVerse hoy y gana 50 monedas (25 × 2).",
-          dailyClaimedDescription: "Las 50 monedas de hoy ya están en tu bóveda.",
-          dailyStreak: "Racha de {count} días compartiendo",
-          dailyShareButton: "Compartir y ganar {coins} monedas",
-          dailyShareAgainButton: "Compartir QuizVerse",
-          dailyCopyButton: "Copiar enlace de invitación",
-          dailyFeedbackClaimed: "Bono recibido: +{coins} monedas.",
-          dailyFeedbackAlready: "El bono de hoy ya está cobrado.",
-          dailyFeedbackCanceled: "Se canceló el envío; no se añadieron monedas.",
-          dailyFeedbackError: "No se pudo compartir. Inténtalo de nuevo.",
-          dailyFeedbackCopied: "Enlace copiado. Usa la hoja nativa para ganar monedas.",
-          dailyFeedbackStorage: "Se compartió, pero falló el almacenamiento; no se añadieron monedas.",
-          dailyFeedbackClock: "La fecha del dispositivo es anterior al último envío; no se dio el bono."
         },
         fr: {
           kicker: "CENTRE DE NAVIGATION", title: "Tout au même endroit",
@@ -6600,23 +6422,6 @@
           privacySummaryDescription: "Afficher un résumé sans quitter cette page.",
           settingsDescription: "Langue, effets visuels et commandes de progression.",
           soundDescription: "Activer ou désactiver les sons des réponses et récompenses.",
-          dailyReadyBadge: "BONUS 2× ACTIF 🔥",
-          dailyClaimedBadge: "BONUS 2× RÉCUPÉRÉ AUJOURD’HUI",
-          dailyReadyTitle: "Partagez aujourd’hui pour doubler votre récompense !",
-          dailyClaimedTitle: "Le bonus de partage doublé du jour est récupéré",
-          dailyReadyDescription: "Partagez QuizVerse aujourd’hui pour gagner 50 pièces (25 × 2).",
-          dailyClaimedDescription: "Les 50 pièces du jour sont dans votre coffre.",
-          dailyStreak: "Série de partage : {count} jour(s)",
-          dailyShareButton: "Partager et gagner {coins} pièces",
-          dailyShareAgainButton: "Partager QuizVerse",
-          dailyCopyButton: "Copier le lien d’invitation",
-          dailyFeedbackClaimed: "Bonus obtenu : +{coins} pièces.",
-          dailyFeedbackAlready: "Le bonus de partage du jour est déjà récupéré.",
-          dailyFeedbackCanceled: "Partage annulé ; aucune pièce ajoutée.",
-          dailyFeedbackError: "Le partage a échoué. Réessayez.",
-          dailyFeedbackCopied: "Lien copié. Utilisez le partage natif pour gagner des pièces.",
-          dailyFeedbackStorage: "Partage effectué, mais stockage indisponible ; aucune pièce ajoutée.",
-          dailyFeedbackClock: "La date de l’appareil précède le dernier partage ; aucun bonus ajouté."
         }
       };
 
@@ -8091,8 +7896,15 @@
       const REWARD_COLLECTION_STORAGE_KEY = "quiz-orbit-reward-collection";
       const RULES_ACCEPTED_STORAGE_KEY = "quiz-orbit-rules-accepted";
       const COIN_SKIPPED_LEVELS_STORAGE_KEY = "quiz-orbit-coin-skipped-levels-v1";
-      const DAILY_SHARE_STORAGE_KEY = "quizverse-daily-share-state-v1";
-      const DAILY_SHARE_LOCK_KEY = `${DAILY_SHARE_STORAGE_KEY}:claim-lock`;
+      // Remove obsolete share-reward records left by earlier builds. Existing
+      // coin balances are intentionally preserved; no sharing payout remains.
+      const RETIRED_DAILY_SHARE_STORAGE_KEYS = [
+        "quizverse-daily-share-state-v1",
+        "quizverse-daily-share-state-v1:claim-lock"
+      ];
+      RETIRED_DAILY_SHARE_STORAGE_KEYS.forEach((key) => {
+        try { localStorage.removeItem(key); } catch { /* Storage may be blocked. */ }
+      });
       const DAILY_LOGIN_STORAGE_KEY = "quizverse-daily-login-state-v1";
       const DAILY_LOGIN_LOCK_KEY = `${DAILY_LOGIN_STORAGE_KEY}:claim-lock`;
       const DAILY_BOSS_STORAGE_KEY = "quizverse-daily-boss-state-v1";
@@ -8123,11 +7935,9 @@
         streakFive: 10,
         levelClear: 50,
         newBadge: 25,
-        dailyShareBase: 25,
         dailyLoginBase: DAILY_LOGIN_BASE_COINS,
         trophy: { gold: 100, silver: 60, bronze: 30 }
       };
-      const DAILY_SHARE_MULTIPLIER = 2;
 
       function emptyRewardCollection() {
         return {
@@ -8289,61 +8099,6 @@
       function utcDayKey(timestamp = Date.now()) {
         const date = new Date(timestamp);
         return Number.isFinite(date.getTime()) ? date.toISOString().slice(0, 10) : "";
-      }
-
-      function emptyDailyShareState() {
-        return {
-          version: 1,
-          lastShareDate: "",
-          lastShareTimestamp: 0,
-          currentStreak: 0,
-          totalClaims: 0
-        };
-      }
-
-      // Local storage is validated and deduplicated client-side; it is not a secure
-      // server ledger and can be edited by the device owner.
-      function readDailyShareState() {
-        try {
-          const serialized = localStorage.getItem(DAILY_SHARE_STORAGE_KEY);
-          if (!serialized) return emptyDailyShareState();
-          const saved = JSON.parse(serialized);
-          if (!saved || saved.version !== 1) return emptyDailyShareState();
-          const validDay = (value) => {
-            if (value === "") return true;
-            if (typeof value !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
-            const parsed = new Date(`${value}T00:00:00.000Z`);
-            return Number.isFinite(parsed.getTime()) && parsed.toISOString().slice(0, 10) === value;
-          };
-          if (
-            !validDay(saved.lastShareDate) ||
-            !Number.isSafeInteger(saved.lastShareTimestamp) ||
-            saved.lastShareTimestamp < 0 ||
-            saved.lastShareTimestamp > Date.now() + 5 * 60 * 1000 ||
-            !Number.isSafeInteger(saved.currentStreak) ||
-            saved.currentStreak < 0 ||
-            saved.currentStreak > 100_000 ||
-            !Number.isSafeInteger(saved.totalClaims) ||
-            saved.totalClaims < 0 ||
-            saved.totalClaims > 100_000
-          ) return emptyDailyShareState();
-          if (saved.lastShareDate) {
-            if (!saved.lastShareTimestamp || utcDayKey(saved.lastShareTimestamp) !== saved.lastShareDate) {
-              return emptyDailyShareState();
-            }
-          } else if (saved.lastShareTimestamp || saved.currentStreak || saved.totalClaims) {
-            return emptyDailyShareState();
-          }
-          return {
-            version: 1,
-            lastShareDate: saved.lastShareDate,
-            lastShareTimestamp: saved.lastShareTimestamp,
-            currentStreak: saved.currentStreak,
-            totalClaims: saved.totalClaims
-          };
-        } catch {
-          return emptyDailyShareState();
-        }
       }
 
       function emptyDailyLoginState() {
@@ -8646,10 +8401,6 @@
       let particlesEnabled = readPreference(PARTICLES_STORAGE_KEY, "true") !== "false";
       let syncSceneAnimation = () => {};
       let rewardCollection = readRewardCollection();
-      let dailyShareState = readDailyShareState();
-      let dailyShareFeedbackKey = "";
-      let dailyShareFeedbackCoins = 0;
-      let dailyShareInProgress = false;
       let dailyLoginState = readDailyLoginState();
       let dailyLoginFeedbackKey = "";
       let dailyLoginFeedbackCoins = 0;
@@ -8870,141 +8621,6 @@
         if (views.levels.classList.contains("active")) renderLevelMap(currentCategory);
         if (views.results.classList.contains("active")) renderResults();
         return true;
-      }
-
-      async function withDailyShareClaimLock(callback) {
-        if (navigator.locks?.request) {
-          return navigator.locks.request(
-            "quizverse-daily-share-claim",
-            { mode: "exclusive" },
-            callback
-          );
-        }
-        const owner = `${Date.now()}-${Math.random().toString(36).slice(2)}`;
-        try {
-          const existing = JSON.parse(localStorage.getItem(DAILY_SHARE_LOCK_KEY) || "null");
-          if (existing && Number.isFinite(existing.expiresAt) && existing.expiresAt > Date.now()) {
-            return { status: "busy" };
-          }
-          localStorage.setItem(DAILY_SHARE_LOCK_KEY, JSON.stringify({
-            owner,
-            expiresAt: Date.now() + 5_000
-          }));
-          const acquired = JSON.parse(localStorage.getItem(DAILY_SHARE_LOCK_KEY) || "null");
-          if (acquired?.owner !== owner) return { status: "busy" };
-          try {
-            return await callback();
-          } finally {
-            const current = JSON.parse(localStorage.getItem(DAILY_SHARE_LOCK_KEY) || "null");
-            if (current?.owner === owner) localStorage.removeItem(DAILY_SHARE_LOCK_KEY);
-          }
-        } catch {
-          return { status: "storage" };
-        }
-      }
-
-      async function claimDailyShareBonus() {
-        return withDailyShareClaimLock(() => {
-          const now = Date.now();
-          const today = utcDayKey(now);
-          const latestShareState = readDailyShareState();
-          dailyShareState = latestShareState;
-          if (latestShareState.lastShareDate === today) return { status: "already" };
-          if (latestShareState.lastShareDate && latestShareState.lastShareDate > today) {
-            return { status: "clock" };
-          }
-
-          const latestCollection = readRewardCollection();
-          const award = COIN_REWARDS.dailyShareBase * DAILY_SHARE_MULTIPLIER;
-          if (!Number.isSafeInteger(latestCollection.coins) ||
-              latestCollection.coins > Number.MAX_SAFE_INTEGER - award) {
-            return { status: "storage" };
-          }
-          const consecutiveDays = latestShareState.lastShareDate
-            ? utcDaysBetween(today, latestShareState.lastShareDate) === 1
-            : false;
-          const nextShareState = {
-            version: 1,
-            lastShareDate: today,
-            lastShareTimestamp: now,
-            currentStreak: consecutiveDays ? latestShareState.currentStreak + 1 : 1,
-            totalClaims: latestShareState.totalClaims + 1
-          };
-          const nextCollection = {
-            ...latestCollection,
-            coins: latestCollection.coins + award
-          };
-          let previousShareState = null;
-          let previousCollection = null;
-          try {
-            previousShareState = localStorage.getItem(DAILY_SHARE_STORAGE_KEY);
-            previousCollection = localStorage.getItem(REWARD_COLLECTION_STORAGE_KEY);
-            // Save the dated claim and coin vault together; restore both if either write fails.
-            localStorage.setItem(DAILY_SHARE_STORAGE_KEY, JSON.stringify(nextShareState));
-            localStorage.setItem(REWARD_COLLECTION_STORAGE_KEY, JSON.stringify(nextCollection));
-          } catch {
-            try {
-              if (previousShareState === null) localStorage.removeItem(DAILY_SHARE_STORAGE_KEY);
-              else if (previousShareState !== null) localStorage.setItem(DAILY_SHARE_STORAGE_KEY, previousShareState);
-              if (previousCollection === null) localStorage.removeItem(REWARD_COLLECTION_STORAGE_KEY);
-              else if (previousCollection !== null) localStorage.setItem(REWARD_COLLECTION_STORAGE_KEY, previousCollection);
-            } catch {
-              // Storage may remain unavailable; do not claim a payout in the UI.
-            }
-            return { status: "storage" };
-          }
-          dailyShareState = nextShareState;
-          rewardCollection = nextCollection;
-          updateCoinBalanceDisplays();
-          renderHomeHub();
-          renderRewardCollection();
-          renderRewardsDashboard();
-          updateDailyShareUI();
-          spawnCoinPopup(award, document.getElementById("coinBalanceChip"));
-          playCoinCue();
-          return { status: "claimed", award };
-        });
-      }
-
-      async function shareGameForDailyBonus() {
-        if (dailyShareInProgress) return;
-        dailyShareInProgress = true;
-        dailyShareFeedbackKey = "";
-        updateDailyShareUI();
-        try {
-          const shareUrl = new URL(location.href);
-          shareUrl.hash = "";
-          shareUrl.search = "";
-          if (typeof navigator.share === "function") {
-            await navigator.share({
-              title: "QuizVerse 3D",
-              text: (homeMenuTranslations[currentLanguage] || homeMenuTranslations.en).dailyReadyTitle,
-              url: shareUrl.toString()
-            });
-            const result = await claimDailyShareBonus();
-            const feedbackKeys = {
-              claimed: "dailyFeedbackClaimed",
-              already: "dailyFeedbackAlready",
-              clock: "dailyFeedbackClock",
-              storage: "dailyFeedbackStorage",
-              busy: "dailyFeedbackError"
-            };
-            dailyShareFeedbackKey = feedbackKeys[result.status] || "dailyFeedbackError";
-            dailyShareFeedbackCoins = result.award || 0;
-          } else if (typeof navigator.clipboard?.writeText === "function") {
-            await navigator.clipboard.writeText(shareUrl.toString());
-            dailyShareFeedbackKey = "dailyFeedbackCopied";
-          } else {
-            dailyShareFeedbackKey = "dailyFeedbackError";
-          }
-        } catch (error) {
-          dailyShareFeedbackKey = error?.name === "AbortError"
-            ? "dailyFeedbackCanceled"
-            : "dailyFeedbackError";
-        } finally {
-          dailyShareInProgress = false;
-          updateDailyShareUI();
-        }
       }
 
       function spawnCoinPopup(amount, target = null, direction = "earned") {
@@ -11975,7 +11591,6 @@
         document.getElementById("openSettingsHomeButton").setAttribute(
           "aria-label", `${settingsCopy[currentLanguage].title}. ${copy.settingsDescription}`
         );
-        updateDailyShareUI();
         updateDailyLoginUI();
         updateBossArenaHomeCopy();
       }
@@ -11986,43 +11601,6 @@
         return Number.isFinite(newer) && Number.isFinite(older)
           ? Math.round((newer - older) / 86_400_000)
           : Number.POSITIVE_INFINITY;
-      }
-
-      function updateDailyShareUI() {
-        const copy = homeMenuTranslations[currentLanguage] || homeMenuTranslations.en;
-        const today = utcDayKey();
-        const claimedToday = dailyShareState.lastShareDate === today;
-        const daysSinceLastShare = dailyShareState.lastShareDate
-          ? utcDaysBetween(today, dailyShareState.lastShareDate)
-          : Number.POSITIVE_INFINITY;
-        const visibleStreak = claimedToday || daysSinceLastShare === 1
-          ? dailyShareState.currentStreak
-          : 0;
-        const bonus = COIN_REWARDS.dailyShareBase * DAILY_SHARE_MULTIPLIER;
-        document.getElementById("dailyShareBanner").dataset.claimedToday = String(claimedToday);
-        document.getElementById("dailyShareBadge").textContent =
-          claimedToday ? copy.dailyClaimedBadge : copy.dailyReadyBadge;
-        document.getElementById("dailyShareTitle").textContent =
-          claimedToday ? copy.dailyClaimedTitle : copy.dailyReadyTitle;
-        document.getElementById("dailyShareDescription").textContent = claimedToday
-          ? copy.dailyClaimedDescription
-          : copy.dailyReadyDescription;
-        document.getElementById("dailyShareStreak").textContent =
-          copy.dailyStreak.replace("{count}", formatNumber(visibleStreak));
-        const shareSupported = typeof navigator.share === "function";
-        const buttonLabel = !shareSupported
-          ? copy.dailyCopyButton
-          : claimedToday
-            ? copy.dailyShareAgainButton
-            : copy.dailyShareButton.replace("{coins}", formatNumber(bonus));
-        document.getElementById("dailyShareButtonLabel").textContent = buttonLabel;
-        const button = document.getElementById("dailyShareButton");
-        button.disabled = dailyShareInProgress;
-        button.setAttribute("aria-label", buttonLabel);
-        const feedback = dailyShareFeedbackKey ? copy[dailyShareFeedbackKey] : "";
-        document.getElementById("dailyShareFeedback").textContent = feedback
-          ? feedback.replace("{coins}", formatNumber(dailyShareFeedbackCoins))
-          : "";
       }
 
       function recordDailyLoginLaunch(now = Date.now()) {
@@ -12925,7 +12503,7 @@
           ...PROGRESSION_CATEGORIES.map(categoryProgressStorageKey),
           LAST_PLAYED_STORAGE_KEY, REWARD_COLLECTION_STORAGE_KEY,
           RULES_ACCEPTED_STORAGE_KEY, COIN_SKIPPED_LEVELS_STORAGE_KEY,
-          DAILY_SHARE_STORAGE_KEY, DAILY_LOGIN_STORAGE_KEY, DAILY_BOSS_STORAGE_KEY,
+          ...RETIRED_DAILY_SHARE_STORAGE_KEYS, DAILY_LOGIN_STORAGE_KEY, DAILY_BOSS_STORAGE_KEY,
           ACTIVE_QUIZ_SESSION_STORAGE_KEY
         ])];
         let backup = [];
@@ -13262,9 +12840,6 @@
           updateSoundToggle();
         } else if (event.key === "quiz-orbit-language") {
           setLanguage(readSavedLanguage());
-        } else if (event.key === DAILY_SHARE_STORAGE_KEY) {
-          dailyShareState = readDailyShareState();
-          updateDailyShareUI();
         } else if (event.key === DAILY_LOGIN_STORAGE_KEY) {
           dailyLoginState = readDailyLoginState();
           updateDailyLoginUI();
@@ -13349,7 +12924,6 @@
       ["bossHomeBackButton", "bossBattleBackButton", "bossResultHomeButton"].forEach((id) => {
         document.getElementById(id).addEventListener("click", () => showView("welcome"));
       });
-      document.getElementById("dailyShareButton").addEventListener("click", shareGameForDailyBonus);
       continueJourneyButton.addEventListener("click", () => {
         const target = readLastPlayed();
         if (!target) {
@@ -13413,11 +12987,6 @@
         startQuiz(currentCategory, hasNextLevel ? currentLevel + 1 : currentLevel || 1);
       });
       window.addEventListener("storage", (event) => {
-        if (event.key === DAILY_SHARE_STORAGE_KEY) {
-          dailyShareState = readDailyShareState();
-          updateDailyShareUI();
-          return;
-        }
         if (event.key === DAILY_LOGIN_STORAGE_KEY) {
           dailyLoginState = readDailyLoginState();
           updateDailyLoginUI();
@@ -13436,8 +13005,6 @@
       window.addEventListener("pageshow", () => {
         if (document.body.dataset.view === "welcome") {
           syncRewardCollectionFromStorage();
-          dailyShareState = readDailyShareState();
-          updateDailyShareUI();
           dailyBossState = readDailyBossState();
           updateBossArenaUI();
           recordDailyLoginLaunch();
@@ -13446,8 +13013,6 @@
       document.addEventListener("visibilitychange", () => {
         if (!document.hidden && document.body.dataset.view === "welcome") {
           syncRewardCollectionFromStorage();
-          dailyShareState = readDailyShareState();
-          updateDailyShareUI();
           recordDailyLoginLaunch();
         }
       });

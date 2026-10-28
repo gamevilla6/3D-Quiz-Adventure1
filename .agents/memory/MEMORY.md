@@ -10,3 +10,4 @@
 - [Forgiving coin progression](coin-level-progression.md) — Clear 10-question levels with six correct; each paid progression step costs 100 coins and remains distinct from a quiz clear.
 - [Home coin vault visibility](home-coin-vault.md) — Keep the saved coin balance prominent on Home and visibly responsive to earns, spends, and synced changes.
 - [Quiz category editorial policy](general-knowledge-editorial-policy.md) — Keep each mode within its factual or reasoning domain; date and source current affairs.
+- [Referral-free rewards](referral-free-rewards.md) — Keep QuizVerse free of invite/share-for-coins flows; retain ordinary individual gameplay rewards.

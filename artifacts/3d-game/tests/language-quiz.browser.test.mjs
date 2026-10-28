@@ -200,105 +200,54 @@ try {
   assert.equal(await splashPage.locator("#loadingLabel").innerText(), "Prêt à jouer", "loading copy follows the active language");
   await splashContext.close();
 
-  const shareContext = await browser.newContext({
+  const referralContext = await browser.newContext({
     viewport: { width: 390, height: 844 },
     isMobile: true,
     hasTouch: true,
     reducedMotion: "reduce",
   });
-  await shareContext.addInitScript(() => {
-    window.__shareShouldCancel = false;
-    window.__shareCalls = [];
+  await referralContext.addInitScript(() => {
+    localStorage.setItem("quizverse-daily-share-state-v1", JSON.stringify({
+      version: 1,
+      lastShareDate: new Date().toISOString().slice(0, 10),
+      lastShareTimestamp: Date.now(),
+      currentStreak: 3,
+      totalClaims: 3,
+    }));
+    localStorage.setItem("quizverse-daily-share-state-v1:claim-lock", JSON.stringify({
+      owner: "legacy",
+      expiresAt: Date.now() + 60_000,
+    }));
+    window.__nativeShareCalls = 0;
     Object.defineProperty(navigator, "share", {
       configurable: true,
-      value: async (payload) => {
-        window.__shareCalls.push(payload);
-        if (window.__shareShouldCancel) throw new DOMException("Share cancelled", "AbortError");
-      },
+      value: async () => { window.__nativeShareCalls += 1; },
     });
   });
-  const sharePage = await shareContext.newPage();
-  await loadReadyPage(sharePage);
-  assert.equal(await sharePage.locator("#dailyShareBanner").isVisible(), true);
-  assert.match(await sharePage.locator("#dailyShareBadge").innerText(), /2×.*ACTIVE/i);
-  assert.equal(await sharePage.locator("#dailyShareButton").evaluate((button) => button.getBoundingClientRect().height >= 48), true);
-  for (const viewport of [
-    { width: 280, height: 653 },
-    { width: 390, height: 844 },
-    { width: 844, height: 390 },
-  ]) {
-    await sharePage.setViewportSize(viewport);
-    const shareLayout = await sharePage.evaluate(() => {
-      const banner = document.querySelector("#dailyShareBanner").getBoundingClientRect();
-      const button = document.querySelector("#dailyShareButton").getBoundingClientRect();
-      return {
-        viewportWidth: innerWidth,
-        documentWidth: document.documentElement.scrollWidth,
-        bannerLeft: banner.left,
-        bannerRight: banner.right,
-        buttonHeight: button.height,
-      };
-    });
-    assert.ok(shareLayout.documentWidth <= shareLayout.viewportWidth, "daily share card must not create horizontal scrolling");
-    assert.ok(shareLayout.bannerLeft >= 0 && shareLayout.bannerRight <= shareLayout.viewportWidth, "share card must stay within the viewport");
-    assert.ok(shareLayout.buttonHeight >= 48, "share control must remain touch-sized");
-  }
-  await sharePage.setViewportSize({ width: 390, height: 844 });
-  for (const [language, readyTitle] of [
-    ["en", "Share today to double your daily reward!"],
-    ["bn", "আজ শেয়ার করে দৈনিক পুরস্কার দ্বিগুণ করুন!"],
-    ["hi", "आज शेयर करें और दैनिक इनाम दोगुना पाएँ!"],
-    ["es", "¡Comparte hoy y duplica tu recompensa diaria!"],
-    ["fr", "Partagez aujourd’hui pour doubler votre récompense !"],
-  ]) {
-    await sharePage.selectOption("#languageSelect", language);
-    assert.equal(await sharePage.locator("#dailyShareTitle").innerText(), readyTitle);
-  }
-  await sharePage.selectOption("#languageSelect", "en");
-  await sharePage.evaluate(() => { window.__shareShouldCancel = true; });
-  await sharePage.locator("#dailyShareButton").tap();
-  await sharePage.waitForFunction(() => document.querySelector("#dailyShareFeedback")?.textContent.includes("cancelled"));
-  assert.equal(await sharePage.locator("#coinBalance").innerText(), "0", "cancelled sharing earns no coins");
-  assert.equal(await sharePage.evaluate(() => localStorage.getItem("quizverse-daily-share-state-v1")), null);
-  await sharePage.evaluate(() => { window.__shareShouldCancel = false; });
-  await sharePage.locator("#dailyShareButton").tap();
-  await sharePage.waitForFunction(() => document.querySelector("#coinBalance")?.textContent === "50");
-  const firstShareRecord = await sharePage.evaluate(() => ({
-    share: JSON.parse(localStorage.getItem("quizverse-daily-share-state-v1")),
-    coins: JSON.parse(localStorage.getItem("quiz-orbit-reward-collection")).coins,
-    payload: window.__shareCalls.at(-1),
-  }));
-  assert.equal(firstShareRecord.coins, 50, "the first successful share pays the 25-coin base bonus at 2×");
-  assert.equal(firstShareRecord.share.totalClaims, 1);
-  assert.equal(firstShareRecord.share.lastShareDate, new Date().toISOString().slice(0, 10));
-  assert.ok(firstShareRecord.share.lastShareTimestamp > 0);
-  assert.match(firstShareRecord.payload.url, /^https?:\/\//);
-  assert.match(await sharePage.locator("#dailyShareBadge").innerText(), /CLAIMED TODAY/i);
-  await sharePage.locator("#dailyShareButton").tap();
-  await sharePage.waitForFunction(() => document.querySelector("#dailyShareFeedback")?.textContent.includes("already claimed"));
-  assert.equal(await sharePage.locator("#coinBalance").innerText(), "50", "a second share on the same UTC day cannot duplicate the payout");
-  const streakSeed = await sharePage.evaluate(() => {
-    const collectionKey = "quiz-orbit-reward-collection";
-    const collection = JSON.parse(localStorage.getItem(collectionKey));
-    const yesterday = new Date(Date.now() - 86_400_000);
-    const state = {
-      version: 1,
-      lastShareDate: yesterday.toISOString().slice(0, 10),
-      lastShareTimestamp: yesterday.getTime(),
-      currentStreak: 4,
-      totalClaims: 4,
-    };
-    localStorage.setItem(collectionKey, JSON.stringify({ ...collection, coins: 0 }));
-    localStorage.setItem("quizverse-daily-share-state-v1", JSON.stringify(state));
-    return state;
-  });
-  assert.equal(streakSeed.currentStreak, 4);
-  await reloadReadyPage(sharePage);
-  await sharePage.locator("#dailyShareButton").tap();
-  await sharePage.waitForFunction(() => document.querySelector("#coinBalance")?.textContent === "50");
-  const streakResult = await sharePage.evaluate(() => JSON.parse(localStorage.getItem("quizverse-daily-share-state-v1")));
-  assert.equal(streakResult.currentStreak, 5, "sharing on consecutive UTC days advances the saved streak");
-  await shareContext.close();
+  const referralPage = await referralContext.newPage();
+  await loadReadyPage(referralPage);
+  assert.equal(await referralPage.locator("#dailyShareBanner, #dailyShareButton").count(), 0, "referral/share-to-earn UI is removed");
+  assert.equal(await referralPage.locator("#dailyLoginCard").isVisible(), true, "daily login streak rewards remain available");
+  assert.equal(await referralPage.locator("#openBossArenaButton").isVisible(), true, "the daily battle remains available");
+  assert.equal(
+    await referralPage.evaluate(() => document.body.innerText.match(/refer and earn|invite friends|share\s*&\s*earn/i)),
+    null,
+    "no referral or share-for-coins copy remains in the interface",
+  );
+  assert.deepEqual(
+    await referralPage.evaluate(() => {
+      const collection = JSON.parse(localStorage.getItem("quiz-orbit-reward-collection") || "null");
+      return [
+        localStorage.getItem("quizverse-daily-share-state-v1"),
+        localStorage.getItem("quizverse-daily-share-state-v1:claim-lock"),
+        collection?.coins ?? 0,
+        window.__nativeShareCalls,
+      ];
+    }),
+    [null, null, 0, 0],
+    "startup removes retired claim data without awarding coins or opening a share flow",
+  );
+  await referralContext.close();
 
   const loginContext = await browser.newContext({
     viewport: { width: 390, height: 844 },
@@ -1897,7 +1846,7 @@ try {
   await stabilityPage.locator("#resetProgressButton").click();
   await stabilityPage.locator("#cancelResetProgressButton").click();
   assert.equal(await stabilityPage.locator("#coinBalance").innerText(), savedCoinsBeforeReset, "canceling reset preserves the wallet");
-  assert.notEqual(await stabilityPage.evaluate(() => localStorage.getItem("quizverse-daily-share-state-v1")), null, "canceling reset preserves the share streak");
+   assert.notEqual(await stabilityPage.evaluate(() => localStorage.getItem("quizverse-daily-share-state-v1")), null, "canceling reset leaves legacy share metadata untouched until confirmation");
   assert.notEqual(await stabilityPage.evaluate(() => localStorage.getItem("quizverse-daily-login-state-v1")), null, "canceling reset preserves the login streak");
   assert.notEqual(await stabilityPage.evaluate(() => localStorage.getItem("quizverse-daily-boss-state-v1")), null, "canceling reset preserves the daily arena rank");
   await stabilityPage.locator("#resetProgressButton").click();
@@ -1906,7 +1855,7 @@ try {
     stabilityPage.locator("#confirmResetProgressButton").click(),
   ]);
   assert.equal(await stabilityPage.locator("#coinBalance").innerText(), "0");
-  assert.equal(await stabilityPage.evaluate(() => localStorage.getItem("quizverse-daily-share-state-v1")), null, "confirmed reset clears the local share streak");
+   assert.equal(await stabilityPage.evaluate(() => localStorage.getItem("quizverse-daily-share-state-v1")), null, "confirmed reset clears legacy share metadata");
   const resetLoginState = await stabilityPage.evaluate(() =>
     JSON.parse(localStorage.getItem("quizverse-daily-login-state-v1"))
   );
