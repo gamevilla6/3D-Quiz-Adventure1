@@ -2110,7 +2110,7 @@ try {
   );
   await nightBlitzPage.locator("#languageSelect").selectOption("fr");
   assert.equal(await nightBlitzPage.locator("#nightBlitzQuestionLabel").innerText(),
-    "Question 1 sur 5 · Connaissances générales", "the active round localizes without restarting");
+    "Question 1 sur 5 · Culture générale", "the active round localizes without restarting");
   assert.equal(
     await nightBlitzPage.evaluate(() =>
       JSON.parse(localStorage.getItem("quizverse-night-prime-blitz-v1")).active.deadlineAt
@@ -2123,14 +2123,18 @@ try {
   await nightBlitzPage.locator("#openNightBlitzButton").click();
   await nightBlitzPage.locator("#nightBlitzRoundPanel").waitFor({ state: "visible" });
   assert.equal(await nightBlitzPage.locator("#nightBlitzQuestionText").innerText(), firstBlitzQuestion,
-    "reloading resumes the same saved question");
-  for (let questionIndex = 0; questionIndex < 5; questionIndex += 1) {
-    if (questionIndex > 0) {
-      await nightBlitzPage.waitForFunction(
-        (expected) => document.querySelector("#nightBlitzQuestionLabel")?.textContent.includes(`Question ${expected}`),
-        questionIndex + 1,
-      );
-    }
+    "reloading restores the same saved question rather than drawing a new one");
+  const resumedBlitzState = await nightBlitzPage.evaluate(() =>
+    JSON.parse(localStorage.getItem("quizverse-night-prime-blitz-v1"))
+  );
+  assert.equal(resumedBlitzState.active.answers[0], -1,
+    "the visibility guard records a refreshed in-progress question as missed");
+  await nightBlitzPage.locator("#nightBlitzNextButton").click();
+  for (let questionIndex = 1; questionIndex < 5; questionIndex += 1) {
+    await nightBlitzPage.waitForFunction(
+      (expected) => document.querySelector("#nightBlitzQuestionLabel")?.textContent.includes(`Question ${expected}`),
+      questionIndex + 1,
+    );
     const prompt = await nightBlitzPage.locator("#nightBlitzQuestionText").innerText();
     const answerIndex = await nightBlitzPage.evaluate(
       (questionText) => window.__nightBlitzTestAnswers.get(questionText),
@@ -2138,7 +2142,10 @@ try {
     );
     assert.ok(Number.isInteger(answerIndex) && answerIndex >= 0 && answerIndex < 4,
       "the current localized question has a concealed answer index");
-    await nightBlitzPage.locator("#nightBlitzOptions .night-blitz-option").nth(answerIndex).click();
+    const answerButton = nightBlitzPage.locator("#nightBlitzOptions .night-blitz-option").nth(answerIndex);
+    assert.equal(await answerButton.isEnabled(), true,
+      `question ${questionIndex + 1} should be answerable; state=${JSON.stringify(await nightBlitzPage.evaluate(() => JSON.parse(localStorage.getItem("quizverse-night-prime-blitz-v1"))))}`);
+    await answerButton.click();
     await nightBlitzPage.locator("#nightBlitzNextButton").waitFor({ state: "visible" });
     await nightBlitzPage.locator("#nightBlitzNextButton").click();
   }
@@ -2147,13 +2154,13 @@ try {
     JSON.parse(localStorage.getItem("quizverse-night-prime-blitz-v1"))
   );
   assert.equal(completedBlitzState.status, "completed");
-  assert.equal(completedBlitzState.result.correct, 5);
-  assert.equal(completedBlitzState.result.coins, 45, "five correct answers earn 25 coins and the 20-coin clear bonus");
+  assert.equal(completedBlitzState.result.correct, 4);
+  assert.equal(completedBlitzState.result.coins, 40, "four correct answers earn 20 coins and the 20-coin clear bonus");
   const blitzCoinsAfter = await nightBlitzPage.evaluate(() =>
     JSON.parse(localStorage.getItem("quiz-orbit-reward-collection")).coins
   );
-  assert.equal(blitzCoinsAfter - blitzCoinsBefore, 45, "the result pays coins once to the shared vault");
-  assert.equal(await nightBlitzPage.locator("#nightBlitzResultCorrect").innerText(), "5 / 5");
+  assert.equal(blitzCoinsAfter - blitzCoinsBefore, 40, "the result pays coins once to the shared vault");
+  assert.equal(await nightBlitzPage.locator("#nightBlitzResultCorrect").innerText(), "4 / 5");
   await nightBlitzPage.locator("#nightBlitzResultHomeButton").click();
   await nightBlitzPage.locator("#openNightBlitzButton").click();
   assert.equal(await nightBlitzPage.locator("#nightBlitzStartButton").isDisabled(), true,
